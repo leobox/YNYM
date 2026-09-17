@@ -1,11 +1,12 @@
 """
-Quant Data Collector & Pattern Scanner
----------------------------------------
-GitHub Actions(1시간 주기) 및 모바일 수동(workflow_dispatch)으로 실행되는 실전 수집기입니다.
-네이버/야후 공개 시세를 기반으로 150개 유니버스를 스캔하여:
-1. '조건 충족' Top 5 후보 및 '다음 봉 확인' 관찰 종목을 도출
-2. 상세 스냅샷(universe, scores, top5, watch)을 멱등적으로 영구 저장
-3. GitHub 모바일 앱 첫 화면(README.md)에 최신 결과 표를 자동 갱신
+Quant Data Collector & Forward Labeling Engine
+---------------------------------------------
+GitHub Actions(1시간 주기) 및 모바일 수동(workflow_dispatch)으로 실행되는 실전 수집기 & 전진 라벨러입니다.
+1. 네이버 150개 유니버스 + 기존 추적 중인 pending 종목의 60분봉 수집
+2. '조건 충족' 및 '관찰' 후보 포착 및 특징값 고정 (Snapshot)
+3. 향후 3~5거래일 완료봉 추적을 통한 다중 목표(+3/5/7/10%)/손절(-3/5%) 선접촉 라벨링 확정
+4. 2차 판독기(위험 필터 / 메타 모델) 학습용 원본 데이터셋 자동 축적
+5. GitHub 모바일 앱(README.md)에 실시간 스캔 및 추적 진행 현황 자동 갱신
 
 [절대 안전 불변식]
 - 실제 거래, 매수, 매도, 계좌 연동 로직은 작성하지 않으며 일체 호출하지 않습니다.
@@ -20,16 +21,24 @@ import subprocess
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
 from concurrent.futures import ThreadPoolExecutor
-from typing import Dict, Any, List, Optional, Tuple
+from typing import Dict, Any, List, Optional, Tuple, Set
 
 import numpy as np
 import pandas as pd
 import requests
 
+from tracker import SignalTracker
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8")
+
 KST = timezone(timedelta(hours=9))
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
 README_PATH = BASE_DIR / "README.md"
+STRATEGY_VERSION = "algorithm260917_v1"
 
 SCAN_LIMIT = 150
 TOP_N = 5
@@ -140,8 +149,8 @@ def completed_bars(item: Dict[str, Any], now: pd.Timestamp) -> pd.DataFrame:
     return df[ends <= now]
 
 
-def fetch_bars(rec: Dict[str, Any], now: pd.Timestamp) -> pd.DataFrame:
-    symbol = rec["code"] + (".KQ" if rec["market"] == "KOSDAQ" else ".KS")
+def fetch_bars(code: str, market: str, now: pd.Timestamp) -> pd.DataFrame:
+    symbol = code + (".KQ" if market == "KOSDAQ" else ".KS")
     payload = get_json(
         f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}",
         {"range": "60d", "interval": "60m"},
@@ -259,38 +268,40 @@ def valid_ohlcv(df: pd.DataFrame) -> bool:
     return not bool(bad.any())
 
 
-def score_stock(rec: Dict[str, Any], now: pd.Timestamp) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
+def score_stock(rec: Dict[str, Any], now: pd.Timestamp) -> Tuple[Optional[Dict[str, Any]], Optional[pd.DataFrame], Optional[str]]:
     try:
-        df = fetch_bars(rec, now)
+        df = fetch_bars(rec["code"], rec["market"], now)
         if not valid_ohlcv(df):
-            return None, "가격/거래량 정합성 오류"
+            return None, None, "가격/거래량 정합성 오류"
         if len(df) < 120 or df.Volume.iloc[-1] <= 0 or df.Close.iloc[-1] < MIN_PRICE:
-            return None, "봉 부족/거래정지/가격조건 미달"
+            return None, None, "봉 부족/거래정지/가격조건 미달"
         if now - df.index[-1] > pd.Timedelta(days=7):
-            return None, "최근 7일 데이터 없음"
+            return None, None, "최근 7일 데이터 없음"
 
         s = hourly_pattern(df, volume_weight=VOLUME_WEIGHT, max_extension_atr=MAX_EXTENSION_ATR).iloc[-1]
         conf = confirmed_breakout(df).iloc[-1]
         matched = bool(s.eligible and conf.hold)
         if not np.isfinite(s.score):
-            return None, "지표 계산 불가"
+            return None, None, "지표 계산 불가"
 
         c = df.Close
         fast, medium = c.rolling(12).mean(), c.rolling(26).mean()
+        atr_val = _atr(df).iloc[-1]
 
-        return {
+        row = {
             "종목": rec["name"],
             "코드": rec["code"],
             "시장": rec["market"],
             "구분": "일치" if matched else "제외",
             "점수": float(s.score),
-            "이격ATR": round(float((c.iloc[-1] - medium.iloc[-1]) / _atr(df).iloc[-1]), 2),
+            "이격ATR": round(float((c.iloc[-1] - medium.iloc[-1]) / atr_val), 2) if pd.notna(atr_val) and atr_val > 0 else np.nan,
             "돌파선": round(float(conf.breakout_level), 2),
             "돌파봉종가": float(c.iloc[-2]),
             "돌파봉대금_억": round(float(conf.trigger_amount), 1),
             "돌파봉대금배수": round(float(conf.trigger_ratio), 2),
             "기준봉(KST)": df.index[-1].strftime("%m-%d %H:%M"),
             "돌파봉(KST)": df.index[-2].strftime("%m-%d %H:%M"),
+            "_bar_time_full": df.index[-1].strftime("%Y-%m-%d %H:%M"),
             "_base": bool(s.eligible),
             "_match": matched,
             "_waiting": bool(s.eligible and conf.waiting),
@@ -299,9 +310,29 @@ def score_stock(rec: Dict[str, Any], now: pd.Timestamp) -> Tuple[Optional[Dict[s
             "_current_level": float(conf.current_level),
             "_current_close": float(c.iloc[-1]),
             "_bar_time": df.index[-1].isoformat(),
-        }, None
+        }
+
+        # 2차 판독기용 세부 특징값 딕셔너리
+        features = {
+            "score": float(s.score),
+            "pattern_type": str(s.pattern),
+            "volume_ratio": float(s.volume_ratio),
+            "above60": bool(s.above60),
+            "extension_atr": float(row["이격ATR"]),
+            "trigger_amount_e8": float(conf.trigger_amount),
+            "trigger_ratio": float(conf.trigger_ratio),
+            "breakout_level": float(conf.breakout_level),
+            "trigger_close": float(c.iloc[-2]),
+            "current_close": float(c.iloc[-1]),
+            "atr_14": float(atr_val) if pd.notna(atr_val) else 0.0,
+            "sma12": float(fast.iloc[-1]),
+            "sma26": float(medium.iloc[-1]),
+        }
+        row["_features"] = features
+
+        return row, df, None
     except Exception as e:
-        return None, str(e)[:100]
+        return None, None, str(e)[:100]
 
 
 def naver_quote(code: str) -> Dict[str, Any]:
@@ -375,21 +406,30 @@ def build_results(rows: List[Dict[str, Any]]) -> Tuple[pd.DataFrame, pd.DataFram
                 "동시간배수": round(r["_current_ratio"], 2),
                 "돌파봉(KST)": r["기준봉(KST)"],
                 "기준봉(KST)": r["기준봉(KST)"],
+                "시장": r.get("시장", "KOSPI"),
+                "_bar_time_full": r.get("_bar_time_full", f"2026-{r['기준봉(KST)']}"),
+                "_features": r.get("_features", {}),
             })
     watch = pd.DataFrame(watch_rows)
 
     return top, watch
 
 
-def render_markdown_table(top: pd.DataFrame, watch: pd.DataFrame, now_str: str, scan_count: int) -> str:
-    """GitHub 모바일 앱 및 웹 첫 화면(README.md)에 표시될 깔끔한 마크다운 리포트"""
+def render_markdown_dashboard(
+    top: pd.DataFrame,
+    watch: pd.DataFrame,
+    tracker_stats: Dict[str, Any],
+    pending_list: List[Dict[str, Any]],
+    now_str: str,
+    scan_count: int,
+) -> str:
+    """GitHub 모바일 앱 및 웹 첫 화면(README.md)에 표시될 종합 대시보드 리포트"""
     lines = [
-        "# ⏱️ Quant Data Collector & Scanner",
+        "# ⏱️ Quant Pattern Scanner & Forward Labeler",
         "",
-        f"> **최근 스캔 시각**: `{now_str} KST` | **대상 유니버스**: `{scan_count}종목` | **조건 충족**: `{len(top)}건` | **관찰**: `{len(watch)}건`",
+        f"> **최근 스캔**: `{now_str} KST` | **유니버스**: `{scan_count}종목` | **조건 충족**: `{len(top)}건` | **관찰**: `{len(watch)}건` | **추적 중(Pending)**: `{tracker_stats['total_pending']}건`",
         "",
-        "이 페이지는 GitHub Actions(1시간 주기)를 통해 한국 정규장 시간에 자동 스캔·갱신됩니다.",
-        "스마트폰 GitHub 앱 또는 모바일 웹에서 언제든지 최신 후보를 확인하실 수 있습니다.",
+        "한국 정규장 1시간 주기로 실행되며, **신호 발생 후 3~5거래일 완료봉을 끝까지 추적하여 선접촉 라벨(TARGET_FIRST/STOP_FIRST)**을 자동 확정합니다.",
         "",
         "---",
         "",
@@ -398,7 +438,7 @@ def render_markdown_table(top: pd.DataFrame, watch: pd.DataFrame, now_str: str, 
     ]
 
     if top.empty:
-        lines.append("*현재 60분봉 돌파 후 지지 조건을 충족한 종목이 없습니다.* (0개가 정상입니다)\n")
+        lines.append("*현재 60분봉 돌파 후 지지 조건을 충족한 종목이 없습니다.* (조건 미달 시 0개가 정상입니다)\n")
     else:
         lines.append("| 순위 | 종목명 (코드) | 현재가 | 돌파선 대비 | 돌파봉종가 대비 | 당일등락 | 당일고가 | 거래대금 | 기준봉 |")
         lines.append("|:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|")
@@ -434,12 +474,58 @@ def render_markdown_table(top: pd.DataFrame, watch: pd.DataFrame, now_str: str, 
             lines.append(f"| **{r['종목']}** ({r['코드']}) | {price_str} | {r['돌파선']:,.0f}원 | {r['돌파봉종가']:,.0f}원 | {r['돌파봉대금_억']:,.1f}억 ({r['동시간배수']:,.1f}배) | {chg} | {r['돌파봉(KST)']} |")
         lines.append("")
 
+    # 3. 실시간 추적 중인 Pending 신호 목록
     lines.extend([
         "---",
         "",
-        "### ⚠️ 알림 & 안전 원칙",
-        "- **거래 주문 로직 없음**: 본 수집기는 순수 시세 관측·패턴 분석 도구이며, 실제 매수/매도는 사용자가 MTS에서 직접 판단합니다.",
-        "- **과거 스냅샷 보존**: 모든 스캔의 원본 데이터(universe, scores, top5, watch)는 `data/{YYYYMMDD}/`에 영구 보존됩니다.",
+        "## 🔵 실시간 전진 추적 중인 신호 (Pending)",
+        "",
+        f"> 신호 발생 후 현재까지의 가격 흐름을 추적 중인 목록입니다. (총 **{len(pending_list)}건**)",
+        "",
+    ])
+
+    if not pending_list:
+        lines.append("*현재 추적 중인 활성 신호가 없습니다.*\n")
+    else:
+        lines.append("| 종목명 (코드) | 신호발생시각 | 진입기준가 | 최고가 | 최저가 | 경과일수 | +10%목표가 | -5%손절가 |")
+        lines.append("|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|")
+        for sig in pending_list[-10:]:  # 최근 10개 표시
+            name = sig["name"]
+            code = sig["code"]
+            t_str = sig["signal_time_kst"]
+            e_p = sig["entry_reference_price"]
+            h_p = sig["highest_seen"]
+            l_p = sig["lowest_seen"]
+            days = sig["trading_days_observed"]
+            tgt_10 = sig["targets"].get("tgt_10", e_p * 1.1)
+            stop_5 = sig["stops"].get("stop_5", e_p * 0.95)
+
+            h_gap = f"{(h_p/e_p - 1)*100:+.2f}%"
+            l_gap = f"{(l_p/e_p - 1)*100:+.2f}%"
+            lines.append(f"| **{name}** ({code}) | {t_str} | {e_p:,.0f}원 | {h_p:,.0f}원 ({h_gap}) | {l_p:,.0f}원 ({l_gap}) | {days}일차 | {tgt_10:,.0f}원 | {stop_5:,.0f}원 |")
+        lines.append("")
+
+    # 4. 누적 통계 박스
+    tot_res = tracker_stats["total_resolved"]
+    win_r = tracker_stats["win_rate"]
+    win_str = f"**{win_r}%**" if win_r is not None else "데이터 축적 중"
+
+    lines.extend([
+        "---",
+        "",
+        "## 📈 누적 전진 검증 성과 (+10% 익절 vs -5% 손절 / 5일 기준)",
+        "",
+        f"- **완료된 평가 표본 수**: `{tot_res}건` (목표: 독립 표본 300건 이상)",
+        f"- **TARGET_FIRST (익절 선접촉)**: `{tracker_stats['target_first']}건`",
+        f"- **STOP_FIRST (손절 선접촉)**: `{tracker_stats['stop_first']}건`",
+        f"- **TIMEOUT (만기 종료)**: `{tracker_stats['timeout']}건`",
+        f"- **익절 성공률 (Win Rate)**: {win_str}",
+        "",
+        "---",
+        "",
+        "### 🔬 2차 판독기 (Meta-Classifier) 파이프라인 안내",
+        "- 본 수집기에서 생성되는 `data/resolved_signals.jsonl`은 향후 로지스틱 회귀 및 Gradient Boosting 기반의 **2차 위험 필터 모델 학습**에 사용됩니다.",
+        "- 목표: 전진 검증에서 손절률의 95% 신뢰 상한을 최소화하고 위험 후보를 사전에 '판단 보류'로 필터링.",
         "",
     ])
 
@@ -453,41 +539,130 @@ def run_collector():
     stamp_time = now_dt.strftime("%H%M")
     now_str = now_dt.strftime("%Y-%m-%d %H:%M")
 
-    print(f"=== [Quant Collector] 150종목 스캔 시작: {now_str} KST ===")
-    stocks = get_universe()
-    print(f"-> 유니버스 {len(stocks)}종목 추출 완료. 60분봉 수집 및 채점 진행 중...")
+    print(f"=== [Quant Collector] 전진 라벨러 & 스캔 시작: {now_str} KST ===")
+    tracker = SignalTracker(DATA_DIR)
 
-    rows, errors = [], []
+    # 1. 대상 유니버스 150개 확보
+    universe_stocks = get_universe()
+    universe_codes = {s["code"] for s in universe_stocks}
+
+    # 2. 유니버스에서 빠졌더라도 현재 추적 중인 Pending 종목 코드도 함께 수집 대상에 포함
+    tracked_codes = tracker.get_tracked_codes()
+    missing_tracked = tracked_codes - universe_codes
+    all_scan_targets = list(universe_stocks)
+
+    if missing_tracked:
+        print(f"-> 유니버스 외 추적 중인 Pending 종목 {len(missing_tracked)}개 추가 수집 목록 포함")
+        for sig in tracker.pending_signals.values():
+            if sig["code"] in missing_tracked:
+                all_scan_targets.append({
+                    "code": sig["code"],
+                    "name": sig["name"],
+                    "market": sig["market"],
+                })
+
+    print(f"-> 총 {len(all_scan_targets)}개 대상 60분봉 수집 및 패턴 채점 진행 중...")
+
+    rows = []
+    errors = []
+    collected_candles_by_code = {}
+
     with ThreadPoolExecutor(max_workers=WORKERS) as pool:
-        for row, err in pool.map(lambda s: score_stock(s, now_ts), stocks):
-            if row is not None:
+        results = pool.map(lambda s: (s, score_stock(s, now_ts)), all_scan_targets)
+        for rec, (row, df_bars, err) in results:
+            if row is not None and df_bars is not None:
                 rows.append(row)
+                # 최근 20개 완료봉을 추적용으로 보관
+                candle_list = []
+                for idx, b in df_bars.tail(20).iterrows():
+                    candle_list.append({
+                        "time_kst": idx.strftime("%Y-%m-%d %H:%M"),
+                        "open": float(b.Open),
+                        "high": float(b.High),
+                        "low": float(b.Low),
+                        "close": float(b.Close),
+                        "volume": int(b.Volume),
+                    })
+                collected_candles_by_code[rec["code"]] = candle_list
             else:
                 errors.append(err)
 
     print(f"-> 채점 완료: 성공 {len(rows)} / 제외·오류 {len(errors)}")
 
+    # 3. Top 5 및 Watch 종목 도출
     top, watch = build_results(rows)
     top_quoted, watch_quoted = attach_quotes([top, watch])
 
-    # 1. 스냅샷 파일 멱등 저장
+    # 4. 신규 신호 등록 (Top 5 조건 충족 및 Watch 돌파 종목)
+    registered_count = 0
+    # A. Top 5 등록
+    for _, r in top_quoted.iterrows():
+        sig_id = tracker.register_signal(
+            strategy_version=STRATEGY_VERSION,
+            code=r["코드"],
+            name=r["종목"],
+            market=r["시장"],
+            bar_time_kst=r.get("_bar_time_full", r["기준봉(KST)"]),
+            features=r.get("_features", {}),
+            entry_reference_price=float(r["현재가"] if pd.notna(r.get("현재가")) else r["돌파봉종가"]),
+        )
+        if sig_id:
+            registered_count += 1
+
+    # B. Watch 등록 (다음 봉 마감 대기지만 돌파 당시의 특징값 고정)
+    for _, r in watch_quoted.iterrows():
+        sig_id = tracker.register_signal(
+            strategy_version=STRATEGY_VERSION,
+            code=r["코드"],
+            name=r["종목"],
+            market=r.get("시장", "KOSPI"),
+            bar_time_kst=r.get("_bar_time_full", r["기준봉(KST)"]),
+            features=r.get("_features", {}),
+            entry_reference_price=float(r["돌파봉종가"]),
+        )
+        if sig_id:
+            registered_count += 1
+
+    print(f"-> 신규 추적 등록 신호: {registered_count}건 (현재 총 pending: {len(tracker.pending_signals)}건)")
+
+    # 5. 기존 Pending 신호들의 미래봉 접촉 판정 및 라벨 확정
+    newly_resolved = tracker.update_with_bars(collected_candles_by_code, now_dt)
+    if newly_resolved:
+        print(f"-> [라벨 확정] 종결 신호: {len(newly_resolved)}건!")
+        for res in newly_resolved:
+            print(f"   [{res['code']} {res['name']}] 확정 라벨: {res['evaluations']['h5_t10_s5']['status']}")
+
+    # 6. 스냅샷 파일 멱등 저장
     day_dir = DATA_DIR / stamp_day
     day_dir.mkdir(parents=True, exist_ok=True)
 
-    pd.DataFrame(stocks).to_csv(day_dir / f"{stamp_time}_universe.csv", index=False, encoding="utf-8-sig")
-    pd.DataFrame(rows).to_csv(day_dir / f"{stamp_time}_scores.csv", index=False, encoding="utf-8-sig")
-    top_quoted.to_csv(day_dir / f"{stamp_time}_top5.csv", index=False, encoding="utf-8-sig")
-    watch_quoted.to_csv(day_dir / f"{stamp_time}_watch.csv", index=False, encoding="utf-8-sig")
+    pd.DataFrame(universe_stocks).to_csv(day_dir / f"{stamp_time}_universe.csv", index=False, encoding="utf-8-sig")
+    # _features 등 객체 컬럼 정리 후 CSV 저장
+    df_scores = pd.DataFrame(rows).drop(columns=["_features"], errors="ignore")
+    df_scores.to_csv(day_dir / f"{stamp_time}_scores.csv", index=False, encoding="utf-8-sig")
+    top_clean = top_quoted.drop(columns=["_features"], errors="ignore")
+    watch_clean = watch_quoted.drop(columns=["_features"], errors="ignore")
+    top_clean.to_csv(day_dir / f"{stamp_time}_top5.csv", index=False, encoding="utf-8-sig")
+    watch_clean.to_csv(day_dir / f"{stamp_time}_watch.csv", index=False, encoding="utf-8-sig")
 
-    # 2. README.md에 최신 표 갱신 (모바일 앱 메인 뷰)
-    md_content = render_markdown_table(top_quoted, watch_quoted, now_str, len(stocks))
+    # 7. README.md 모바일 대시보드 갱신
+    tracker_stats = tracker.get_summary_stats()
+    pending_list = list(tracker.pending_signals.values())
+    md_dashboard = render_markdown_dashboard(
+        top_clean,
+        watch_clean,
+        tracker_stats,
+        pending_list,
+        now_str,
+        len(universe_stocks),
+    )
+
     with open(README_PATH, "w", encoding="utf-8") as f:
-        f.write(md_content)
+        f.write(md_dashboard)
 
-    print(f"=== [Quant Collector] 스캔 및 저장 완료 ===")
-    print(f"-> Top 5 조건충족: {len(top_quoted)}건 | 관찰 대기: {len(watch_quoted)}건")
-    print(f"-> 스냅샷 보존: {day_dir}/{stamp_time}_*.csv")
-    print(f"-> README.md 모바일 표 갱신 완료\n")
+    print(f"=== [Quant Collector] 전진 라벨링 및 스캔 전체 완료 ===")
+    print(f"-> Top 5: {len(top_clean)}건 | 관찰: {len(watch_clean)}건 | 추적 중: {len(pending_list)}건")
+    print(f"-> 저장소 README.md 모바일 대시보드 갱신 완료\n")
 
 
 if __name__ == "__main__":
