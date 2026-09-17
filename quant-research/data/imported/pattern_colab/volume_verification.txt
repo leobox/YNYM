@@ -1,0 +1,11 @@
+py_compile exit=0
+test_matches_first_and_near_matches_labeled (__main__.ColabTests.test_matches_first_and_near_matches_labeled) ... ok
+test_partial_bar_and_quote_snapshot_excluded (__main__.ColabTests.test_partial_bar_and_quote_snapshot_excluded) ... ok
+test_same_hour_excludes_other_hours_and_current_bar (__main__.ColabTests.test_same_hour_excludes_other_hours_and_current_bar) ... ok
+test_same_scores_as_project (__main__.ColabTests.test_same_scores_as_project) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.317s
+
+OK
+SMOKE same_hour_volume 1.0

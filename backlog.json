@@ -1,0 +1,211 @@
+{
+  "$schema_version": "1.0",
+  "meta": {
+    "project": "Leobox Multi-root Workspace",
+    "updated": "2026-09-17",
+    "context_doc": "README.md",
+    "doc_dir": "docs/tasks",
+    "stack": "Multi-agent (Gemini + Claude + Codex) / Python(Quant) / GitHub Actions / Android",
+    "task_unit_min": 30,
+    "note": "작업 상태 SSOT. CLI(node tools/backlog.mjs)로만 다룬다. 직접 수정을 금지한다. 상태 전이: todo → in_progress → review → done. 진행 불가 시 blocked(선행 대기) 또는 needs_decision(사람 판단 필요). 폐기는 cancelled."
+  },
+  "enums": {
+    "status": [
+      "todo",
+      "in_progress",
+      "review",
+      "needs_decision",
+      "blocked",
+      "done",
+      "cancelled"
+    ],
+    "priority": [
+      "P0",
+      "P1",
+      "P2",
+      "P3",
+      null
+    ],
+    "category": [
+      "infra",
+      "quant_research",
+      "quant_ops",
+      "mobile",
+      "docs",
+      "test"
+    ]
+  },
+  "labels": {
+    "status": {
+      "todo": "할 일",
+      "in_progress": "작업중",
+      "review": "리뷰필요",
+      "needs_decision": "사람 판단 필요",
+      "blocked": "대기",
+      "done": "완료",
+      "cancelled": "취소"
+    },
+    "category": {
+      "infra": "공통 인프라·모니터링",
+      "quant_research": "퀀트 연구",
+      "quant_ops": "퀀트 운영·수집",
+      "mobile": "모바일 앱",
+      "docs": "문서·가이드",
+      "test": "테스트·검증"
+    }
+  },
+  "phases": [
+    "0. 공통 인프라 & 대시보드",
+    "1. 퀀트 알고리즘 연구",
+    "2. 퀀트 데이터 자동 수집",
+    "3. 헬스 앱 (Android)"
+  ],
+  "tasks": [
+    {
+      "id": "T-001",
+      "title": "멀티 에이전트 협업 규칙 및 공통 환경 구성",
+      "summary": "Gemini, Claude, Codex 간 협업을 위한 공통 AGENTS.md, CLAUDE.md, GEMINI.md 및 backlog CLI 도구를 구성한다.",
+      "doc": "docs/tasks/T-001.md",
+      "status": "done",
+      "priority": "P0",
+      "category": "infra",
+      "phase": "0. 공통 인프라 & 대시보드",
+      "estimate_min": 30,
+      "deps": [],
+      "where": "AGENTS.md, CLAUDE.md, GEMINI.md, tools/backlog.mjs",
+      "refs": [
+        "README.md"
+      ],
+      "note": "초기 환경 셋업 진행 중",
+      "done_at": "2026-09-17",
+      "updated_at": "2026-09-17"
+    },
+    {
+      "id": "T-002",
+      "title": "PostgreSQL & Grafana 백로그 시각화 인프라 구축",
+      "summary": "backlog.json과 연동되는 PostgreSQL 데이터베이스와 Grafana 대시보드(Docker Compose) 초기 설정을 구축한다.",
+      "doc": "docs/tasks/T-002.md",
+      "status": "todo",
+      "priority": "P1",
+      "category": "infra",
+      "phase": "0. 공통 인프라 & 대시보드",
+      "estimate_min": 30,
+      "deps": [
+        "T-001"
+      ],
+      "where": "infra/monitoring/, tools/sync-postgres.mjs",
+      "refs": [],
+      "note": null,
+      "done_at": null,
+      "updated_at": "2026-09-17"
+    },
+    {
+      "id": "T-003",
+      "title": "퀀트 연구: 기본 데이터 수집 및 백테스팅 프레임워크 설계",
+      "summary": "yfinance/pandas를 활용한 과거 시세 수집 헬퍼 및 미래 참조 편향(Lookahead Bias)이 차단된 백테스트 기본 구조를 작성한다.",
+      "doc": "docs/tasks/T-003.md",
+      "status": "todo",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 45,
+      "deps": [
+        "T-001"
+      ],
+      "where": "quant-research/",
+      "refs": [],
+      "note": null,
+      "done_at": null,
+      "updated_at": "2026-09-17"
+    },
+    {
+      "id": "T-004",
+      "title": "퀀트 수집기: 1시간 주기 GitHub Actions 및 모바일 수동 실행 안정화",
+      "summary": "1시간 주기 크론 및 모바일 브라우저 workflow_dispatch를 통한 무중단 시세 수집 및 멱등적(idempotent) 파일 저장 파이프라인을 완성한다.",
+      "doc": "docs/tasks/T-004.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [
+        "T-001"
+      ],
+      "where": "quant-collector/",
+      "refs": [],
+      "note": "자동 매수 로직 금지 불변식 준수",
+      "done_at": "2026-09-17",
+      "updated_at": "2026-09-17"
+    },
+    {
+      "id": "T-005",
+      "title": "헬스 앱: 프로젝트 초기화 및 오프라인 운동 기록 모델 설계",
+      "summary": "안드로이드 프로젝트 구조를 초기화하고, 헬스장 오프라인 환경에 대응하는 세트/반복수/중량 로컬 데이터 스키마를 정의한다.",
+      "doc": "docs/tasks/T-005.md",
+      "status": "todo",
+      "priority": "P1",
+      "category": "mobile",
+      "phase": "3. 헬스 앱 (Android)",
+      "estimate_min": 45,
+      "deps": [
+        "T-001"
+      ],
+      "where": "gym-app/",
+      "refs": [],
+      "note": null,
+      "done_at": null,
+      "updated_at": "2026-09-17"
+    },
+    {
+      "id": "T-006",
+      "title": "설계문서 기반 공통 AI 규칙·스킬·훅 구성",
+      "summary": "",
+      "doc": "docs/tasks/T-006.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "0. 공통 인프라 & 대시보드",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "Codex: 공통 AI 규칙·연구 스킬·세 공급자 훅·Git 검사 구성 완료. 회귀 10개 통과, find-skills 워크스페이스 설치 및 검증. 클라이언트 자동 이벤트/신뢰는 별도 확인; T-007 코드 이전은 별도 진행. docs/tasks/T-006.md 참조.",
+      "done_at": "2026-09-17",
+      "updated_at": "2026-09-17"
+    },
+    {
+      "id": "T-007",
+      "title": "Phase0: 이전 코드 복사 및 프로젝트 구조 구축",
+      "summary": "",
+      "doc": "docs/tasks/T-007.md",
+      "status": "done",
+      "priority": "P0",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": null,
+      "done_at": "2026-09-17",
+      "updated_at": "2026-09-17"
+    },
+    {
+      "id": "T-008",
+      "title": "Phase1-3: 패턴 엔진 통합 테스트 + Colab 배포 + 데이터 재현",
+      "summary": "",
+      "doc": "docs/tasks/T-008.md",
+      "status": "done",
+      "priority": "P0",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "Codex: 패턴/체결 통합 47 tests 통과, standalone Python↔단일셀 notebook 동기화, 4 CSV+manifest 원자 저장, 이전 데이터 497파일 20,969,386바이트 SHA256 트리 동일 확인. 라이브 API/실제 Colab 및 성과 검증은 미수행. docs/tasks/T-008.md 참조.",
+      "done_at": "2026-09-17",
+      "updated_at": "2026-09-17"
+    }
+  ]
+}

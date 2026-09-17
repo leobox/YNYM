@@ -1,0 +1,27 @@
+# Environment & Secrets
+.env
+*.local
+*.secret
+
+# Logs & OS
+*.log
+.DS_Store
+Thumbs.db
+
+# Docker volumes / cache
+infra/monitoring/postgres_data/
+infra/monitoring/grafana_data/
+infra/monitoring/sync.sql
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Node
+node_modules/
+
+# Archives & Reference
+sample/
+

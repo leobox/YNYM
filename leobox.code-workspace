@@ -1,0 +1,32 @@
+{
+  "folders": [
+    {
+      "name": "📈 Quant Research (퀀트 연구)",
+      "path": "quant-research"
+    },
+    {
+      "name": "⏱️ Quant Collector (데이터 자동 수집)",
+      "path": "quant-collector"
+    },
+    {
+      "name": "🏋️ Gym App (안드로이드 앱)",
+      "path": "gym-app"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/__pycache__": true,
+      "**/.pytest_cache": true,
+      "**/.ipynb_checkpoints": true
+    },
+    "python.analysis.autoImportCompletions": true,
+    "editor.formatOnSave": true
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-python.python",
+      "ms-toolsai.jupyter",
+      "github.vscode-github-actions"
+    ]
+  }
+}

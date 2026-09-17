@@ -1,0 +1,30 @@
+py_compile exit=0
+test_entry_bar_final_volume_cannot_change_selection (__main__.TimingTests.test_entry_bar_final_volume_cannot_change_selection) ... ok
+test_filter_applied_before_top_five (__main__.TimingTests.test_filter_applied_before_top_five) ... ok
+test_future_prices_do_not_change_past_scores (__main__.TimingTests.test_future_prices_do_not_change_past_scores) ... ok
+test_holdout_cannot_use_target_after_cutoff (__main__.TimingTests.test_holdout_cannot_use_target_after_cutoff) ... ok
+test_incomplete_horizon_censored_even_if_early_hit (__main__.TimingTests.test_incomplete_horizon_censored_even_if_early_hit) ... ok
+test_missing_final_bar_censored (__main__.TimingTests.test_missing_final_bar_censored) ... ok
+test_no_stop_and_same_bar_target (__main__.TimingTests.test_no_stop_and_same_bar_target) ... ok
+test_past_high_cannot_hit (__main__.TimingTests.test_past_high_cannot_hit) ... ok
+test_signal_bar_precedes_entry_and_rank_limit (__main__.TimingTests.test_signal_bar_precedes_entry_and_rank_limit) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.894s
+
+OK
+  [PASS] +5%도달 WIN
+  [PASS] 손절 LOSS
+  [PASS] 동시터치 손절우선
+  [PASS] 미도달 TIMEOUT
+  [PASS] 적중률 66.7%
+  [PASS] 기대값 1.67%
+
+결과: 6/6 PASS
+  [PASS] 승자 전액 +10%
+  [PASS] 패자 -10%
+  [PASS] 슬롯제한 2/3 체결
+  [PASS] 최저자본 추적
+
+결과: 4/4 PASS
+SMOKE 175 ['score', 'volume_ratio', 'pattern', 'above60', 'eligible'] 26

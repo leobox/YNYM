@@ -1,0 +1,20 @@
+py_compile exit=0
+test_matches_first_and_near_matches_labeled (__main__.ColabTests.test_matches_first_and_near_matches_labeled) ... ok
+test_partial_bar_and_quote_snapshot_excluded (__main__.ColabTests.test_partial_bar_and_quote_snapshot_excluded) ... ok
+test_same_scores_as_project (__main__.ColabTests.test_same_scores_as_project) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.329s
+
+OK
+SMOKE 175 26
+패턴 탐색 · 2026-09-15 09:59 KST · 최대 150종목
+조회 150 · 채점 147 · 제외 3 · 31초
+일치 후보 우선, 부족하면 관찰 후보로 표시합니다. 점수는 상승 확률이 아닙니다.
+기준봉은 완료봉의 시작 시각입니다. 야후 지연·15시 봉 누락 및 통합/KRX 차이를 MTS에서 확인하세요.
+   순위       종목      코드  구분   패턴    점수   RSI 12/26선  거래량배수     기준봉(KST)
+0   1    한국비엔씨  256840  일치  재반등  92.6  61.0  12≤26   2.90  09-14 14:00
+1   2     실리콘투  257720  일치  재반등  85.0  51.8  12>26   1.49  09-14 14:00
+2   3  아이티센글로벌  124500  일치  재반등  82.4  51.0  12>26   2.27  09-14 14:00
+3   4       더즌  462860  일치  재반등  82.3  55.1  12≤26   3.93  09-14 14:00
+4   5     삼익제약  014950  일치  재반등  81.7  60.7  12≤26   3.28  09-14 14:00

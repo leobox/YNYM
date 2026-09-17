@@ -1,0 +1,2 @@
+﻿code,name,entry,qty,initial_qty,start,day,cost,proceeds,partial,peak,time_exit,last,exit,reason,pnl
+356860,티엘비,39116.99999999999,0,25,2026-08-26 11:00:00+09:00,38,979636.3687499997,1048162.5,False,42700.0,False,42000.0,2026-09-01 14:00:00+09:00,MAX_5D,68526.13125000033

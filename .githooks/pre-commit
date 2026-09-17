@@ -1,0 +1,6 @@
+#!/bin/sh
+# Check staged research sources only. Does not stage, modify, commit or push files.
+if command -v python >/dev/null 2>&1; then
+  exec python tools/ai/quant_guard.py --staged
+fi
+exec python3 tools/ai/quant_guard.py --staged

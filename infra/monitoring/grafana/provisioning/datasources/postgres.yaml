@@ -1,0 +1,16 @@
+apiVersion: 1
+
+datasources:
+  - name: PostgreSQL-Backlog
+    type: postgres
+    access: proxy
+    url: postgres:5432
+    user: leobox
+    secureJsonData:
+      password: leobox_secret
+    jsonData:
+      database: leobox_backlog
+      sslmode: disable
+      maxOpenConns: 5
+      maxIdleConns: 2
+    isDefault: true

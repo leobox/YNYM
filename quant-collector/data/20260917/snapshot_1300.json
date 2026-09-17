@@ -1,0 +1,317 @@
+{
+  "timestamp_kst": "2026-09-17 13:53:38",
+  "status": "success",
+  "total_targets": 6,
+  "collected_count": 6,
+  "items": [
+    {
+      "code": "069500",
+      "name": "KODEX 200",
+      "naver_quote": {
+        "code": "069500",
+        "stock_name": "KODEX 200",
+        "current_price": 107350.0,
+        "change_ratio": 0.93,
+        "market_status": "OPEN",
+        "traded_at": "2026-09-17T13:53:16+09:00"
+      },
+      "hourly_candles": {
+        "symbol": "069500.KS",
+        "currency": "KRW",
+        "regular_market_price": 106920.0,
+        "recent_candles": [
+          {
+            "time_kst": "2026-09-17 10:00",
+            "open": 106715.0,
+            "high": 107350.0,
+            "low": 106380.0,
+            "close": 106535.0,
+            "volume": 3700328
+          },
+          {
+            "time_kst": "2026-09-17 11:00",
+            "open": 106540.0,
+            "high": 106620.0,
+            "low": 106170.0,
+            "close": 106450.0,
+            "volume": 3479433
+          },
+          {
+            "time_kst": "2026-09-17 12:00",
+            "open": 106440.0,
+            "high": 107125.0,
+            "low": 106300.0,
+            "close": 107085.0,
+            "volume": 3021714
+          },
+          {
+            "time_kst": "2026-09-17 13:00",
+            "open": 107085.0,
+            "high": 107280.0,
+            "low": 106910.0,
+            "close": 106990.0,
+            "volume": 1873545
+          },
+          {
+            "time_kst": "2026-09-17 13:33",
+            "open": 106920.0,
+            "high": 106920.0,
+            "low": 106920.0,
+            "close": 106920.0,
+            "volume": 0
+          }
+        ]
+      }
+    },
+    {
+      "code": "229200",
+      "name": "KODEX 코스닥150",
+      "naver_quote": {
+        "code": "229200",
+        "stock_name": "KODEX 코스닥150",
+        "current_price": 13890.0,
+        "change_ratio": 0.83,
+        "market_status": "OPEN",
+        "traded_at": "2026-09-17T13:53:00+09:00"
+      },
+      "hourly_candles": null
+    },
+    {
+      "code": "005930",
+      "name": "삼성전자",
+      "naver_quote": {
+        "code": "005930",
+        "stock_name": "삼성전자",
+        "current_price": 255500.0,
+        "change_ratio": 0.79,
+        "market_status": "OPEN",
+        "traded_at": "2026-09-17T13:53:19+09:00"
+      },
+      "hourly_candles": {
+        "symbol": "005930.KS",
+        "currency": "KRW",
+        "regular_market_price": 254000.0,
+        "recent_candles": [
+          {
+            "time_kst": "2026-09-17 10:00",
+            "open": 254000.0,
+            "high": 255500.0,
+            "low": 252500.0,
+            "close": 252500.0,
+            "volume": 1362362
+          },
+          {
+            "time_kst": "2026-09-17 11:00",
+            "open": 253000.0,
+            "high": 254000.0,
+            "low": 252000.0,
+            "close": 253500.0,
+            "volume": 927442
+          },
+          {
+            "time_kst": "2026-09-17 12:00",
+            "open": 253500.0,
+            "high": 255000.0,
+            "low": 252500.0,
+            "close": 255000.0,
+            "volume": 970358
+          },
+          {
+            "time_kst": "2026-09-17 13:00",
+            "open": 254750.0,
+            "high": 255500.0,
+            "low": 254000.0,
+            "close": 254500.0,
+            "volume": 885942
+          },
+          {
+            "time_kst": "2026-09-17 13:33",
+            "open": 254000.0,
+            "high": 254000.0,
+            "low": 254000.0,
+            "close": 254000.0,
+            "volume": 0
+          }
+        ]
+      }
+    },
+    {
+      "code": "000660",
+      "name": "SK하이닉스",
+      "naver_quote": {
+        "code": "000660",
+        "stock_name": "SK하이닉스",
+        "current_price": 1770000.0,
+        "change_ratio": 0.63,
+        "market_status": "OPEN",
+        "traded_at": "2026-09-17T13:53:22+09:00"
+      },
+      "hourly_candles": {
+        "symbol": "000660.KS",
+        "currency": "KRW",
+        "regular_market_price": 1759000.0,
+        "recent_candles": [
+          {
+            "time_kst": "2026-09-17 10:00",
+            "open": 1753000.0,
+            "high": 1764000.0,
+            "low": 1744000.0,
+            "close": 1750000.0,
+            "volume": 336426
+          },
+          {
+            "time_kst": "2026-09-17 11:00",
+            "open": 1750000.0,
+            "high": 1752000.0,
+            "low": 1739000.0,
+            "close": 1745000.0,
+            "volume": 233237
+          },
+          {
+            "time_kst": "2026-09-17 12:00",
+            "open": 1745000.0,
+            "high": 1756000.0,
+            "low": 1741000.0,
+            "close": 1755000.0,
+            "volume": 223766
+          },
+          {
+            "time_kst": "2026-09-17 13:00",
+            "open": 1756000.0,
+            "high": 1764000.0,
+            "low": 1754000.0,
+            "close": 1760000.0,
+            "volume": 197476
+          },
+          {
+            "time_kst": "2026-09-17 13:33",
+            "open": 1759000.0,
+            "high": 1759000.0,
+            "low": 1759000.0,
+            "close": 1759000.0,
+            "volume": 0
+          }
+        ]
+      }
+    },
+    {
+      "code": "035420",
+      "name": "NAVER",
+      "naver_quote": {
+        "code": "035420",
+        "stock_name": "NAVER",
+        "current_price": 200500.0,
+        "change_ratio": -0.5,
+        "market_status": "OPEN",
+        "traded_at": "2026-09-17T13:53:19+09:00"
+      },
+      "hourly_candles": {
+        "symbol": "035420.KS",
+        "currency": "KRW",
+        "regular_market_price": 201000.0,
+        "recent_candles": [
+          {
+            "time_kst": "2026-09-17 10:00",
+            "open": 201000.0,
+            "high": 202500.0,
+            "low": 201000.0,
+            "close": 201000.0,
+            "volume": 32612
+          },
+          {
+            "time_kst": "2026-09-17 11:00",
+            "open": 201000.0,
+            "high": 202000.0,
+            "low": 201000.0,
+            "close": 201000.0,
+            "volume": 24840
+          },
+          {
+            "time_kst": "2026-09-17 12:00",
+            "open": 201500.0,
+            "high": 202000.0,
+            "low": 201000.0,
+            "close": 202000.0,
+            "volume": 27614
+          },
+          {
+            "time_kst": "2026-09-17 13:00",
+            "open": 202000.0,
+            "high": 202000.0,
+            "low": 201000.0,
+            "close": 201500.0,
+            "volume": 26592
+          },
+          {
+            "time_kst": "2026-09-17 13:33",
+            "open": 201000.0,
+            "high": 201000.0,
+            "low": 201000.0,
+            "close": 201000.0,
+            "volume": 0
+          }
+        ]
+      }
+    },
+    {
+      "code": "005380",
+      "name": "현대차",
+      "naver_quote": {
+        "code": "005380",
+        "stock_name": "현대차",
+        "current_price": 363000.0,
+        "change_ratio": 0.28,
+        "market_status": "OPEN",
+        "traded_at": "2026-09-17T13:53:19+09:00"
+      },
+      "hourly_candles": {
+        "symbol": "005380.KS",
+        "currency": "KRW",
+        "regular_market_price": 362000.0,
+        "recent_candles": [
+          {
+            "time_kst": "2026-09-17 10:00",
+            "open": 359500.0,
+            "high": 363000.0,
+            "low": 359500.0,
+            "close": 360500.0,
+            "volume": 57732
+          },
+          {
+            "time_kst": "2026-09-17 11:00",
+            "open": 360500.0,
+            "high": 361000.0,
+            "low": 359500.0,
+            "close": 360000.0,
+            "volume": 32435
+          },
+          {
+            "time_kst": "2026-09-17 12:00",
+            "open": 360000.0,
+            "high": 363000.0,
+            "low": 360000.0,
+            "close": 362500.0,
+            "volume": 29849
+          },
+          {
+            "time_kst": "2026-09-17 13:00",
+            "open": 363000.0,
+            "high": 364000.0,
+            "low": 362500.0,
+            "close": 362500.0,
+            "volume": 19287
+          },
+          {
+            "time_kst": "2026-09-17 13:33",
+            "open": 362000.0,
+            "high": 362000.0,
+            "low": 362000.0,
+            "close": 362000.0,
+            "volume": 0
+          }
+        ]
+      }
+    }
+  ],
+  "errors": []
+}

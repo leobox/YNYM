@@ -1,0 +1,42 @@
+{
+  "0": {
+    "STOP": {
+      "n": 34,
+      "same_bar_exit": 3,
+      "rose_3": 12,
+      "rose_5": 4,
+      "rose_7": 2,
+      "fell_2": 28,
+      "fell_3": 20
+    },
+    "TARGET": {
+      "n": 39,
+      "same_bar_exit": 0,
+      "rose_3": 32,
+      "rose_5": 29,
+      "rose_7": 21,
+      "fell_2": 22,
+      "fell_3": 14
+    }
+  },
+  "60": {
+    "STOP": {
+      "n": 26,
+      "same_bar_exit": 0,
+      "rose_3": 11,
+      "rose_5": 5,
+      "rose_7": 3,
+      "fell_2": 22,
+      "fell_3": 18
+    },
+    "TARGET": {
+      "n": 38,
+      "same_bar_exit": 2,
+      "rose_3": 28,
+      "rose_5": 23,
+      "rose_7": 16,
+      "fell_2": 19,
+      "fell_3": 13
+    }
+  }
+}
