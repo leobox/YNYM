@@ -85,7 +85,7 @@
       "title": "PostgreSQL & Grafana 백로그 시각화 인프라 구축",
       "summary": "backlog.json과 연동되는 PostgreSQL 데이터베이스와 Grafana 대시보드(Docker Compose) 초기 설정을 구축한다.",
       "doc": "docs/tasks/T-002.md",
-      "status": "todo",
+      "status": "done",
       "priority": "P1",
       "category": "infra",
       "phase": "0. 공통 인프라 & 대시보드",
@@ -95,8 +95,8 @@
       ],
       "where": "infra/monitoring/, tools/sync-postgres.mjs",
       "refs": [],
-      "note": null,
-      "done_at": null,
+      "note": "docker compose 기동 검증 완료. datasource uid 미지정으로 전체 패널이 깨지는 버그 발견/수정(postgres.yaml에 uid 고정). WSL Ubuntu 배포판 경로 문제는 별도로 해결.",
+      "done_at": "2026-09-17",
       "updated_at": "2026-09-17"
     },
     {
@@ -104,7 +104,7 @@
       "title": "퀀트 연구: 기본 데이터 수집 및 백테스팅 프레임워크 설계",
       "summary": "yfinance/pandas를 활용한 과거 시세 수집 헬퍼 및 미래 참조 편향(Lookahead Bias)이 차단된 백테스트 기본 구조를 작성한다.",
       "doc": "docs/tasks/T-003.md",
-      "status": "todo",
+      "status": "done",
       "priority": "P1",
       "category": "quant_research",
       "phase": "1. 퀀트 알고리즘 연구",
@@ -114,8 +114,8 @@
       ],
       "where": "quant-research/",
       "refs": [],
-      "note": null,
-      "done_at": null,
+      "note": "walk_forward.py 실제 구현(구간 중복 검사, 반복샘플 경고, 빈신호 처리) + 테스트 5건 추가. yfinance 대신 기존 KRX 어댑터 채택으로 범위 조정, docs/tasks/T-003.md에 근거 기록.",
+      "done_at": "2026-09-17",
       "updated_at": "2026-09-17"
     },
     {
@@ -142,7 +142,7 @@
       "title": "헬스 앱: 프로젝트 초기화 및 오프라인 운동 기록 모델 설계",
       "summary": "안드로이드 프로젝트 구조를 초기화하고, 헬스장 오프라인 환경에 대응하는 세트/반복수/중량 로컬 데이터 스키마를 정의한다.",
       "doc": "docs/tasks/T-005.md",
-      "status": "todo",
+      "status": "done",
       "priority": "P1",
       "category": "mobile",
       "phase": "3. 헬스 앱 (Android)",
@@ -152,8 +152,8 @@
       ],
       "where": "gym-app/",
       "refs": [],
-      "note": null,
-      "done_at": null,
+      "note": "D:/RUNG'S GYM/time-fitness(v1.5)를 gym-app으로 이전. 빌드+서명 일치+Playwright 화면테스트 전항목 통과로 검증. 서명키는 .gitignore 처리, RungsGym은 미이전.",
+      "done_at": "2026-09-17",
       "updated_at": "2026-09-17"
     },
     {
@@ -206,6 +206,89 @@
       "note": "Codex: 패턴/체결 통합 47 tests 통과, standalone Python↔단일셀 notebook 동기화, 4 CSV+manifest 원자 저장, 이전 데이터 497파일 20,969,386바이트 SHA256 트리 동일 확인. 라이브 API/실제 Colab 및 성과 검증은 미수행. docs/tasks/T-008.md 참조.",
       "done_at": "2026-09-17",
       "updated_at": "2026-09-17"
+    },
+    {
+      "id": "T-009",
+      "title": "quant_guard 안전검사 범위를 quant-collector로 확장",
+      "summary": "tools/ai/quant_guard.py의 PROJECT가 quant-research로 하드코딩되어 pre-commit 훅이 quant-collector(exit_engine.py 등 매도/포지션 로직)의 주문 API 금지 검사를 전혀 수행하지 않음. 검사 대상 프로젝트를 다중화하여 quant-collector도 포함시킨다.",
+      "doc": "docs/tasks/T-009.md",
+      "status": "done",
+      "priority": "P0",
+      "category": "quant_ops",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": null,
+      "done_at": "2026-09-17",
+      "updated_at": "2026-09-17"
+    },
+    {
+      "id": "T-010",
+      "title": "quant-collector: 청산 신호 엔진(exit_engine.py) 백로그 소급 등록 및 인수인계 문서화",
+      "summary": "T-004 완료 이후 backlog 미등록 상태로 구현된 exit_engine.py(실시간 포지션 청산 신호 평가)를 docs/tasks/<id>.md에 소급 문서화하고 done 처리한다.",
+      "doc": "docs/tasks/T-010.md",
+      "status": "done",
+      "priority": "P2",
+      "category": "quant_ops",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "exit_engine.py 소급 문서화 완료. 단위 테스트 부재는 T-011로 분리 등록.",
+      "done_at": "2026-09-17",
+      "updated_at": "2026-09-17"
+    },
+    {
+      "id": "T-011",
+      "title": "quant-collector: exit_engine.evaluate_position_exit 단위 테스트 추가",
+      "summary": "순수 함수인 evaluate_position_exit()에 대한 단위 테스트가 없어 HARD_STOP/TARGET_HIT/TRAILING_PROFIT 등 7가지 판정 분기 회귀 안전망이 없음. pytest 기반 케이스 추가.",
+      "doc": "docs/tasks/T-011.md",
+      "status": "done",
+      "priority": "P2",
+      "category": "test",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "exit_engine 8개 판정 분기 + 봉 선택(future_bars 필터) 회귀 테스트 15건 추가, 전체 통과.",
+      "done_at": "2026-09-17",
+      "updated_at": "2026-09-17",
+      "gate": null,
+      "log": [
+        {
+          "at": "2026-09-17",
+          "status": "done",
+          "note": "재확인"
+        }
+      ]
+    },
+    {
+      "id": "T-012",
+      "title": "backlog.mjs 안전장치 강화 (deps 게이트/순환탐지/log/gate) + Stop 훅 Node 구문검사 추가",
+      "summary": "D:/sdc_claude 거버넌스 구조 대비 갭 분석을 검증해, provider-중립적으로 이식 가능한 부분(backlog CLI 안전장치, Stop 단계 node --check)만 적용. Claude 전용 PreToolUse 훅/.claude/rules는 3-provider 협업 원칙에 위배되어 제외(사유는 docs/tasks 문서에 기록).",
+      "doc": "docs/tasks/T-012.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "infra",
+      "phase": "0. 공통 인프라 & 대시보드",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "backlog.mjs에 deps게이트/순환탐지/log/gate/owner 추가, check_syntax.cjs 신설해 Stop 단계(3-provider 공통)에 연결. Claude 전용 PreToolUse훅/.claude-rules/서브에이전트 변경은 검증 후 의도적으로 제외(docs/tasks/T-012.md 근거).",
+      "done_at": "2026-09-17",
+      "updated_at": "2026-09-17",
+      "log": [
+        {
+          "at": "2026-09-17",
+          "status": "done",
+          "note": "backlog.mjs에 deps게이트/순환탐지/log/gate/owner 추가, check_syntax.cjs 신설해 Stop 단계(3-provider 공통)에 연결. Claude 전용 PreToolUse훅/.claude-rules/서브에이전트 변경은 검증 후 의도적으로 제외(docs/tasks/T-012.md 근거)."
+        }
+      ]
     }
   ]
 }

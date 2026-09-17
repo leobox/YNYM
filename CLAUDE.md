@@ -17,11 +17,14 @@
 node tools/backlog.mjs next
 node tools/backlog.mjs set <id> in_progress
 
-# 상태 변경 완료 시
-node tools/backlog.mjs set <id> done
+# 상태 변경 완료 시 (--note는 완료 근거, done 전환 시 필수)
+node tools/backlog.mjs set <id> done --note "완료 근거"
 
 # 작업 추가 시
 node tools/backlog.mjs add --title "제목" --category quant_research --phase "1. 퀀트..."
+
+# 상태 외 필드만 고칠 때 (제목/요약/우선순위/deps 등)
+node tools/backlog.mjs update <id> --summary "..."
 ```
 
 ---
@@ -31,3 +34,4 @@ node tools/backlog.mjs add --title "제목" --category quant_research --phase "1
 2. 코드를 작성하기 전에 반드시 `node tools/backlog.mjs set <id> in_progress`를 실행하십시오.
 3. 퀀트 프로젝트(`quant-research`, `quant-collector`)에서는 주문/매매 API를 절대 구현하지 않습니다.
 4. 사용자 결정이 필요한 사항은 `needs_decision` 상태와 사유(`--note`)를 명시하십시오.
+5. `done` 전환에는 `--note`(완료 근거)가 필수입니다. 선행 작업(`deps`)이 `done`이 아니면 그 상태로 전환할 수 없습니다(순환 의존성도 거부됩니다).

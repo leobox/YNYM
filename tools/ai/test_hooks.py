@@ -42,6 +42,17 @@ class GuardTests(unittest.TestCase):
         self.assertEqual([], content_issues('scanner.ipynb', json.dumps(notebook)))
         self.assertTrue(content_issues('scanner.ipynb', '{'))
 
+    def test_quant_collector_is_also_scanned(self):
+        with tempfile.TemporaryDirectory(prefix='leobox guard ') as folder:
+            root = Path(folder)
+            subprocess.run(['git', 'init', '-q', folder], check=True)
+            project = root / 'quant-collector'
+            project.mkdir()
+            (project / 'exit_engine.py').write_text('broker.submit_order()', encoding='utf-8')
+            self.assertTrue(check(root)[0])
+            subprocess.run(['git', '-C', folder, 'add', '.'], check=True)
+            self.assertTrue(check(root, staged=True)[0])
+
     def test_staged_blob_is_checked_even_if_worktree_is_fixed(self):
         with tempfile.TemporaryDirectory(prefix='leobox guard ') as folder:
             root = Path(folder)

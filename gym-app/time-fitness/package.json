@@ -1,0 +1,13 @@
+{
+  "name": "time-fitness",
+  "version": "1.0.0",
+  "private": true,
+  "description": "TimeFitness Android WebView app — screen tests via Playwright/Chromium",
+  "type": "commonjs",
+  "scripts": {
+    "test": "node test-1.5.cjs"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.63.0"
+  }
+}

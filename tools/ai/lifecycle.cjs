@@ -28,12 +28,14 @@ function respond(provider, phase, input) {
     } };
   }
   if (phase !== 'stop') throw new Error(`Unknown hook phase: ${phase}`);
-  // The worktree is shared; avoid blocking sibling-project work on research checks.
+  // The worktree is shared; avoid blocking sibling-project work (e.g. gym-app) on quant checks.
   const relative = path.relative(ROOT, path.resolve(input.cwd || ROOT));
-  if (relative && relative.split(path.sep)[0] !== 'quant-research') return {};
+  const QUANT_PROJECTS = ['quant-research', 'quant-collector'];
+  if (relative && !QUANT_PROJECTS.includes(relative.split(path.sep)[0])) return {};
   const python = process.platform === 'win32' ? 'python' : 'python3';
   const checks = [run(python, ['tools/ai/quant_guard.py']),
-    run(process.execPath, ['tools/backlog.mjs', 'check'])];
+    run(process.execPath, ['tools/backlog.mjs', 'check']),
+    run(process.execPath, ['tools/ai/check_syntax.cjs'])];
   const failures = checks.filter(result => !result.ok);
   if (!failures.length) return {};
   const reason = 'Fix these local checks, or report the specific unresolved limitation.\n'

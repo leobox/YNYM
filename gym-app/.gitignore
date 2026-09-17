@@ -26,3 +26,11 @@ local.properties
 # OS
 .DS_Store
 Thumbs.db
+
+# time-fitness (WebView shell) build/toolchain — see time-fitness/README.md
+tools/android-sdk/
+time-fitness/signing/
+time-fitness/test-output/
+time-fitness/test-output-*/
+node_modules/
+*.sha256

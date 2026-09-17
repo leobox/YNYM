@@ -9,7 +9,9 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[2]
-PROJECT = "quant-research"
+# Both projects can carry buy/sell-adjacent logic (research backtests, collector
+# exit/position signals), so both must be scanned for the order-API ban.
+PROJECTS = ("quant-research", "quant-collector")
 SKIP = {".git", ".venv", "venv", "node_modules", "__pycache__", "data", "models"}
 # Narrow API identifiers, not buy/sell/order words in documentation or variable names.
 ORDER_APIS = {
@@ -128,24 +130,27 @@ def selected_sources(root: Path, staged: bool):
             if not raw_name:
                 continue
             name = raw_name.decode("utf-8")
-            if name.startswith(PROJECT + "/"):
+            if any(name.startswith(project + "/") for project in PROJECTS):
                 if Path(name).suffix in {".py", ".ipynb"}:
                     yield name, git(root, "show", f":{name}").decode("utf-8-sig")
                 elif Path(name).name == ".env" or Path(name).suffix in {".pem", ".key"}:
                     yield name, None
     else:
-        project = root / PROJECT
-        if not project.is_dir():
-            raise FileNotFoundError(f"Missing project: {project}")
+        project_dirs = [root / project for project in PROJECTS]
+        if not any(project.is_dir() for project in project_dirs):
+            raise FileNotFoundError(f"Missing projects: {', '.join(str(p) for p in project_dirs)}")
         # Walk without following symlinks or descending into raw data/virtualenvs.
         import os
-        for current, directories, files in os.walk(project, followlinks=False):
-            directories[:] = [d for d in directories if d not in SKIP
-                              and not (Path(current) / d).is_symlink()]
-            for filename in files:
-                path = Path(current) / filename
-                if path.suffix in {".py", ".ipynb"} and not path.is_symlink():
-                    yield path.relative_to(root).as_posix(), path.read_text(encoding="utf-8-sig")
+        for project in project_dirs:
+            if not project.is_dir():
+                continue
+            for current, directories, files in os.walk(project, followlinks=False):
+                directories[:] = [d for d in directories if d not in SKIP
+                                  and not (Path(current) / d).is_symlink()]
+                for filename in files:
+                    path = Path(current) / filename
+                    if path.suffix in {".py", ".ipynb"} and not path.is_symlink():
+                        yield path.relative_to(root).as_posix(), path.read_text(encoding="utf-8-sig")
 
 
 def check(root: Path, staged=False):

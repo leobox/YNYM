@@ -83,12 +83,17 @@ python tools/ai/quant_guard.py
 python tools/ai/quant_guard.py --staged
 python -m unittest discover -s tools/ai -p test_*.py -v
 node tools/backlog.mjs check
+node tools/ai/check_syntax.cjs
 ```
 
-정적 검사는 Python/노트북 문법, 알려진 주문 API 호출명, 인식 가능한 requests
-호출의 timeout 누락 및 잘못된 리터럴 값을 검사한다. 스테이징 검사에는
-연구 폴더의 `.env`, `.pem`, `.key` 파일 차단도 포함된다.
-주석·가상 체결 변수명은 주문으로 판정하지 않는다.
+세션 종료(Stop) 시 `lifecycle.cjs`가 위 `quant_guard.py`, `backlog.mjs check`,
+`check_syntax.cjs`(Node `.js`/`.cjs`/`.mjs` 구문 검사, 이 스택엔 번들러가 없어 이게 build를
+대신한다) 세 가지를 Claude/Codex/Gemini 세 provider 모두에서 동일하게 실행한다.
+
+정적 검사는 `quant-research/`, `quant-collector/` 두 폴더를 대상으로 Python/노트북
+문법, 알려진 주문 API 호출명, 인식 가능한 requests 호출의 timeout 누락 및 잘못된
+리터럴 값을 검사한다. 스테이징 검사에는 두 폴더의 `.env`, `.pem`, `.key` 파일
+차단도 포함된다. 주석·가상 체결 변수명은 주문으로 판정하지 않는다.
 
 이는 실제 거래 방지의 완전한 보안 경계가 아니다. 동적 호출, 사용자 정의 HTTP
 래퍼, 런타임 timeout 값, 비밀키 문자열 전체는 검증하지 못한다. 네트워크 재시도,

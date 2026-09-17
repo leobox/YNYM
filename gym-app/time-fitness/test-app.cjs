@@ -1,0 +1,38 @@
+const {chromium}=require(process.argv[2]||'playwright-core');
+const fs=require('fs'),path=require('path'),http=require('http'),assert=require('node:assert/strict');
+const assets=path.join(__dirname,'assets'),out=path.join(__dirname,'test-output');fs.mkdirSync(out,{recursive:true});
+const server=http.createServer((req,res)=>{const file=path.join(assets,req.url==='/'?'index.html':decodeURIComponent(req.url).split('?')[0]);if(!file.startsWith(assets+path.sep)){res.writeHead(403).end();return;}fs.readFile(file,(err,data)=>{if(err){res.writeHead(404).end();return;}res.setHeader('Content-Type',({'html':'text/html; charset=utf-8','js':'text/javascript; charset=utf-8','css':'text/css','jpg':'image/jpeg'})[file.split('.').pop()]||'application/octet-stream');res.end(data);});});
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{await new Promise(r=>server.listen(0,'127.0.0.1',r));const url='http://127.0.0.1:'+server.address().port;const browser=await chromium.launch({headless:true});
+try{
+ const context=await browser.newContext({viewport:{width:372,height:913},deviceScaleFactor:1,hasTouch:true});const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.accept());
+ const screenshot=async name=>page.screenshot({path:path.join(out,name+'.png')});
+ const hold=async locator=>{await locator.scrollIntoViewIfNeeded();const b=await locator.boundingBox();await page.mouse.move(b.x+b.width/2,b.y+b.height/2);await page.mouse.down();await sleep(1100);await page.mouse.up();await sleep(450);};
+ await page.goto(url);await screenshot('01-launch');await page.locator('#splash').waitFor({state:'hidden'});
+ assert.equal(await page.locator('.exercise-name').count(),0,'Fresh install must not contain example data');
+ const today=await page.locator('.day.today').getAttribute('data-day');const day=()=>page.locator(`[data-day="${today}"]`);
+ await day().click();assert.equal(await page.locator('#viewer').isVisible(),true);assert.equal(await page.locator('#editor').isVisible(),false);
+ const unlock=page.locator('#unlock');let box=await unlock.boundingBox();await page.mouse.move(box.x+20,box.y+20);await page.mouse.down();await sleep(350);await page.mouse.up();await sleep(850);assert.equal(await page.locator('#editor').isVisible(),false,'Short press must not edit');
+ await page.mouse.move(box.x+20,box.y+20);await page.mouse.down();await page.mouse.move(box.x+50,box.y+20);await sleep(1100);await page.mouse.up();assert.equal(await page.locator('#editor').isVisible(),false,'Dragging must cancel long press');
+ await hold(unlock);assert.equal(await page.locator('#editor').isVisible(),true);await page.locator('[name=kind]').selectOption('pt');
+ await page.locator('#add').click();assert.equal(await page.locator('#draft-list .draft-row').count(),0);assert.ok((await page.locator('#entry-error').textContent()).length);
+ const names=['레그익스텐션','레그컬','바벨 스쿼트','핵스쿼트','레그프레스','직접 운동 테스트'];
+ for(let i=0;i<names.length;i++){await page.locator('[name=exercise]').selectOption(i===5?'custom':names[i]);if(i===5)await page.locator('[name=custom]').fill(names[i]);await page.locator('[name=kg]').fill(String(i*5));await page.locator('[name=reps]').fill('12');await page.locator('[name=sets]').fill('3');await page.locator('#add').click();}
+ await page.locator('.save').click();await page.locator('[data-close=viewer]').click();assert.equal(await day().locator('.exercise-name').count(),5);assert.ok((await day().textContent()).includes('+1개 더'));assert.ok((await day().textContent()).includes('PT'));
+ await screenshot('02-cover-week');await day().click();await page.locator('[data-memo="0"]').fill('천천히 내리기\n다음 운동은 2.5kg 추가');assert.equal(await page.locator('#memo-state').textContent(),'메모 저장됨');await screenshot('03-cover-memos');
+ await page.reload();await page.locator('#splash').waitFor({state:'hidden'});await day().click();assert.equal(await page.locator('[data-memo="0"]').inputValue(),'천천히 내리기\n다음 운동은 2.5kg 추가');
+ await hold(page.locator('[data-hold=exercise]').first());assert.equal(await page.locator('[name=exercise]').inputValue(),names[0]);assert.equal(await page.locator('#editor textarea').count(),0,'Memo must only be editable in one-tap view');
+ await page.locator('[name=kg]').fill('27.5');await page.setViewportSize({width:690,height:803});assert.equal(await page.locator('[name=kg]').inputValue(),'27.5','Unfolding must retain draft');await screenshot('04-unfolded-editor');await page.locator('#add').click();await page.locator('.save').click();assert.equal(await page.locator('[data-memo="0"]').inputValue(),'천천히 내리기\n다음 운동은 2.5kg 추가');assert.ok((await page.locator('.workout-head').first().textContent()).includes('27.5'));
+ await page.locator('[data-close=viewer]').click();await screenshot('05-unfolded-week');await page.locator('[data-mode=month]').click();await screenshot('06-unfolded-month');
+ const year=Number((await page.locator('#year-month').textContent()).replace(/\D/g,''));for(let i=0;i<12;i++)await page.locator('[data-nav="1"]').click();assert.equal(Number((await page.locator('#year-month').textContent()).replace(/\D/g,'')),year+1,'Month navigation must cross years');await page.locator('#today').click();
+ for(const width of [320,372,690,850]){await page.setViewportSize({width,height:Math.round(width*(width<600?2376/968:2160/1856))});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'No horizontal overflow at '+width);}
+ // A real browser touch sequence, including the release-generated click.
+ await page.setViewportSize({width:372,height:913});await page.locator('[data-mode=week]').click();await day().scrollIntoViewIfNeeded();const touchBox=await day().boundingBox();const cdp=await context.newCDPSession(page);
+ await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:touchBox.x+25,y:touchBox.y+25}]});await sleep(1100);await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await sleep(450);assert.equal(await page.locator('#editor').isVisible(),true,'Touch hold and release must keep editor open');await page.locator('[data-close=editor]').click();await cdp.detach();
+ assert.equal(await page.locator('[data-settings],audio').count(),0);assert.deepEqual(errors,[]);
+ // Exercise the same synchronous Native bridge interface used by the APK.
+ const native=await browser.newContext({viewport:{width:372,height:913}});await native.addInitScript(()=>{window.Native={load:()=>localStorage.getItem('native-records')||'',save:json=>{localStorage.setItem('native-records',json);return true;}};});const p=await native.newPage();await p.goto(url);await p.evaluate(()=>{Native.save(JSON.stringify({version:1,days:{'2026-09-05':{kind:'solo',exercises:[{id:'test',name:'네이티브 저장 검사',kg:0,reps:10,sets:3,memo:'복원됨'}]}}}));});await p.reload();assert.equal(await p.locator('#storage-error').isVisible(),false);
+ await p.evaluate(()=>localStorage.setItem('native-records','{broken'));await p.reload();assert.equal(await p.locator('#storage-error').isVisible(),true);assert.equal(await p.evaluate(()=>localStorage.getItem('native-records')),'{broken','Corrupt source must not be overwritten');
+ const result='PASS: blank install; tap view; short/drag cancellation; 1-second edit; ADD and custom exercise; first-five summary; PT; memo persistence; edit preserves memo; unfold keeps draft; year navigation; 320/372/690/850 widths; Native bridge loading; corruption protection; no sound/settings; no JS errors.';console.log(result);fs.writeFileSync(path.join(out,'results.txt'),result+'\n');await context.close();await native.close();
+}finally{await browser.close();server.close();}
+})().catch(e=>{console.error(e);server.close();process.exitCode=1;});

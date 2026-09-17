@@ -22,6 +22,9 @@ venv/
 # Node
 node_modules/
 
+# backlog.mjs writes this before every save; regenerated, not source of truth
+backlog.json.bak
+
 # Archives & Reference
 sample/
 
