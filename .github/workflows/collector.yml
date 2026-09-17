@@ -39,7 +39,7 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add quant-collector/data/
+          git add quant-collector/data/ quant-collector/README.md
           if git diff --staged --quiet; then
             echo "새로 기록된 시세 데이터 변경사항이 없습니다."
           else
