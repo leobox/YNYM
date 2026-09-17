@@ -28,6 +28,7 @@ import pandas as pd
 import requests
 
 from tracker import SignalTracker
+from exit_engine import evaluate_position_exit, ExitSignal
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
@@ -418,27 +419,79 @@ def build_results(rows: List[Dict[str, Any]]) -> Tuple[pd.DataFrame, pd.DataFram
 def render_markdown_dashboard(
     top: pd.DataFrame,
     watch: pd.DataFrame,
+    exit_evaluations: List[Dict[str, Any]],
     tracker_stats: Dict[str, Any],
     pending_list: List[Dict[str, Any]],
     now_str: str,
     scan_count: int,
 ) -> str:
     """GitHub 모바일 앱 및 웹 첫 화면(README.md)에 표시될 종합 대시보드 리포트"""
+    sell_alerts = [e for e in exit_evaluations if e["action_type"] in ("TAKE_PROFIT", "CUT_LOSS")]
+
     lines = [
-        "# ⏱️ Quant Pattern Scanner & Forward Labeler",
+        "# ⏱️ Quant Pattern Scanner & Position Exit Monitor",
         "",
-        f"> **최근 스캔**: `{now_str} KST` | **유니버스**: `{scan_count}종목` | **조건 충족**: `{len(top)}건` | **관찰**: `{len(watch)}건` | **추적 중(Pending)**: `{tracker_stats['total_pending']}건`",
+        f"> **최근 스캔**: `{now_str} KST` | **유니버스**: `{scan_count}종목` | **조건 충족**: `{len(top)}건` | **관찰**: `{len(watch)}건` | **보유 추적**: `{len(pending_list)}건`",
         "",
-        "한국 정규장 1시간 주기로 실행되며, **신호 발생 후 3~5거래일 완료봉을 끝까지 추적하여 선접촉 라벨(TARGET_FIRST/STOP_FIRST)**을 자동 확정합니다.",
+        "한국 정규장 1시간 주기로 실행되며, **매수 진입 포지션에 대한 실시간 매도·청산 신호**와 **신규 후보**를 동시에 모니터링합니다.",
         "",
         "---",
         "",
-        "## 🟢 조건 충족 종목 (최대 5개)",
-        "",
     ]
 
+    # [최우선 알림] 긴급 매도/청산 신호 발생 시 상단에 강조 표시
+    if sell_alerts:
+        lines.extend([
+            "## 🚨 [긴급] 실시간 매도·청산 권고 신호 발생!",
+            "",
+            "> **조건 충족으로 매수했던 종목 중 청산 조건(익절/손절/돌파선붕괴)이 감지되었습니다. MTS에서 확인 후 대응하세요.**",
+            "",
+            "| 구분 | 종목명 (코드) | 진입가 | 현재가 (수익률) | 매도 판정 | 사유 및 대응 가이드 |",
+            "|:---:|:---|:---:|:---:|:---:|:---|",
+        ])
+        for a in sell_alerts:
+            tag = "🔴 익절" if a["action_type"] == "TAKE_PROFIT" else "⚠️ 손절·탈출"
+            lines.append(
+                f"| **{tag}** | **{a['name']}** ({a['code']}) | {a['entry_price']:,.0f}원 | **{a['current_price']:,.0f}원 ({a['pnl_pct']:+.2f}%)** | `{a['decision']}` | {a['reason']} |"
+            )
+        lines.extend(["", "---", ""])
+
+    # 1. 보유 포지션 매도 판정 모니터링 표
+    lines.extend([
+        "## 💼 보유 포지션 실시간 매도 모니터링 (가상 매수 100만원 가정)",
+        "",
+        "> 조건 충족 시 100만원 매수 진입했다고 가정한 종목들의 **봉 단위 청산 판정 상태**입니다.",
+        "",
+    ])
+
+    if not exit_evaluations:
+        lines.append("*현재 보유 중인 가상 포지션이 없습니다.*\n")
+    else:
+        lines.append("| 종목명 (코드) | 진입가 | 현재가 (손익) | 최고수익 | 돌파선 | **매도 판정** | **대응 가이드** |")
+        lines.append("|:---|:---:|:---:|:---:|:---:|:---:|:---|")
+        for e in exit_evaluations:
+            status_icon = "🟢 HOLD"
+            if e["decision"] == ExitSignal.CAUTION:
+                status_icon = "🟡 CAUTION"
+            elif e["action_type"] == "TAKE_PROFIT":
+                status_icon = "🔴 SELL (익절)"
+            elif e["action_type"] == "CUT_LOSS":
+                status_icon = "🔴 SELL (손절)"
+
+            lines.append(
+                f"| **{e['name']}** ({e['code']}) | {e['entry_price']:,.0f}원 | {e['current_price']:,.0f}원 (**{e['pnl_pct']:+.2f}%**) | +{e['max_gain_pct']:.1f}% | {e['breakout_level']:,.0f}원 | **{status_icon}** | {e['reason']} |"
+            )
+        lines.append("")
+
+    lines.extend([
+        "---",
+        "",
+        "## 🟢 신규 조건 충족 종목 (신규 매수 후보)",
+        "",
+    ])
+
     if top.empty:
-        lines.append("*현재 60분봉 돌파 후 지지 조건을 충족한 종목이 없습니다.* (조건 미달 시 0개가 정상입니다)\n")
+        lines.append("*현재 신규로 돌파 후 지지 조건을 충족한 종목이 없습니다.* (0개가 정상입니다)\n")
     else:
         lines.append("| 순위 | 종목명 (코드) | 현재가 | 돌파선 대비 | 돌파봉종가 대비 | 당일등락 | 당일고가 | 거래대금 | 기준봉 |")
         lines.append("|:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|")
@@ -645,12 +698,28 @@ def run_collector():
     top_clean.to_csv(day_dir / f"{stamp_time}_top5.csv", index=False, encoding="utf-8-sig")
     watch_clean.to_csv(day_dir / f"{stamp_time}_watch.csv", index=False, encoding="utf-8-sig")
 
-    # 7. README.md 모바일 대시보드 갱신
+    # 7. 실시간 보유 포지션 매도·청산 신호 평가
+    exit_evaluations = []
+    for sig_id, pos in tracker.pending_signals.items():
+        c_code = pos["code"]
+        candles = collected_candles_by_code.get(c_code, [])
+        cur_quote = naver_quote(c_code)
+        cur_p = cur_quote.get("현재가")
+        if not pd.notna(cur_p) or cur_p <= 0:
+            cur_p = candles[-1]["close"] if candles else pos["entry_reference_price"]
+        eval_res = evaluate_position_exit(pos, candles, float(cur_p), now_str)
+        exit_evaluations.append(eval_res)
+
+        if eval_res["action_type"] in ("TAKE_PROFIT", "CUT_LOSS"):
+            print(f"-> [매도 권고] {eval_res['name']}({c_code}): {eval_res['decision']} | {eval_res['reason']}")
+
+    # 8. README.md 모바일 대시보드 갱신
     tracker_stats = tracker.get_summary_stats()
     pending_list = list(tracker.pending_signals.values())
     md_dashboard = render_markdown_dashboard(
         top_clean,
         watch_clean,
+        exit_evaluations,
         tracker_stats,
         pending_list,
         now_str,
