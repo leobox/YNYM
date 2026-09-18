@@ -2,9 +2,9 @@ name: Quant Data Collector
 
 on:
   schedule:
-    # 한국 장중(KST 09:30 ~ 16:30, UTC 00:30 ~ 07:30, 월~금) 30분마다 자동 실행
-    - cron: '30 0 * * 1-5'
-    - cron: '0,30 1-7 * * 1-5'
+    # 한국 장중(KST 09:37 ~ 16:37, UTC 00:37 ~ 07:37, 월~금) 30분마다 자동 실행 (정각/30분 혼잡 회피: 7분, 37분)
+    - cron: '37 0 * * 1-5'
+    - cron: '7,37 1-7 * * 1-5'
   workflow_dispatch: # 스마트폰 웹 브라우저 또는 GitHub 웹에서 버튼 클릭으로 즉시 수동 실행
 
 permissions:
@@ -15,6 +15,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: 정시 30초 대기 (7분 30초 / 37분 30초 타이밍 동기화)
+        if: github.event_name == 'schedule'
+        run: sleep 30
+
       - name: 저장소 체크아웃
         uses: actions/checkout@v4
 
