@@ -1124,7 +1124,7 @@
       "title": "ATR 계산을 Wilder 표준 방식으로 통일 (운영 전략 포함)",
       "summary": "collector.py의 _atr()이 단순이동평균(SMA) 근사였음을 RSI 검증 과정에서 발견(같은 문제로 resistance_breakout_rsi_v1 백테스트 결론이 무효화됨). hourly_pattern/confirmed_breakout/score_stock이 전부 이 _atr을 쓰므로 운영 전략(algorithm260917_v1) 자체가 브로커 표준과 다른 근사 지표로 돌아가고 있었음. Wilder's smoothing(ewm alpha=1/period)으로 교체하고, 변경 전후로 운영 전략을 과거 60일 워크포워드 백테스트해 실제 영향도 확인",
       "doc": "docs/tasks/T-034.md",
-      "status": "in_progress",
+      "status": "done",
       "priority": "P1",
       "category": "quant_research",
       "phase": "2. 퀀트 데이터 자동 수집",
@@ -1132,8 +1132,8 @@
       "deps": [],
       "where": null,
       "refs": [],
-      "note": null,
-      "done_at": null,
+      "note": "_atr을 Wilder 표준으로 교체(전체 테스트 36건 통과). 운영전략 60일 백테스트 전후비교: SMA(승률23.3%,평균-0.28%) vs Wilder(승률23.5%,평균-0.17%) - ATR 교체는 RSI 때와 달리 결과에 큰 영향 없음. 단 이 백테스트 자체가 quant-research 수준 정식검증(수수료/다음봉시가체결/train-val-test)은 아님 - 별도 재검증 필요",
+      "done_at": "2026-09-18",
       "updated_at": "2026-09-18",
       "done_when": "_atr을 Wilder 표준으로 교체, 전체 테스트 통과, 변경 전/후 운영전략 백테스트 비교 결과 문서화",
       "gate": null,
@@ -1150,6 +1150,11 @@
           "at": "2026-09-18",
           "status": "in_progress",
           "note": ""
+        },
+        {
+          "at": "2026-09-18",
+          "status": "done",
+          "note": "_atr을 Wilder 표준으로 교체(전체 테스트 36건 통과). 운영전략 60일 백테스트 전후비교: SMA(승률23.3%,평균-0.28%) vs Wilder(승률23.5%,평균-0.17%) - ATR 교체는 RSI 때와 달리 결과에 큰 영향 없음. 단 이 백테스트 자체가 quant-research 수준 정식검증(수수료/다음봉시가체결/train-val-test)은 아님 - 별도 재검증 필요"
         }
       ]
     },

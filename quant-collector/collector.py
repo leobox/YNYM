@@ -188,10 +188,18 @@ def fetch_bars(code: str, market: str, now: pd.Timestamp) -> pd.DataFrame:
     return completed_bars(payload["result"][0], now)
 
 
-def _atr(df: pd.DataFrame) -> pd.Series:
+def _atr(df: pd.DataFrame, period: int = 14) -> pd.Series:
+    """Wilder's Smoothing 기반 표준 ATR (증권사 MTS와 동일 방식).
+
+    [T-034] 원래는 tr.rolling(14).mean()(단순이동평균)으로 근사했었다. RSI를
+    검증하다가 같은 방식의 근사가 실제 지표와 값·타이밍이 달라진다는 걸 확인해서
+    (resistance_breakout_rsi_v1 백테스트 결론이 무효화된 사례), ATR도 같은 문제가
+    있어 표준 방식으로 교체했다. ewm(alpha=1/period, adjust=False)가 Wilder의
+    재귀식(avg_today = (avg_어제*(period-1) + today)/period)과 수학적으로 동일하다.
+    """
     prev = df.Close.shift(1)
     tr = pd.concat([df.High - df.Low, (df.High - prev).abs(), (df.Low - prev).abs()], axis=1).max(axis=1)
-    return tr.rolling(14).mean().replace(0, np.nan)
+    return tr.ewm(alpha=1.0 / period, min_periods=period, adjust=False).mean().replace(0, np.nan)
 
 
 def hourly_pattern(df: pd.DataFrame, require_volume: bool = True, volume_weight: float = 0.2, max_extension_atr: Optional[float] = None) -> pd.DataFrame:
