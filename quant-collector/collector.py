@@ -38,23 +38,18 @@ if hasattr(sys.stderr, "reconfigure"):
 KST = timezone(timedelta(hours=9))
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
+BARS_HISTORY_DIR = DATA_DIR / "bars_history"
 README_PATH = BASE_DIR / "README.md"
 ROOT_README_PATH = BASE_DIR.parent / "README.md"
 DASHBOARD_MARK_START = "<!-- QUANT_DASHBOARD:START -->"
 DASHBOARD_MARK_END = "<!-- QUANT_DASHBOARD:END -->"
 STRATEGY_VERSION = "algorithm260917_v1"
-# 거래대금 이상탐지 + 3봉 연속 가속 병렬 실험(신규, 독자 설계) — 운영 신호와 분리 추적한다.
-# 눌림목(trend_pullback_v1)·모멘텀·유동성(momentum_liquidity_v1) 실험은 각각
-# "봉 1개만 닿아도 통과"(단일봉 노이즈), "전 종목 동일 절대 임계값"(규모 무시)
-# 문제로 폐기했다. 이 전략은 그 두 약점을 피하도록 설계했다.
-VOLUME_ZSCORE_STRATEGY_VERSION = "volume_zscore_accel_v1"
-VOLUME_ZSCORE_MIN = 2.0
-VOLUME_ZSCORE_LOOKBACK_DAYS = 20
-VOLUME_ZSCORE_MIN_VALUE_FLOOR = 1.0e9  # 10억원 (z-score가 왜곡되는 초소형 거래대금 배제용 하한)
-VOLUME_ZSCORE_MAX_EXTENSION_PCT = 15.0  # 일봉 SMA20 대비 과열 상한(추격 매수 방지)
-# [T-033] 과거 60일 워크포워드 검증에서 16개 목표/손절 조합 중 h5_t10_s3이 평균수익률 1위였으나,
-# 사후에 최선 조합을 고른 것(다중비교 편향)이라 헤드라인은 공통 기준 h5_t10_s5를 그대로 쓴다.
-# get_summary_stats의 ref_key 파라미터는 향후 out-of-sample로 재검증할 때를 위해 남겨둔다.
+# [T-041, 2026-09-18] 병렬 실험 3종(눌림목 trend_pullback_v1, 모멘텀·유동성 momentum_liquidity_v1,
+# 거래대금 이상탐지 volume_zscore_accel_v1, 매물대+RSI resistance_breakout_rsi_v1)을 전부 검증한
+# 결과 — 표본이 늘어나도 손익분기 근처를 벗어나지 못하거나(z-score) 구조적 결함이 확인돼(매물대+RSI,
+# 단일봉 급등 추격 구조) 전부 폐기했다. quant-research 정식 프레임워크로 재검증(T-036~T-039)한 운영
+# 전략 자체도 아직 엣지가 확정되지 않았지만, 실험을 더 늘리기보다 운영 전략 단일 구성으로 정리하고
+# 지수 국면 필터 등 다음 개선을 기다리기로 했다. 과거 실험 상세 경위는 docs/tasks/T-023~T-033 참고.
 
 # [T-033, 2026-09-18 폐기] 매물대 돌파 + 거래량 급증 + RSI 과매도 반등(resistance_breakout_rsi_v1)은
 # 과거 60일 60분봉 워크포워드 검증에서 목표/손절/기간 16개 조합 전부 평균수익률이 마이너스로 나와
@@ -188,6 +183,32 @@ def fetch_bars(code: str, market: str, now: pd.Timestamp) -> pd.DataFrame:
     return completed_bars(payload["result"][0], now)
 
 
+def save_bar_history(code: str, df_bars: pd.DataFrame) -> None:
+    """[T-040] 종목별 60분봉 원본 이력을 증분 저장한다 (향후 피처 재실험/ML 학습용).
+
+    fetch_bars는 매번 최근 60일 롤링 윈도우 전체를 돌려주는데, 그걸 스캔마다 그대로
+    다시 저장하면 대부분 겹치는 내용이라 저장소가 과도하게 커진다. 이미 저장된 마지막
+    타임스탬프 이후의 신규 완료봉만 골라 append해서 시간이 지날수록 60일보다 긴 이력이
+    조금씩 쌓이게 한다.
+    """
+    BARS_HISTORY_DIR.mkdir(parents=True, exist_ok=True)
+    path = BARS_HISTORY_DIR / f"{code}.csv"
+
+    if not path.exists():
+        df_bars.to_csv(path)
+        return
+
+    try:
+        last_ts = pd.Timestamp(pd.read_csv(path, usecols=[0], index_col=0).index[-1])
+    except Exception:
+        df_bars.to_csv(path)  # 손상되었거나 빈 파일이면 통째로 다시 씀
+        return
+
+    new_rows = df_bars[df_bars.index > last_ts]
+    if not new_rows.empty:
+        new_rows.to_csv(path, mode="a", header=False)
+
+
 def _atr(df: pd.DataFrame, period: int = 14) -> pd.Series:
     """Wilder's Smoothing 기반 표준 ATR (증권사 MTS와 동일 방식).
 
@@ -289,74 +310,6 @@ def confirmed_breakout(df: pd.DataFrame) -> pd.DataFrame:
     )
 
 
-def volume_zscore_accel_candidate(df: pd.DataFrame) -> Optional[Dict[str, Any]]:
-    """거래대금 이상탐지 + 3봉 연속 가속 (독자 설계 병렬 실험).
-
-    앞서 시도했다가 폐기한 두 실험의 약점을 피하도록 설계했다:
-    - 눌림목(trend_pullback_v1, 폐기): 완료봉 1개만 이동평균에 닿아도 조건을 통과하는
-      느슨한 정의라 실제로는 돌파 순간을 눌림으로 오판했다. → 여기서는 최근 3개
-      완료봉이 연속으로 종가 상승해야만 통과시켜 단일봉 노이즈를 배제한다.
-    - 모멘텀·유동성(momentum_liquidity_v1, 폐기): 시가총액이 다른 모든 종목에 동일한
-      절대 임계값(거래대금 100억원 등)을 적용해 한 번에 12종목이 동시 통과할 만큼
-      선별력이 없었다. → 여기서는 그 종목 자신의 최근 20거래일 거래대금 분포 대비
-      z-score(표준편차 단위 이상치)로 판단해 종목마다 기준이 자동으로 달라진다.
-
-    검증 표본이 전혀 없는 신규 가설이므로 운영 신호를 대체하지 않고 별도
-    strategy_version으로만 전진 추적한다.
-
-    [2026-09-18 보강] 두산밥캣 사례에서 발견한 결함을 수정했다: 당일 거래대금
-    z-score는 "이례적으로 컸다"만 볼 뿐 그 거래량이 상승봉에 실렸는지 하락봉에
-    실렸는지 구분하지 않아서, 아침에 갭하락하며 던진 물량(하락봉 거래량)과
-    이후의 약한 데드캣 바운스(음봉 섞인 반등, 거래량 감소)가 섞여도 통과됐다.
-    이제는 ①당일 종가가 전일 종가보다 높아야 하고(당일 전체 방향이 순매수 우위),
-    ②3봉 상승 구간 자체의 평균 거래량이 그 이전 구간의 평균 거래량보다 커야 하며(가속 구간이 스스로 거래량을 동반),
-    ③최근 3개 완료봉이 각각 모두 양봉(Close > Open) 및 연속 종가 상승이어야만 통과한다.
-    """
-    o, c, v = df.Open, df.Close, df.Volume
-    dates = df.index.date
-    daily_close = pd.Series(c.values, index=dates).groupby(level=0).last()
-    daily_val = pd.Series((c * v).values, index=dates).groupby(level=0).sum()
-
-    if len(daily_val) < VOLUME_ZSCORE_LOOKBACK_DAYS + 1 or len(c) < 23:
-        return None
-
-    today_val = float(daily_val.iloc[-1])
-    hist_val = daily_val.iloc[-(VOLUME_ZSCORE_LOOKBACK_DAYS + 1):-1]
-    mean_val, std_val = float(hist_val.mean()), float(hist_val.std())
-    if not np.isfinite(std_val) or std_val <= 0:
-        return None
-
-    value_z = (today_val - mean_val) / std_val
-    if today_val < VOLUME_ZSCORE_MIN_VALUE_FLOOR or value_z < VOLUME_ZSCORE_MIN:
-        return None
-
-    # 최근 3개 완료봉이 모두 양봉(Close > Open)이고 연속 종가 상승이어야 함 (음봉 반등 및 단일봉 반짝 상승 배제)
-    if not ((c.iloc[-3:] > o.iloc[-3:]).all() and (c.iloc[-3] < c.iloc[-2] < c.iloc[-1])):
-        return None
-
-    # 당일 전체 방향이 순매수 우위여야 한다 (전일 대비 하락 중인 데드캣 바운스 배제)
-    if len(daily_close) < 2 or daily_close.iloc[-1] <= daily_close.iloc[-2]:
-        return None
-
-    # 3봉 상승 구간 자체가 거래량을 동반해야 한다 (직전 하락봉에 몰린 거래량과 구분)
-    recent3_vol = float(v.iloc[-3:].mean())
-    prior_vol = float(v.iloc[-23:-3].mean())
-    if prior_vol <= 0 or recent3_vol < prior_vol:
-        return None
-
-    sma20 = float(daily_close.tail(20).mean())
-    extension_pct = (float(daily_close.iloc[-1]) / sma20 - 1) * 100.0 if sma20 > 0 else float("inf")
-    if extension_pct > VOLUME_ZSCORE_MAX_EXTENSION_PCT:
-        return None
-
-    return {
-        "value_z": round(float(value_z), 2),
-        "today_value_e8": round(today_val / 1e8, 1),
-        "extension_pct": round(extension_pct, 2),
-        "support_level": float(c.iloc[-3]),
-    }
-
-
 def valid_ohlcv(df: pd.DataFrame) -> bool:
     if df.empty or df.index.has_duplicates or not df.index.is_monotonic_increasing:
         return False
@@ -432,9 +385,6 @@ def score_stock(rec: Dict[str, Any], now: pd.Timestamp) -> Tuple[Optional[Dict[s
             "sma26": float(medium.iloc[-1]),
         }
         row["_features"] = features
-
-        # 거래대금 이상탐지 + 3봉 연속 가속 병렬 실험 신호 (운영 판단에는 영향 없음, 별도 등록용 스냅샷만 계산)
-        row["_volume_zscore"] = volume_zscore_accel_candidate(df)
 
         return row, df, None
     except Exception as e:
@@ -770,6 +720,7 @@ def run_collector():
         for rec, (row, df_bars, err) in results:
             if row is not None and df_bars is not None:
                 rows.append(row)
+                save_bar_history(rec["code"], df_bars)
                 # 최근 20개 완료봉을 추적용으로 보관
                 candle_list = []
                 for idx, b in df_bars.tail(20).iterrows():
@@ -823,32 +774,6 @@ def run_collector():
 
     print(f"-> 신규 추적 등록 신호: {registered_count}건 (현재 총 pending: {len(tracker.pending_signals)}건)")
 
-    # 4C. 거래대금 이상탐지 + 3봉 연속 가속 병렬 실험 등록 (운영 신호와 분리된 strategy_version)
-    zscore_registered = 0
-    for r in rows:
-        vz = r.get("_volume_zscore")
-        if not vz:
-            continue
-        sig_id = tracker.register_signal(
-            strategy_version=VOLUME_ZSCORE_STRATEGY_VERSION,
-            code=r["코드"],
-            name=r["종목"],
-            market=r["시장"],
-            bar_time_kst=r["_bar_time_full"],
-            features={
-                "pattern_type": "volume_zscore_accel",
-                "breakout_level": vz["support_level"],
-                "current_close": r["_current_close"],
-                "value_z": vz["value_z"],
-                "today_value_e8": vz["today_value_e8"],
-                "extension_pct": vz["extension_pct"],
-            },
-            entry_reference_price=float(r["_current_close"]),
-        )
-        if sig_id:
-            zscore_registered += 1
-    print(f"-> [실험] 거래대금 이상탐지+3봉 가속 신규 등록: {zscore_registered}건")
-
     # 5. 기존 Pending 신호들의 미래봉 접촉 판정 및 라벨 확정
     newly_resolved = tracker.update_with_bars(collected_candles_by_code, now_dt)
     if newly_resolved:
@@ -862,7 +787,7 @@ def run_collector():
 
     pd.DataFrame(universe_stocks).to_csv(day_dir / f"{stamp_time}_universe.csv", index=False, encoding="utf-8-sig")
     # _features 등 객체 컬럼 정리 후 CSV 저장
-    df_scores = pd.DataFrame(rows).drop(columns=["_features", "_volume_zscore"], errors="ignore")
+    df_scores = pd.DataFrame(rows).drop(columns=["_features"], errors="ignore")
     df_scores.to_csv(day_dir / f"{stamp_time}_scores.csv", index=False, encoding="utf-8-sig")
     top_clean = top_quoted.drop(columns=["_features"], errors="ignore")
     watch_clean = watch_quoted.drop(columns=["_features"], errors="ignore")
@@ -887,28 +812,9 @@ def run_collector():
             print(f"-> [매도 권고] {eval_res['name']}({c_code}): {eval_res['decision']} | {eval_res['reason']}")
 
     # 8. README.md 모바일 대시보드 갱신
+    # [T-041] 병렬 실험 전부 폐기(docs/tasks/T-041.md) — 운영 전략(STRATEGY_VERSION) 단일 구성.
     tracker_stats = tracker.get_summary_stats(strategy_version=STRATEGY_VERSION)
     pending_list = list(tracker.pending_signals.values())
-
-    experiments = [
-        {
-            "strategy_version": VOLUME_ZSCORE_STRATEGY_VERSION,
-            "heading": "🧪 [실험] 거래대금 이상탐지 + 3봉 연속 가속 (검증 전 · 독자 설계)",
-            "description": (
-                f"> 최근 3개 완료봉이 모두 양봉(Close > Open) 및 연속 종가 상승(그 구간 자체 거래량이 직전 20봉 평균보다 커야 함) + "
-                f"당일 종가가 전일 종가보다 높음(당일 전체 순매수 우위) + "
-                f"당일 거래대금이 그 종목 자신의 최근 {VOLUME_ZSCORE_LOOKBACK_DAYS}거래일 평균 대비 z-score {VOLUME_ZSCORE_MIN:.1f} "
-                f"이상인 이상치 + 일봉 SMA20 대비 +{VOLUME_ZSCORE_MAX_EXTENSION_PCT:.0f}% 이내(추격 방지)를 모두 만족하는 종목만 잡습니다. "
-                "두산밥캣 사례(갭하락 거래량과 음봉 섞인 약한 데드캣 바운스 오탐)에서 드러난 결함을 보강했습니다. "
-                "[T-033] 과거 60일 워크포워드 검증(83건)에서 16개 목표/손절 조합 중 h5_t10_s3이 평균수익률이 가장 좋았지만"
-                "(+0.45%), 사후에 최선 조합을 고른 것이라 다중비교 편향 위험이 있어 **헤드라인은 공통 기준(+10%/-5%/5일)으로 "
-                "유지합니다.** "
-                "**가상 매수이며 아래 매도 알림·누적 통계에는 포함되지 않습니다.**"
-            ),
-            "empty_message": "현재 추적 중인 실험 신호가 없습니다",
-            "stats": tracker.get_summary_stats(strategy_version=VOLUME_ZSCORE_STRATEGY_VERSION),
-        },
-    ]
 
     md_dashboard = render_markdown_dashboard(
         top_clean,
@@ -918,13 +824,12 @@ def run_collector():
         pending_list,
         now_str,
         len(universe_stocks),
-        experiments=experiments,
     )
 
     with open(README_PATH, "w", encoding="utf-8") as f:
         f.write(md_dashboard)
 
-    # 워크스페이스 루트 README.md의 QUANT_DASHBOARD 마커 구간에도 실험 섹션 포함 동일 현황 반영
+    # 워크스페이스 루트 README.md의 QUANT_DASHBOARD 마커 구간에도 동일 현황 반영
     md_embed = render_markdown_dashboard(
         top_clean,
         watch_clean,
@@ -933,7 +838,6 @@ def run_collector():
         pending_list,
         now_str,
         len(universe_stocks),
-        experiments=experiments,
         embed=True,
     )
     update_root_readme(md_embed)

@@ -1241,7 +1241,7 @@
       "title": "quant-research: 신규 진입 아이디어 파라미터 스윕 (Donchian+거래량) 백테스트",
       "summary": "제미나이는 기존 hourly_pattern(algorithm260917_v1) 정식 재검증을 맡고, 나는 그와 겹치지 않는 새 신호 아이디어를 탐색. N봉 최고가 돌파(Donchian)+거래량배수+선택적 추세/이격 필터를 약 100개 파라미터 조합으로 스윕, walk_forward.py(train/validate/test)+account_simulator.py(수수료0.175%, 다음봉시가체결, 단일포지션)로 정식 검증해 살아남는 조합이 있으면 1개만 채택",
       "doc": "docs/tasks/T-037.md",
-      "status": "in_progress",
+      "status": "blocked",
       "priority": "P1",
       "category": "quant_research",
       "phase": "1. 퀀트 알고리즘 연구",
@@ -1249,7 +1249,7 @@
       "deps": [],
       "where": null,
       "refs": [],
-      "note": null,
+      "note": "96개 조합 스윕 스크립트가 시스템 메모리 부족으로 백그라운드 강제종료됨(하니스 자동 조치, 재시도 보류 권고). 이후 T-036/T-038/T-039(운영전략 재검증) 우선순위로 전환되어 재시도 안 함. 재개 시 종목 수/조합 수를 줄여서 가볍게 다시 시도할 것",
       "done_at": null,
       "updated_at": "2026-09-18",
       "done_when": "100개 조합 스윕 완료, train에서만 좋은 게 아니라 validate/test에서도 버티는 후보 확인, 채택 시 quant-research에 정식 모듈+테스트로 구현, 없으면 결과 없음으로 정직하게 보고",
@@ -1267,6 +1267,11 @@
           "at": "2026-09-18",
           "status": "in_progress",
           "note": ""
+        },
+        {
+          "at": "2026-09-18",
+          "status": "blocked",
+          "note": "96개 조합 스윕 스크립트가 시스템 메모리 부족으로 백그라운드 강제종료됨(하니스 자동 조치, 재시도 보류 권고). 이후 T-036/T-038/T-039(운영전략 재검증) 우선순위로 전환되어 재시도 안 함. 재개 시 종목 수/조합 수를 줄여서 가볍게 다시 시도할 것"
         }
       ]
     },
@@ -1314,7 +1319,7 @@
       "title": "account_simulator.py 다중 포지션(3~5종목) 분산 지원 및 운영전략 표본확대 재검증",
       "summary": "",
       "doc": "docs/tasks/T-039.md",
-      "status": "in_progress",
+      "status": "done",
       "priority": "P1",
       "category": "quant_research",
       "phase": "1. 퀀트 알고리즘 연구",
@@ -1322,8 +1327,8 @@
       "deps": [],
       "where": null,
       "refs": [],
-      "note": null,
-      "done_at": null,
+      "note": "account_simulator.py 다중 포지션(3~5종목) 분산 지원 구현 및 회계보존식 단위테스트 통과. max_positions=1/3/5 워크포워드 비교 완료 및 표본부족 경고 해소 문서화(docs/tasks/T-039.md)",
+      "done_at": "2026-09-18",
       "updated_at": "2026-09-18",
       "done_when": "account_simulator.py에 max_positions 파라미터 구현, 회계 보존식 및 단위 테스트 통과, max_positions=1/3/5 비교 백테스트 및 bias_reporter 경고 포함 문서화",
       "gate": null,
@@ -1340,6 +1345,89 @@
           "at": "2026-09-18",
           "status": "in_progress",
           "note": ""
+        },
+        {
+          "at": "2026-09-18",
+          "status": "done",
+          "note": "account_simulator.py 다중 포지션(3~5종목) 분산 지원 구현 및 회계보존식 단위테스트 통과. max_positions=1/3/5 워크포워드 비교 완료 및 표본부족 경고 해소 문서화(docs/tasks/T-039.md)"
+        }
+      ]
+    },
+    {
+      "id": "T-040",
+      "title": "원본 60분봉 이력 축적 저장 추가 (향후 ML/DL 대비)",
+      "summary": "매 스캔마다 최종 계산 결과(scores/top5/watch)만 저장하고 원본 60분봉은 버려지는 구조라 향후 피처 재실험이 불가능했음. 종목별 누적 CSV(data/bars_history/{code}.csv)에 그날 새로 완료된 봉만 타임스탬프 기준 중복없이 append하는 방식으로 원본 이력을 별도 축적. 60일 전체를 매번 다시 저장하면 저장소가 과도하게 커지므로 신규분만 증분 저장",
+      "doc": "docs/tasks/T-040.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "save_bar_history 구현(증분 append, 최초 1회 전체저장 후 신규 완료봉만 추가), tests/test_bar_history.py 4건 통과, collector.py 실행으로 352개 종목 bars_history 생성 확인. quant-research의 bars_CODE.csv와 동일 포맷",
+      "done_at": "2026-09-18",
+      "updated_at": "2026-09-18",
+      "done_when": "증분 append 로직 구현, 중복 저장 방지 테스트, collector.py 1회 실행으로 정상 축적 확인",
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-18",
+      "log": [
+        {
+          "at": "2026-09-18",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-18",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-18",
+          "status": "done",
+          "note": "save_bar_history 구현(증분 append, 최초 1회 전체저장 후 신규 완료봉만 추가), tests/test_bar_history.py 4건 통과, collector.py 실행으로 352개 종목 bars_history 생성 확인. quant-research의 bars_CODE.csv와 동일 포맷"
+        }
+      ]
+    },
+    {
+      "id": "T-041",
+      "title": "오늘 실험 전략 정리, 운영 전략(algorithm260917_v1) 단일화",
+      "summary": "오늘 하루 검증한 실험 3종(resistance_breakout_rsi_v1은 이미 T-033에서 폐기, volume_zscore_accel_v1은 헤드라인 h5_t10_s5 원복 후에도 여전히 미검증) 중 남아있던 volume_zscore_accel_v1 실험 코드를 완전히 제거하고 운영 전략(algorithm260917_v1) 단일 구성으로 정리. 대시보드에서 실험 섹션 제거, 관련 상수/함수/등록블록/테스트 삭제",
+      "doc": "docs/tasks/T-041.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "volume_zscore_accel_v1 관련 상수/함수/등록블록/대시보드섹션/테스트 전부 제거, 운영전략(algorithm260917_v1) 단일 구성으로 정리. 전체 테스트 22건 통과, collector.py 실행으로 대시보드에 실험 섹션 없음 확인",
+      "done_at": "2026-09-18",
+      "updated_at": "2026-09-18",
+      "done_when": "volume_zscore_accel_v1 관련 코드 전부 제거, 전체 테스트 통과, collector.py 1회 실행으로 대시보드가 운영전략만 표시하는지 확인",
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-18",
+      "log": [
+        {
+          "at": "2026-09-18",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-18",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-18",
+          "status": "done",
+          "note": "volume_zscore_accel_v1 관련 상수/함수/등록블록/대시보드섹션/테스트 전부 제거, 운영전략(algorithm260917_v1) 단일 구성으로 정리. 전체 테스트 22건 통과, collector.py 실행으로 대시보드에 실험 섹션 없음 확인"
         }
       ]
     }
