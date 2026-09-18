@@ -723,6 +723,45 @@
           "note": "momentum_liquidity_v1 3번째 병렬 실험 추가, 상신이디피 오탐 신호 삭제, experiments 리스트로 렌더링 일반화. 검증 결과 docs/tasks/T-023.md 참고"
         }
       ]
+    },
+    {
+      "id": "T-024",
+      "title": "독자 설계 거래대금 이상탐지+3봉 연속가속 전략으로 교체",
+      "summary": "눌림목(trend_pullback_v1)·모멘텀유동성(momentum_liquidity_v1) 2개 실험 폐기(코드+pending 신호 삭제), 두 실험의 약점(단일봉 노이즈/전종목 동일 절대임계값)을 피하도록 설계한 volume_zscore_accel_v1(종목별 거래대금 z-score+3봉연속상승+과열상한)로 교체",
+      "doc": "docs/tasks/T-024.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": "quant-collector/collector.py",
+      "refs": [],
+      "note": "volume_zscore_accel_v1 독자 설계 전략으로 교체 완료, 폐기 전략 코드/데이터 정리, 합성데이터+라이브 검증 완료(docs/tasks/T-024.md 참고)",
+      "done_at": "2026-09-18",
+      "updated_at": "2026-09-18",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-18",
+      "log": [
+        {
+          "at": "2026-09-18",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-18",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-18",
+          "status": "done",
+          "note": "volume_zscore_accel_v1 독자 설계 전략으로 교체 완료, 폐기 전략 코드/데이터 정리, 합성데이터+라이브 검증 완료(docs/tasks/T-024.md 참고)"
+        }
+      ]
     }
   ]
 }

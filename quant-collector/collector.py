@@ -43,14 +43,15 @@ ROOT_README_PATH = BASE_DIR.parent / "README.md"
 DASHBOARD_MARK_START = "<!-- QUANT_DASHBOARD:START -->"
 DASHBOARD_MARK_END = "<!-- QUANT_DASHBOARD:END -->"
 STRATEGY_VERSION = "algorithm260917_v1"
-# 눌림목 재상승 병렬 실험(연구용, 미채택 전략) — 운영 신호와 분리 추적한다.
-PULLBACK_STRATEGY_VERSION = "trend_pullback_v1"
-# 모멘텀·유동성 복합 병렬 실험(신규, 사용자 정의 조건) — 재무 팩터는 데이터 미수집으로 제외.
-MOMENTUM_STRATEGY_VERSION = "momentum_liquidity_v1"
-MOMENTUM_CHANGE_MIN_PCT = 5.0
-MOMENTUM_CHANGE_MAX_PCT = 10.0
-MOMENTUM_MIN_VOLUME = 1_000_000
-MOMENTUM_MIN_VALUE = 1.0e10  # 100억원
+# 거래대금 이상탐지 + 3봉 연속 가속 병렬 실험(신규, 독자 설계) — 운영 신호와 분리 추적한다.
+# 눌림목(trend_pullback_v1)·모멘텀·유동성(momentum_liquidity_v1) 실험은 각각
+# "봉 1개만 닿아도 통과"(단일봉 노이즈), "전 종목 동일 절대 임계값"(규모 무시)
+# 문제로 폐기했다. 이 전략은 그 두 약점을 피하도록 설계했다.
+VOLUME_ZSCORE_STRATEGY_VERSION = "volume_zscore_accel_v1"
+VOLUME_ZSCORE_MIN = 2.0
+VOLUME_ZSCORE_LOOKBACK_DAYS = 20
+VOLUME_ZSCORE_MIN_VALUE_FLOOR = 1.0e9  # 10억원 (z-score가 왜곡되는 초소형 거래대금 배제용 하한)
+VOLUME_ZSCORE_MAX_EXTENSION_PCT = 15.0  # 일봉 SMA20 대비 과열 상한(추격 매수 방지)
 
 SCAN_LIMIT = 150
 TOP_N = 5
@@ -269,68 +270,53 @@ def confirmed_breakout(df: pd.DataFrame) -> pd.DataFrame:
     )
 
 
-def trend_pullback(df: pd.DataFrame) -> pd.DataFrame:
-    """상승 추세 눌림 후 재상승 신호 (연구용 병렬 실험, 운영 조건과 분리).
+def volume_zscore_accel_candidate(df: pd.DataFrame) -> Optional[Dict[str, Any]]:
+    """거래대금 이상탐지 + 3봉 연속 가속 (독자 설계 병렬 실험).
 
-    D:/DEPO_M/agent/strategy.py의 trend_pullback()을 그대로 포팅했다
-    (quant-research/설계문서.md §9.7에서 검토된 공식). 그 연구에서는
-    기간별·지연별 안정성이 없어 미채택으로 결론났으므로, 여기서도
-    운영 신호(confirmed_breakout)를 대체하지 않고 별도 strategy_version으로만
-    전진 추적한다.
-    """
-    c, v = df.Close, df.Volume
-    ma12, ma26, ma60 = c.rolling(12).mean(), c.rolling(26).mean(), c.rolling(60).mean()
-    atr = _atr(df)
-    trend = (ma12 > ma26) & (ma26 > ma60) & (ma12 > ma12.shift(3)) & (ma26 > ma26.shift(3)) & (ma60 > ma60.shift(6))
-    value = c * v
-    typical = value.groupby(df.index.hour).transform(lambda s: s.shift(1).rolling(20, min_periods=5).median())
-    burst = (value >= 1e9) & (value >= typical * 2) & (c > df.Open)
-    attention = burst.rolling(12, min_periods=12).max().eq(1)
-    recovery = (c > df.Open) & (c > df.High.shift(1)) & ((c - ma26) / atr <= 2) & attention
-    fast = (df.Low.shift(1) <= ma12.shift(1)) & (c.shift(1) >= ma26.shift(1)) & (c > ma12)
-    slow = (df.Low.shift(1) <= ma26.shift(1)) & (c.shift(1) >= ma60.shift(1)) & (c > ma26)
-    return pd.DataFrame(
-        {"pullback12": trend & recovery & fast, "pullback26": trend & recovery & slow},
-        index=df.index,
-    )
+    앞서 시도했다가 폐기한 두 실험의 약점을 피하도록 설계했다:
+    - 눌림목(trend_pullback_v1, 폐기): 완료봉 1개만 이동평균에 닿아도 조건을 통과하는
+      느슨한 정의라 실제로는 돌파 순간을 눌림으로 오판했다. → 여기서는 최근 3개
+      완료봉이 연속으로 종가 상승해야만 통과시켜 단일봉 노이즈를 배제한다.
+    - 모멘텀·유동성(momentum_liquidity_v1, 폐기): 시가총액이 다른 모든 종목에 동일한
+      절대 임계값(거래대금 100억원 등)을 적용해 한 번에 12종목이 동시 통과할 만큼
+      선별력이 없었다. → 여기서는 그 종목 자신의 최근 20거래일 거래대금 분포 대비
+      z-score(표준편차 단위 이상치)로 판단해 종목마다 기준이 자동으로 달라진다.
 
-
-def momentum_liquidity_candidate(df: pd.DataFrame) -> Optional[Dict[str, Any]]:
-    """모멘텀·유동성 복합 병렬 실험 신호 (연구용, 사용자 정의 조건).
-
-    등락률 5~10%, 당일 거래량 100만주 이상, 당일 거래대금 100억원 이상,
-    2거래일 연속 상승을 모두 만족하는 종목을 찾는다. 재무제표 기반 팩터
-    (PER/PBR/ROE 등)는 이 파이프라인이 가격·거래량 60분봉만 수집하므로
-    포함하지 않는다. 운영 신호·눌림목 실험과 분리된 별도 strategy_version으로만
-    전진 추적한다.
+    검증 표본이 전혀 없는 신규 가설이므로 운영 신호를 대체하지 않고 별도
+    strategy_version으로만 전진 추적한다.
     """
     c, v = df.Close, df.Volume
     dates = df.index.date
     daily_close = pd.Series(c.values, index=dates).groupby(level=0).last()
-    daily_vol = pd.Series(v.values, index=dates).groupby(level=0).sum()
     daily_val = pd.Series((c * v).values, index=dates).groupby(level=0).sum()
 
-    if len(daily_close) < 3:
+    if len(daily_val) < VOLUME_ZSCORE_LOOKBACK_DAYS + 1 or len(c) < 3:
         return None
 
-    today, yesterday, day_before = daily_close.iloc[-1], daily_close.iloc[-2], daily_close.iloc[-3]
-    if not (yesterday > day_before and today > yesterday):
-        return None
-
-    day_change_pct = (today / yesterday - 1) * 100.0
-    today_vol = float(daily_vol.iloc[-1])
     today_val = float(daily_val.iloc[-1])
-
-    if not (MOMENTUM_CHANGE_MIN_PCT <= day_change_pct <= MOMENTUM_CHANGE_MAX_PCT):
+    hist_val = daily_val.iloc[-(VOLUME_ZSCORE_LOOKBACK_DAYS + 1):-1]
+    mean_val, std_val = float(hist_val.mean()), float(hist_val.std())
+    if not np.isfinite(std_val) or std_val <= 0:
         return None
-    if today_vol < MOMENTUM_MIN_VOLUME or today_val < MOMENTUM_MIN_VALUE:
+
+    value_z = (today_val - mean_val) / std_val
+    if today_val < VOLUME_ZSCORE_MIN_VALUE_FLOOR or value_z < VOLUME_ZSCORE_MIN:
+        return None
+
+    # 최근 3개 완료봉 연속 종가 상승 (단일봉 반짝 상승 배제)
+    if not (c.iloc[-3] < c.iloc[-2] < c.iloc[-1]):
+        return None
+
+    sma20 = float(daily_close.tail(20).mean())
+    extension_pct = (float(daily_close.iloc[-1]) / sma20 - 1) * 100.0 if sma20 > 0 else float("inf")
+    if extension_pct > VOLUME_ZSCORE_MAX_EXTENSION_PCT:
         return None
 
     return {
-        "day_change_pct": round(float(day_change_pct), 2),
-        "today_volume": today_vol,
+        "value_z": round(float(value_z), 2),
         "today_value_e8": round(today_val / 1e8, 1),
-        "support_level": float(yesterday),
+        "extension_pct": round(extension_pct, 2),
+        "support_level": float(c.iloc[-3]),
     }
 
 
@@ -410,20 +396,8 @@ def score_stock(rec: Dict[str, Any], now: pd.Timestamp) -> Tuple[Optional[Dict[s
         }
         row["_features"] = features
 
-        # 눌림목 재상승 병렬 실험 신호 (운영 판단에는 영향 없음, 별도 등록용 스냅샷만 계산)
-        pb = trend_pullback(df).iloc[-1]
-        pb26, pb12 = bool(pb.pullback26), bool(pb.pullback12)
-        row["_pullback"] = {
-            "matched": pb26 or pb12,
-            "type": "pullback26" if pb26 else ("pullback12" if pb12 else None),
-            "support_level": float(medium.iloc[-1]) if pb26 else float(fast.iloc[-1]),
-            "atr_14": float(atr_val) if pd.notna(atr_val) else 0.0,
-            "sma12": float(fast.iloc[-1]),
-            "sma26": float(medium.iloc[-1]),
-        }
-
-        # 모멘텀·유동성 복합 병렬 실험 신호 (운영 판단에는 영향 없음, 별도 등록용 스냅샷만 계산)
-        row["_momentum"] = momentum_liquidity_candidate(df)
+        # 거래대금 이상탐지 + 3봉 연속 가속 병렬 실험 신호 (운영 판단에는 영향 없음, 별도 등록용 스냅샷만 계산)
+        row["_volume_zscore"] = volume_zscore_accel_candidate(df)
 
         return row, df, None
     except Exception as e:
@@ -811,57 +785,31 @@ def run_collector():
 
     print(f"-> 신규 추적 등록 신호: {registered_count}건 (현재 총 pending: {len(tracker.pending_signals)}건)")
 
-    # 4C. 눌림목 재상승 병렬 실험 등록 (운영 신호와 분리된 strategy_version, 별도 전진 추적)
-    pullback_registered = 0
+    # 4C. 거래대금 이상탐지 + 3봉 연속 가속 병렬 실험 등록 (운영 신호와 분리된 strategy_version)
+    zscore_registered = 0
     for r in rows:
-        pb = r.get("_pullback")
-        if not pb or not pb["matched"]:
+        vz = r.get("_volume_zscore")
+        if not vz:
             continue
         sig_id = tracker.register_signal(
-            strategy_version=PULLBACK_STRATEGY_VERSION,
+            strategy_version=VOLUME_ZSCORE_STRATEGY_VERSION,
             code=r["코드"],
             name=r["종목"],
             market=r["시장"],
             bar_time_kst=r["_bar_time_full"],
             features={
-                "pattern_type": pb["type"],
-                "breakout_level": pb["support_level"],
+                "pattern_type": "volume_zscore_accel",
+                "breakout_level": vz["support_level"],
                 "current_close": r["_current_close"],
-                "atr_14": pb["atr_14"],
-                "sma12": pb["sma12"],
-                "sma26": pb["sma26"],
+                "value_z": vz["value_z"],
+                "today_value_e8": vz["today_value_e8"],
+                "extension_pct": vz["extension_pct"],
             },
             entry_reference_price=float(r["_current_close"]),
         )
         if sig_id:
-            pullback_registered += 1
-    print(f"-> [실험] 눌림목 재상승 신규 등록: {pullback_registered}건")
-
-    # 4D. 모멘텀·유동성 복합 병렬 실험 등록 (운영 신호와 분리된 strategy_version, 별도 전진 추적)
-    momentum_registered = 0
-    for r in rows:
-        mo = r.get("_momentum")
-        if not mo:
-            continue
-        sig_id = tracker.register_signal(
-            strategy_version=MOMENTUM_STRATEGY_VERSION,
-            code=r["코드"],
-            name=r["종목"],
-            market=r["시장"],
-            bar_time_kst=r["_bar_time_full"],
-            features={
-                "pattern_type": "momentum_liquidity",
-                "breakout_level": mo["support_level"],
-                "current_close": r["_current_close"],
-                "day_change_pct": mo["day_change_pct"],
-                "today_volume": mo["today_volume"],
-                "today_value_e8": mo["today_value_e8"],
-            },
-            entry_reference_price=float(r["_current_close"]),
-        )
-        if sig_id:
-            momentum_registered += 1
-    print(f"-> [실험] 모멘텀·유동성 복합 신규 등록: {momentum_registered}건")
+            zscore_registered += 1
+    print(f"-> [실험] 거래대금 이상탐지+3봉 가속 신규 등록: {zscore_registered}건")
 
     # 5. 기존 Pending 신호들의 미래봉 접촉 판정 및 라벨 확정
     newly_resolved = tracker.update_with_bars(collected_candles_by_code, now_dt)
@@ -876,7 +824,7 @@ def run_collector():
 
     pd.DataFrame(universe_stocks).to_csv(day_dir / f"{stamp_time}_universe.csv", index=False, encoding="utf-8-sig")
     # _features 등 객체 컬럼 정리 후 CSV 저장
-    df_scores = pd.DataFrame(rows).drop(columns=["_features", "_pullback", "_momentum"], errors="ignore")
+    df_scores = pd.DataFrame(rows).drop(columns=["_features", "_volume_zscore"], errors="ignore")
     df_scores.to_csv(day_dir / f"{stamp_time}_scores.csv", index=False, encoding="utf-8-sig")
     top_clean = top_quoted.drop(columns=["_features"], errors="ignore")
     watch_clean = watch_quoted.drop(columns=["_features"], errors="ignore")
@@ -906,27 +854,16 @@ def run_collector():
 
     experiments = [
         {
-            "strategy_version": PULLBACK_STRATEGY_VERSION,
-            "heading": "🧪 [실험] 눌림목 재상승 병렬 추적 (검증 전 · 미채택 전략)",
+            "strategy_version": VOLUME_ZSCORE_STRATEGY_VERSION,
+            "heading": "🧪 [실험] 거래대금 이상탐지 + 3봉 연속 가속 (검증 전 · 독자 설계)",
             "description": (
-                "> MA12>MA26>MA60 정배열 후 12/26선 눌림 재상승을 잡는 전략입니다. 과거 소급 백테스트(quant-research 설계문서 §9.7)에서는 "
-                "기간별 안정성이 없어 미채택됐지만, 실제 전진 데이터로 다시 검증하려고 운영 신호와 분리해서만 추적합니다. "
-                "**가상 매수이며 아래 매도 알림·누적 통계에는 포함되지 않습니다.**"
+                f"> 최근 3개 완료봉 연속 종가 상승 + 당일 거래대금이 그 종목 자신의 최근 {VOLUME_ZSCORE_LOOKBACK_DAYS}거래일 평균 대비 "
+                f"z-score {VOLUME_ZSCORE_MIN:.1f} 이상인 이상치 + 일봉 SMA20 대비 +{VOLUME_ZSCORE_MAX_EXTENSION_PCT:.0f}% 이내(추격 방지)를 "
+                "모두 만족하는 종목만 잡습니다. 앞서 폐기한 눌림목(단일봉 노이즈)·모멘텀·유동성(전 종목 동일 절대 임계값) 실험의 약점을 "
+                "피하도록 설계한 신규 가설입니다. **가상 매수이며 아래 매도 알림·누적 통계에는 포함되지 않습니다.**"
             ),
-            "empty_message": "현재 추적 중인 눌림목 실험 신호가 없습니다",
-            "stats": tracker.get_summary_stats(strategy_version=PULLBACK_STRATEGY_VERSION),
-        },
-        {
-            "strategy_version": MOMENTUM_STRATEGY_VERSION,
-            "heading": "🧪 [실험] 모멘텀·유동성 복합 병렬 추적 (검증 전 · 신규 실험)",
-            "description": (
-                f"> 등락률 {MOMENTUM_CHANGE_MIN_PCT:.0f}~{MOMENTUM_CHANGE_MAX_PCT:.0f}% · 당일 거래량 {MOMENTUM_MIN_VOLUME:,}주 이상 · "
-                f"당일 거래대금 {MOMENTUM_MIN_VALUE/1e8:.0f}억원 이상 · 2거래일 연속 상승을 모두 만족하는 종목만 잡는 순수 가격·거래량 기반 "
-                "복합 전략입니다. PER/PBR/ROE 같은 재무 팩터는 이 파이프라인이 수집하지 않아 포함하지 않았습니다. "
-                "**가상 매수이며 아래 매도 알림·누적 통계에는 포함되지 않습니다.**"
-            ),
-            "empty_message": "현재 추적 중인 모멘텀·유동성 실험 신호가 없습니다",
-            "stats": tracker.get_summary_stats(strategy_version=MOMENTUM_STRATEGY_VERSION),
+            "empty_message": "현재 추적 중인 실험 신호가 없습니다",
+            "stats": tracker.get_summary_stats(strategy_version=VOLUME_ZSCORE_STRATEGY_VERSION),
         },
     ]
 
