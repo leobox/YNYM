@@ -424,143 +424,104 @@ def render_markdown_dashboard(
     pending_list: List[Dict[str, Any]],
     now_str: str,
     scan_count: int,
+    detection_counts: Dict[str, int],
 ) -> str:
-    """GitHub 모바일 앱 및 웹 첫 화면(README.md)에 표시될 종합 대시보드 리포트"""
+    """GitHub 모바일 앱 및 웹 첫 화면(README.md)에 표시될 종합 대시보드 리포트
+
+    보유/관찰/전진추적이 모두 같은 tracker.pending_signals를 참조하는 동일 종목이라
+    표 3개에 중복 표시되던 것을 종목당 1행짜리 단일 표로 통합했다.
+    """
+    eval_by_code = {e["code"]: e for e in exit_evaluations}
     sell_alerts = [e for e in exit_evaluations if e["action_type"] in ("TAKE_PROFIT", "CUT_LOSS")]
+
+    # 이번 스캔에서 신규 등록된 종목의 선정 사유(왜 후보가 됐는지) 매핑
+    new_context: Dict[str, str] = {}
+    for _, r in top.iterrows():
+        chg = r.get("당일등락률")
+        amt, mult = r.get("돌파봉대금_억"), r.get("돌파봉대금배수")
+        new_context[r["코드"]] = f"🆕 신규 조건 충족 · 거래대금 {amt:,.1f}억({mult:,.1f}배) · 당일 {chg:+.2f}%"
+    for _, r in watch.iterrows():
+        chg = r.get("당일등락률")
+        amt, mult = r.get("돌파봉대금_억"), r.get("동시간배수")
+        new_context[r["코드"]] = f"🆕 관찰 등록 · 거래대금 {amt:,.1f}억({mult:,.1f}배) · 당일 {chg:+.2f}% · 다음 봉 지지 확인 대기"
 
     lines = [
         "# ⏱️ Quant Pattern Scanner & Position Exit Monitor",
         "",
-        f"> **최근 스캔**: `{now_str} KST` | **유니버스**: `{scan_count}종목` | **조건 충족**: `{len(top)}건` | **관찰**: `{len(watch)}건` | **보유 추적**: `{len(pending_list)}건`",
+        f"> **최근 스캔**: `{now_str} KST` | **유니버스**: `{scan_count}종목` | **조건 충족**: `{len(top)}건` | **관찰**: `{len(watch)}건` | **추적 중**: `{len(pending_list)}건`",
         "",
-        "한국 정규장 30분 주기(09:37~16:37, 7분30초/37분30초)로 실행되며, **매수 진입 포지션에 대한 실시간 매도·청산 신호**와 **신규 후보**를 동시에 모니터링합니다.",
+        "한국 정규장 30분 주기(09:37~16:37, 7분30초/37분30초)로 실행되며, **매수 진입 포지션에 대한 실시간 매도·청산 신호**와 **신규 후보**를 아래 표 하나로 통합해 모니터링합니다.",
         "",
         "---",
         "",
     ]
 
-    # [최우선 알림] 긴급 매도/청산 신호 발생 시 상단에 강조 표시
+    # [최우선 알림] 긴급 매도/청산 신호는 짧게 요약만 상단에, 상세는 통합 표에서 확인
     if sell_alerts:
-        lines.extend([
-            "## 🚨 [긴급] 실시간 매도·청산 권고 신호 발생!",
-            "",
-            "> **조건 충족으로 매수했던 종목 중 청산 조건(익절/손절/돌파선붕괴)이 감지되었습니다. MTS에서 확인 후 대응하세요.**",
-            "",
-            "| 구분 | 종목명 (코드) | 진입가 | 현재가 (수익률) | 매도 판정 | 사유 및 대응 가이드 |",
-            "|:---:|:---|:---:|:---:|:---:|:---|",
-        ])
+        lines.append("## 🚨 [긴급] 실시간 매도·청산 권고 신호 발생!")
+        lines.append("")
+        lines.append("> 청산 조건(익절/손절/돌파선붕괴)이 감지되었습니다. 상세 사유는 아래 표를 확인 후 MTS에서 대응하세요.")
+        lines.append("")
         for a in sell_alerts:
-            tag = "🔴 익절" if a["action_type"] == "TAKE_PROFIT" else "⚠️ 손절·탈출"
-            lines.append(
-                f"| **{tag}** | **{a['name']}** ({a['code']}) | {a['entry_price']:,.0f}원 | **{a['current_price']:,.0f}원 ({a['pnl_pct']:+.2f}%)** | `{a['decision']}` | {a['reason']} |"
-            )
+            tag = "🔴 익절" if a["action_type"] == "TAKE_PROFIT" else "🔴 손절"
+            lines.append(f"- **{tag} · {a['name']}** ({a['code']}) {a['current_price']:,.0f}원 (**{a['pnl_pct']:+.2f}%**)")
         lines.extend(["", "---", ""])
 
-    # 1. 보유 포지션 매도 판정 모니터링 표
+    # 1. 추적 중인 모든 신호(보유+관찰+신규)를 종목당 1행으로 통합한 마스터 표
     lines.extend([
-        "## 💼 보유 포지션 실시간 매도 모니터링 (가상 매수 100만원 가정)",
+        "## 📊 추적 중인 신호 현황 (가상 매수 100만원 가정)",
         "",
-        "> 조건 충족 시 100만원 매수 진입했다고 가정한 종목들의 **봉 단위 청산 판정 상태**입니다.",
-        "",
-    ])
-
-    if not exit_evaluations:
-        lines.append("*현재 보유 중인 가상 포지션이 없습니다.*\n")
-    else:
-        lines.append("| 종목명 (코드) | 진입가 | 현재가 (손익) | 최고수익 | 돌파선 | **매도 판정** | **대응 가이드** |")
-        lines.append("|:---|:---:|:---:|:---:|:---:|:---:|:---|")
-        for e in exit_evaluations:
-            status_icon = "🟢 HOLD"
-            if e["decision"] == ExitSignal.CAUTION:
-                status_icon = "🟡 CAUTION"
-            elif e["decision"] == ExitSignal.BREAKOUT_AMBIGUOUS:
-                status_icon = "🟠 RECHECK (다음 봉 확인)"
-            elif e["action_type"] == "TAKE_PROFIT":
-                status_icon = "🔴 SELL (익절)"
-            elif e["action_type"] == "CUT_LOSS":
-                status_icon = "🔴 SELL (손절)"
-
-            lines.append(
-                f"| **{e['name']}** ({e['code']}) | {e['entry_price']:,.0f}원 | {e['current_price']:,.0f}원 (**{e['pnl_pct']:+.2f}%**) | +{e['max_gain_pct']:.1f}% | {e['breakout_level']:,.0f}원 | **{status_icon}** | {e['reason']} |"
-            )
-        lines.append("")
-
-    lines.extend([
-        "---",
-        "",
-        "## 🟢 신규 조건 충족 종목 (신규 매수 후보)",
-        "",
-    ])
-
-    if top.empty:
-        lines.append("*현재 신규로 돌파 후 지지 조건을 충족한 종목이 없습니다.* (0개가 정상입니다)\n")
-    else:
-        lines.append("| 순위 | 종목명 (코드) | 현재가 | 돌파선 대비 | 돌파봉종가 대비 | 당일등락 | 당일고가 | 거래대금 | 기준봉 |")
-        lines.append("|:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|")
-        for _, r in top.iterrows():
-            p = r.get("현재가")
-            price_str = f"**{p:,.0f}원**" if pd.notna(p) else "—"
-            level = r.get("돌파선")
-            c_prev = r.get("돌파봉종가")
-            gap_lvl = f"{(p/level-1)*100:+.2f}%" if pd.notna(p) and pd.notna(level) and level > 0 else "—"
-            gap_c = f"{(p/c_prev-1)*100:+.2f}%" if pd.notna(p) and pd.notna(c_prev) and c_prev > 0 else "—"
-            chg = f"{r.get('당일등락률'):+.2f}%" if pd.notna(r.get("당일등락률")) else "—"
-            high = f"{r.get('당일고가'):,.0f}원" if pd.notna(r.get("당일고가")) else "—"
-            amt = f"{r.get('돌파봉대금_억'):,.1f}억 ({r.get('돌파봉대금배수'):,.1f}배)"
-            lines.append(f"| {r['순위']} | **{r['종목']}** ({r['코드']}) | {price_str} | {gap_lvl} | {gap_c} | {chg} | {high} | {amt} | {r['기준봉(KST)']} |")
-        lines.append("")
-
-    lines.extend([
-        "## 🟡 다음 봉 확인 관찰 종목",
-        "",
-        "> 기본 패턴 + 돌파 + 동시간 대금 2배를 통과하고, **다음 60분봉 지지 확인만 남은 종목**입니다.",
-        "",
-    ])
-
-    if watch.empty:
-        lines.append("*현재 관찰 대기 종목이 없습니다.*\n")
-    else:
-        lines.append("| 종목명 (코드) | 현재가 | 돌파선 | 돌파봉종가 | 돌파대금 | 당일등락 | 돌파봉시각 |")
-        lines.append("|:---|:---:|:---:|:---:|:---:|:---:|:---:|")
-        for _, r in watch.iterrows():
-            p = r.get("현재가")
-            price_str = f"**{p:,.0f}원**" if pd.notna(p) else "—"
-            chg = f"{r.get('당일등락률'):+.2f}%" if pd.notna(r.get("당일등락률")) else "—"
-            lines.append(f"| **{r['종목']}** ({r['코드']}) | {price_str} | {r['돌파선']:,.0f}원 | {r['돌파봉종가']:,.0f}원 | {r['돌파봉대금_억']:,.1f}억 ({r['동시간배수']:,.1f}배) | {chg} | {r['돌파봉(KST)']} |")
-        lines.append("")
-
-    # 3. 실시간 추적 중인 Pending 신호 목록
-    lines.extend([
-        "---",
-        "",
-        "## 🔵 실시간 전진 추적 중인 신호 (Pending)",
-        "",
-        f"> 신호 발생 후 현재까지의 가격 흐름을 추적 중인 목록입니다. (총 **{len(pending_list)}건**)",
+        "> 조건 충족·관찰 등록된 모든 신호를 한 표로 모아 긴급도순(매도 > 재확인 > 주의 > 신규 > 보유)으로 정렬했습니다.",
         "",
     ])
 
     if not pending_list:
         lines.append("*현재 추적 중인 활성 신호가 없습니다.*\n")
     else:
-        lines.append("| 종목명 (코드) | 신호발생시각 | 진입기준가 | 최고가 | 최저가 | 경과일수 | +10%목표가 | -5%손절가 |")
-        lines.append("|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|")
-        for sig in pending_list[-10:]:  # 최근 10개 표시
-            name = sig["name"]
+        priority = {"SELL": 0, "RECHECK": 1, "CAUTION": 2, "NEW": 3, "HOLD": 4}
+        rows = []
+        for sig in pending_list:
             code = sig["code"]
-            t_str = sig["signal_time_kst"]
-            e_p = sig["entry_reference_price"]
-            h_p = sig["highest_seen"]
-            l_p = sig["lowest_seen"]
-            days = sig["trading_days_observed"]
-            tgt_10 = sig["targets"].get("tgt_10", e_p * 1.1)
-            stop_5 = sig["stops"].get("stop_5", e_p * 0.95)
+            ev = eval_by_code.get(code)
+            is_new = sig.get("trading_days_observed", 0) == 0 and code in new_context
 
-            h_gap = f"{(h_p/e_p - 1)*100:+.2f}%"
-            l_gap = f"{(l_p/e_p - 1)*100:+.2f}%"
-            lines.append(f"| **{name}** ({code}) | {t_str} | {e_p:,.0f}원 | {h_p:,.0f}원 ({h_gap}) | {l_p:,.0f}원 ({l_gap}) | {days}일차 | {tgt_10:,.0f}원 | {stop_5:,.0f}원 |")
+            if ev and ev["action_type"] in ("TAKE_PROFIT", "CUT_LOSS"):
+                group, badge = "SELL", "🔴 SELL"
+            elif ev and ev["decision"] == ExitSignal.BREAKOUT_AMBIGUOUS:
+                group, badge = "RECHECK", "🟠 RECHECK"
+            elif ev and ev["decision"] == ExitSignal.CAUTION:
+                group, badge = "CAUTION", "🟡 CAUTION"
+            elif is_new:
+                group, badge = "NEW", "🆕 신규"
+            else:
+                group, badge = "HOLD", "🟢 HOLD"
+
+            # 신규 등록과 동시에 급한 판정(매도/재확인/주의)이 뜨면 그 사유를 우선한다
+            reason = new_context[code] if group == "NEW" else (ev["reason"] if ev else "정보 없음")
+            entry_p = sig["entry_reference_price"]
+            cur_p = ev["current_price"] if ev else entry_p
+            pnl = ev["pnl_pct"] if ev else 0.0
+            stop_5 = sig.get("stops", {}).get("stop_5", entry_p * 0.95)
+            days = sig.get("trading_days_observed", 0)
+            cnt7 = detection_counts.get(code, 1)
+
+            rows.append((priority[group], -pnl if group == "SELL" else 0.0, {
+                "badge": badge, "name": sig["name"], "code": code,
+                "cur_p": cur_p, "pnl": pnl, "stop_5": stop_5,
+                "days": days, "cnt7": cnt7, "reason": reason,
+            }))
+
+        rows.sort(key=lambda x: (x[0], x[1]))
+
+        lines.append("| 상태 | 종목(코드) | 현재가 (수익률) | 손절가 | 경과 | 최근7일 감지 | 사유 |")
+        lines.append("|:---:|:---|:---:|:---:|:---:|:---:|:---|")
+        for _, _, d in rows:
+            lines.append(
+                f"| {d['badge']} | **{d['name']}** ({d['code']}) | {d['cur_p']:,.0f}원 (**{d['pnl']:+.2f}%**) | {d['stop_5']:,.0f}원 | {d['days']}일차 | {d['cnt7']}회 | {d['reason']} |"
+            )
         lines.append("")
 
-    # 4. 누적 통계 박스
+    # 2. 누적 통계 박스
     tot_res = tracker_stats["total_resolved"]
     win_r = tracker_stats["win_rate"]
     win_str = f"**{win_r}%**" if win_r is not None else "데이터 축적 중"
@@ -718,6 +679,7 @@ def run_collector():
     # 8. README.md 모바일 대시보드 갱신
     tracker_stats = tracker.get_summary_stats()
     pending_list = list(tracker.pending_signals.values())
+    detection_counts = tracker.get_recent_signal_counts(days=7)
     md_dashboard = render_markdown_dashboard(
         top_clean,
         watch_clean,
@@ -726,6 +688,7 @@ def run_collector():
         pending_list,
         now_str,
         len(universe_stocks),
+        detection_counts,
     )
 
     with open(README_PATH, "w", encoding="utf-8") as f:
