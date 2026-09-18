@@ -52,6 +52,10 @@ VOLUME_ZSCORE_MIN = 2.0
 VOLUME_ZSCORE_LOOKBACK_DAYS = 20
 VOLUME_ZSCORE_MIN_VALUE_FLOOR = 1.0e9  # 10억원 (z-score가 왜곡되는 초소형 거래대금 배제용 하한)
 VOLUME_ZSCORE_MAX_EXTENSION_PCT = 15.0  # 일봉 SMA20 대비 과열 상한(추격 매수 방지)
+# [T-033] 과거 60일 60분봉 워크포워드 재현(dedup 83건) 결과, 기본 기준 h5_t10_s5(평균수익률 +0.14%)보다
+# h5_t10_s3(+10%익절/-3%손절/5일, 평균수익률 +0.45%)가 나아서 이 전략만 헤드라인 판정 기준을 바꾼다.
+# 원본 목표/손절 매트릭스(evaluations)는 그대로 다 계산해 두므로 라벨 데이터 자체는 손실 없음.
+VOLUME_ZSCORE_REF_KEY = "h5_t10_s3"
 
 # 매물대(거래량 밀집구간) 돌파 + 거래량 급증 + RSI 과매도 반등 병렬 실험(신규, 독자 설계).
 # 거래대금 z-score 실험(volume_zscore_accel_v1)을 대체하지 않고 별도 strategy_version으로
@@ -995,10 +999,13 @@ def run_collector():
                 f"당일 거래대금이 그 종목 자신의 최근 {VOLUME_ZSCORE_LOOKBACK_DAYS}거래일 평균 대비 z-score {VOLUME_ZSCORE_MIN:.1f} "
                 f"이상인 이상치 + 일봉 SMA20 대비 +{VOLUME_ZSCORE_MAX_EXTENSION_PCT:.0f}% 이내(추격 방지)를 모두 만족하는 종목만 잡습니다. "
                 "두산밥캣 사례(갭하락 거래량과 음봉 섞인 약한 데드캣 바운스 오탐)에서 드러난 결함을 보강했습니다. "
+                "[T-033] 과거 60일 워크포워드 검증(83건) 결과 기본 +10%/-5%/5일 기준보다 "
+                "**+10%/-3%/5일 기준이 평균수익률이 더 나아(+0.45%) 아래 통계는 그 기준으로 집계합니다** "
+                "(아직 통계적으로 유의하진 않아 계속 관찰 필요). "
                 "**가상 매수이며 아래 매도 알림·누적 통계에는 포함되지 않습니다.**"
             ),
             "empty_message": "현재 추적 중인 실험 신호가 없습니다",
-            "stats": tracker.get_summary_stats(strategy_version=VOLUME_ZSCORE_STRATEGY_VERSION),
+            "stats": tracker.get_summary_stats(strategy_version=VOLUME_ZSCORE_STRATEGY_VERSION, ref_key=VOLUME_ZSCORE_REF_KEY),
         },
         {
             "strategy_version": RESISTANCE_RSI_STRATEGY_VERSION,
@@ -1009,6 +1016,8 @@ def run_collector():
                 f"이상 + RSI(14)가 최근 10봉 내 과매도권({RESISTANCE_RSI_OVERSOLD:.0f} 이하)을 찍은 뒤 이번 봉에 "
                 f"Signal({RSI_SIGNAL_PERIOD})선을 상향 돌파를 모두 만족하는 종목만 잡습니다. "
                 "거래대금 z-score 실험을 대체하지 않고 별도로 병행 추적합니다. "
+                "⚠️ **[T-033] 과거 60일 워크포워드 검증(77건)에서 목표/손절/기간 16개 조합 전부 평균수익률이 마이너스였습니다** "
+                "(최선이 -0.30%). 진입 조건 재설계 또는 폐기 검토 필요 — 사용자 결정 대기 중. "
                 "**가상 매수이며 아래 매도 알림·누적 통계에는 포함되지 않습니다.**"
             ),
             "empty_message": "현재 추적 중인 실험 신호가 없습니다",

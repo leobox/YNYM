@@ -269,11 +269,16 @@ class SignalTracker:
         self._save_pending()
         return newly_resolved
 
-    def get_summary_stats(self, strategy_version: Optional[str] = None) -> Dict[str, Any]:
+    def get_summary_stats(self, strategy_version: Optional[str] = None, ref_key: str = "h5_t10_s5") -> Dict[str, Any]:
         """현재까지 추적 중인 신호 및 완료된 신호의 통계 요약
 
         strategy_version을 주면 그 전략으로 등록된 신호만 집계한다(운영 신호와
         병렬 실험 전략의 성과를 섞지 않기 위함).
+
+        ref_key: 어떤 목표/손절/기간 조합을 익절·손절 판정 기준으로 쓸지
+        (evaluations 딕셔너리의 키, 예: "h5_t10_s5" = +10% 익절/-5% 손절/5거래일).
+        전략마다 실제 가격 변동폭이 달라 최적 조합이 다를 수 있어 파라미터화했다
+        (예: volume_zscore_accel_v1은 과거 데이터 검증 결과 h5_t10_s3이 더 나음).
         """
         total_pending = sum(
             1 for sig in self.pending_signals.values()
@@ -283,9 +288,6 @@ class SignalTracker:
         target_first_count = 0
         stop_first_count = 0
         timeout_count = 0
-
-        # 기본 기준: h5_t10_s5 (+10% 익절 / -5% 손절 / 5일 만기)
-        ref_key = "h5_t10_s5"
 
         if self.resolved_file.exists():
             with open(self.resolved_file, "r", encoding="utf-8") as f:

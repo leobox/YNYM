@@ -1074,6 +1074,45 @@
           "note": "collector.yml에 16:50 KST 장마감 안전망 슬롯 추가(오늘 16시 이후 성공 스캔 없을 때만 실행), 시세수집 스텝 3회 재시도 추가, YAML파싱+bash문법검증+실제실행 두 분기 테스트 통과"
         }
       ]
+    },
+    {
+      "id": "T-033",
+      "title": "실험 전략 2종 과거 데이터 기반 기대값 검증 및 재설계",
+      "summary": "60일치 60분봉을 워크포워드로 재현해 volume_zscore_accel_v1(83건)과 resistance_breakout_rsi_v1(77건)의 실제 목표/손절 매트릭스 16종 성과를 계산. z-score는 h5_t10_s3(+10%/-3%/5일)가 기존 기준(h5_t10_s5)보다 평균수익률이 나아(+0.45%) 헤드라인 기준을 변경. 매물대+RSI는 16개 조합 전부 평균수익률 마이너스로 나와 기존 설계로는 기대값이 없다는 결론 -> 재설계 또는 폐기 여부는 사용자 판단 필요",
+      "doc": "docs/tasks/T-033.md",
+      "status": "needs_decision",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "매물대+RSI(resistance_breakout_rsi_v1): 과거60일 워크포워드 16개 목표/손절 조합 전부 평균수익률 마이너스(최선 -0.30%). 재설계/폐기/더 큰 표본 재검증 중 선택 필요. z-score는 h5_t10_s3로 헤드라인 전환 완료(코드 반영됨)",
+      "done_at": null,
+      "updated_at": "2026-09-18",
+      "done_when": "tracker.get_summary_stats에 ref_key 파라미터화, z-score 실험 헤드라인 h5_t10_s3로 전환, 백테스트 방법론/결과 docs/tasks에 기록, 매물대+RSI 처리 방향 needs_decision으로 확정",
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-18",
+      "log": [
+        {
+          "at": "2026-09-18",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-18",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-18",
+          "status": "needs_decision",
+          "note": "매물대+RSI(resistance_breakout_rsi_v1): 과거60일 워크포워드 16개 목표/손절 조합 전부 평균수익률 마이너스(최선 -0.30%). 재설계/폐기/더 큰 표본 재검증 중 선택 필요. z-score는 h5_t10_s3로 헤드라인 전환 완료(코드 반영됨)"
+        }
+      ]
     }
   ]
 }

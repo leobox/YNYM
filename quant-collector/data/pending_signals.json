@@ -1580,7 +1580,7 @@
       "2026-09-18"
     ],
     "highest_seen": 754000.0,
-    "lowest_seen": 747000.0,
+    "lowest_seen": 746000.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "PENDING",
@@ -1860,7 +1860,7 @@
       "2026-09-18"
     ],
     "highest_seen": 8270.0,
-    "lowest_seen": 8060.0,
+    "lowest_seen": 8030.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "PENDING",
