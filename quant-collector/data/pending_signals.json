@@ -179,7 +179,7 @@
       "2026-09-17",
       "2026-09-18"
     ],
-    "highest_seen": 73900.0,
+    "highest_seen": 74200.0,
     "lowest_seen": 71700.0,
     "evaluations": {
       "h3_t3_s3": {
@@ -739,7 +739,7 @@
     "observed_dates": [
       "2026-09-18"
     ],
-    "highest_seen": 112600.0,
+    "highest_seen": 113500.0,
     "lowest_seen": 107400.0,
     "evaluations": {
       "h3_t3_s3": {
@@ -1860,7 +1860,7 @@
       "2026-09-18"
     ],
     "highest_seen": 8270.0,
-    "lowest_seen": 8090.0,
+    "lowest_seen": 8060.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "PENDING",
@@ -2137,6 +2137,406 @@
     "observed_dates": [],
     "highest_seen": 93600.0,
     "lowest_seen": 93600.0,
+    "evaluations": {
+      "h3_t3_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t3_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t5_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t5_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t7_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t7_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t10_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t10_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t3_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t3_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t5_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t5_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t7_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t7_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t10_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t10_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      }
+    },
+    "is_fully_resolved": false
+  },
+  "algorithm260917_v1_140410_2026-09-18_1400": {
+    "signal_id": "algorithm260917_v1_140410_2026-09-18_1400",
+    "strategy_version": "algorithm260917_v1",
+    "code": "140410",
+    "name": "메지온",
+    "market": "KOSDAQ",
+    "signal_time_kst": "2026-09-18 14:00",
+    "registered_at_kst": "2026-09-18 15:11:55",
+    "entry_reference_price": 75400.0,
+    "targets": {
+      "tgt_3": 77662.0,
+      "tgt_5": 79170.0,
+      "tgt_7": 80678.0,
+      "tgt_10": 82940.0
+    },
+    "stops": {
+      "stop_3": 73138.0,
+      "stop_5": 71630.0
+    },
+    "features": {
+      "score": 68.61924910245969,
+      "pattern_type": "base_breakout",
+      "volume_ratio": 1.8250745244845312,
+      "above60": true,
+      "extension_atr": 2.67,
+      "trigger_amount_e8": 12.217255,
+      "trigger_ratio": 2.600992601685575,
+      "breakout_level": 75000.0,
+      "trigger_close": 74500.0,
+      "current_close": 75400.0,
+      "atr_14": 1085.7142857142858,
+      "sma12": 73608.33333333333,
+      "sma26": 72500.0
+    },
+    "trading_days_observed": 0,
+    "observed_dates": [],
+    "highest_seen": 75400.0,
+    "lowest_seen": 75400.0,
+    "evaluations": {
+      "h3_t3_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t3_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t5_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t5_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t7_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t7_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t10_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t10_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t3_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t3_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t5_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t5_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t7_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t7_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t10_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t10_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      }
+    },
+    "is_fully_resolved": false
+  },
+  "volume_zscore_accel_v1_140410_2026-09-18_1400": {
+    "signal_id": "volume_zscore_accel_v1_140410_2026-09-18_1400",
+    "strategy_version": "volume_zscore_accel_v1",
+    "code": "140410",
+    "name": "메지온",
+    "market": "KOSDAQ",
+    "signal_time_kst": "2026-09-18 14:00",
+    "registered_at_kst": "2026-09-18 15:11:55",
+    "entry_reference_price": 75400.0,
+    "targets": {
+      "tgt_3": 77662.0,
+      "tgt_5": 79170.0,
+      "tgt_7": 80678.0,
+      "tgt_10": 82940.0
+    },
+    "stops": {
+      "stop_3": 73138.0,
+      "stop_5": 71630.0
+    },
+    "features": {
+      "pattern_type": "volume_zscore_accel",
+      "breakout_level": 74100.0,
+      "current_close": 75400.0,
+      "value_z": 2.36,
+      "today_value_e8": 77.2,
+      "extension_pct": 9.19
+    },
+    "trading_days_observed": 0,
+    "observed_dates": [],
+    "highest_seen": 75400.0,
+    "lowest_seen": 75400.0,
+    "evaluations": {
+      "h3_t3_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t3_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t5_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t5_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t7_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t7_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t10_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t10_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t3_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t3_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t5_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t5_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t7_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t7_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t10_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t10_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      }
+    },
+    "is_fully_resolved": false
+  },
+  "volume_zscore_accel_v1_420770_2026-09-18_1400": {
+    "signal_id": "volume_zscore_accel_v1_420770_2026-09-18_1400",
+    "strategy_version": "volume_zscore_accel_v1",
+    "code": "420770",
+    "name": "기가비스",
+    "market": "KOSDAQ",
+    "signal_time_kst": "2026-09-18 14:00",
+    "registered_at_kst": "2026-09-18 15:11:55",
+    "entry_reference_price": 113100.0,
+    "targets": {
+      "tgt_3": 116493.0,
+      "tgt_5": 118755.0,
+      "tgt_7": 121017.0,
+      "tgt_10": 124410.0
+    },
+    "stops": {
+      "stop_3": 109707.0,
+      "stop_5": 107445.0
+    },
+    "features": {
+      "pattern_type": "volume_zscore_accel",
+      "breakout_level": 109400.0,
+      "current_close": 113100.0,
+      "value_z": 2.18,
+      "today_value_e8": 208.2,
+      "extension_pct": 10.23
+    },
+    "trading_days_observed": 0,
+    "observed_dates": [],
+    "highest_seen": 113100.0,
+    "lowest_seen": 113100.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "PENDING",

@@ -666,8 +666,9 @@ def render_markdown_dashboard(
     있어 signal_id 기준으로 분리 집계한다.
 
     embed=True면 루트 README.md의 QUANT_DASHBOARD 마커 구간에 삽입할 용도로,
-    문서 제목(H1)과 중복 설명 문단을 생략하고 하위 헤딩을 한 단계 낮추며,
-    검증 전 실험 섹션은 워크스페이스 인덱스를 어지럽히지 않도록 생략한다.
+    문서 제목(H1)과 중복 설명 문단·2차 판독기 안내 문단만 생략하고 하위 헤딩을
+    한 단계 낮춘다. 모바일 앱에서 루트 README만 열어도 실험 전략까지 바로 보이도록
+    병렬 실험 섹션은 embed 모드에서도 그대로 포함한다.
     """
     eval_by_sigid = {e["signal_id"]: e for e in exit_evaluations}
     sell_alerts = [
@@ -700,8 +701,8 @@ def render_markdown_dashboard(
             "",
         ])
 
-    # 병렬 실험 전략들을 최상단에 노출한다 (운영 신호와는 표·통계 모두 분리 유지, embed 모드는 생략)
-    if not embed and experiments:
+    # 병렬 실험 전략들을 최상단에 노출한다 (운영 신호와는 표·통계 모두 분리 유지)
+    if experiments:
         for exp in experiments:
             exp_list = [s for s in pending_list if s.get("strategy_version") == exp["strategy_version"]]
             stats = exp["stats"]
@@ -1029,8 +1030,7 @@ def run_collector():
     with open(README_PATH, "w", encoding="utf-8") as f:
         f.write(md_dashboard)
 
-    # 워크스페이스 루트 README.md의 QUANT_DASHBOARD 마커 구간에도 동일 현황 반영
-    # (실험 전략 섹션은 embed=True일 때 render_markdown_dashboard 내부에서 생략된다)
+    # 워크스페이스 루트 README.md의 QUANT_DASHBOARD 마커 구간에도 실험 섹션 포함 동일 현황 반영
     md_embed = render_markdown_dashboard(
         top_clean,
         watch_clean,

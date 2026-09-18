@@ -996,6 +996,45 @@
           "note": "resistance_breakout_rsi_v1 구현(매물대POC돌파+거래량2.5배+RSI과매도반등), 단위테스트 5건 신규(전체30건 통과), volume_zscore_accel_v1과 병행 추적"
         }
       ]
+    },
+    {
+      "id": "T-031",
+      "title": "루트 README에 실험 전략 섹션도 embed하여 앱에서 바로 노출",
+      "summary": "render_markdown_dashboard의 embed=True 경로가 병렬 실험(volume_zscore_accel_v1, resistance_breakout_rsi_v1) 섹션을 생략하던 것을 제거해, GitHub 모바일 앱에서 루트 README만 열어도 실험 전략까지 바로 보이게 함",
+      "doc": "docs/tasks/T-031.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "render_markdown_dashboard embed 모드에서 실험 섹션 포함하도록 수정, collector.py 실행으로 루트 README 반영 확인, 전체 테스트 30건 통과",
+      "done_at": "2026-09-18",
+      "updated_at": "2026-09-18",
+      "done_when": "embed 모드에서도 실험 섹션 렌더링, 전체 테스트 통과, collector.py 1회 실행으로 루트 README 반영 확인",
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-18",
+      "log": [
+        {
+          "at": "2026-09-18",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-18",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-18",
+          "status": "done",
+          "note": "render_markdown_dashboard embed 모드에서 실험 섹션 포함하도록 수정, collector.py 실행으로 루트 README 반영 확인, 전체 테스트 30건 통과"
+        }
+      ]
     }
   ]
 }
