@@ -429,7 +429,7 @@ function cmdSet(data, args) {
     try {
       const psScript = join(ROOT, "tools", "notify_voice.ps1");
       if (existsSync(psScript)) {
-        const msg = `태스크 ${t.id}, ${t.title || ""} 완료되었습니다.`;
+        const msg = `클로드 작업이 완료 되었습니다.`;
         const child = spawn("pwsh", ["-NoProfile", "-File", psScript, msg], {
           detached: true,
           stdio: "ignore",

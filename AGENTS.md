@@ -31,7 +31,7 @@
    - 작업 인수인계 및 맥락은 `docs/tasks/<id>.md`에 성실하게 기록한다.
    - 판단이 필요한 사항은 `needs_decision` 상태와 `--note "사유"`를 남긴다.
 6. **작업 완료 시 음성 안내 (Voice Notification)**:
-   - 사용자의 요청에 따라 작업이 완료되면 반드시 `pwsh tools/notify_voice.ps1 "<완료 안내 메시지>"`를 실행하거나, `node tools/backlog.mjs set <id> done`을 통해 한국어 음성(TTS)으로 사용자에게 작업 완료를 알린다.
+   - 사용자의 요청에 따라 작업이 완료되면 반드시 `pwsh tools/notify_voice.ps1 "제미나이 작업이 완료 되었습니다."`를 실행하거나, `node tools/backlog.mjs set <id> done`을 통해 한국어 음성(TTS: "제미나이 작업이 완료 되었습니다.")으로 사용자에게 작업 완료를 알린다.
 
 ---
 

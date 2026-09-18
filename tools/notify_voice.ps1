@@ -1,5 +1,5 @@
 param(
-    [string]$Message = "작업이 완료되었습니다."
+    [string]$Message = "클로드 작업이 완료 되었습니다."
 )
 
 try {
