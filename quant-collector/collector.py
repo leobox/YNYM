@@ -39,6 +39,9 @@ KST = timezone(timedelta(hours=9))
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
 README_PATH = BASE_DIR / "README.md"
+ROOT_README_PATH = BASE_DIR.parent / "README.md"
+DASHBOARD_MARK_START = "<!-- QUANT_DASHBOARD:START -->"
+DASHBOARD_MARK_END = "<!-- QUANT_DASHBOARD:END -->"
 STRATEGY_VERSION = "algorithm260917_v1"
 
 SCAN_LIMIT = 150
@@ -424,11 +427,15 @@ def render_markdown_dashboard(
     pending_list: List[Dict[str, Any]],
     now_str: str,
     scan_count: int,
+    embed: bool = False,
 ) -> str:
     """GitHub 모바일 앱 및 웹 첫 화면(README.md)에 표시될 종합 대시보드 리포트
 
     보유/관찰/전진추적이 모두 같은 tracker.pending_signals를 참조하는 동일 종목이라
     표 3개에 중복 표시되던 것을 종목당 1행짜리 단일 표로 통합했다.
+
+    embed=True면 루트 README.md의 QUANT_DASHBOARD 마커 구간에 삽입할 용도로,
+    문서 제목(H1)과 중복 설명 문단을 생략하고 하위 헤딩을 한 단계 낮춘다.
     """
     eval_by_code = {e["code"]: e for e in exit_evaluations}
     sell_alerts = [e for e in exit_evaluations if e["action_type"] in ("TAKE_PROFIT", "CUT_LOSS")]
@@ -437,20 +444,28 @@ def render_markdown_dashboard(
     new_codes = set(top["코드"]) if "코드" in top.columns else set()
     new_codes |= set(watch["코드"]) if "코드" in watch.columns else set()
 
-    lines = [
-        "# ⏱️ Quant Pattern Scanner & Position Exit Monitor",
-        "",
-        f"> **최근 스캔**: `{now_str} KST` | **유니버스**: `{scan_count}종목` | **조건 충족**: `{len(top)}건` | **관찰**: `{len(watch)}건` | **추적 중**: `{len(pending_list)}건`",
-        "",
-        "한국 정규장 30분 주기(09:37~16:37, 7분30초/37분30초)로 실행되며, **매수 진입 포지션에 대한 실시간 매도·청산 신호**와 **신규 후보**를 아래 표 하나로 통합해 모니터링합니다.",
-        "",
-        "---",
-        "",
-    ]
+    H2, H3 = ("###", "####") if embed else ("##", "###")
+
+    lines = []
+    if not embed:
+        lines.extend(["# ⏱️ Quant Pattern Scanner & Position Exit Monitor", ""])
+
+    lines.append(
+        f"> **최근 스캔**: `{now_str} KST` | **유니버스**: `{scan_count}종목` | **조건 충족**: `{len(top)}건` | **관찰**: `{len(watch)}건` | **추적 중**: `{len(pending_list)}건`"
+    )
+    lines.append("")
+
+    if not embed:
+        lines.extend([
+            "한국 정규장 30분 주기(09:37~16:37, 7분30초/37분30초)로 실행되며, **매수 진입 포지션에 대한 실시간 매도·청산 신호**와 **신규 후보**를 아래 표 하나로 통합해 모니터링합니다.",
+            "",
+            "---",
+            "",
+        ])
 
     # [최우선 알림] 긴급 매도/청산 신호는 짧게 요약만 상단에, 상세는 통합 표에서 확인
     if sell_alerts:
-        lines.append("## 🚨 [긴급] 실시간 매도·청산 권고 신호 발생!")
+        lines.append(f"{H2} 🚨 [긴급] 실시간 매도·청산 권고 신호 발생!")
         lines.append("")
         lines.append("> 청산 조건(익절/손절/돌파선붕괴)이 감지되었습니다. 상세 사유는 아래 표를 확인 후 MTS에서 대응하세요.")
         lines.append("")
@@ -462,7 +477,7 @@ def render_markdown_dashboard(
 
     # 1. 추적 중인 모든 신호(보유+관찰+신규)를 종목당 1행으로 통합한 마스터 표
     lines.extend([
-        "## 📊 추적 중인 신호 현황 (가상 매수 100만원 가정)",
+        f"{H2} 📊 추적 중인 신호 현황 (가상 매수 100만원 가정)",
         "",
         "> 조건 충족·관찰 등록된 모든 신호를 한 표로 모아 긴급도순(매도 > 재확인 > 주의 > 신규 > 보유)으로 정렬했습니다.",
         "",
@@ -520,23 +535,44 @@ def render_markdown_dashboard(
     lines.extend([
         "---",
         "",
-        "## 📈 누적 전진 검증 성과 (+10% 익절 vs -5% 손절 / 5일 기준)",
+        f"{H2} 📈 누적 전진 검증 성과 (+10% 익절 vs -5% 손절 / 5일 기준)",
         "",
         f"- **완료된 평가 표본 수**: `{tot_res}건` (목표: 독립 표본 300건 이상)",
         f"- **TARGET_FIRST (익절 선접촉)**: `{tracker_stats['target_first']}건`",
         f"- **STOP_FIRST (손절 선접촉)**: `{tracker_stats['stop_first']}건`",
         f"- **TIMEOUT (만기 종료)**: `{tracker_stats['timeout']}건`",
         f"- **익절 성공률 (Win Rate)**: {win_str}",
-        "",
-        "---",
-        "",
-        "### 🔬 2차 판독기 (Meta-Classifier) 파이프라인 안내",
-        "- 본 수집기에서 생성되는 `data/resolved_signals.jsonl`은 향후 로지스틱 회귀 및 Gradient Boosting 기반의 **2차 위험 필터 모델 학습**에 사용됩니다.",
-        "- 목표: 전진 검증에서 손절률의 95% 신뢰 상한을 최소화하고 위험 후보를 사전에 '판단 보류'로 필터링.",
-        "",
     ])
 
+    if not embed:
+        lines.extend([
+            "",
+            "---",
+            "",
+            f"{H3} 🔬 2차 판독기 (Meta-Classifier) 파이프라인 안내",
+            "- 본 수집기에서 생성되는 `data/resolved_signals.jsonl`은 향후 로지스틱 회귀 및 Gradient Boosting 기반의 **2차 위험 필터 모델 학습**에 사용됩니다.",
+            "- 목표: 전진 검증에서 손절률의 95% 신뢰 상한을 최소화하고 위험 후보를 사전에 '판단 보류'로 필터링.",
+        ])
+
+    lines.append("")
     return "\n".join(lines)
+
+
+def update_root_readme(embed_md: str) -> None:
+    """루트 README.md의 QUANT_DASHBOARD 마커 구간만 최신 현황으로 교체한다."""
+    if not ROOT_README_PATH.exists():
+        print("[경고] 루트 README.md가 없어 실시간 현황 반영을 건너뜁니다.")
+        return
+
+    content = ROOT_README_PATH.read_text(encoding="utf-8")
+    if DASHBOARD_MARK_START not in content or DASHBOARD_MARK_END not in content:
+        print("[경고] 루트 README.md에 QUANT_DASHBOARD 마커가 없어 실시간 현황 반영을 건너뜁니다.")
+        return
+
+    pre, _, rest = content.partition(DASHBOARD_MARK_START)
+    _, _, post = rest.partition(DASHBOARD_MARK_END)
+    new_content = f"{pre}{DASHBOARD_MARK_START}\n\n{embed_md}\n{DASHBOARD_MARK_END}{post}"
+    ROOT_README_PATH.write_text(new_content, encoding="utf-8")
 
 
 def run_collector():
@@ -683,9 +719,22 @@ def run_collector():
     with open(README_PATH, "w", encoding="utf-8") as f:
         f.write(md_dashboard)
 
+    # 워크스페이스 루트 README.md의 QUANT_DASHBOARD 마커 구간에도 동일 현황 반영
+    md_embed = render_markdown_dashboard(
+        top_clean,
+        watch_clean,
+        exit_evaluations,
+        tracker_stats,
+        pending_list,
+        now_str,
+        len(universe_stocks),
+        embed=True,
+    )
+    update_root_readme(md_embed)
+
     print(f"=== [Quant Collector] 전진 라벨링 및 스캔 전체 완료 ===")
     print(f"-> Top 5: {len(top_clean)}건 | 관찰: {len(watch_clean)}건 | 추적 중: {len(pending_list)}건")
-    print(f"-> 저장소 README.md 모바일 대시보드 갱신 완료\n")
+    print(f"-> 저장소 README.md + 루트 README.md 모바일 대시보드 갱신 완료\n")
 
 
 if __name__ == "__main__":
