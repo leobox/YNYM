@@ -43,6 +43,8 @@ ROOT_README_PATH = BASE_DIR.parent / "README.md"
 DASHBOARD_MARK_START = "<!-- QUANT_DASHBOARD:START -->"
 DASHBOARD_MARK_END = "<!-- QUANT_DASHBOARD:END -->"
 STRATEGY_VERSION = "algorithm260917_v1"
+# 눌림목 재상승 병렬 실험(연구용, 미채택 전략) — 운영 신호와 분리 추적한다.
+PULLBACK_STRATEGY_VERSION = "trend_pullback_v1"
 
 SCAN_LIMIT = 150
 TOP_N = 5
@@ -261,6 +263,32 @@ def confirmed_breakout(df: pd.DataFrame) -> pd.DataFrame:
     )
 
 
+def trend_pullback(df: pd.DataFrame) -> pd.DataFrame:
+    """상승 추세 눌림 후 재상승 신호 (연구용 병렬 실험, 운영 조건과 분리).
+
+    D:/DEPO_M/agent/strategy.py의 trend_pullback()을 그대로 포팅했다
+    (quant-research/설계문서.md §9.7에서 검토된 공식). 그 연구에서는
+    기간별·지연별 안정성이 없어 미채택으로 결론났으므로, 여기서도
+    운영 신호(confirmed_breakout)를 대체하지 않고 별도 strategy_version으로만
+    전진 추적한다.
+    """
+    c, v = df.Close, df.Volume
+    ma12, ma26, ma60 = c.rolling(12).mean(), c.rolling(26).mean(), c.rolling(60).mean()
+    atr = _atr(df)
+    trend = (ma12 > ma26) & (ma26 > ma60) & (ma12 > ma12.shift(3)) & (ma26 > ma26.shift(3)) & (ma60 > ma60.shift(6))
+    value = c * v
+    typical = value.groupby(df.index.hour).transform(lambda s: s.shift(1).rolling(20, min_periods=5).median())
+    burst = (value >= 1e9) & (value >= typical * 2) & (c > df.Open)
+    attention = burst.rolling(12, min_periods=12).max().eq(1)
+    recovery = (c > df.Open) & (c > df.High.shift(1)) & ((c - ma26) / atr <= 2) & attention
+    fast = (df.Low.shift(1) <= ma12.shift(1)) & (c.shift(1) >= ma26.shift(1)) & (c > ma12)
+    slow = (df.Low.shift(1) <= ma26.shift(1)) & (c.shift(1) >= ma60.shift(1)) & (c > ma26)
+    return pd.DataFrame(
+        {"pullback12": trend & recovery & fast, "pullback26": trend & recovery & slow},
+        index=df.index,
+    )
+
+
 def valid_ohlcv(df: pd.DataFrame) -> bool:
     if df.empty or df.index.has_duplicates or not df.index.is_monotonic_increasing:
         return False
@@ -336,6 +364,18 @@ def score_stock(rec: Dict[str, Any], now: pd.Timestamp) -> Tuple[Optional[Dict[s
             "sma26": float(medium.iloc[-1]),
         }
         row["_features"] = features
+
+        # 눌림목 재상승 병렬 실험 신호 (운영 판단에는 영향 없음, 별도 등록용 스냅샷만 계산)
+        pb = trend_pullback(df).iloc[-1]
+        pb26, pb12 = bool(pb.pullback26), bool(pb.pullback12)
+        row["_pullback"] = {
+            "matched": pb26 or pb12,
+            "type": "pullback26" if pb26 else ("pullback12" if pb12 else None),
+            "support_level": float(medium.iloc[-1]) if pb26 else float(fast.iloc[-1]),
+            "atr_14": float(atr_val) if pd.notna(atr_val) else 0.0,
+            "sma12": float(fast.iloc[-1]),
+            "sma26": float(medium.iloc[-1]),
+        }
 
         return row, df, None
     except Exception as e:
@@ -422,6 +462,62 @@ def build_results(rows: List[Dict[str, Any]]) -> Tuple[pd.DataFrame, pd.DataFram
     return top, watch
 
 
+def _render_signal_rows(
+    sig_list: List[Dict[str, Any]],
+    eval_by_sigid: Dict[str, Dict[str, Any]],
+    new_codes: Set[str],
+    empty_message: str,
+) -> List[str]:
+    """전략 하나에 속한 pending 신호 목록을 긴급도순 정렬된 마스터 표로 렌더링한다."""
+    if not sig_list:
+        return [f"*{empty_message}*\n"]
+
+    priority = {"SELL": 0, "RECHECK": 1, "CAUTION": 2, "NEW": 3, "HOLD": 4}
+    rows = []
+    for sig in sig_list:
+        code = sig["code"]
+        ev = eval_by_sigid.get(sig["signal_id"])
+        is_new = sig.get("trading_days_observed", 0) == 0 and code in new_codes
+
+        if ev and ev["action_type"] in ("TAKE_PROFIT", "CUT_LOSS"):
+            group, badge = "SELL", "🔴 SELL"
+        elif ev and ev["decision"] == ExitSignal.BREAKOUT_AMBIGUOUS:
+            group, badge = "RECHECK", "🟠 RECHECK"
+        elif ev and ev["decision"] == ExitSignal.CAUTION:
+            group, badge = "CAUTION", "🟡 CAUTION"
+        elif is_new:
+            group, badge = "NEW", "🆕 신규"
+        else:
+            group, badge = "HOLD", "🟢 HOLD"
+
+        trigger_ratio = sig.get("features", {}).get("trigger_ratio")
+        if trigger_ratio is not None and trigger_ratio >= OVERHEAT_TRIGGER_RATIO:
+            badge = f"{badge} 🔥"
+
+        entry_p = sig["entry_reference_price"]
+        cur_p = ev["current_price"] if ev else entry_p
+        pnl = ev["pnl_pct"] if ev else 0.0
+        pnl_color = "🔴" if pnl >= 0 else "🔵"
+        stop_5 = sig.get("stops", {}).get("stop_5", entry_p * 0.95)
+        days = sig.get("trading_days_observed", 0)
+
+        rows.append((priority[group], -pnl if group == "SELL" else 0.0, {
+            "badge": badge, "name": sig["name"], "code": code,
+            "cur_p": cur_p, "pnl": pnl, "pnl_color": pnl_color,
+            "stop_5": stop_5, "days": days,
+        }))
+
+    rows.sort(key=lambda x: (x[0], x[1]))
+
+    out = ["| 상태 | 종목(코드) | 현재가(수익률) | 손절가 | 경과 |", "|:---:|:---|:---:|:---:|:---:|"]
+    for _, _, d in rows:
+        out.append(
+            f"| {d['badge']} | **{d['name']}** ({d['code']}) | {d['cur_p']:,.0f} ({d['pnl_color']}{d['pnl']:+.2f}%) | {d['stop_5']:,.0f} | {d['days']}일차 |"
+        )
+    out.append("")
+    return out
+
+
 def render_markdown_dashboard(
     top: pd.DataFrame,
     watch: pd.DataFrame,
@@ -430,6 +526,7 @@ def render_markdown_dashboard(
     pending_list: List[Dict[str, Any]],
     now_str: str,
     scan_count: int,
+    pullback_stats: Optional[Dict[str, Any]] = None,
     embed: bool = False,
 ) -> str:
     """GitHub 모바일 앱 및 웹 첫 화면(README.md)에 표시될 종합 대시보드 리포트
@@ -437,11 +534,21 @@ def render_markdown_dashboard(
     보유/관찰/전진추적이 모두 같은 tracker.pending_signals를 참조하는 동일 종목이라
     표 3개에 중복 표시되던 것을 종목당 1행짜리 단일 표로 통합했다.
 
+    운영 신호(STRATEGY_VERSION)와 눌림목 재상승 병렬 실험(PULLBACK_STRATEGY_VERSION)은
+    같은 코드가 두 전략에 동시에 걸릴 수 있어 signal_id 기준으로 분리 집계한다.
+
     embed=True면 루트 README.md의 QUANT_DASHBOARD 마커 구간에 삽입할 용도로,
-    문서 제목(H1)과 중복 설명 문단을 생략하고 하위 헤딩을 한 단계 낮춘다.
+    문서 제목(H1)과 중복 설명 문단을 생략하고 하위 헤딩을 한 단계 낮추며,
+    검증 전 실험 섹션은 워크스페이스 인덱스를 어지럽히지 않도록 생략한다.
     """
-    eval_by_code = {e["code"]: e for e in exit_evaluations}
-    sell_alerts = [e for e in exit_evaluations if e["action_type"] in ("TAKE_PROFIT", "CUT_LOSS")]
+    eval_by_sigid = {e["signal_id"]: e for e in exit_evaluations}
+    sell_alerts = [
+        e for e in exit_evaluations
+        if e["action_type"] in ("TAKE_PROFIT", "CUT_LOSS") and e.get("strategy_version") == STRATEGY_VERSION
+    ]
+
+    main_list = [s for s in pending_list if s.get("strategy_version") == STRATEGY_VERSION]
+    pullback_list = [s for s in pending_list if s.get("strategy_version") == PULLBACK_STRATEGY_VERSION]
 
     # 이번 스캔에서 신규 등록된(조건 충족/관찰) 종목 코드 집합
     new_codes = set(top["코드"]) if "코드" in top.columns else set()
@@ -454,7 +561,7 @@ def render_markdown_dashboard(
         lines.extend(["# ⏱️ Quant Pattern Scanner & Position Exit Monitor", ""])
 
     lines.append(
-        f"> **최근 스캔**: `{now_str} KST` | **유니버스**: `{scan_count}종목` | **조건 충족**: `{len(top)}건` | **관찰**: `{len(watch)}건` | **추적 중**: `{len(pending_list)}건`"
+        f"> **최근 스캔**: `{now_str} KST` | **유니버스**: `{scan_count}종목` | **조건 충족**: `{len(top)}건` | **관찰**: `{len(watch)}건` | **추적 중**: `{len(main_list)}건`"
     )
     lines.append("")
 
@@ -487,53 +594,7 @@ def render_markdown_dashboard(
         "",
     ])
 
-    if not pending_list:
-        lines.append("*현재 추적 중인 활성 신호가 없습니다.*\n")
-    else:
-        priority = {"SELL": 0, "RECHECK": 1, "CAUTION": 2, "NEW": 3, "HOLD": 4}
-        rows = []
-        for sig in pending_list:
-            code = sig["code"]
-            ev = eval_by_code.get(code)
-            is_new = sig.get("trading_days_observed", 0) == 0 and code in new_codes
-
-            if ev and ev["action_type"] in ("TAKE_PROFIT", "CUT_LOSS"):
-                group, badge = "SELL", "🔴 SELL"
-            elif ev and ev["decision"] == ExitSignal.BREAKOUT_AMBIGUOUS:
-                group, badge = "RECHECK", "🟠 RECHECK"
-            elif ev and ev["decision"] == ExitSignal.CAUTION:
-                group, badge = "CAUTION", "🟡 CAUTION"
-            elif is_new:
-                group, badge = "NEW", "🆕 신규"
-            else:
-                group, badge = "HOLD", "🟢 HOLD"
-
-            trigger_ratio = sig.get("features", {}).get("trigger_ratio")
-            if trigger_ratio is not None and trigger_ratio >= OVERHEAT_TRIGGER_RATIO:
-                badge = f"{badge} 🔥"
-
-            entry_p = sig["entry_reference_price"]
-            cur_p = ev["current_price"] if ev else entry_p
-            pnl = ev["pnl_pct"] if ev else 0.0
-            pnl_color = "🔴" if pnl >= 0 else "🔵"
-            stop_5 = sig.get("stops", {}).get("stop_5", entry_p * 0.95)
-            days = sig.get("trading_days_observed", 0)
-
-            rows.append((priority[group], -pnl if group == "SELL" else 0.0, {
-                "badge": badge, "name": sig["name"], "code": code,
-                "cur_p": cur_p, "pnl": pnl, "pnl_color": pnl_color,
-                "stop_5": stop_5, "days": days,
-            }))
-
-        rows.sort(key=lambda x: (x[0], x[1]))
-
-        lines.append("| 상태 | 종목(코드) | 현재가(수익률) | 손절가 | 경과 |")
-        lines.append("|:---:|:---|:---:|:---:|:---:|")
-        for _, _, d in rows:
-            lines.append(
-                f"| {d['badge']} | **{d['name']}** ({d['code']}) | {d['cur_p']:,.0f} ({d['pnl_color']}{d['pnl']:+.2f}%) | {d['stop_5']:,.0f} | {d['days']}일차 |"
-            )
-        lines.append("")
+    lines.extend(_render_signal_rows(main_list, eval_by_sigid, new_codes, "현재 추적 중인 활성 신호가 없습니다"))
 
     # 2. 누적 통계 박스
     tot_res = tracker_stats["total_resolved"]
@@ -551,6 +612,32 @@ def render_markdown_dashboard(
         f"- **TIMEOUT (만기 종료)**: `{tracker_stats['timeout']}건`",
         f"- **익절 성공률 (Win Rate)**: {win_str}",
     ])
+
+    # 3. 눌림목 재상승 병렬 실험 (운영 신호와 완전히 분리 — embed 모드에서는 생략)
+    if not embed and pullback_stats is not None:
+        pb_tot = pullback_stats["total_resolved"]
+        pb_win = pullback_stats["win_rate"]
+        pb_win_str = f"**{pb_win}%**" if pb_win is not None else "데이터 축적 중"
+
+        lines.extend([
+            "",
+            "---",
+            "",
+            f"{H2} 🧪 [실험] 눌림목 재상승 병렬 추적 (검증 전 · 미채택 전략)",
+            "",
+            "> MA12>MA26>MA60 정배열 후 12/26선 눌림 재상승을 잡는 별도 전략입니다. 과거 소급 백테스트(quant-research 설계문서 §9.7)에서는 "
+            "기간별 안정성이 없어 미채택됐지만, 실제 전진 데이터로 다시 검증하려고 운영 신호와 분리해서만 추적합니다. "
+            "**가상 매수이며 위 매도 알림·누적 통계에는 포함되지 않습니다.**",
+            "",
+        ])
+        lines.extend(_render_signal_rows(pullback_list, eval_by_sigid, new_codes, "현재 추적 중인 눌림목 실험 신호가 없습니다"))
+        lines.extend([
+            f"- **완료된 평가 표본 수**: `{pb_tot}건`",
+            f"- **TARGET_FIRST (익절 선접촉)**: `{pullback_stats['target_first']}건`",
+            f"- **STOP_FIRST (손절 선접촉)**: `{pullback_stats['stop_first']}건`",
+            f"- **TIMEOUT (만기 종료)**: `{pullback_stats['timeout']}건`",
+            f"- **익절 성공률 (Win Rate)**: {pb_win_str}",
+        ])
 
     if not embed:
         lines.extend([
@@ -676,6 +763,32 @@ def run_collector():
 
     print(f"-> 신규 추적 등록 신호: {registered_count}건 (현재 총 pending: {len(tracker.pending_signals)}건)")
 
+    # 4C. 눌림목 재상승 병렬 실험 등록 (운영 신호와 분리된 strategy_version, 별도 전진 추적)
+    pullback_registered = 0
+    for r in rows:
+        pb = r.get("_pullback")
+        if not pb or not pb["matched"]:
+            continue
+        sig_id = tracker.register_signal(
+            strategy_version=PULLBACK_STRATEGY_VERSION,
+            code=r["코드"],
+            name=r["종목"],
+            market=r["시장"],
+            bar_time_kst=r["_bar_time_full"],
+            features={
+                "pattern_type": pb["type"],
+                "breakout_level": pb["support_level"],
+                "current_close": r["_current_close"],
+                "atr_14": pb["atr_14"],
+                "sma12": pb["sma12"],
+                "sma26": pb["sma26"],
+            },
+            entry_reference_price=float(r["_current_close"]),
+        )
+        if sig_id:
+            pullback_registered += 1
+    print(f"-> [실험] 눌림목 재상승 신규 등록: {pullback_registered}건")
+
     # 5. 기존 Pending 신호들의 미래봉 접촉 판정 및 라벨 확정
     newly_resolved = tracker.update_with_bars(collected_candles_by_code, now_dt)
     if newly_resolved:
@@ -689,7 +802,7 @@ def run_collector():
 
     pd.DataFrame(universe_stocks).to_csv(day_dir / f"{stamp_time}_universe.csv", index=False, encoding="utf-8-sig")
     # _features 등 객체 컬럼 정리 후 CSV 저장
-    df_scores = pd.DataFrame(rows).drop(columns=["_features"], errors="ignore")
+    df_scores = pd.DataFrame(rows).drop(columns=["_features", "_pullback"], errors="ignore")
     df_scores.to_csv(day_dir / f"{stamp_time}_scores.csv", index=False, encoding="utf-8-sig")
     top_clean = top_quoted.drop(columns=["_features"], errors="ignore")
     watch_clean = watch_quoted.drop(columns=["_features"], errors="ignore")
@@ -706,13 +819,16 @@ def run_collector():
         if not pd.notna(cur_p) or cur_p <= 0:
             cur_p = candles[-1]["close"] if candles else pos["entry_reference_price"]
         eval_res = evaluate_position_exit(pos, candles, float(cur_p), now_str)
+        eval_res["signal_id"] = sig_id
+        eval_res["strategy_version"] = pos.get("strategy_version")
         exit_evaluations.append(eval_res)
 
         if eval_res["action_type"] in ("TAKE_PROFIT", "CUT_LOSS"):
             print(f"-> [매도 권고] {eval_res['name']}({c_code}): {eval_res['decision']} | {eval_res['reason']}")
 
     # 8. README.md 모바일 대시보드 갱신
-    tracker_stats = tracker.get_summary_stats()
+    tracker_stats = tracker.get_summary_stats(strategy_version=STRATEGY_VERSION)
+    pullback_stats = tracker.get_summary_stats(strategy_version=PULLBACK_STRATEGY_VERSION)
     pending_list = list(tracker.pending_signals.values())
     md_dashboard = render_markdown_dashboard(
         top_clean,
@@ -722,12 +838,14 @@ def run_collector():
         pending_list,
         now_str,
         len(universe_stocks),
+        pullback_stats=pullback_stats,
     )
 
     with open(README_PATH, "w", encoding="utf-8") as f:
         f.write(md_dashboard)
 
     # 워크스페이스 루트 README.md의 QUANT_DASHBOARD 마커 구간에도 동일 현황 반영
+    # (실험 전략 섹션은 embed=True일 때 render_markdown_dashboard 내부에서 생략된다)
     md_embed = render_markdown_dashboard(
         top_clean,
         watch_clean,
@@ -736,6 +854,7 @@ def run_collector():
         pending_list,
         now_str,
         len(universe_stocks),
+        pullback_stats=pullback_stats,
         embed=True,
     )
     update_root_readme(md_embed)

@@ -1946,5 +1946,136 @@
       }
     },
     "is_fully_resolved": false
+  },
+  "trend_pullback_v1_091580_2026-09-18_1000": {
+    "signal_id": "trend_pullback_v1_091580_2026-09-18_1000",
+    "strategy_version": "trend_pullback_v1",
+    "code": "091580",
+    "name": "상신이디피",
+    "market": "KOSDAQ",
+    "signal_time_kst": "2026-09-18 10:00",
+    "registered_at_kst": "2026-09-18 11:50:50",
+    "entry_reference_price": 23100.0,
+    "targets": {
+      "tgt_3": 23793.0,
+      "tgt_5": 24255.0,
+      "tgt_7": 24717.0,
+      "tgt_10": 25410.0
+    },
+    "stops": {
+      "stop_3": 22407.0,
+      "stop_5": 21945.0
+    },
+    "features": {
+      "pattern_type": "pullback26",
+      "breakout_level": 22207.69230769231,
+      "current_close": 23100.0,
+      "atr_14": 592.8571428571429,
+      "sma12": 22345.833333333332,
+      "sma26": 22207.69230769231
+    },
+    "trading_days_observed": 0,
+    "observed_dates": [],
+    "highest_seen": 23100.0,
+    "lowest_seen": 23100.0,
+    "evaluations": {
+      "h3_t3_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t3_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t5_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t5_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t7_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t7_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t10_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t10_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t3_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t3_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t5_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t5_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t7_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t7_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t10_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t10_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      }
+    },
+    "is_fully_resolved": false
   }
 }

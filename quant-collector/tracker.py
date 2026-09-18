@@ -263,9 +263,16 @@ class SignalTracker:
         self._save_pending()
         return newly_resolved
 
-    def get_summary_stats(self) -> Dict[str, Any]:
-        """현재까지 추적 중인 신호 및 완료된 신호의 통계 요약"""
-        total_pending = len(self.pending_signals)
+    def get_summary_stats(self, strategy_version: Optional[str] = None) -> Dict[str, Any]:
+        """현재까지 추적 중인 신호 및 완료된 신호의 통계 요약
+
+        strategy_version을 주면 그 전략으로 등록된 신호만 집계한다(운영 신호와
+        병렬 실험 전략의 성과를 섞지 않기 위함).
+        """
+        total_pending = sum(
+            1 for sig in self.pending_signals.values()
+            if strategy_version is None or sig.get("strategy_version") == strategy_version
+        )
         resolved_count = 0
         target_first_count = 0
         stop_first_count = 0
@@ -279,6 +286,8 @@ class SignalTracker:
                 for line in f:
                     try:
                         record = json.loads(line)
+                        if strategy_version is not None and record.get("strategy_version") != strategy_version:
+                            continue
                         resolved_count += 1
                         st = record.get("evaluations", {}).get(ref_key, {}).get("status")
                         if st == "TARGET_FIRST":

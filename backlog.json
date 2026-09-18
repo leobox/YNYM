@@ -601,6 +601,84 @@
           "note": "OVERHEAT_TRIGGER_RATIO=15.0 상수 추가, 마스터 표 배지에 🔥 표시 구현, 로컬 실행으로 LS에코에너지(43배) 케이스 정상 표시 확인 후 커밋 e949ed2 푸시 완료"
         }
       ]
+    },
+    {
+      "id": "T-021",
+      "title": "Intel Arc A350M 로컬 GPU 연산 환경 설정",
+      "summary": "Intel Arc 전용 Python 환경, 노트북 커널, 진단 도구 및 그래픽 드라이버 설치",
+      "doc": "docs/tasks/T-021.md",
+      "status": "in_progress",
+      "priority": "P1",
+      "category": "infra",
+      "phase": "0. 공통 인프라 & 대시보드",
+      "estimate_min": 30,
+      "deps": [],
+      "where": "tools/gpu",
+      "refs": [],
+      "note": "격리 환경과 83개 패키지 설치 완료. 초기 OpenVINO A350M 연산 통과. Intel 공식 드라이버 업데이트 진행 후 최종 검증 예정.",
+      "done_at": null,
+      "updated_at": "2026-09-18",
+      "done_when": "별도 Python 환경 및 재실행 가능한 진단 도구 구성, Arc 실제 연산 검증과 제한사항 기록",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-09-18",
+      "log": [
+        {
+          "at": "2026-09-18",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-18",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-18",
+          "status": "in_progress",
+          "note": "격리 환경과 83개 패키지 설치 완료. 초기 OpenVINO A350M 연산 통과. Intel 공식 드라이버 업데이트 진행 후 최종 검증 예정."
+        }
+      ]
+    },
+    {
+      "id": "T-022",
+      "title": "눌림목 재상승(trend_pullback) 병렬 전진추적 실험 추가",
+      "summary": "D:/DEPO_M/agent/strategy.py의 trend_pullback() 공식을 포팅해 quant-collector에서 기존 algorithm260917_v1 신호와 분리된 strategy_version(trend_pullback_v1)으로 병렬 전진추적, README에 별도 실험 섹션으로 표시",
+      "doc": "docs/tasks/T-022.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": "quant-collector/collector.py, quant-collector/tracker.py",
+      "refs": [],
+      "note": "trend_pullback() 포팅 및 병렬 strategy_version 전진추적 구현, eval_by_code->signal_id 버그 수정, 실행 검증 완료(docs/tasks/T-022.md 참고)",
+      "done_at": "2026-09-18",
+      "updated_at": "2026-09-18",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-18",
+      "log": [
+        {
+          "at": "2026-09-18",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-18",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-18",
+          "status": "done",
+          "note": "trend_pullback() 포팅 및 병렬 strategy_version 전진추적 구현, eval_by_code->signal_id 버그 수정, 실행 검증 완료(docs/tasks/T-022.md 참고)"
+        }
+      ]
     }
   ]
 }
