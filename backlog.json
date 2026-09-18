@@ -1196,6 +1196,152 @@
           "note": "quant-research/scanner/indicators.py의 _atr을 collector.py와 동일하게 Wilder's smoothing(ewm alpha=1/period)으로 교체. tests/ 52건 전체 통과(prefix invariance 포함), 회귀 없음"
         }
       ]
+    },
+    {
+      "id": "T-036",
+      "title": "운영 전략(algorithm260917_v1)의 quant-research 정식 프레임워크 재검증",
+      "summary": "",
+      "doc": "docs/tasks/T-036.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "walk_forward+account_simulator+signal_generator 기반 train/validate/test 분리 재검증 완료. SMA vs Wilder ATR 대조 및 독립 신호 기대값 산출 완료(docs/tasks/T-036.md)",
+      "done_at": "2026-09-18",
+      "updated_at": "2026-09-18",
+      "done_when": "walk_forward+account_simulator+signal_generator 기반 train/validate/test 분리 재검증 완료 및 리포트 작성",
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-09-18",
+      "log": [
+        {
+          "at": "2026-09-18",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-18",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-18",
+          "status": "done",
+          "note": "walk_forward+account_simulator+signal_generator 기반 train/validate/test 분리 재검증 완료. SMA vs Wilder ATR 대조 및 독립 신호 기대값 산출 완료(docs/tasks/T-036.md)"
+        }
+      ]
+    },
+    {
+      "id": "T-037",
+      "title": "quant-research: 신규 진입 아이디어 파라미터 스윕 (Donchian+거래량) 백테스트",
+      "summary": "제미나이는 기존 hourly_pattern(algorithm260917_v1) 정식 재검증을 맡고, 나는 그와 겹치지 않는 새 신호 아이디어를 탐색. N봉 최고가 돌파(Donchian)+거래량배수+선택적 추세/이격 필터를 약 100개 파라미터 조합으로 스윕, walk_forward.py(train/validate/test)+account_simulator.py(수수료0.175%, 다음봉시가체결, 단일포지션)로 정식 검증해 살아남는 조합이 있으면 1개만 채택",
+      "doc": "docs/tasks/T-037.md",
+      "status": "in_progress",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": null,
+      "done_at": null,
+      "updated_at": "2026-09-18",
+      "done_when": "100개 조합 스윕 완료, train에서만 좋은 게 아니라 validate/test에서도 버티는 후보 확인, 채택 시 quant-research에 정식 모듈+테스트로 구현, 없으면 결과 없음으로 정직하게 보고",
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-18",
+      "log": [
+        {
+          "at": "2026-09-18",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-18",
+          "status": "in_progress",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "id": "T-038",
+      "title": "운영전략 정식검증을 신규(최근60일) 데이터셋으로 시간외 재현 (T-036 강건성 확인)",
+      "summary": "T-036이 06-22~09-14 수입 스냅샷(원래 코드재현 검증용으로만 인증됐던 데이터, T-008 한계 고지 있음)으로 나온 결과라 quant-collector 간이백테스트(-0.17%)와 confounded 비교였음. 같은 walk_forward+account_simulator+bias_reporter 방법론을 그대로 유지하고 데이터셋만 신규(최근 60일, 350종목 라이브 수집)로 바꿔 재현, T-036 결론(+1.92%, 양의 기대값)이 다른 시기에도 유지되는지 확인",
+      "doc": "docs/tasks/T-038.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "신규(06-25~09-18) 라이브 데이터셋으로 T-036 동일 파이프라인 재현. 결과: Train -20.25%(2/8승), Validate -1.25%(2/4승), Test -11.08%(1/6승) - T-036의 양의기대값(+19.70%/+22.62%) 결론이 재현 안 됨, 특히 최근 구간(09-01~09-18)이 가장 나쁨. 두 데이터셋 합산 승률 35.5%로 손익분기(33.3%) 근처 - 엣지 유무 판단 어려움. bias_reporter 표본부족 경고 재확인",
+      "done_at": "2026-09-18",
+      "updated_at": "2026-09-18",
+      "done_when": "신규 데이터셋 fetch+저장, 동일 파이프라인으로 train/validate/test 재현, T-036과 결과 비교표 작성, bias_reporter 경고 포함 정직 보고",
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-18",
+      "log": [
+        {
+          "at": "2026-09-18",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-18",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-18",
+          "status": "done",
+          "note": "신규(06-25~09-18) 라이브 데이터셋으로 T-036 동일 파이프라인 재현. 결과: Train -20.25%(2/8승), Validate -1.25%(2/4승), Test -11.08%(1/6승) - T-036의 양의기대값(+19.70%/+22.62%) 결론이 재현 안 됨, 특히 최근 구간(09-01~09-18)이 가장 나쁨. 두 데이터셋 합산 승률 35.5%로 손익분기(33.3%) 근처 - 엣지 유무 판단 어려움. bias_reporter 표본부족 경고 재확인"
+        }
+      ]
+    },
+    {
+      "id": "T-039",
+      "title": "account_simulator.py 다중 포지션(3~5종목) 분산 지원 및 운영전략 표본확대 재검증",
+      "summary": "",
+      "doc": "docs/tasks/T-039.md",
+      "status": "in_progress",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": null,
+      "done_at": null,
+      "updated_at": "2026-09-18",
+      "done_when": "account_simulator.py에 max_positions 파라미터 구현, 회계 보존식 및 단위 테스트 통과, max_positions=1/3/5 비교 백테스트 및 bias_reporter 경고 포함 문서화",
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-09-18",
+      "log": [
+        {
+          "at": "2026-09-18",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-18",
+          "status": "in_progress",
+          "note": ""
+        }
+      ]
     }
   ]
 }

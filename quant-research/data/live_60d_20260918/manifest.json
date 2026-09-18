@@ -1,0 +1,8 @@
+{
+  "fetched_at": "2026-09-18T18:34:55.948293+09:00",
+  "source": "Yahoo Finance 60m chart endpoint (scanner.data_adapter.fetch_hourly_candles)",
+  "universe_basis": "quant-collector/data/20260918/1602_universe.csv (KOSPI200+KOSDAQ150 시총 근사, 350종목)",
+  "codes_fetched": 349,
+  "purpose": "T-038: T-036(06-22~09-14 수입 스냅샷) 검증 결과가 다른 시기 데이터에서도 유지되는지 확인하기 위한 시간외(out-of-time) 재현용 신규 데이터셋. 라이브 수집, 수입 데이터 아님.",
+  "known_limitations": "생존편향(오늘 상장 종목만), 15:00~15:30 구간 및 수정주가 기준 미확인은 T-008과 동일하게 적용됨."
+}
