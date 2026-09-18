@@ -1118,6 +1118,79 @@
           "note": "매물대+RSI(resistance_breakout_rsi_v1) 완전 폐기(코드/테스트/대시보드 제거), z-score 헤드라인 h5_t10_s5로 원복(다중비교 편향 인정). 제미나이 리뷰 교차검증: 단일봉 추격매수 구조 지적은 데이터로 확인, POC 하락잡주 편향 가설은 데이터로 반박(POC 위치 균등분포). 전체 테스트 33건 통과"
         }
       ]
+    },
+    {
+      "id": "T-034",
+      "title": "ATR 계산을 Wilder 표준 방식으로 통일 (운영 전략 포함)",
+      "summary": "collector.py의 _atr()이 단순이동평균(SMA) 근사였음을 RSI 검증 과정에서 발견(같은 문제로 resistance_breakout_rsi_v1 백테스트 결론이 무효화됨). hourly_pattern/confirmed_breakout/score_stock이 전부 이 _atr을 쓰므로 운영 전략(algorithm260917_v1) 자체가 브로커 표준과 다른 근사 지표로 돌아가고 있었음. Wilder's smoothing(ewm alpha=1/period)으로 교체하고, 변경 전후로 운영 전략을 과거 60일 워크포워드 백테스트해 실제 영향도 확인",
+      "doc": "docs/tasks/T-034.md",
+      "status": "in_progress",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": null,
+      "done_at": null,
+      "updated_at": "2026-09-18",
+      "done_when": "_atr을 Wilder 표준으로 교체, 전체 테스트 통과, 변경 전/후 운영전략 백테스트 비교 결과 문서화",
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-18",
+      "log": [
+        {
+          "at": "2026-09-18",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-18",
+          "status": "in_progress",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "id": "T-035",
+      "title": "quant-research indicators.py의 ATR도 Wilder 표준으로 통일",
+      "summary": "quant-collector T-034에서 발견한 SMA-vs-Wilder ATR 근사 문제가 quant-research/scanner/indicators.py의 _atr에도 동일하게 존재함을 확인(quant-collector/collector.py의 hourly_pattern은 이 pattern.py를 그대로 포팅한 코드). Wilder's smoothing으로 교체하고 기존 테스트(prefix invariance 포함) 통과 확인",
+      "doc": "docs/tasks/T-035.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "quant-research/scanner/indicators.py의 _atr을 collector.py와 동일하게 Wilder's smoothing(ewm alpha=1/period)으로 교체. tests/ 52건 전체 통과(prefix invariance 포함), 회귀 없음",
+      "done_at": "2026-09-18",
+      "updated_at": "2026-09-18",
+      "done_when": "indicators.py의 _atr을 ewm 기반 Wilder 방식으로 교체, tests/ 전체 통과(prefix invariance 포함)",
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-18",
+      "log": [
+        {
+          "at": "2026-09-18",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-18",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-18",
+          "status": "done",
+          "note": "quant-research/scanner/indicators.py의 _atr을 collector.py와 동일하게 Wilder's smoothing(ewm alpha=1/period)으로 교체. tests/ 52건 전체 통과(prefix invariance 포함), 회귀 없음"
+        }
+      ]
     }
   ]
 }
