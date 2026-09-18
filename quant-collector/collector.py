@@ -573,6 +573,32 @@ def render_markdown_dashboard(
             "",
         ])
 
+    # 눌림목 재상승 병렬 실험을 최상단에 노출한다 (운영 신호와는 표·통계 모두 분리 유지, embed 모드는 생략)
+    if not embed and pullback_stats is not None:
+        pb_tot = pullback_stats["total_resolved"]
+        pb_win = pullback_stats["win_rate"]
+        pb_win_str = f"**{pb_win}%**" if pb_win is not None else "데이터 축적 중"
+
+        lines.extend([
+            f"{H2} 🧪 [실험] 눌림목 재상승 병렬 추적 (검증 전 · 미채택 전략)",
+            "",
+            "> MA12>MA26>MA60 정배열 후 12/26선 눌림 재상승을 잡는 별도 전략입니다. 과거 소급 백테스트(quant-research 설계문서 §9.7)에서는 "
+            "기간별 안정성이 없어 미채택됐지만, 실제 전진 데이터로 다시 검증하려고 운영 신호와 분리해서만 추적합니다. "
+            "**가상 매수이며 아래 매도 알림·누적 통계에는 포함되지 않습니다.**",
+            "",
+        ])
+        lines.extend(_render_signal_rows(pullback_list, eval_by_sigid, new_codes, "현재 추적 중인 눌림목 실험 신호가 없습니다"))
+        lines.extend([
+            f"- **완료된 평가 표본 수**: `{pb_tot}건`",
+            f"- **TARGET_FIRST (익절 선접촉)**: `{pullback_stats['target_first']}건`",
+            f"- **STOP_FIRST (손절 선접촉)**: `{pullback_stats['stop_first']}건`",
+            f"- **TIMEOUT (만기 종료)**: `{pullback_stats['timeout']}건`",
+            f"- **익절 성공률 (Win Rate)**: {pb_win_str}",
+            "",
+            "---",
+            "",
+        ])
+
     # [최우선 알림] 긴급 매도/청산 신호는 짧게 요약만 상단에, 상세는 통합 표에서 확인
     if sell_alerts:
         lines.append(f"{H2} 🚨 [긴급] 실시간 매도·청산 권고 신호 발생!")
@@ -612,32 +638,6 @@ def render_markdown_dashboard(
         f"- **TIMEOUT (만기 종료)**: `{tracker_stats['timeout']}건`",
         f"- **익절 성공률 (Win Rate)**: {win_str}",
     ])
-
-    # 3. 눌림목 재상승 병렬 실험 (운영 신호와 완전히 분리 — embed 모드에서는 생략)
-    if not embed and pullback_stats is not None:
-        pb_tot = pullback_stats["total_resolved"]
-        pb_win = pullback_stats["win_rate"]
-        pb_win_str = f"**{pb_win}%**" if pb_win is not None else "데이터 축적 중"
-
-        lines.extend([
-            "",
-            "---",
-            "",
-            f"{H2} 🧪 [실험] 눌림목 재상승 병렬 추적 (검증 전 · 미채택 전략)",
-            "",
-            "> MA12>MA26>MA60 정배열 후 12/26선 눌림 재상승을 잡는 별도 전략입니다. 과거 소급 백테스트(quant-research 설계문서 §9.7)에서는 "
-            "기간별 안정성이 없어 미채택됐지만, 실제 전진 데이터로 다시 검증하려고 운영 신호와 분리해서만 추적합니다. "
-            "**가상 매수이며 위 매도 알림·누적 통계에는 포함되지 않습니다.**",
-            "",
-        ])
-        lines.extend(_render_signal_rows(pullback_list, eval_by_sigid, new_codes, "현재 추적 중인 눌림목 실험 신호가 없습니다"))
-        lines.extend([
-            f"- **완료된 평가 표본 수**: `{pb_tot}건`",
-            f"- **TARGET_FIRST (익절 선접촉)**: `{pullback_stats['target_first']}건`",
-            f"- **STOP_FIRST (손절 선접촉)**: `{pullback_stats['stop_first']}건`",
-            f"- **TIMEOUT (만기 종료)**: `{pullback_stats['timeout']}건`",
-            f"- **익절 성공률 (Win Rate)**: {pb_win_str}",
-        ])
 
     if not embed:
         lines.extend([
