@@ -30,8 +30,9 @@
    - 이전 에이전트가 작성한 코드 및 결정 사항을 임의로 전면 재작성하지 않는다.
    - 작업 인수인계 및 맥락은 `docs/tasks/<id>.md`에 성실하게 기록한다.
    - 판단이 필요한 사항은 `needs_decision` 상태와 `--note "사유"`를 남긴다.
-6. **작업 완료 시 음성 안내 (Voice Notification)**:
-   - 사용자의 요청에 따라 작업이 완료되면 반드시 `pwsh tools/notify_voice.ps1 "제미나이 작업이 완료 되었습니다."`를 실행하거나, `node tools/backlog.mjs set <id> done`을 통해 한국어 음성(TTS: "제미나이 작업이 완료 되었습니다.")으로 사용자에게 작업 완료를 알린다.
+6. **작업 완료 시 모델별 음성 안내 (Voice Notification)**:
+   - **제미나이(Antigravity)**: 작업 완료 시 반드시 `pwsh tools/notify_voice.ps1 "제미나이 작업이 종료되었습니다."`를 실행하여 음성으로 알린다.
+   - **클로드(Claude Code)**: 작업 완료 시 `pwsh tools/notify_voice.ps1 "클로드 작업이 완료 되었습니다."` 또는 자체 설정에 따라 음성으로 알린다.
 
 ---
 

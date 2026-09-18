@@ -20,4 +20,4 @@
   - `quant-research`: `.agents/skills/quant-backtest-validator/`
   - `quant-collector`: `.agents/skills/collector-safety-check/`
   - `gym-app`: `.agents/skills/offline-first-reviewer/`
-- 작업 완료 알림: 작업 마무리 시 `pwsh tools/notify_voice.ps1 "제미나이 작업이 완료 되었습니다."`를 호출하여 음성(TTS) 안내를 제공합니다.
+- 작업 완료 알림: 제미나이(Antigravity)는 작업 마무리 시 반드시 `pwsh tools/notify_voice.ps1 "제미나이 작업이 종료되었습니다."`를 호출하여 음성(TTS) 안내를 제공합니다.
