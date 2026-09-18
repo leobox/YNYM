@@ -957,6 +957,45 @@
           "note": "SignalTracker.register_signal에 종목당 활성신호 dedup 추가, 단위테스트 4건 신규 작성(전체 25건 통과), 기존 pending_signals.json 중복 4쌍 정리"
         }
       ]
+    },
+    {
+      "id": "T-030",
+      "title": "매물대 돌파 + 거래대금 급증 + RSI 과매도반등 병렬 실험 전략 추가",
+      "summary": "60분봉 기준 최근 N봉 거래량 밀집구간(매물대) 상단을 당일 신규 돌파 + 직전 20봉 대비 거래량 급증 + RSI(14)가 과매도권에서 Signal(6)선을 상향돌파하는 3조건 동시충족 종목을 독립 strategy_version(resistance_breakout_rsi_v1)으로 병렬 전진추적. volume_zscore_accel_v1은 유지, 대체 아님",
+      "doc": "docs/tasks/T-030.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "resistance_breakout_rsi_v1 구현(매물대POC돌파+거래량2.5배+RSI과매도반등), 단위테스트 5건 신규(전체30건 통과), volume_zscore_accel_v1과 병행 추적",
+      "done_at": "2026-09-18",
+      "updated_at": "2026-09-18",
+      "done_when": "resistance_breakout_rsi_candidate 구현, run_collector 등록/대시보드 반영, 단위테스트 통과",
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-18",
+      "log": [
+        {
+          "at": "2026-09-18",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-18",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-18",
+          "status": "done",
+          "note": "resistance_breakout_rsi_v1 구현(매물대POC돌파+거래량2.5배+RSI과매도반등), 단위테스트 5건 신규(전체30건 통과), volume_zscore_accel_v1과 병행 추적"
+        }
+      ]
     }
   ]
 }
