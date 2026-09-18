@@ -879,6 +879,84 @@
           "note": "3봉 양봉 조건 추가, 두산밥캣 오탐 제거, README 갱신 및 테스트 21개 통과"
         }
       ]
+    },
+    {
+      "id": "T-028",
+      "title": "GitHub Actions 자동화 git push 충돌 수정 및 한국 공휴일 자동 스킵",
+      "summary": "collector.yml 마지막 push 단계가 pull/rebase 없이 push만 해서 사용자 수동 push와 경합 시 자동 커밋이 조용히 실패하던 문제 수정, 스케줄 실행에 한해 한국 공휴일 자동 스킵 추가",
+      "doc": "docs/tasks/T-028.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "collector.yml에 check-holiday job(한국 공휴일 자동 skip, 수동 실행은 예외) 추가 및 push 단계를 rebase+재시도(최대5회) 방식으로 수정. YAML 파싱 검증 완료",
+      "done_at": "2026-09-18",
+      "updated_at": "2026-09-18",
+      "done_when": "push 재시도 로직 적용 및 공휴일 체크 job 추가, 로컬에서 workflow 문법 검증 통과",
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-18",
+      "log": [
+        {
+          "at": "2026-09-18",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-18",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-18",
+          "status": "done",
+          "note": "collector.yml에 check-holiday job(한국 공휴일 자동 skip, 수동 실행은 예외) 추가 및 push 단계를 rebase+재시도(최대5회) 방식으로 수정. YAML 파싱 검증 완료"
+        }
+      ]
+    },
+    {
+      "id": "T-029",
+      "title": "pending_signals 종목당 활성 신호 중복 등록 방지 (dedup)",
+      "summary": "동일 전략에서 같은 종목이 연속봉마다 조건을 계속 만족하면 봉마다 새 signal_id로 중복 등록되던 버그 수정(기가비스/휴림로봇 사례). 동일 strategy_version+code로 미해소(is_fully_resolved=False) 신호가 이미 있으면 재등록 skip",
+      "doc": "docs/tasks/T-029.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "SignalTracker.register_signal에 종목당 활성신호 dedup 추가, 단위테스트 4건 신규 작성(전체 25건 통과), 기존 pending_signals.json 중복 4쌍 정리",
+      "done_at": "2026-09-18",
+      "updated_at": "2026-09-18",
+      "done_when": "SignalTracker.register_signal에 활성 신호 존재 시 skip 로직 추가, 단위 테스트 통과",
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-18",
+      "log": [
+        {
+          "at": "2026-09-18",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-18",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-18",
+          "status": "done",
+          "note": "SignalTracker.register_signal에 종목당 활성신호 dedup 추가, 단위테스트 4건 신규 작성(전체 25건 통과), 기존 pending_signals.json 중복 4쌍 정리"
+        }
+      ]
     }
   ]
 }

@@ -71,10 +71,16 @@ class SignalTracker:
         features: Dict[str, Any],
         entry_reference_price: float,
     ) -> Optional[str]:
-        """신규 신호 등록 (중복 방지 멱등성 보장)"""
+        """신규 신호 등록 (중복 방지 멱등성 보장, 종목당 활성 신호 1건 제한)"""
         sig_id = f"{strategy_version}_{code}_{bar_time_kst.replace(' ', '_').replace(':', '')}"
         if sig_id in self.pending_signals:
             return None  # 이미 등록되어 추적 중
+
+        # 같은 전략에서 같은 종목이 아직 미해소 상태로 추적 중이면 재등록하지 않는다.
+        # (연속봉마다 조건을 계속 만족하는 종목이 봉마다 별도 신호로 중복 등록되는 것을 방지)
+        for sig in self.pending_signals.values():
+            if sig["strategy_version"] == strategy_version and sig["code"] == code and not sig["is_fully_resolved"]:
+                return None
 
         now_dt = datetime.now(KST)
 

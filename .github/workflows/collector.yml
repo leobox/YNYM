@@ -11,7 +11,38 @@ permissions:
   contents: write
 
 jobs:
+  check-holiday:
+    runs-on: ubuntu-latest
+    outputs:
+      should_run: ${{ steps.check.outputs.should_run }}
+    steps:
+      - name: 한국 공휴일 확인 (자동 스케줄 실행에만 적용, 수동 실행은 항상 진행)
+        id: check
+        run: |
+          if [ "${{ github.event_name }}" != "schedule" ]; then
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          pip install -q holidays
+          python - <<'EOF'
+          import datetime
+          import os
+          import holidays
+
+          kr_holidays = holidays.KR()
+          today = (datetime.datetime.utcnow() + datetime.timedelta(hours=9)).date()
+          is_holiday = today in kr_holidays
+          should_run = "false" if is_holiday else "true"
+          reason = kr_holidays.get(today, "") if is_holiday else ""
+          print(f"오늘({today} KST) 공휴일 여부: {is_holiday} {reason} -> should_run={should_run}")
+
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"should_run={should_run}\n")
+          EOF
+
   run-collector:
+    needs: check-holiday
+    if: needs.check-holiday.outputs.should_run == 'true'
     runs-on: ubuntu-latest
 
     steps:
@@ -49,5 +80,17 @@ jobs:
             echo "새로 기록된 시세 데이터 변경사항이 없습니다."
           else
             git commit -m "chore(collector): automated market data record [skip ci]"
-            git push
+            # 사용자가 같은 시간대에 수동으로 push하면 origin/main이 앞서갈 수 있으므로
+            # rebase 후 재시도한다 (기존에는 단순 push라 충돌 시 이번 회차가 조용히 실패했음).
+            for attempt in 1 2 3 4 5; do
+              if git pull --rebase origin main && git push; then
+                break
+              fi
+              if [ "$attempt" -eq 5 ]; then
+                echo "5회 재시도 후에도 push 실패"
+                exit 1
+              fi
+              echo "push 충돌 감지, ${attempt}회차 재시도 대기 중..."
+              sleep $((attempt * 5))
+            done
           fi
