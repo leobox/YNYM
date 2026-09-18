@@ -288,12 +288,12 @@ def volume_zscore_accel_candidate(df: pd.DataFrame) -> Optional[Dict[str, Any]]:
     [2026-09-18 보강] 두산밥캣 사례에서 발견한 결함을 수정했다: 당일 거래대금
     z-score는 "이례적으로 컸다"만 볼 뿐 그 거래량이 상승봉에 실렸는지 하락봉에
     실렸는지 구분하지 않아서, 아침에 갭하락하며 던진 물량(하락봉 거래량)과
-    이후의 약한 데드캣 바운스(3봉 연속 상승이지만 거래량은 오히려 감소)가
-    섞여도 통과됐다. 이제는 ①당일 종가가 전일 종가보다 높아야 하고(당일 전체
-    방향이 순매수 우위), ②3봉 상승 구간 자체의 평균 거래량이 그 이전 구간의
-    평균 거래량보다 커야만(가속 구간이 스스로 거래량을 동반) 통과한다.
+    이후의 약한 데드캣 바운스(음봉 섞인 반등, 거래량 감소)가 섞여도 통과됐다.
+    이제는 ①당일 종가가 전일 종가보다 높아야 하고(당일 전체 방향이 순매수 우위),
+    ②3봉 상승 구간 자체의 평균 거래량이 그 이전 구간의 평균 거래량보다 커야 하며(가속 구간이 스스로 거래량을 동반),
+    ③최근 3개 완료봉이 각각 모두 양봉(Close > Open) 및 연속 종가 상승이어야만 통과한다.
     """
-    c, v = df.Close, df.Volume
+    o, c, v = df.Open, df.Close, df.Volume
     dates = df.index.date
     daily_close = pd.Series(c.values, index=dates).groupby(level=0).last()
     daily_val = pd.Series((c * v).values, index=dates).groupby(level=0).sum()
@@ -311,8 +311,8 @@ def volume_zscore_accel_candidate(df: pd.DataFrame) -> Optional[Dict[str, Any]]:
     if today_val < VOLUME_ZSCORE_MIN_VALUE_FLOOR or value_z < VOLUME_ZSCORE_MIN:
         return None
 
-    # 최근 3개 완료봉 연속 종가 상승 (단일봉 반짝 상승 배제)
-    if not (c.iloc[-3] < c.iloc[-2] < c.iloc[-1]):
+    # 최근 3개 완료봉이 모두 양봉(Close > Open)이고 연속 종가 상승이어야 함 (음봉 반등 및 단일봉 반짝 상승 배제)
+    if not ((c.iloc[-3:] > o.iloc[-3:]).all() and (c.iloc[-3] < c.iloc[-2] < c.iloc[-1])):
         return None
 
     # 당일 전체 방향이 순매수 우위여야 한다 (전일 대비 하락 중인 데드캣 바운스 배제)
@@ -875,10 +875,11 @@ def run_collector():
             "strategy_version": VOLUME_ZSCORE_STRATEGY_VERSION,
             "heading": "🧪 [실험] 거래대금 이상탐지 + 3봉 연속 가속 (검증 전 · 독자 설계)",
             "description": (
-                f"> 최근 3개 완료봉 연속 종가 상승(그 구간 자체 거래량이 직전 20봉 평균보다 커야 함) + 당일 종가가 전일 종가보다 높음(당일 "
-                f"전체 순매수 우위) + 당일 거래대금이 그 종목 자신의 최근 {VOLUME_ZSCORE_LOOKBACK_DAYS}거래일 평균 대비 z-score {VOLUME_ZSCORE_MIN:.1f} "
+                f"> 최근 3개 완료봉이 모두 양봉(Close > Open) 및 연속 종가 상승(그 구간 자체 거래량이 직전 20봉 평균보다 커야 함) + "
+                f"당일 종가가 전일 종가보다 높음(당일 전체 순매수 우위) + "
+                f"당일 거래대금이 그 종목 자신의 최근 {VOLUME_ZSCORE_LOOKBACK_DAYS}거래일 평균 대비 z-score {VOLUME_ZSCORE_MIN:.1f} "
                 f"이상인 이상치 + 일봉 SMA20 대비 +{VOLUME_ZSCORE_MAX_EXTENSION_PCT:.0f}% 이내(추격 방지)를 모두 만족하는 종목만 잡습니다. "
-                "두산밥캣 사례(갭하락 거래량과 이후 약한 데드캣 바운스가 섞여 오탐)에서 드러난 결함을 보강했습니다. "
+                "두산밥캣 사례(갭하락 거래량과 음봉 섞인 약한 데드캣 바운스 오탐)에서 드러난 결함을 보강했습니다. "
                 "**가상 매수이며 아래 매도 알림·누적 통계에는 포함되지 않습니다.**"
             ),
             "empty_message": "현재 추적 중인 실험 신호가 없습니다",

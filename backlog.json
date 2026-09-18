@@ -840,6 +840,45 @@
           "note": "당일 순매수 우위 + 상승구간 거래량 확인 조건 2개 추가, 두산밥캣 재현 검증 및 합성 양성케이스 통과 확인. docs/tasks/T-026.md 참고"
         }
       ]
+    },
+    {
+      "id": "T-027",
+      "title": "거래대금 z-score 전략 3봉 연속 양봉 조건 추가 및 오탐 신호 정리",
+      "summary": "volume_zscore_accel_candidate에 3봉 연속 양봉(Close > Open) 확인 조건 추가, pending_signals의 두산밥캣 오탐 제거 및 리드미 최신화",
+      "doc": "docs/tasks/T-027.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "3봉 양봉 조건 추가, 두산밥캣 오탐 제거, README 갱신 및 테스트 21개 통과",
+      "done_at": "2026-09-18",
+      "updated_at": "2026-09-18",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-09-18",
+      "log": [
+        {
+          "at": "2026-09-18",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-18",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-18",
+          "status": "done",
+          "note": "3봉 양봉 조건 추가, 두산밥캣 오탐 제거, README 갱신 및 테스트 21개 통과"
+        }
+      ]
     }
   ]
 }
