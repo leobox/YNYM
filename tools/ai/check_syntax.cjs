@@ -10,7 +10,8 @@ const ROOT = path.resolve(__dirname, '..', '..');
 const EXT = new Set(['.js', '.cjs', '.mjs']);
 const EXCLUDE_DIRS = new Set([
   'node_modules', '.git', '__pycache__', 'data',
-  'android-sdk', 'test-output', 'build'
+  'android-sdk', 'test-output', 'build',
+  '.venv', 'venv', 'site-packages'
 ]);
 const PER_FILE_TIMEOUT_MS = 10000;
 
