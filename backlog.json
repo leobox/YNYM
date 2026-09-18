@@ -406,6 +406,45 @@
           "note": "collector.yml cron을 장중 09:30~16:30 30분 주기('30 0 * * 1-5', '0,30 1-7 * * 1-5')로 최적화하고, collector.py 안내문구 현행화 및 로컬 1회 수집으로 20260918 데이터 정상 축적 확인 완료"
         }
       ]
+    },
+    {
+      "id": "T-016",
+      "title": "작업 완료 시 음성 안내(TTS) 자동 알림 체계 구축",
+      "summary": "",
+      "doc": "docs/tasks/T-016.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "infra",
+      "phase": "0. 공통 인프라 & 대시보드",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "tools/notify_voice.ps1 생성 및 backlog.mjs done 상태 전이 시 자동 음성 안내 연동, AGENTS.md 및 GEMINI.md에 음성 안내 원칙 등재 완료",
+      "done_at": "2026-09-18",
+      "updated_at": "2026-09-18",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-09-18",
+      "log": [
+        {
+          "at": "2026-09-18",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-18",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-18",
+          "status": "done",
+          "note": "tools/notify_voice.ps1 생성 및 backlog.mjs done 상태 전이 시 자동 음성 안내 연동, AGENTS.md 및 GEMINI.md에 음성 안내 원칙 등재 완료"
+        }
+      ]
     }
   ]
 }

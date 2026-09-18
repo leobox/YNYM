@@ -13,6 +13,7 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync, renameSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { spawn } from "node:child_process";
 
 const FILE = process.env.BACKLOG_FILE
   ? resolve(process.env.BACKLOG_FILE)
@@ -423,6 +424,23 @@ function cmdSet(data, args) {
   save(data);
   ensureDoc(t);
   console.log(c("green", `✓ [${t.id}] 상태 변경: ${SHORT[oldStatus]} → ${SHORT[newStatus]}`));
+
+  if (newStatus === "done" && process.platform === "win32" && !process.env.CI) {
+    try {
+      const psScript = join(ROOT, "tools", "notify_voice.ps1");
+      if (existsSync(psScript)) {
+        const msg = `태스크 ${t.id}, ${t.title || ""} 완료되었습니다.`;
+        const child = spawn("pwsh", ["-NoProfile", "-File", psScript, msg], {
+          detached: true,
+          stdio: "ignore",
+          windowsHide: true,
+        });
+        child.unref();
+      }
+    } catch {
+      // 음성 안내 실패 시 백로그 로직에 영향 없음
+    }
+  }
 }
 
 function cmdAdd(data, args) {

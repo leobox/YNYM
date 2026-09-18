@@ -20,3 +20,4 @@
   - `quant-research`: `.agents/skills/quant-backtest-validator/`
   - `quant-collector`: `.agents/skills/collector-safety-check/`
   - `gym-app`: `.agents/skills/offline-first-reviewer/`
+- 작업 완료 알림: 작업 마무리 시 `pwsh tools/notify_voice.ps1 "<메시지>"`를 호출하여 음성(TTS) 안내를 제공합니다.
