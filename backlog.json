@@ -801,6 +801,45 @@
           "note": "get_universe()를 KOSPI200+KOSDAQ150 시총 근사(350종목)로 교체, 관련 문서 동기화, 검증 결과 docs/tasks/T-025.md 참고"
         }
       ]
+    },
+    {
+      "id": "T-026",
+      "title": "거래대금 z-score 전략에 방향성 확인 조건 보강",
+      "summary": "두산밥캣 오탐 사례(갭하락 거래량+데드캣 바운스가 3봉연속상승/z-score 조건을 통과) 발견, 당일 전체 순매수 우위 확인 + 3봉 상승구간 자체 거래량이 직전 구간보다 커야 하는 조건 2개 추가",
+      "doc": "docs/tasks/T-026.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": "quant-collector/collector.py",
+      "refs": [],
+      "note": "당일 순매수 우위 + 상승구간 거래량 확인 조건 2개 추가, 두산밥캣 재현 검증 및 합성 양성케이스 통과 확인. docs/tasks/T-026.md 참고",
+      "done_at": "2026-09-18",
+      "updated_at": "2026-09-18",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-18",
+      "log": [
+        {
+          "at": "2026-09-18",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-18",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-18",
+          "status": "done",
+          "note": "당일 순매수 우위 + 상승구간 거래량 확인 조건 2개 추가, 두산밥캣 재현 검증 및 합성 양성케이스 통과 확인. docs/tasks/T-026.md 참고"
+        }
+      ]
     }
   ]
 }
