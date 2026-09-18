@@ -33,10 +33,12 @@
       "sma12": 49841.666666666664,
       "sma26": 49930.769230769234
     },
-    "trading_days_observed": 0,
-    "observed_dates": [],
-    "highest_seen": 53200.0,
-    "lowest_seen": 53200.0,
+    "trading_days_observed": 1,
+    "observed_dates": [
+      "2026-09-17"
+    ],
+    "highest_seen": 53700.0,
+    "lowest_seen": 52800.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "PENDING",
@@ -171,10 +173,12 @@
       "sma12": 69666.66666666667,
       "sma26": 68876.92307692308
     },
-    "trading_days_observed": 0,
-    "observed_dates": [],
-    "highest_seen": 73300.0,
-    "lowest_seen": 73300.0,
+    "trading_days_observed": 1,
+    "observed_dates": [
+      "2026-09-17"
+    ],
+    "highest_seen": 73500.0,
+    "lowest_seen": 72200.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "PENDING",
