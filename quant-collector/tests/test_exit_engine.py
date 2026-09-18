@@ -74,6 +74,14 @@ class TestBreakoutCollapse:
         assert result["decision"] == ExitSignal.BREAKOUT_COLLAPSE
         assert result["action_type"] == "CUT_LOSS"
 
+    def test_ambiguous_when_breach_is_marginal(self):
+        position = make_position(entry=10000, breakout_level=9800, stop_5=8000, target_10=13000)
+        bars = [make_bar("2026-09-17 11:00", open=9850, high=9900, low=9740, close=9760)]
+        result = evaluate_position_exit(position, bars, 9800.0, NOW)
+        assert result["decision"] == ExitSignal.BREAKOUT_AMBIGUOUS
+        assert result["action_type"] == "KEEP"
+        assert result["urgency"] == "MEDIUM"
+
 
 class TestVolumeBear:
     def test_triggers_on_sharp_bearish_bar_while_in_loss(self):

@@ -473,6 +473,8 @@ def render_markdown_dashboard(
             status_icon = "🟢 HOLD"
             if e["decision"] == ExitSignal.CAUTION:
                 status_icon = "🟡 CAUTION"
+            elif e["decision"] == ExitSignal.BREAKOUT_AMBIGUOUS:
+                status_icon = "🟠 RECHECK (다음 봉 확인)"
             elif e["action_type"] == "TAKE_PROFIT":
                 status_icon = "🔴 SELL (익절)"
             elif e["action_type"] == "CUT_LOSS":

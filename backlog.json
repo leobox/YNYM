@@ -328,6 +328,45 @@
           "note": "collector.yml cron을 '0 23,0-8 * * 1-5'에서 '0,30 23,0-8 * * 1-5'로 변경. 60분봉/패턴 로직은 그대로 두고 실행 주기만 30분으로 단축하여 청산 신호 감지 지연을 줄임. 월 예상 실행 횟수 약 217→433회, GH Actions 비공개 저장소 월 2000분 한도 대비 여유 확인."
         }
       ]
+    },
+    {
+      "id": "T-014",
+      "title": "돌파선 애매한 이탈 판정 완화 (BREAKOUT_AMBIGUOUS)",
+      "summary": "돌파선 이탈 폭이 -0.5% 이내로 작을 때 확정 BREAKOUT_COLLAPSE(손절) 대신 BREAKOUT_AMBIGUOUS(다음 봉 재확인)로 분류해 공포성 확정 손절 문구를 완화",
+      "doc": "docs/tasks/T-014.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "exit_engine.py에 BREAKOUT_AMBIGUOUS_BAND_PCT(-0.5%) 기준 신설. 이탈폭이 -0.5% 이내면 BREAKOUT_AMBIGUOUS(KEEP/MEDIUM, '다음 봉 재확인 필요')로, 그 이상이면 기존 BREAKOUT_COLLAPSE(CUT_LOSS/HIGH)로 분기. collector.py README 렌더링에 🟠 RECHECK 아이콘 추가, action_type이 KEEP이라 상단 긴급 매도 배너에는 안 뜸. tests/test_exit_engine.py에 애매 케이스 테스트 추가, 전체 16개 테스트 통과.",
+      "done_at": "2026-09-18",
+      "updated_at": "2026-09-18",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-18",
+      "log": [
+        {
+          "at": "2026-09-18",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-18",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-18",
+          "status": "done",
+          "note": "exit_engine.py에 BREAKOUT_AMBIGUOUS_BAND_PCT(-0.5%) 기준 신설. 이탈폭이 -0.5% 이내면 BREAKOUT_AMBIGUOUS(KEEP/MEDIUM, '다음 봉 재확인 필요')로, 그 이상이면 기존 BREAKOUT_COLLAPSE(CUT_LOSS/HIGH)로 분기. collector.py README 렌더링에 🟠 RECHECK 아이콘 추가, action_type이 KEEP이라 상단 긴급 매도 배너에는 안 뜸. tests/test_exit_engine.py에 애매 케이스 테스트 추가, 전체 16개 테스트 통과."
+        }
+      ]
     }
   ]
 }

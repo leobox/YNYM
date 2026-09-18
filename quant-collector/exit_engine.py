@@ -8,11 +8,15 @@ Exit Signal Engine (매도·청산 판정기)
 [매도 판정 5대 조건]
 1. TARGET_HIT (목표 달성 익절): 목표가(+10% 또는 설정치) 터치 시 전량 익절
 2. TRAILING_PROFIT (수익 보존 익절): +5% 이상 상승 후 고점 대비 3% 이상 밀리거나 본전 위협 시 이익 보존
-3. BREAKOUT_COLLAPSE (기준선 이탈 조기 손절): 매수 근거였던 돌파선(breakout_level) 종가 이탈 시 -1~2% 내 조기 컷
+3. BREAKOUT_COLLAPSE (기준선 이탈 조기 손절): 매수 근거였던 돌파선(breakout_level) 종가 이탈 폭이 뚜렷할 때(-0.5% 초과) 조기 컷
+   - 이탈 폭이 -0.5% 이내로 애매하면 BREAKOUT_AMBIGUOUS로 분류해 확정 손절 대신 "다음 봉 재확인"으로 안내(공포성 확정 문구 방지)
 4. VOLUME_BEAR_REVERSAL (대량거래 음봉 탈출): 동시간 1.5배 이상 대량 거래량 실린 음봉 마감 시 세력 이탈 탈출
 5. STAGNATION_TIMEOUT (정체 탈출): 진입 후 2거래일(12봉) 경과 후에도 수익률 미미(+1% 미만) 시 기회비용 청산
 6. HARD_STOP (절대 손절): -5% 절대 손절가 이탈 시 즉시 시장가 청산
 """
+
+# 돌파선 이탈 폭이 이 값(%) 이내면 "확정 붕괴"가 아니라 "애매함"으로 분류한다.
+BREAKOUT_AMBIGUOUS_BAND_PCT = -0.5
 
 from typing import Dict, Any, List, Optional, Tuple
 import pandas as pd
@@ -25,6 +29,7 @@ class ExitSignal:
     TARGET_HIT = "TARGET_HIT"  # 목표가 달성 익절 (+10%)
     TRAILING_PROFIT = "TRAILING_PROFIT"  # 고점 대비 되돌림 이익 보존 (+5% 이상 경험 후)
     BREAKOUT_COLLAPSE = "BREAKOUT_COLLAPSE"  # 돌파선 붕괴 조기 탈출 (최소 손실)
+    BREAKOUT_AMBIGUOUS = "BREAKOUT_AMBIGUOUS"  # 돌파선 근접 이탈 (확정 아님, 다음 봉 재확인)
     VOLUME_BEAR = "VOLUME_BEAR"  # 대량 거래 음봉 탈출
     STAGNATION = "STAGNATION"  # 2일 정체 기회비용 청산
     HARD_STOP = "HARD_STOP"  # -5% 절대 손절
@@ -102,12 +107,20 @@ def evaluate_position_exit(
 
     # -------------------------------------------------------------
     # 4. 돌파선 붕괴 조기 탈출 (매수 근거 소멸, -1~2% 내 조기 컷)
+    #    단, 이탈 폭이 작아 애매하면(BREAKOUT_AMBIGUOUS_BAND_PCT 이내) 확정 손절 대신 재확인 대기
     # -------------------------------------------------------------
     elif last_bar and last_bar["close"] < breakout_level:
-        decision = ExitSignal.BREAKOUT_COLLAPSE
-        action_type = "CUT_LOSS"
-        urgency = "HIGH"
-        reason = f"돌파 기준선({breakout_level:,.0f}원) 종가 하향 이탈! 가짜 돌파로 판단하여 조기 손절({pnl_pct:+.2f}%)"
+        breach_pct = round((last_bar["close"] / breakout_level - 1) * 100.0, 2)
+        if breach_pct >= BREAKOUT_AMBIGUOUS_BAND_PCT:
+            decision = ExitSignal.BREAKOUT_AMBIGUOUS
+            action_type = "KEEP"
+            urgency = "MEDIUM"
+            reason = f"돌파 기준선({breakout_level:,.0f}원) 근접 이탈({breach_pct:+.2f}%). 확정 붕괴로 보기엔 애매해 다음 봉 재확인 필요"
+        else:
+            decision = ExitSignal.BREAKOUT_COLLAPSE
+            action_type = "CUT_LOSS"
+            urgency = "HIGH"
+            reason = f"돌파 기준선({breakout_level:,.0f}원) 종가 하향 이탈({breach_pct:+.2f}%)! 가짜 돌파로 판단하여 조기 손절({pnl_pct:+.2f}%)"
         suggested_price = current_price
 
     # -------------------------------------------------------------
