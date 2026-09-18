@@ -45,6 +45,12 @@ DASHBOARD_MARK_END = "<!-- QUANT_DASHBOARD:END -->"
 STRATEGY_VERSION = "algorithm260917_v1"
 # 눌림목 재상승 병렬 실험(연구용, 미채택 전략) — 운영 신호와 분리 추적한다.
 PULLBACK_STRATEGY_VERSION = "trend_pullback_v1"
+# 모멘텀·유동성 복합 병렬 실험(신규, 사용자 정의 조건) — 재무 팩터는 데이터 미수집으로 제외.
+MOMENTUM_STRATEGY_VERSION = "momentum_liquidity_v1"
+MOMENTUM_CHANGE_MIN_PCT = 5.0
+MOMENTUM_CHANGE_MAX_PCT = 10.0
+MOMENTUM_MIN_VOLUME = 1_000_000
+MOMENTUM_MIN_VALUE = 1.0e10  # 100억원
 
 SCAN_LIMIT = 150
 TOP_N = 5
@@ -289,6 +295,45 @@ def trend_pullback(df: pd.DataFrame) -> pd.DataFrame:
     )
 
 
+def momentum_liquidity_candidate(df: pd.DataFrame) -> Optional[Dict[str, Any]]:
+    """모멘텀·유동성 복합 병렬 실험 신호 (연구용, 사용자 정의 조건).
+
+    등락률 5~10%, 당일 거래량 100만주 이상, 당일 거래대금 100억원 이상,
+    2거래일 연속 상승을 모두 만족하는 종목을 찾는다. 재무제표 기반 팩터
+    (PER/PBR/ROE 등)는 이 파이프라인이 가격·거래량 60분봉만 수집하므로
+    포함하지 않는다. 운영 신호·눌림목 실험과 분리된 별도 strategy_version으로만
+    전진 추적한다.
+    """
+    c, v = df.Close, df.Volume
+    dates = df.index.date
+    daily_close = pd.Series(c.values, index=dates).groupby(level=0).last()
+    daily_vol = pd.Series(v.values, index=dates).groupby(level=0).sum()
+    daily_val = pd.Series((c * v).values, index=dates).groupby(level=0).sum()
+
+    if len(daily_close) < 3:
+        return None
+
+    today, yesterday, day_before = daily_close.iloc[-1], daily_close.iloc[-2], daily_close.iloc[-3]
+    if not (yesterday > day_before and today > yesterday):
+        return None
+
+    day_change_pct = (today / yesterday - 1) * 100.0
+    today_vol = float(daily_vol.iloc[-1])
+    today_val = float(daily_val.iloc[-1])
+
+    if not (MOMENTUM_CHANGE_MIN_PCT <= day_change_pct <= MOMENTUM_CHANGE_MAX_PCT):
+        return None
+    if today_vol < MOMENTUM_MIN_VOLUME or today_val < MOMENTUM_MIN_VALUE:
+        return None
+
+    return {
+        "day_change_pct": round(float(day_change_pct), 2),
+        "today_volume": today_vol,
+        "today_value_e8": round(today_val / 1e8, 1),
+        "support_level": float(yesterday),
+    }
+
+
 def valid_ohlcv(df: pd.DataFrame) -> bool:
     if df.empty or df.index.has_duplicates or not df.index.is_monotonic_increasing:
         return False
@@ -376,6 +421,9 @@ def score_stock(rec: Dict[str, Any], now: pd.Timestamp) -> Tuple[Optional[Dict[s
             "sma12": float(fast.iloc[-1]),
             "sma26": float(medium.iloc[-1]),
         }
+
+        # 모멘텀·유동성 복합 병렬 실험 신호 (운영 판단에는 영향 없음, 별도 등록용 스냅샷만 계산)
+        row["_momentum"] = momentum_liquidity_candidate(df)
 
         return row, df, None
     except Exception as e:
@@ -526,7 +574,7 @@ def render_markdown_dashboard(
     pending_list: List[Dict[str, Any]],
     now_str: str,
     scan_count: int,
-    pullback_stats: Optional[Dict[str, Any]] = None,
+    experiments: Optional[List[Dict[str, Any]]] = None,
     embed: bool = False,
 ) -> str:
     """GitHub 모바일 앱 및 웹 첫 화면(README.md)에 표시될 종합 대시보드 리포트
@@ -534,8 +582,8 @@ def render_markdown_dashboard(
     보유/관찰/전진추적이 모두 같은 tracker.pending_signals를 참조하는 동일 종목이라
     표 3개에 중복 표시되던 것을 종목당 1행짜리 단일 표로 통합했다.
 
-    운영 신호(STRATEGY_VERSION)와 눌림목 재상승 병렬 실험(PULLBACK_STRATEGY_VERSION)은
-    같은 코드가 두 전략에 동시에 걸릴 수 있어 signal_id 기준으로 분리 집계한다.
+    운영 신호(STRATEGY_VERSION)와 병렬 실험 전략들은 같은 코드가 동시에 걸릴 수
+    있어 signal_id 기준으로 분리 집계한다.
 
     embed=True면 루트 README.md의 QUANT_DASHBOARD 마커 구간에 삽입할 용도로,
     문서 제목(H1)과 중복 설명 문단을 생략하고 하위 헤딩을 한 단계 낮추며,
@@ -548,7 +596,6 @@ def render_markdown_dashboard(
     ]
 
     main_list = [s for s in pending_list if s.get("strategy_version") == STRATEGY_VERSION]
-    pullback_list = [s for s in pending_list if s.get("strategy_version") == PULLBACK_STRATEGY_VERSION]
 
     # 이번 스캔에서 신규 등록된(조건 충족/관찰) 종목 코드 집합
     new_codes = set(top["코드"]) if "코드" in top.columns else set()
@@ -573,31 +620,32 @@ def render_markdown_dashboard(
             "",
         ])
 
-    # 눌림목 재상승 병렬 실험을 최상단에 노출한다 (운영 신호와는 표·통계 모두 분리 유지, embed 모드는 생략)
-    if not embed and pullback_stats is not None:
-        pb_tot = pullback_stats["total_resolved"]
-        pb_win = pullback_stats["win_rate"]
-        pb_win_str = f"**{pb_win}%**" if pb_win is not None else "데이터 축적 중"
+    # 병렬 실험 전략들을 최상단에 노출한다 (운영 신호와는 표·통계 모두 분리 유지, embed 모드는 생략)
+    if not embed and experiments:
+        for exp in experiments:
+            exp_list = [s for s in pending_list if s.get("strategy_version") == exp["strategy_version"]]
+            stats = exp["stats"]
+            tot = stats["total_resolved"]
+            win_r = stats["win_rate"]
+            win_str2 = f"**{win_r}%**" if win_r is not None else "데이터 축적 중"
 
-        lines.extend([
-            f"{H2} 🧪 [실험] 눌림목 재상승 병렬 추적 (검증 전 · 미채택 전략)",
-            "",
-            "> MA12>MA26>MA60 정배열 후 12/26선 눌림 재상승을 잡는 별도 전략입니다. 과거 소급 백테스트(quant-research 설계문서 §9.7)에서는 "
-            "기간별 안정성이 없어 미채택됐지만, 실제 전진 데이터로 다시 검증하려고 운영 신호와 분리해서만 추적합니다. "
-            "**가상 매수이며 아래 매도 알림·누적 통계에는 포함되지 않습니다.**",
-            "",
-        ])
-        lines.extend(_render_signal_rows(pullback_list, eval_by_sigid, new_codes, "현재 추적 중인 눌림목 실험 신호가 없습니다"))
-        lines.extend([
-            f"- **완료된 평가 표본 수**: `{pb_tot}건`",
-            f"- **TARGET_FIRST (익절 선접촉)**: `{pullback_stats['target_first']}건`",
-            f"- **STOP_FIRST (손절 선접촉)**: `{pullback_stats['stop_first']}건`",
-            f"- **TIMEOUT (만기 종료)**: `{pullback_stats['timeout']}건`",
-            f"- **익절 성공률 (Win Rate)**: {pb_win_str}",
-            "",
-            "---",
-            "",
-        ])
+            lines.extend([
+                f"{H2} {exp['heading']}",
+                "",
+                exp["description"],
+                "",
+            ])
+            lines.extend(_render_signal_rows(exp_list, eval_by_sigid, new_codes, exp["empty_message"]))
+            lines.extend([
+                f"- **완료된 평가 표본 수**: `{tot}건`",
+                f"- **TARGET_FIRST (익절 선접촉)**: `{stats['target_first']}건`",
+                f"- **STOP_FIRST (손절 선접촉)**: `{stats['stop_first']}건`",
+                f"- **TIMEOUT (만기 종료)**: `{stats['timeout']}건`",
+                f"- **익절 성공률 (Win Rate)**: {win_str2}",
+                "",
+                "---",
+                "",
+            ])
 
     # [최우선 알림] 긴급 매도/청산 신호는 짧게 요약만 상단에, 상세는 통합 표에서 확인
     if sell_alerts:
@@ -789,6 +837,32 @@ def run_collector():
             pullback_registered += 1
     print(f"-> [실험] 눌림목 재상승 신규 등록: {pullback_registered}건")
 
+    # 4D. 모멘텀·유동성 복합 병렬 실험 등록 (운영 신호와 분리된 strategy_version, 별도 전진 추적)
+    momentum_registered = 0
+    for r in rows:
+        mo = r.get("_momentum")
+        if not mo:
+            continue
+        sig_id = tracker.register_signal(
+            strategy_version=MOMENTUM_STRATEGY_VERSION,
+            code=r["코드"],
+            name=r["종목"],
+            market=r["시장"],
+            bar_time_kst=r["_bar_time_full"],
+            features={
+                "pattern_type": "momentum_liquidity",
+                "breakout_level": mo["support_level"],
+                "current_close": r["_current_close"],
+                "day_change_pct": mo["day_change_pct"],
+                "today_volume": mo["today_volume"],
+                "today_value_e8": mo["today_value_e8"],
+            },
+            entry_reference_price=float(r["_current_close"]),
+        )
+        if sig_id:
+            momentum_registered += 1
+    print(f"-> [실험] 모멘텀·유동성 복합 신규 등록: {momentum_registered}건")
+
     # 5. 기존 Pending 신호들의 미래봉 접촉 판정 및 라벨 확정
     newly_resolved = tracker.update_with_bars(collected_candles_by_code, now_dt)
     if newly_resolved:
@@ -802,7 +876,7 @@ def run_collector():
 
     pd.DataFrame(universe_stocks).to_csv(day_dir / f"{stamp_time}_universe.csv", index=False, encoding="utf-8-sig")
     # _features 등 객체 컬럼 정리 후 CSV 저장
-    df_scores = pd.DataFrame(rows).drop(columns=["_features", "_pullback"], errors="ignore")
+    df_scores = pd.DataFrame(rows).drop(columns=["_features", "_pullback", "_momentum"], errors="ignore")
     df_scores.to_csv(day_dir / f"{stamp_time}_scores.csv", index=False, encoding="utf-8-sig")
     top_clean = top_quoted.drop(columns=["_features"], errors="ignore")
     watch_clean = watch_quoted.drop(columns=["_features"], errors="ignore")
@@ -828,8 +902,34 @@ def run_collector():
 
     # 8. README.md 모바일 대시보드 갱신
     tracker_stats = tracker.get_summary_stats(strategy_version=STRATEGY_VERSION)
-    pullback_stats = tracker.get_summary_stats(strategy_version=PULLBACK_STRATEGY_VERSION)
     pending_list = list(tracker.pending_signals.values())
+
+    experiments = [
+        {
+            "strategy_version": PULLBACK_STRATEGY_VERSION,
+            "heading": "🧪 [실험] 눌림목 재상승 병렬 추적 (검증 전 · 미채택 전략)",
+            "description": (
+                "> MA12>MA26>MA60 정배열 후 12/26선 눌림 재상승을 잡는 전략입니다. 과거 소급 백테스트(quant-research 설계문서 §9.7)에서는 "
+                "기간별 안정성이 없어 미채택됐지만, 실제 전진 데이터로 다시 검증하려고 운영 신호와 분리해서만 추적합니다. "
+                "**가상 매수이며 아래 매도 알림·누적 통계에는 포함되지 않습니다.**"
+            ),
+            "empty_message": "현재 추적 중인 눌림목 실험 신호가 없습니다",
+            "stats": tracker.get_summary_stats(strategy_version=PULLBACK_STRATEGY_VERSION),
+        },
+        {
+            "strategy_version": MOMENTUM_STRATEGY_VERSION,
+            "heading": "🧪 [실험] 모멘텀·유동성 복합 병렬 추적 (검증 전 · 신규 실험)",
+            "description": (
+                f"> 등락률 {MOMENTUM_CHANGE_MIN_PCT:.0f}~{MOMENTUM_CHANGE_MAX_PCT:.0f}% · 당일 거래량 {MOMENTUM_MIN_VOLUME:,}주 이상 · "
+                f"당일 거래대금 {MOMENTUM_MIN_VALUE/1e8:.0f}억원 이상 · 2거래일 연속 상승을 모두 만족하는 종목만 잡는 순수 가격·거래량 기반 "
+                "복합 전략입니다. PER/PBR/ROE 같은 재무 팩터는 이 파이프라인이 수집하지 않아 포함하지 않았습니다. "
+                "**가상 매수이며 아래 매도 알림·누적 통계에는 포함되지 않습니다.**"
+            ),
+            "empty_message": "현재 추적 중인 모멘텀·유동성 실험 신호가 없습니다",
+            "stats": tracker.get_summary_stats(strategy_version=MOMENTUM_STRATEGY_VERSION),
+        },
+    ]
+
     md_dashboard = render_markdown_dashboard(
         top_clean,
         watch_clean,
@@ -838,7 +938,7 @@ def run_collector():
         pending_list,
         now_str,
         len(universe_stocks),
-        pullback_stats=pullback_stats,
+        experiments=experiments,
     )
 
     with open(README_PATH, "w", encoding="utf-8") as f:
@@ -854,7 +954,7 @@ def run_collector():
         pending_list,
         now_str,
         len(universe_stocks),
-        pullback_stats=pullback_stats,
+        experiments=experiments,
         embed=True,
     )
     update_root_readme(md_embed)
