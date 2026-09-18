@@ -2,7 +2,7 @@
   "$schema_version": "1.0",
   "meta": {
     "project": "Leobox Multi-root Workspace",
-    "updated": "2026-09-17",
+    "updated": "2026-09-18",
     "context_doc": "README.md",
     "doc_dir": "docs/tasks",
     "stack": "Multi-agent (Gemini + Claude + Codex) / Python(Quant) / GitHub Actions / Android",
@@ -287,6 +287,45 @@
           "at": "2026-09-17",
           "status": "done",
           "note": "backlog.mjs에 deps게이트/순환탐지/log/gate/owner 추가, check_syntax.cjs 신설해 Stop 단계(3-provider 공통)에 연결. Claude 전용 PreToolUse훅/.claude-rules/서브에이전트 변경은 검증 후 의도적으로 제외(docs/tasks/T-012.md 근거)."
+        }
+      ]
+    },
+    {
+      "id": "T-013",
+      "title": "수집기 실행 주기 30분 단축",
+      "summary": "청산 신호 감지 지연을 줄이기 위해 GH Actions cron을 시간당 1회에서 30분당 1회로 변경 (60분봉 로직은 유지)",
+      "doc": "docs/tasks/T-013.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "collector.yml cron을 '0 23,0-8 * * 1-5'에서 '0,30 23,0-8 * * 1-5'로 변경. 60분봉/패턴 로직은 그대로 두고 실행 주기만 30분으로 단축하여 청산 신호 감지 지연을 줄임. 월 예상 실행 횟수 약 217→433회, GH Actions 비공개 저장소 월 2000분 한도 대비 여유 확인.",
+      "done_at": "2026-09-18",
+      "updated_at": "2026-09-18",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-18",
+      "log": [
+        {
+          "at": "2026-09-18",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-18",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-18",
+          "status": "done",
+          "note": "collector.yml cron을 '0 23,0-8 * * 1-5'에서 '0,30 23,0-8 * * 1-5'로 변경. 60분봉/패턴 로직은 그대로 두고 실행 주기만 30분으로 단축하여 청산 신호 감지 지연을 줄임. 월 예상 실행 횟수 약 217→433회, GH Actions 비공개 저장소 월 2000분 한도 대비 여유 확인."
         }
       ]
     }

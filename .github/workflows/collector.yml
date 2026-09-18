@@ -2,8 +2,8 @@ name: Quant Data Collector
 
 on:
   schedule:
-    # 한국 장중 및 전후(KST 08:00 ~ 17:00, UTC 23:00 ~ 08:00) 매시간 정각 자동 실행
-    - cron: '0 23,0-8 * * 1-5'
+    # 한국 장중 및 전후(KST 08:00 ~ 17:30, UTC 23:00 ~ 08:00) 30분마다 자동 실행 (청산 신호 감지 지연 단축, 봉 단위는 60분봉 유지)
+    - cron: '0,30 23,0-8 * * 1-5'
   workflow_dispatch: # 스마트폰 웹 브라우저 또는 GitHub 웹에서 버튼 클릭으로 즉시 수동 실행
 
 permissions:
@@ -43,6 +43,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "새로 기록된 시세 데이터 변경사항이 없습니다."
           else
-            git commit -m "chore(collector): automated hourly market data record [skip ci]"
+            git commit -m "chore(collector): automated market data record [skip ci]"
             git push
           fi
