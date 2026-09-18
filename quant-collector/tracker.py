@@ -263,34 +263,6 @@ class SignalTracker:
         self._save_pending()
         return newly_resolved
 
-    def get_recent_signal_counts(self, days: int = 7) -> Dict[str, int]:
-        """최근 N일 이내 등록된 신호를 종목코드 기준으로 집계 (추적 중 + 확정 종결 합산)"""
-        now_dt = datetime.now(KST)
-        cutoff = now_dt - timedelta(days=days)
-        counts: Dict[str, int] = {}
-
-        def _bump(code: str, ts_str: str):
-            try:
-                ts = datetime.strptime(ts_str, "%Y-%m-%d %H:%M:%S").replace(tzinfo=KST)
-            except (ValueError, TypeError):
-                return
-            if ts >= cutoff:
-                counts[code] = counts.get(code, 0) + 1
-
-        for sig in self.pending_signals.values():
-            _bump(sig["code"], sig.get("registered_at_kst", ""))
-
-        if self.resolved_file.exists():
-            with open(self.resolved_file, "r", encoding="utf-8") as f:
-                for line in f:
-                    try:
-                        rec = json.loads(line)
-                    except Exception:
-                        continue
-                    _bump(rec.get("code", ""), rec.get("registered_at_kst", ""))
-
-        return counts
-
     def get_summary_stats(self) -> Dict[str, Any]:
         """현재까지 추적 중인 신호 및 완료된 신호의 통계 요약"""
         total_pending = len(self.pending_signals)

@@ -484,6 +484,45 @@
           "note": "스케줄 트리거를 한국 장중 09:37~16:37 매시 7분/37분으로 분산하고 sleep 30초 대기 단계로 7분30초/37분30초 타이밍 동기화 완료"
         }
       ]
+    },
+    {
+      "id": "T-018",
+      "title": "quant-collector README 대시보드 중복 제거 및 감지횟수 추가",
+      "summary": "보유/관찰/전진추적 3개 표가 동일 종목을 중복 표시하던 문제를 종목당 1행 단일 표로 통합, 최근7일 감지횟수 컬럼 추가",
+      "doc": "docs/tasks/T-018.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "collector.py render_markdown_dashboard 통합 표로 리팩터링, tracker.py에 get_recent_signal_counts(7일) 추가, 로컬 실제 스캔 실행으로 검증 후 커밋 98b8c82 푸시 완료",
+      "done_at": "2026-09-18",
+      "updated_at": "2026-09-18",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-18",
+      "log": [
+        {
+          "at": "2026-09-18",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-18",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-18",
+          "status": "done",
+          "note": "collector.py render_markdown_dashboard 통합 표로 리팩터링, tracker.py에 get_recent_signal_counts(7일) 추가, 로컬 실제 스캔 실행으로 검증 후 커밋 98b8c82 푸시 완료"
+        }
+      ]
     }
   ]
 }

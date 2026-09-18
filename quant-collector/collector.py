@@ -424,7 +424,6 @@ def render_markdown_dashboard(
     pending_list: List[Dict[str, Any]],
     now_str: str,
     scan_count: int,
-    detection_counts: Dict[str, int],
 ) -> str:
     """GitHub 모바일 앱 및 웹 첫 화면(README.md)에 표시될 종합 대시보드 리포트
 
@@ -434,16 +433,9 @@ def render_markdown_dashboard(
     eval_by_code = {e["code"]: e for e in exit_evaluations}
     sell_alerts = [e for e in exit_evaluations if e["action_type"] in ("TAKE_PROFIT", "CUT_LOSS")]
 
-    # 이번 스캔에서 신규 등록된 종목의 선정 사유(왜 후보가 됐는지) 매핑
-    new_context: Dict[str, str] = {}
-    for _, r in top.iterrows():
-        chg = r.get("당일등락률")
-        amt, mult = r.get("돌파봉대금_억"), r.get("돌파봉대금배수")
-        new_context[r["코드"]] = f"🆕 신규 조건 충족 · 거래대금 {amt:,.1f}억({mult:,.1f}배) · 당일 {chg:+.2f}%"
-    for _, r in watch.iterrows():
-        chg = r.get("당일등락률")
-        amt, mult = r.get("돌파봉대금_억"), r.get("동시간배수")
-        new_context[r["코드"]] = f"🆕 관찰 등록 · 거래대금 {amt:,.1f}억({mult:,.1f}배) · 당일 {chg:+.2f}% · 다음 봉 지지 확인 대기"
+    # 이번 스캔에서 신규 등록된(조건 충족/관찰) 종목 코드 집합
+    new_codes = set(top["코드"]) if "코드" in top.columns else set()
+    new_codes |= set(watch["코드"]) if "코드" in watch.columns else set()
 
     lines = [
         "# ⏱️ Quant Pattern Scanner & Position Exit Monitor",
@@ -464,7 +456,8 @@ def render_markdown_dashboard(
         lines.append("")
         for a in sell_alerts:
             tag = "🔴 익절" if a["action_type"] == "TAKE_PROFIT" else "🔴 손절"
-            lines.append(f"- **{tag} · {a['name']}** ({a['code']}) {a['current_price']:,.0f}원 (**{a['pnl_pct']:+.2f}%**)")
+            pnl_color = "🔴" if a["pnl_pct"] >= 0 else "🔵"
+            lines.append(f"- **{tag} · {a['name']}** ({a['code']}) {a['current_price']:,.0f}원 ({pnl_color}{a['pnl_pct']:+.2f}%)")
         lines.extend(["", "---", ""])
 
     # 1. 추적 중인 모든 신호(보유+관찰+신규)를 종목당 1행으로 통합한 마스터 표
@@ -483,7 +476,7 @@ def render_markdown_dashboard(
         for sig in pending_list:
             code = sig["code"]
             ev = eval_by_code.get(code)
-            is_new = sig.get("trading_days_observed", 0) == 0 and code in new_context
+            is_new = sig.get("trading_days_observed", 0) == 0 and code in new_codes
 
             if ev and ev["action_type"] in ("TAKE_PROFIT", "CUT_LOSS"):
                 group, badge = "SELL", "🔴 SELL"
@@ -496,28 +489,26 @@ def render_markdown_dashboard(
             else:
                 group, badge = "HOLD", "🟢 HOLD"
 
-            # 신규 등록과 동시에 급한 판정(매도/재확인/주의)이 뜨면 그 사유를 우선한다
-            reason = new_context[code] if group == "NEW" else (ev["reason"] if ev else "정보 없음")
             entry_p = sig["entry_reference_price"]
             cur_p = ev["current_price"] if ev else entry_p
             pnl = ev["pnl_pct"] if ev else 0.0
+            pnl_color = "🔴" if pnl >= 0 else "🔵"
             stop_5 = sig.get("stops", {}).get("stop_5", entry_p * 0.95)
             days = sig.get("trading_days_observed", 0)
-            cnt7 = detection_counts.get(code, 1)
 
             rows.append((priority[group], -pnl if group == "SELL" else 0.0, {
                 "badge": badge, "name": sig["name"], "code": code,
-                "cur_p": cur_p, "pnl": pnl, "stop_5": stop_5,
-                "days": days, "cnt7": cnt7, "reason": reason,
+                "cur_p": cur_p, "pnl": pnl, "pnl_color": pnl_color,
+                "stop_5": stop_5, "days": days,
             }))
 
         rows.sort(key=lambda x: (x[0], x[1]))
 
-        lines.append("| 상태 | 종목(코드) | 현재가 (수익률) | 손절가 | 경과 | 최근7일 감지 | 사유 |")
-        lines.append("|:---:|:---|:---:|:---:|:---:|:---:|:---|")
+        lines.append("| 상태 | 종목(코드) | 현재가(수익률) | 손절가 | 경과 |")
+        lines.append("|:---:|:---|:---:|:---:|:---:|")
         for _, _, d in rows:
             lines.append(
-                f"| {d['badge']} | **{d['name']}** ({d['code']}) | {d['cur_p']:,.0f}원 (**{d['pnl']:+.2f}%**) | {d['stop_5']:,.0f}원 | {d['days']}일차 | {d['cnt7']}회 | {d['reason']} |"
+                f"| {d['badge']} | **{d['name']}** ({d['code']}) | {d['cur_p']:,.0f} ({d['pnl_color']}{d['pnl']:+.2f}%) | {d['stop_5']:,.0f} | {d['days']}일차 |"
             )
         lines.append("")
 
@@ -679,7 +670,6 @@ def run_collector():
     # 8. README.md 모바일 대시보드 갱신
     tracker_stats = tracker.get_summary_stats()
     pending_list = list(tracker.pending_signals.values())
-    detection_counts = tracker.get_recent_signal_counts(days=7)
     md_dashboard = render_markdown_dashboard(
         top_clean,
         watch_clean,
@@ -688,7 +678,6 @@ def run_collector():
         pending_list,
         now_str,
         len(universe_stocks),
-        detection_counts,
     )
 
     with open(README_PATH, "w", encoding="utf-8") as f:
