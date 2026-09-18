@@ -562,6 +562,45 @@
           "note": "collector.py에 embed 모드 및 update_root_readme() 추가, 루트 README.md에 마커 삽입, workflow에 README.md add 반영, 로컬 실행으로 양쪽 README 정상 갱신 확인 후 커밋 7e8f8c3 푸시 완료"
         }
       ]
+    },
+    {
+      "id": "T-020",
+      "title": "돌파 거래대금 이상치(과열 진입) 경고 배지 추가",
+      "summary": "features.trigger_ratio가 평소 대비 15배 이상이면 마스터 표에 🔥 경고 배지 표시(진입 자체는 배제하지 않고 전진 검증으로 가설 확인 예정)",
+      "doc": "docs/tasks/T-020.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "OVERHEAT_TRIGGER_RATIO=15.0 상수 추가, 마스터 표 배지에 🔥 표시 구현, 로컬 실행으로 LS에코에너지(43배) 케이스 정상 표시 확인 후 커밋 e949ed2 푸시 완료",
+      "done_at": "2026-09-18",
+      "updated_at": "2026-09-18",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-18",
+      "log": [
+        {
+          "at": "2026-09-18",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-18",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-18",
+          "status": "done",
+          "note": "OVERHEAT_TRIGGER_RATIO=15.0 상수 추가, 마스터 표 배지에 🔥 표시 구현, 로컬 실행으로 LS에코에너지(43배) 케이스 정상 표시 확인 후 커밋 e949ed2 푸시 완료"
+        }
+      ]
     }
   ]
 }
