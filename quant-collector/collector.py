@@ -51,6 +51,9 @@ MCAP_MIN, MCAP_MAX = 100_000_000_000, 5_000_000_000_000
 MIN_PRICE = 2000
 VOLUME_WEIGHT = 0.2
 MAX_EXTENSION_ATR = None
+# 돌파봉 거래대금이 평소(typical) 대비 이 배수 이상이면 "과열 진입"으로 경고만 표시한다.
+# 평소 관측 범위가 2~9배인데 43배짜리 이상치가 나와 잡은 임계값 — 확정 표본이 쌓이면 재검토.
+OVERHEAT_TRIGGER_RATIO = 15.0
 
 
 def get_current_kst() -> datetime:
@@ -479,7 +482,8 @@ def render_markdown_dashboard(
     lines.extend([
         f"{H2} 📊 추적 중인 신호 현황 (가상 매수 100만원 가정)",
         "",
-        "> 조건 충족·관찰 등록된 모든 신호를 한 표로 모아 긴급도순(매도 > 재확인 > 주의 > 신규 > 보유)으로 정렬했습니다.",
+        "> 조건 충족·관찰 등록된 모든 신호를 한 표로 모아 긴급도순(매도 > 재확인 > 주의 > 신규 > 보유)으로 정렬했습니다. 🔥는 돌파 당시 거래대금이 평소 대비 "
+        f"{OVERHEAT_TRIGGER_RATIO:.0f}배 이상 폭증한 과열 진입이니 참고만 하세요(확정 표본 쌓이기 전이라 제외는 안 함).",
         "",
     ])
 
@@ -503,6 +507,10 @@ def render_markdown_dashboard(
                 group, badge = "NEW", "🆕 신규"
             else:
                 group, badge = "HOLD", "🟢 HOLD"
+
+            trigger_ratio = sig.get("features", {}).get("trigger_ratio")
+            if trigger_ratio is not None and trigger_ratio >= OVERHEAT_TRIGGER_RATIO:
+                badge = f"{badge} 🔥"
 
             entry_p = sig["entry_reference_price"]
             cur_p = ev["current_price"] if ev else entry_p
