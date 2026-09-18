@@ -1080,7 +1080,7 @@
       "title": "실험 전략 2종 과거 데이터 기반 기대값 검증 및 재설계",
       "summary": "60일치 60분봉을 워크포워드로 재현해 volume_zscore_accel_v1(83건)과 resistance_breakout_rsi_v1(77건)의 실제 목표/손절 매트릭스 16종 성과를 계산. z-score는 h5_t10_s3(+10%/-3%/5일)가 기존 기준(h5_t10_s5)보다 평균수익률이 나아(+0.45%) 헤드라인 기준을 변경. 매물대+RSI는 16개 조합 전부 평균수익률 마이너스로 나와 기존 설계로는 기대값이 없다는 결론 -> 재설계 또는 폐기 여부는 사용자 판단 필요",
       "doc": "docs/tasks/T-033.md",
-      "status": "needs_decision",
+      "status": "done",
       "priority": "P1",
       "category": "quant_research",
       "phase": "2. 퀀트 데이터 자동 수집",
@@ -1088,8 +1088,8 @@
       "deps": [],
       "where": null,
       "refs": [],
-      "note": "매물대+RSI(resistance_breakout_rsi_v1): 과거60일 워크포워드 16개 목표/손절 조합 전부 평균수익률 마이너스(최선 -0.30%). 재설계/폐기/더 큰 표본 재검증 중 선택 필요. z-score는 h5_t10_s3로 헤드라인 전환 완료(코드 반영됨)",
-      "done_at": null,
+      "note": "매물대+RSI(resistance_breakout_rsi_v1) 완전 폐기(코드/테스트/대시보드 제거), z-score 헤드라인 h5_t10_s5로 원복(다중비교 편향 인정). 제미나이 리뷰 교차검증: 단일봉 추격매수 구조 지적은 데이터로 확인, POC 하락잡주 편향 가설은 데이터로 반박(POC 위치 균등분포). 전체 테스트 33건 통과",
+      "done_at": "2026-09-18",
       "updated_at": "2026-09-18",
       "done_when": "tracker.get_summary_stats에 ref_key 파라미터화, z-score 실험 헤드라인 h5_t10_s3로 전환, 백테스트 방법론/결과 docs/tasks에 기록, 매물대+RSI 처리 방향 needs_decision으로 확정",
       "gate": null,
@@ -1111,6 +1111,11 @@
           "at": "2026-09-18",
           "status": "needs_decision",
           "note": "매물대+RSI(resistance_breakout_rsi_v1): 과거60일 워크포워드 16개 목표/손절 조합 전부 평균수익률 마이너스(최선 -0.30%). 재설계/폐기/더 큰 표본 재검증 중 선택 필요. z-score는 h5_t10_s3로 헤드라인 전환 완료(코드 반영됨)"
+        },
+        {
+          "at": "2026-09-18",
+          "status": "done",
+          "note": "매물대+RSI(resistance_breakout_rsi_v1) 완전 폐기(코드/테스트/대시보드 제거), z-score 헤드라인 h5_t10_s5로 원복(다중비교 편향 인정). 제미나이 리뷰 교차검증: 단일봉 추격매수 구조 지적은 데이터로 확인, POC 하락잡주 편향 가설은 데이터로 반박(POC 위치 균등분포). 전체 테스트 33건 통과"
         }
       ]
     }

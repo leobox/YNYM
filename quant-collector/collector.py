@@ -52,22 +52,17 @@ VOLUME_ZSCORE_MIN = 2.0
 VOLUME_ZSCORE_LOOKBACK_DAYS = 20
 VOLUME_ZSCORE_MIN_VALUE_FLOOR = 1.0e9  # 10억원 (z-score가 왜곡되는 초소형 거래대금 배제용 하한)
 VOLUME_ZSCORE_MAX_EXTENSION_PCT = 15.0  # 일봉 SMA20 대비 과열 상한(추격 매수 방지)
-# [T-033] 과거 60일 60분봉 워크포워드 재현(dedup 83건) 결과, 기본 기준 h5_t10_s5(평균수익률 +0.14%)보다
-# h5_t10_s3(+10%익절/-3%손절/5일, 평균수익률 +0.45%)가 나아서 이 전략만 헤드라인 판정 기준을 바꾼다.
-# 원본 목표/손절 매트릭스(evaluations)는 그대로 다 계산해 두므로 라벨 데이터 자체는 손실 없음.
-VOLUME_ZSCORE_REF_KEY = "h5_t10_s3"
+# [T-033] 과거 60일 워크포워드 검증에서 16개 목표/손절 조합 중 h5_t10_s3이 평균수익률 1위였으나,
+# 사후에 최선 조합을 고른 것(다중비교 편향)이라 헤드라인은 공통 기준 h5_t10_s5를 그대로 쓴다.
+# get_summary_stats의 ref_key 파라미터는 향후 out-of-sample로 재검증할 때를 위해 남겨둔다.
 
-# 매물대(거래량 밀집구간) 돌파 + 거래량 급증 + RSI 과매도 반등 병렬 실험(신규, 독자 설계).
-# 거래대금 z-score 실험(volume_zscore_accel_v1)을 대체하지 않고 별도 strategy_version으로
-# 병행 추적한다 — 둘 다 검증 표본이 없는 가설이므로 결과를 보고 나중에 채택/폐기를 판단한다.
-RESISTANCE_RSI_STRATEGY_VERSION = "resistance_breakout_rsi_v1"
-RESISTANCE_LOOKBACK_BARS = 120  # 매물대 계산에 쓰는 과거 봉 수 (60분봉 기준 약 최근 20거래일)
-RESISTANCE_BIN_COUNT = 15  # 매물대 가격 구간을 나눌 bin 개수
-RESISTANCE_MIN_VALUE_FLOOR = 5.0e8  # 5억원 (돌파봉 자체 거래대금 하한, 초소형 노이즈 배제)
-RESISTANCE_VOL_RATIO_MIN = 2.5  # 돌파봉 거래량이 직전 20봉 평균 대비 이 배수 이상이어야 함
-RESISTANCE_RSI_OVERSOLD = 35.0  # 최근 10봉 내 RSI가 이 값 이하로 떨어졌던 적이 있어야 '반등'으로 인정
-RSI_PERIOD = 14
-RSI_SIGNAL_PERIOD = 6
+# [T-033, 2026-09-18 폐기] 매물대 돌파 + 거래량 급증 + RSI 과매도 반등(resistance_breakout_rsi_v1)은
+# 과거 60일 60분봉 워크포워드 검증에서 목표/손절/기간 16개 조합 전부 평균수익률이 마이너스로 나와
+# 폐기했다. 원인 분석(실제 발동 80건 기준): RSI 과매도(35 이하) 시점~돌파봉 시차가 중앙값 0봉,
+# 80%가 1~2봉 이내였고 돌파봉 자체 등락률도 중앙값 +5.67%로, "매물대를 서서히 소화하며 돌파"가
+# 아니라 사실상 "단일봉 급반등 직후 추격 매수"를 잡는 구조였다(그래서 손절 비중이 높았음). 참고로
+# "매물대가 항상 하단에 있는 하락 잡주만 잡는다"는 가설은 검증해보니 틀렸다 — POC 위치는 120봉
+# range의 상/하단에 고르게 분포(중앙값 53%ile)했다. 재설계 없이 코드는 완전히 제거한다.
 
 # 시가총액 상위 종목으로 KOSPI200/KOSDAQ150 공식 지수 구성종목을 근사한다.
 # (KRX 공식 지수 구성종목 API는 세션 인증이 필요해 이 환경에서 직접 수집이 안 됨 —
@@ -197,16 +192,6 @@ def _atr(df: pd.DataFrame) -> pd.Series:
     prev = df.Close.shift(1)
     tr = pd.concat([df.High - df.Low, (df.High - prev).abs(), (df.Low - prev).abs()], axis=1).max(axis=1)
     return tr.rolling(14).mean().replace(0, np.nan)
-
-
-def _rsi(close: pd.Series, period: int = RSI_PERIOD) -> pd.Series:
-    delta = close.diff()
-    gain = delta.clip(lower=0)
-    loss = -delta.clip(upper=0)
-    avg_gain = gain.rolling(period).mean()
-    avg_loss = loss.rolling(period).mean()
-    rs = avg_gain / avg_loss.replace(0, np.nan)
-    return (100 - 100 / (1 + rs)).fillna(100.0)
 
 
 def hourly_pattern(df: pd.DataFrame, require_volume: bool = True, volume_weight: float = 0.2, max_extension_atr: Optional[float] = None) -> pd.DataFrame:
@@ -364,70 +349,6 @@ def volume_zscore_accel_candidate(df: pd.DataFrame) -> Optional[Dict[str, Any]]:
     }
 
 
-def resistance_breakout_rsi_candidate(df: pd.DataFrame) -> Optional[Dict[str, Any]]:
-    """매물대(거래량 밀집구간) 돌파 + 거래량 급증 + RSI 과매도 반등 (독자 설계 병렬 실험).
-
-    직전 RESISTANCE_LOOKBACK_BARS봉(현재봉 제외)의 (종가, 거래량) 분포를 가격 구간별로
-    나눠 거래량이 가장 많이 몰린 구간(매물대)을 찾고, 이번 봉 종가가 그 구간 상단을
-    직전봉까지는 못 넘다가 이번 봉에 처음 돌파했는지를 본다. 여기에 ①돌파봉 자체 거래량이
-    직전 20봉 평균보다 뚜렷하게 크고(가속 없는 매물대 돌파 배제), ②RSI(14)가 최근 10봉 내
-    과매도권(RESISTANCE_RSI_OVERSOLD 이하)을 찍은 뒤 이번 봉에 Signal(6)선을 상향 돌파하는
-    조건을 더해, 단순 매물대 돌파 노이즈나 거래량 없는 돌파를 배제한다.
-
-    검증 표본이 전혀 없는 신규 가설이므로 운영 신호나 다른 실험(volume_zscore_accel_v1)을
-    대체하지 않고 별도 strategy_version으로만 병행 전진 추적한다.
-    """
-    c, v = df.Close, df.Volume
-    if len(df) < RESISTANCE_LOOKBACK_BARS + RSI_PERIOD + 5:
-        return None
-
-    # 매물대 계산: 현재봉을 제외한 과거 구간의 (종가, 거래량) 분포에서 최대 거래량 가격대를 찾는다.
-    window_c = c.iloc[-(RESISTANCE_LOOKBACK_BARS + 1):-1]
-    window_v = v.iloc[-(RESISTANCE_LOOKBACK_BARS + 1):-1]
-    lo, hi = float(window_c.min()), float(window_c.max())
-    if not np.isfinite(lo) or not np.isfinite(hi) or hi <= lo:
-        return None
-
-    bins = np.linspace(lo, hi, RESISTANCE_BIN_COUNT + 1)
-    bin_idx = np.digitize(window_c.values, bins[1:-1])
-    bin_volume = np.bincount(bin_idx, weights=window_v.values, minlength=RESISTANCE_BIN_COUNT)
-    poc_bin = int(np.argmax(bin_volume))
-    resistance_level = float(bins[poc_bin + 1])  # 최대 매물대 구간의 상단
-
-    prev_close, cur_close = float(c.iloc[-2]), float(c.iloc[-1])
-    if not (prev_close <= resistance_level < cur_close):
-        return None  # 이번 봉에 새로 돌파한 게 아니면 배제 (이미 돌파했던 추격 매수 방지)
-
-    # 거래량 급증: 돌파봉 자체 거래량이 직전 20봉 평균 대비 이 배수 이상이어야 함
-    prior_vol_mean = float(v.iloc[-21:-1].mean())
-    if prior_vol_mean <= 0:
-        return None
-    vol_ratio = float(v.iloc[-1]) / prior_vol_mean
-    if vol_ratio < RESISTANCE_VOL_RATIO_MIN:
-        return None
-
-    today_value = cur_close * float(v.iloc[-1])
-    if today_value < RESISTANCE_MIN_VALUE_FLOOR:
-        return None
-
-    # RSI 과매도 반등: 최근 10봉 내 과매도권을 찍은 뒤 이번 봉에 Signal(6)선을 상향 돌파
-    rsi = _rsi(c, RSI_PERIOD)
-    signal = rsi.rolling(RSI_SIGNAL_PERIOD).mean()
-    if len(rsi) < 11 or not np.isfinite(rsi.iloc[-1]) or not np.isfinite(signal.iloc[-1]) or not np.isfinite(signal.iloc[-2]):
-        return None
-    crossed_up = rsi.iloc[-1] > signal.iloc[-1] and rsi.iloc[-2] <= signal.iloc[-2]
-    was_oversold = bool((rsi.iloc[-11:-1] <= RESISTANCE_RSI_OVERSOLD).any())
-    if not (crossed_up and was_oversold):
-        return None
-
-    return {
-        "resistance_level": round(resistance_level, 2),
-        "vol_ratio": round(vol_ratio, 2),
-        "rsi": round(float(rsi.iloc[-1]), 1),
-        "rsi_signal": round(float(signal.iloc[-1]), 1),
-    }
-
-
 def valid_ohlcv(df: pd.DataFrame) -> bool:
     if df.empty or df.index.has_duplicates or not df.index.is_monotonic_increasing:
         return False
@@ -506,8 +427,6 @@ def score_stock(rec: Dict[str, Any], now: pd.Timestamp) -> Tuple[Optional[Dict[s
 
         # 거래대금 이상탐지 + 3봉 연속 가속 병렬 실험 신호 (운영 판단에는 영향 없음, 별도 등록용 스냅샷만 계산)
         row["_volume_zscore"] = volume_zscore_accel_candidate(df)
-        # 매물대 돌파 + 거래량 급증 + RSI 과매도 반등 병렬 실험 신호 (운영 판단에는 영향 없음)
-        row["_resistance_rsi"] = resistance_breakout_rsi_candidate(df)
 
         return row, df, None
     except Exception as e:
@@ -922,32 +841,6 @@ def run_collector():
             zscore_registered += 1
     print(f"-> [실험] 거래대금 이상탐지+3봉 가속 신규 등록: {zscore_registered}건")
 
-    # 4D. 매물대 돌파 + 거래량 급증 + RSI 과매도 반등 병렬 실험 등록 (운영 신호와 분리된 strategy_version)
-    resistance_rsi_registered = 0
-    for r in rows:
-        rr = r.get("_resistance_rsi")
-        if not rr:
-            continue
-        sig_id = tracker.register_signal(
-            strategy_version=RESISTANCE_RSI_STRATEGY_VERSION,
-            code=r["코드"],
-            name=r["종목"],
-            market=r["시장"],
-            bar_time_kst=r["_bar_time_full"],
-            features={
-                "pattern_type": "resistance_breakout_rsi",
-                "resistance_level": rr["resistance_level"],
-                "current_close": r["_current_close"],
-                "vol_ratio": rr["vol_ratio"],
-                "rsi": rr["rsi"],
-                "rsi_signal": rr["rsi_signal"],
-            },
-            entry_reference_price=float(r["_current_close"]),
-        )
-        if sig_id:
-            resistance_rsi_registered += 1
-    print(f"-> [실험] 매물대 돌파+RSI 반등 신규 등록: {resistance_rsi_registered}건")
-
     # 5. 기존 Pending 신호들의 미래봉 접촉 판정 및 라벨 확정
     newly_resolved = tracker.update_with_bars(collected_candles_by_code, now_dt)
     if newly_resolved:
@@ -961,7 +854,7 @@ def run_collector():
 
     pd.DataFrame(universe_stocks).to_csv(day_dir / f"{stamp_time}_universe.csv", index=False, encoding="utf-8-sig")
     # _features 등 객체 컬럼 정리 후 CSV 저장
-    df_scores = pd.DataFrame(rows).drop(columns=["_features", "_volume_zscore", "_resistance_rsi"], errors="ignore")
+    df_scores = pd.DataFrame(rows).drop(columns=["_features", "_volume_zscore"], errors="ignore")
     df_scores.to_csv(day_dir / f"{stamp_time}_scores.csv", index=False, encoding="utf-8-sig")
     top_clean = top_quoted.drop(columns=["_features"], errors="ignore")
     watch_clean = watch_quoted.drop(columns=["_features"], errors="ignore")
@@ -999,29 +892,13 @@ def run_collector():
                 f"당일 거래대금이 그 종목 자신의 최근 {VOLUME_ZSCORE_LOOKBACK_DAYS}거래일 평균 대비 z-score {VOLUME_ZSCORE_MIN:.1f} "
                 f"이상인 이상치 + 일봉 SMA20 대비 +{VOLUME_ZSCORE_MAX_EXTENSION_PCT:.0f}% 이내(추격 방지)를 모두 만족하는 종목만 잡습니다. "
                 "두산밥캣 사례(갭하락 거래량과 음봉 섞인 약한 데드캣 바운스 오탐)에서 드러난 결함을 보강했습니다. "
-                "[T-033] 과거 60일 워크포워드 검증(83건) 결과 기본 +10%/-5%/5일 기준보다 "
-                "**+10%/-3%/5일 기준이 평균수익률이 더 나아(+0.45%) 아래 통계는 그 기준으로 집계합니다** "
-                "(아직 통계적으로 유의하진 않아 계속 관찰 필요). "
+                "[T-033] 과거 60일 워크포워드 검증(83건)에서 16개 목표/손절 조합 중 h5_t10_s3이 평균수익률이 가장 좋았지만"
+                "(+0.45%), 사후에 최선 조합을 고른 것이라 다중비교 편향 위험이 있어 **헤드라인은 공통 기준(+10%/-5%/5일)으로 "
+                "유지합니다.** "
                 "**가상 매수이며 아래 매도 알림·누적 통계에는 포함되지 않습니다.**"
             ),
             "empty_message": "현재 추적 중인 실험 신호가 없습니다",
-            "stats": tracker.get_summary_stats(strategy_version=VOLUME_ZSCORE_STRATEGY_VERSION, ref_key=VOLUME_ZSCORE_REF_KEY),
-        },
-        {
-            "strategy_version": RESISTANCE_RSI_STRATEGY_VERSION,
-            "heading": "🧪 [실험] 매물대 돌파 + 거래량 급증 + RSI 과매도 반등 (검증 전 · 독자 설계)",
-            "description": (
-                f"> 직전 {RESISTANCE_LOOKBACK_BARS}봉(60분봉 기준 약 최근 20거래일)의 거래량 밀집구간(매물대) "
-                f"상단을 이번 봉에 새로 돌파 + 돌파봉 거래량이 직전 20봉 평균 대비 {RESISTANCE_VOL_RATIO_MIN:.1f}배 "
-                f"이상 + RSI(14)가 최근 10봉 내 과매도권({RESISTANCE_RSI_OVERSOLD:.0f} 이하)을 찍은 뒤 이번 봉에 "
-                f"Signal({RSI_SIGNAL_PERIOD})선을 상향 돌파를 모두 만족하는 종목만 잡습니다. "
-                "거래대금 z-score 실험을 대체하지 않고 별도로 병행 추적합니다. "
-                "⚠️ **[T-033] 과거 60일 워크포워드 검증(77건)에서 목표/손절/기간 16개 조합 전부 평균수익률이 마이너스였습니다** "
-                "(최선이 -0.30%). 진입 조건 재설계 또는 폐기 검토 필요 — 사용자 결정 대기 중. "
-                "**가상 매수이며 아래 매도 알림·누적 통계에는 포함되지 않습니다.**"
-            ),
-            "empty_message": "현재 추적 중인 실험 신호가 없습니다",
-            "stats": tracker.get_summary_stats(strategy_version=RESISTANCE_RSI_STRATEGY_VERSION),
+            "stats": tracker.get_summary_stats(strategy_version=VOLUME_ZSCORE_STRATEGY_VERSION),
         },
     ]
 
