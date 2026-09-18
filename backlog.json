@@ -762,6 +762,45 @@
           "note": "volume_zscore_accel_v1 독자 설계 전략으로 교체 완료, 폐기 전략 코드/데이터 정리, 합성데이터+라이브 검증 완료(docs/tasks/T-024.md 참고)"
         }
       ]
+    },
+    {
+      "id": "T-025",
+      "title": "유니버스를 KOSPI200+KOSDAQ150 시총 근사로 교체",
+      "summary": "시가총액 1천억~5조 밴드+거래대금 상위150 방식을 KOSPI 시총상위200+KOSDAQ 시총상위150(약 350종목, 공식 지수 근사)으로 교체. KRX 공식 지수 API는 세션 인증 필요로 접근 불가해 네이버 시총랭킹으로 근사. quant-research 설계문서 §4.1도 동기화",
+      "doc": "docs/tasks/T-025.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": "quant-collector/collector.py, quant-research/설계문서.md",
+      "refs": [],
+      "note": "get_universe()를 KOSPI200+KOSDAQ150 시총 근사(350종목)로 교체, 관련 문서 동기화, 검증 결과 docs/tasks/T-025.md 참고",
+      "done_at": "2026-09-18",
+      "updated_at": "2026-09-18",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-18",
+      "log": [
+        {
+          "at": "2026-09-18",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-18",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-18",
+          "status": "done",
+          "note": "get_universe()를 KOSPI200+KOSDAQ150 시총 근사(350종목)로 교체, 관련 문서 동기화, 검증 결과 docs/tasks/T-025.md 참고"
+        }
+      ]
     }
   ]
 }

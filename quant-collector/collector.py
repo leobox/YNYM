@@ -2,7 +2,7 @@
 Quant Data Collector & Forward Labeling Engine
 ---------------------------------------------
 GitHub Actions(장중 09:37~16:37, 7분30초/37분30초 30분 주기) 및 모바일 수동(workflow_dispatch)으로 실행되는 실전 수집기 & 전진 라벨러입니다.
-1. 네이버 150개 유니버스 + 기존 추적 중인 pending 종목의 60분봉 수집
+1. 네이버 시총 랭킹 기반 KOSPI200+KOSDAQ150 근사 유니버스(350종목) + 기존 추적 중인 pending 종목의 60분봉 수집
 2. '조건 충족' 및 '관찰' 후보 포착 및 특징값 고정 (Snapshot)
 3. 향후 3~5거래일 완료봉 추적을 통한 다중 목표(+3/5/7/10%)/손절(-3/5%) 선접촉 라벨링 확정
 4. 2차 판독기(위험 필터 / 메타 모델) 학습용 원본 데이터셋 자동 축적
@@ -53,10 +53,13 @@ VOLUME_ZSCORE_LOOKBACK_DAYS = 20
 VOLUME_ZSCORE_MIN_VALUE_FLOOR = 1.0e9  # 10억원 (z-score가 왜곡되는 초소형 거래대금 배제용 하한)
 VOLUME_ZSCORE_MAX_EXTENSION_PCT = 15.0  # 일봉 SMA20 대비 과열 상한(추격 매수 방지)
 
-SCAN_LIMIT = 150
+# 시가총액 상위 종목으로 KOSPI200/KOSDAQ150 공식 지수 구성종목을 근사한다.
+# (KRX 공식 지수 구성종목 API는 세션 인증이 필요해 이 환경에서 직접 수집이 안 됨 —
+#  네이버 시가총액 랭킹으로 근사하되 정확히 일치하지는 않는다.)
+KOSPI_TOP_N = 200
+KOSDAQ_TOP_N = 150
 TOP_N = 5
 WORKERS = 6
-MCAP_MIN, MCAP_MAX = 100_000_000_000, 5_000_000_000_000
 MIN_PRICE = 2000
 VOLUME_WEIGHT = 0.2
 MAX_EXTENSION_ATR = None
@@ -89,7 +92,7 @@ def get_json(url: str, params: Optional[Dict[str, Any]] = None, max_retries: int
 
 
 def get_universe() -> List[Dict[str, Any]]:
-    """공식 상장사 화이트리스트 기반 중소형주(1천억~5조, 거래대금 상위 150개) 추출"""
+    """KOSPI 시가총액 상위 200 + KOSDAQ 시가총액 상위 150 (KOSPI200/KOSDAQ150 근사)"""
     try:
         fdr = importlib.import_module("FinanceDataReader")
     except ImportError:
@@ -101,10 +104,11 @@ def get_universe() -> List[Dict[str, Any]]:
     if not valid:
         raise RuntimeError("상장 종목 목록이 비어 있습니다.")
 
-    rows = []
     number = lambda x: pd.to_numeric(str(x).replace(",", ""), errors="coerce")
+    rows = []
 
-    for market in ("KOSPI", "KOSDAQ"):
+    for market, top_n in (("KOSPI", KOSPI_TOP_N), ("KOSDAQ", KOSDAQ_TOP_N)):
+        market_rows = []
         for page in range(1, 31):
             try:
                 stocks = get_json(
@@ -124,8 +128,8 @@ def get_universe() -> List[Dict[str, Any]]:
                 cap, price = number(x["marketValue"]) * 1e8, number(x["closePrice"])
                 if code not in valid or not code.endswith("0") or "스팩" in name or "리츠" in name:
                     continue
-                if MCAP_MIN <= cap <= MCAP_MAX and price >= MIN_PRICE:
-                    rows.append({
+                if price >= MIN_PRICE:
+                    market_rows.append({
                         "code": code,
                         "name": name,
                         "market": market,
@@ -135,19 +139,15 @@ def get_universe() -> List[Dict[str, Any]]:
                         "amount": number(x["accumulatedTradingValue"]),
                     })
 
-            if number(stocks[-1]["marketValue"]) * 1e8 < MCAP_MIN:
+            if len(market_rows) >= top_n:
                 break
 
-    if not rows:
-        raise RuntimeError("조회 가능한 중소형주 유니버스가 없습니다.")
+        rows.extend(market_rows[:top_n])
 
-    df_u = (
-        pd.DataFrame(rows)
-        .dropna(subset=["amount"])
-        .sort_values("amount", ascending=False)
-        .drop_duplicates("code")
-        .head(SCAN_LIMIT)
-    )
+    if not rows:
+        raise RuntimeError("조회 가능한 유니버스가 없습니다.")
+
+    df_u = pd.DataFrame(rows).dropna(subset=["amount"]).drop_duplicates("code")
     return df_u.to_dict("records")
 
 
@@ -702,7 +702,7 @@ def run_collector():
     print(f"=== [Quant Collector] 전진 라벨러 & 스캔 시작: {now_str} KST ===")
     tracker = SignalTracker(DATA_DIR)
 
-    # 1. 대상 유니버스 150개 확보
+    # 1. 대상 유니버스 확보 (KOSPI200+KOSDAQ150 근사, 최대 350종목)
     universe_stocks = get_universe()
     universe_codes = {s["code"] for s in universe_stocks}
 
