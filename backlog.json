@@ -523,6 +523,45 @@
           "note": "collector.py render_markdown_dashboard 통합 표로 리팩터링, tracker.py에 get_recent_signal_counts(7일) 추가, 로컬 실제 스캔 실행으로 검증 후 커밋 98b8c82 푸시 완료"
         }
       ]
+    },
+    {
+      "id": "T-019",
+      "title": "루트 README에 quant-collector 실시간 현황 마커 반영",
+      "summary": "루트 README.md에 QUANT_DASHBOARD 마커 구간을 추가하고 collector.py가 스캔마다 그 구간을 자동 갱신하도록 확장, Action도 루트 README 커밋 포함하도록 수정",
+      "doc": "docs/tasks/T-019.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "collector.py에 embed 모드 및 update_root_readme() 추가, 루트 README.md에 마커 삽입, workflow에 README.md add 반영, 로컬 실행으로 양쪽 README 정상 갱신 확인 후 커밋 7e8f8c3 푸시 완료",
+      "done_at": "2026-09-18",
+      "updated_at": "2026-09-18",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-18",
+      "log": [
+        {
+          "at": "2026-09-18",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-18",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-18",
+          "status": "done",
+          "note": "collector.py에 embed 모드 및 update_root_readme() 추가, 루트 README.md에 마커 삽입, workflow에 README.md add 반영, 로컬 실행으로 양쪽 README 정상 갱신 확인 후 커밋 7e8f8c3 푸시 완료"
+        }
+      ]
     }
   ]
 }
