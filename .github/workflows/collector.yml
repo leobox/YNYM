@@ -5,6 +5,11 @@ on:
     # 한국 장중(KST 09:37 ~ 16:37, UTC 00:37 ~ 07:37, 월~금) 30분마다 자동 실행 (정각/30분 혼잡 회피: 7분, 37분)
     - cron: '37 0 * * 1-5'
     - cron: '7,37 1-7 * * 1-5'
+    # 장마감 안전망(16:50 KST): 오늘 16:00 이후 성공한 스캔이 하나도 없으면(장중 스케줄이
+    # 전부 안 돌았을 경우) 여기서 60분봉 하루치를 한 번에 수집해 최소 1건의 스캔은 보장한다.
+    # Yahoo Finance 봉 데이터는 항상 range=60d로 받아오므로 장중 실행 여부와 무관하게
+    # 이 시점에 돌려도 그날 완료봉 전체를 그대로 확보할 수 있다.
+    - cron: '50 7 * * 1-5'
   workflow_dispatch: # 스마트폰 웹 브라우저 또는 GitHub 웹에서 버튼 클릭으로 즉시 수동 실행
 
 permissions:
@@ -16,29 +21,46 @@ jobs:
     outputs:
       should_run: ${{ steps.check.outputs.should_run }}
     steps:
-      - name: 한국 공휴일 확인 (자동 스케줄 실행에만 적용, 수동 실행은 항상 진행)
+      - name: 저장소 체크아웃 (장마감 안전망 중복 실행 여부 확인용)
+        uses: actions/checkout@v4
+
+      - name: 실행 여부 판단 (공휴일 스킵 + 장마감 안전망 중복 실행 방지)
         id: check
         run: |
           if [ "${{ github.event_name }}" != "schedule" ]; then
             echo "should_run=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
+
           pip install -q holidays
-          python - <<'EOF'
+          IS_HOLIDAY=$(python - <<'EOF'
           import datetime
-          import os
           import holidays
 
           kr_holidays = holidays.KR()
           today = (datetime.datetime.utcnow() + datetime.timedelta(hours=9)).date()
-          is_holiday = today in kr_holidays
-          should_run = "false" if is_holiday else "true"
-          reason = kr_holidays.get(today, "") if is_holiday else ""
-          print(f"오늘({today} KST) 공휴일 여부: {is_holiday} {reason} -> should_run={should_run}")
-
-          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
-              f.write(f"should_run={should_run}\n")
+          print("true" if today in kr_holidays else "false")
           EOF
+          )
+          if [ "$IS_HOLIDAY" = "true" ]; then
+            echo "오늘은 한국 공휴일 -> should_run=false"
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # 16:50 KST 장마감 안전망 슬롯: 오늘 16:00 이후 이미 성공한 스캔이 있으면 중복 실행 생략
+          if [ "${{ github.event.schedule }}" = "50 7 * * 1-5" ]; then
+            TODAY=$(TZ=Asia/Seoul date +%Y%m%d)
+            LATEST=$(ls "quant-collector/data/$TODAY"/*_scores.csv 2>/dev/null | sed -E 's#.*/([0-9]{4})_scores\.csv#\1#' | sort | tail -1)
+            if [ -n "$LATEST" ] && [ "$LATEST" -ge "1600" ]; then
+              echo "오늘 16:00 이후 이미 스캔 성공(${LATEST}) -> 장마감 안전망 생략"
+              echo "should_run=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            echo "오늘 16:00 이후 성공한 스캔 없음(마지막: ${LATEST:-없음}) -> 장마감 안전망 실행"
+          fi
+
+          echo "should_run=true" >> "$GITHUB_OUTPUT"
 
   run-collector:
     needs: check-holiday
@@ -66,10 +88,20 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: 시세 수집 스크립트 실행
+      - name: 시세 수집 스크립트 실행 (최대 3회 재시도)
         working-directory: quant-collector
         run: |
-          python collector.py
+          for attempt in 1 2 3; do
+            if python collector.py; then
+              break
+            fi
+            if [ "$attempt" -eq 3 ]; then
+              echo "3회 재시도 후에도 수집 실패"
+              exit 1
+            fi
+            echo "수집 실패, ${attempt}회차 재시도 대기 중..."
+            sleep $((attempt * 30))
+          done
 
       - name: 수집된 시세 데이터 자동 커밋 및 푸시
         run: |

@@ -1035,6 +1035,45 @@
           "note": "render_markdown_dashboard embed 모드에서 실험 섹션 포함하도록 수정, collector.py 실행으로 루트 README 반영 확인, 전체 테스트 30건 통과"
         }
       ]
+    },
+    {
+      "id": "T-032",
+      "title": "장마감 안전망 스케줄 추가 (16:50 KST, 재시도 포함)",
+      "summary": "장중 스케줄(09:37~16:37)이 오늘 전부 실패해도 아침에 최소 1건의 추천은 보장되도록, 16:50 KST에 안전망 실행을 추가. 60분봉은 항상 range=60d로 받아와 장마감 후에도 하루치를 한 번에 수집 가능하므로, 오늘 16:00 이후 성공한 스캔이 없을 때만 실행되도록 check-holiday job에서 판단. 시세 수집 스텝에는 최대 3회 재시도(백오프) 추가",
+      "doc": "docs/tasks/T-032.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "collector.yml에 16:50 KST 장마감 안전망 슬롯 추가(오늘 16시 이후 성공 스캔 없을 때만 실행), 시세수집 스텝 3회 재시도 추가, YAML파싱+bash문법검증+실제실행 두 분기 테스트 통과",
+      "done_at": "2026-09-18",
+      "updated_at": "2026-09-18",
+      "done_when": "collector.yml에 EOD cron 추가, 중복실행 방지 로직 및 재시도 로직 구현, YAML 파싱+bash 문법검증+실제 실행 테스트로 두 분기 모두 확인",
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-18",
+      "log": [
+        {
+          "at": "2026-09-18",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-18",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-18",
+          "status": "done",
+          "note": "collector.yml에 16:50 KST 장마감 안전망 슬롯 추가(오늘 16시 이후 성공 스캔 없을 때만 실행), 시세수집 스텝 3회 재시도 추가, YAML파싱+bash문법검증+실제실행 두 분기 테스트 통과"
+        }
+      ]
     }
   ]
 }
