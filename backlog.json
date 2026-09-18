@@ -367,6 +367,45 @@
           "note": "exit_engine.py에 BREAKOUT_AMBIGUOUS_BAND_PCT(-0.5%) 기준 신설. 이탈폭이 -0.5% 이내면 BREAKOUT_AMBIGUOUS(KEEP/MEDIUM, '다음 봉 재확인 필요')로, 그 이상이면 기존 BREAKOUT_COLLAPSE(CUT_LOSS/HIGH)로 분기. collector.py README 렌더링에 🟠 RECHECK 아이콘 추가, action_type이 KEEP이라 상단 긴급 매도 배너에는 안 뜸. tests/test_exit_engine.py에 애매 케이스 테스트 추가, 전체 16개 테스트 통과."
         }
       ]
+    },
+    {
+      "id": "T-015",
+      "title": "수집기 스케줄을 장중 09:30~16:30 30분 주기로 최적화 및 원격 푸시",
+      "summary": "",
+      "doc": "docs/tasks/T-015.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "collector.yml cron을 장중 09:30~16:30 30분 주기('30 0 * * 1-5', '0,30 1-7 * * 1-5')로 최적화하고, collector.py 안내문구 현행화 및 로컬 1회 수집으로 20260918 데이터 정상 축적 확인 완료",
+      "done_at": "2026-09-18",
+      "updated_at": "2026-09-18",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-09-18",
+      "log": [
+        {
+          "at": "2026-09-18",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-18",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-18",
+          "status": "done",
+          "note": "collector.yml cron을 장중 09:30~16:30 30분 주기('30 0 * * 1-5', '0,30 1-7 * * 1-5')로 최적화하고, collector.py 안내문구 현행화 및 로컬 1회 수집으로 20260918 데이터 정상 축적 확인 완료"
+        }
+      ]
     }
   ]
 }
