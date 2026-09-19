@@ -2,7 +2,7 @@
   "$schema_version": "1.0",
   "meta": {
     "project": "Leobox Multi-root Workspace",
-    "updated": "2026-09-18",
+    "updated": "2026-09-19",
     "context_doc": "README.md",
     "doc_dir": "docs/tasks",
     "stack": "Multi-agent (Gemini + Claude + Codex) / Python(Quant) / GitHub Actions / Android",
@@ -1241,7 +1241,7 @@
       "title": "quant-research: 신규 진입 아이디어 파라미터 스윕 (Donchian+거래량) 백테스트",
       "summary": "제미나이는 기존 hourly_pattern(algorithm260917_v1) 정식 재검증을 맡고, 나는 그와 겹치지 않는 새 신호 아이디어를 탐색. N봉 최고가 돌파(Donchian)+거래량배수+선택적 추세/이격 필터를 약 100개 파라미터 조합으로 스윕, walk_forward.py(train/validate/test)+account_simulator.py(수수료0.175%, 다음봉시가체결, 단일포지션)로 정식 검증해 살아남는 조합이 있으면 1개만 채택",
       "doc": "docs/tasks/T-037.md",
-      "status": "blocked",
+      "status": "done",
       "priority": "P1",
       "category": "quant_research",
       "phase": "1. 퀀트 알고리즘 연구",
@@ -1249,9 +1249,9 @@
       "deps": [],
       "where": null,
       "refs": [],
-      "note": "96개 조합 스윕 스크립트가 시스템 메모리 부족으로 백그라운드 강제종료됨(하니스 자동 조치, 재시도 보류 권고). 이후 T-036/T-038/T-039(운영전략 재검증) 우선순위로 전환되어 재시도 안 함. 재개 시 종목 수/조합 수를 줄여서 가볍게 다시 시도할 것",
-      "done_at": null,
-      "updated_at": "2026-09-18",
+      "note": "48조합 Donchian+거래량 스윕: Train 양수 0/48, Validate 10/48. 사전고정 규칙으로 선정한 N60_m2.0_t0_e1을 Test 1회 실행 시 -6.82%(22건 6승)로 미채택. 전체 테스트 57건 통과. 상세 docs/tasks/T-037.md",
+      "done_at": "2026-09-19",
+      "updated_at": "2026-09-19",
       "done_when": "100개 조합 스윕 완료, train에서만 좋은 게 아니라 validate/test에서도 버티는 후보 확인, 채택 시 quant-research에 정식 모듈+테스트로 구현, 없으면 결과 없음으로 정직하게 보고",
       "gate": null,
       "parent": null,
@@ -1272,6 +1272,16 @@
           "at": "2026-09-18",
           "status": "blocked",
           "note": "96개 조합 스윕 스크립트가 시스템 메모리 부족으로 백그라운드 강제종료됨(하니스 자동 조치, 재시도 보류 권고). 이후 T-036/T-038/T-039(운영전략 재검증) 우선순위로 전환되어 재시도 안 함. 재개 시 종목 수/조합 수를 줄여서 가볍게 다시 시도할 것"
+        },
+        {
+          "at": "2026-09-19",
+          "status": "in_progress",
+          "note": "96개 조합 스윕 스크립트가 시스템 메모리 부족으로 백그라운드 강제종료됨(하니스 자동 조치, 재시도 보류 권고). 이후 T-036/T-038/T-039(운영전략 재검증) 우선순위로 전환되어 재시도 안 함. 재개 시 종목 수/조합 수를 줄여서 가볍게 다시 시도할 것"
+        },
+        {
+          "at": "2026-09-19",
+          "status": "done",
+          "note": "48조합 Donchian+거래량 스윕: Train 양수 0/48, Validate 10/48. 사전고정 규칙으로 선정한 N60_m2.0_t0_e1을 Test 1회 실행 시 -6.82%(22건 6승)로 미채택. 전체 테스트 57건 통과. 상세 docs/tasks/T-037.md"
         }
       ]
     },
@@ -1428,6 +1438,279 @@
           "at": "2026-09-18",
           "status": "done",
           "note": "volume_zscore_accel_v1 관련 상수/함수/등록블록/대시보드섹션/테스트 전부 제거, 운영전략(algorithm260917_v1) 단일 구성으로 정리. 전체 테스트 22건 통과, collector.py 실행으로 대시보드에 실험 섹션 없음 확인"
+        }
+      ]
+    },
+    {
+      "id": "T-042",
+      "title": "quant-research: 급등 종목 전일 공통점 탐색 및 시그널 백테스트",
+      "summary": "",
+      "doc": "docs/tasks/T-042.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "급등 종목 전일 공통점 16개 피처 통계 분석 및 신규 전략 백테스트 완료 (+39.8% 달성)",
+      "done_at": "2026-09-19",
+      "updated_at": "2026-09-19",
+      "done_when": "급등 종목의 전일 데이터(거래량, 변동성 수축, 이평선 등) 통계 분석 및 유의미한 패턴 기반 백테스트 검증 완료",
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-09-19",
+      "log": [
+        {
+          "at": "2026-09-19",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-19",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-19",
+          "status": "done",
+          "note": "급등 종목 전일 공통점 16개 피처 통계 분석 및 신규 전략 백테스트 완료 (+39.8% 달성)"
+        }
+      ]
+    },
+    {
+      "id": "T-043",
+      "title": "quant-research: 10일치 학습 50일치 판정 ML 과적합 vs 일반화 백테스트 실험",
+      "summary": "",
+      "doc": "docs/tasks/T-043.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "ML 10일 학습 50일 판정 과적합(Train 승률 100%) vs OOS 실전 성과 붕괴 백테스트 완료",
+      "done_at": "2026-09-19",
+      "updated_at": "2026-09-19",
+      "done_when": "10일 Train 50일 Test 머신러닝(DecisionTree/RandomForest) 과적합 승률 100% 재현 및 OOS 성과 비교 검증 완료",
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-09-19",
+      "log": [
+        {
+          "at": "2026-09-19",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-19",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-19",
+          "status": "done",
+          "note": "ML 10일 학습 50일 판정 과적합(Train 승률 100%) vs OOS 실전 성과 붕괴 백테스트 완료"
+        }
+      ]
+    },
+    {
+      "id": "T-044",
+      "title": "quant-research: 시장 국면(Market Breadth 레짐) 스위칭 전략 백테스트",
+      "summary": "",
+      "doc": "docs/tasks/T-044.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "Market Breadth 레짐 스위칭 백테스트 및 개별주 장세 인사이트 도출 완료",
+      "done_at": "2026-09-19",
+      "updated_at": "2026-09-19",
+      "done_when": "Market Breadth(20일선 상회 비율) 레짐 기반 추세/역추세 스위칭 백테스트 검증 완료",
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-09-19",
+      "log": [
+        {
+          "at": "2026-09-19",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-19",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-19",
+          "status": "done",
+          "note": "Market Breadth 레짐 스위칭 백테스트 및 개별주 장세 인사이트 도출 완료"
+        }
+      ]
+    },
+    {
+      "id": "T-045",
+      "title": "quant-research: 213일 장기데이터 기반 10가지 조건 ML 고승률(80%+) 탐색 백테스트",
+      "summary": "",
+      "doc": "docs/tasks/T-045.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "213일 장기데이터 기반 10대 피처 ML 고승률 탐색 및 백테스트 검증 완료",
+      "done_at": "2026-09-19",
+      "updated_at": "2026-09-19",
+      "done_when": "ytd_11am 213일 장기데이터 대상 10대 핵심 피처 생성, ML 정밀도(Precision 80%+) 최적화 탐색 및 Out-of-Sample 백테스트 검증 완료",
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-09-19",
+      "log": [
+        {
+          "at": "2026-09-19",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-19",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-19",
+          "status": "done",
+          "note": "213일 장기데이터 기반 10대 피처 ML 고승률 탐색 및 백테스트 검증 완료"
+        }
+      ]
+    },
+    {
+      "id": "T-046",
+      "title": "quant-research: 2026 올해 신고가(New High) 달성 종목들의 공통 패턴 탐색 및 돌파 전략 백테스트",
+      "summary": "",
+      "doc": "docs/tasks/T-046.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "2026 올해 신고가 755건 전수 조사 및 진짜 vs 가짜 신고가 통계/백테스트 완료",
+      "done_at": "2026-09-19",
+      "updated_at": "2026-09-19",
+      "done_when": "213일 YTD 데이터 기반 신고가 경신 종목 추출, 돌파 직전 공통 패턴(VCP/거래량/이평선) 통계 분석 및 백테스트 완료",
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-09-19",
+      "log": [
+        {
+          "at": "2026-09-19",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-19",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-19",
+          "status": "done",
+          "note": "2026 올해 신고가 755건 전수 조사 및 진짜 vs 가짜 신고가 통계/백테스트 완료"
+        }
+      ]
+    },
+    {
+      "id": "T-047",
+      "title": "quant-research: VCP(변동성 축소 패턴) 슈퍼 신고가 스캐너 운영 모듈 및 Colab 단일 셀 구현",
+      "summary": "",
+      "doc": "docs/tasks/T-047.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "VCP 슈퍼 신고가 판정기 모듈화 및 Colab 단일 셀 운영 버전 구현 완료",
+      "done_at": "2026-09-19",
+      "updated_at": "2026-09-19",
+      "done_when": "VCP 판정 로직 모듈화(scanner/vcp.py), 파이프라인 통합, Colab 단일 셀 스크립트 작성 및 테스트 검증 완료",
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-09-19",
+      "log": [
+        {
+          "at": "2026-09-19",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-19",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-19",
+          "status": "done",
+          "note": "VCP 슈퍼 신고가 판정기 모듈화 및 Colab 단일 셀 운영 버전 구현 완료"
+        }
+      ]
+    },
+    {
+      "id": "T-048",
+      "title": "quant-research: VCP 슈퍼 신고가 스캐너 GitHub Actions 자동 실행 워크플로 구축",
+      "summary": "",
+      "doc": "docs/tasks/T-048.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "VCP 슈퍼 신고가 스캐너 GitHub Actions 자동 실행 워크플로(.github/workflows/vcp-scanner.yml) 구축 완료",
+      "done_at": "2026-09-19",
+      "updated_at": "2026-09-19",
+      "done_when": "장중 4회(09:30, 11:30, 13:30, 15:30 KST) 자동 스캔 워크플로(.github/workflows/vcp-scanner.yml) 및 런처 스크립트 구축 및 테스트 완료",
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-09-19",
+      "log": [
+        {
+          "at": "2026-09-19",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-19",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-19",
+          "status": "done",
+          "note": "VCP 슈퍼 신고가 스캐너 GitHub Actions 자동 실행 워크플로(.github/workflows/vcp-scanner.yml) 구축 완료"
         }
       ]
     }

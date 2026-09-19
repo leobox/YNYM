@@ -1,0 +1,101 @@
+{
+  "mp3": {
+    "train": {
+      "signals": 42,
+      "trades": 26,
+      "wins": 9,
+      "ret": -2.72,
+      "mdd": -11.8,
+      "skipped": 15,
+      "no_fill": 1
+    },
+    "validate": {
+      "signals": 64,
+      "trades": 16,
+      "wins": 8,
+      "ret": 1.55,
+      "mdd": -10.44,
+      "skipped": 48,
+      "no_fill": 0
+    },
+    "test": {
+      "signals": 93,
+      "trades": 22,
+      "wins": 6,
+      "ret": -6.82,
+      "mdd": -10.53,
+      "skipped": 70,
+      "no_fill": 1
+    },
+    "warnings": {
+      "train": [
+        "WARNING: Selection/survivorship bias (fixed current universe) is present.",
+        "WARNING: 15:00-15:30 gap impact is not fully accounted for.",
+        "WARNING: Delisted stocks are not included in the dataset.",
+        "WARNING: Historical universe has not been restored."
+      ],
+      "validate": [
+        "WARNING: Selection/survivorship bias (fixed current universe) is present.",
+        "WARNING: 15:00-15:30 gap impact is not fully accounted for.",
+        "WARNING: Delisted stocks are not included in the dataset.",
+        "WARNING: Historical universe has not been restored."
+      ],
+      "test": [
+        "WARNING: Selection/survivorship bias (fixed current universe) is present.",
+        "WARNING: 15:00-15:30 gap impact is not fully accounted for.",
+        "WARNING: Delisted stocks are not included in the dataset.",
+        "WARNING: Historical universe has not been restored."
+      ]
+    }
+  },
+  "mp1": {
+    "train": {
+      "signals": 42,
+      "trades": 15,
+      "wins": 4,
+      "ret": -16.04,
+      "mdd": -29.51,
+      "skipped": 27,
+      "no_fill": 0
+    },
+    "validate": {
+      "signals": 64,
+      "trades": 5,
+      "wins": 2,
+      "ret": -13.98,
+      "mdd": -20.48,
+      "skipped": 59,
+      "no_fill": 0
+    },
+    "test": {
+      "signals": 93,
+      "trades": 8,
+      "wins": 3,
+      "ret": 2.4,
+      "mdd": -17.87,
+      "skipped": 84,
+      "no_fill": 1
+    },
+    "warnings": {
+      "train": [
+        "WARNING: Selection/survivorship bias (fixed current universe) is present.",
+        "WARNING: 15:00-15:30 gap impact is not fully accounted for.",
+        "WARNING: Delisted stocks are not included in the dataset.",
+        "WARNING: Historical universe has not been restored."
+      ],
+      "validate": [
+        "WARNING: Selection/survivorship bias (fixed current universe) is present.",
+        "WARNING: 15:00-15:30 gap impact is not fully accounted for.",
+        "WARNING: Delisted stocks are not included in the dataset.",
+        "WARNING: Historical universe has not been restored.",
+        "WARNING: Trade count (5) < threshold (8). Insufficient sample size."
+      ],
+      "test": [
+        "WARNING: Selection/survivorship bias (fixed current universe) is present.",
+        "WARNING: 15:00-15:30 gap impact is not fully accounted for.",
+        "WARNING: Delisted stocks are not included in the dataset.",
+        "WARNING: Historical universe has not been restored."
+      ]
+    }
+  }
+}
