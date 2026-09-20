@@ -1,15 +1,17 @@
-"""GitHub Actions 및 로컬 실행용 VCP 슈퍼 신고가 스캐너 실행 스크립트.
+"""GitHub Actions 및 로컬 실행용 '추세 돌파 신호판'(구 VCP 슈퍼 신고가 스캐너) 실행 스크립트. (T-052 재설계)
 
 기능:
 1. 네이버 중소형주 유니버스(150개) 수신
-2. 야후 파이낸스 60분봉 완료봉 수신
-3. scanner.vcp.detect_vcp를 통한 VCP 수축+피봇돌파+거래량폭발 판정
-4. Top 5 최종 후보 및 관찰 후보 선정
-5. quant-research/data/vcp_snapshots/ 및 README.md에 대시보드 마크다운 기록
-6. [절대 불변식] 주문/매수 API 일체 없음 (순수 관찰/기록)
+2. 야후 파이낸스 **일봉**(완료된 봉만) 수신 — 장 마감(16:00 KST) 전에는 오늘 일봉을 쓰지 않는다
+3. scanner.daily_breakout.daily_checks 로 4체크(추세/60일 돌파/거래량/과열 아님) 판정
+4. 🟢 신호(최대 5) / 🟡 관찰(최대 5) 카드 렌더링, quant-research/data/vcp_snapshots/ 및 루트 README.md 갱신
+5. 신호 원장(signal_ledger.csv)에 기록하고 지난 신호의 실제 결과(목표/손절/만기)를 일봉으로 확정
+6. 실행별 manifest / universe 스냅샷 보존
+7. [절대 불변식] 주문/매수 API 일체 없음 (순수 관찰/기록)
 """
 import os
 import sys
+import json
 import time
 import importlib
 import subprocess
@@ -25,17 +27,20 @@ KST = timezone(timedelta(hours=9))
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "quant-research"))
 
-from scanner.vcp import detect_vcp
+from scanner import daily_breakout as db
+from scanner import signal_board as sb
 
 SCAN_LIMIT = 150
-TOP_N = 5
 WORKERS = 6
 MCAP_MIN, MCAP_MAX = 100_000_000_000, 5_000_000_000_000
-MIN_PRICE = 2000
+MIN_PRICE = db.MIN_PRICE
+MIN_SESSIONS = 100  # 60일 피봇 + MA60/120 워밍업에 필요한 최소 완료 일봉 수
 OUTPUT_DIR = ROOT / "quant-research" / "data" / "vcp_snapshots"
+LEDGER_PATH = OUTPUT_DIR / "signal_ledger.csv"
 ROOT_README_PATH = ROOT / "README.md"
 VCP_MARK_START = "<!-- VCP_DASHBOARD:START -->"
 VCP_MARK_END = "<!-- VCP_DASHBOARD:END -->"
+
 
 def get_json(url: str, params: dict | None = None, max_retries: int = 3, timeout: int = 10):
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
@@ -53,6 +58,7 @@ def get_json(url: str, params: dict | None = None, max_retries: int = 3, timeout
                 backoff *= 2.0
     raise RuntimeError(f"HTTP 실패: {url} | {str(last_err)[:100]}")
 
+
 def get_universe():
     try:
         fdr = importlib.import_module("FinanceDataReader")
@@ -61,7 +67,7 @@ def get_universe():
         fdr = importlib.import_module("FinanceDataReader")
     listing = fdr.StockListing("KRX")
     valid = set(listing.loc[listing.Market.isin(["KOSPI", "KOSDAQ", "KOSDAQ GLOBAL"]), "Code"].astype(str))
-    
+
     rows = []
     number = lambda x: pd.to_numeric(str(x).replace(",", ""), errors="coerce")
     for market in ("KOSPI", "KOSDAQ"):
@@ -93,156 +99,159 @@ def get_universe():
     return (pd.DataFrame(rows).dropna(subset=["amount"]).sort_values("amount", ascending=False)
             .drop_duplicates("code").head(SCAN_LIMIT).to_dict("records"))
 
-def completed_bars(item, now):
-    df = pd.DataFrame(item["indicators"]["quote"][0],
-                      index=pd.to_datetime(item["timestamp"], unit="s", utc=True).tz_convert("Asia/Seoul"))
-    df = df.rename(columns=str.title)[["Open", "High", "Low", "Close", "Volume"]].dropna()
-    df = df[~df.index.duplicated()].sort_index()
-    df = df[(df.index.minute == 0) & (df.index.second == 0) & (df.index.hour >= 9) & (df.index.hour <= 15)]
-    df = df[~((df.index.hour == 15) & (df.Volume == 0) & (df.High == df.Low))]
-    ends = df.index + pd.to_timedelta(np.where(df.index.hour == 15, 30, 60), unit="m")
-    return df[ends <= now]
 
-def fetch_bars(rec, now):
-    symbol = rec["code"] + (".KQ" if rec["market"] == "KOSDAQ" else ".KS")
+def yahoo_daily(item) -> pd.DataFrame:
+    """야후 chart 응답(1d)을 KST 일자 index의 일봉으로 변환(수정 전 OHLCV, 정합성 검증 포함)."""
+    quote = item["indicators"]["quote"][0]
+    index = (pd.to_datetime(item["timestamp"], unit="s", utc=True)
+             .tz_convert("Asia/Seoul").tz_localize(None).normalize())
+    df = pd.DataFrame({"Open": quote["open"], "High": quote["high"], "Low": quote["low"],
+                       "Close": quote["close"], "Volume": quote["volume"]}, index=index)
+    return db.clean_daily_bars(df)
+
+
+def fetch_daily(code: str, market: str, now_ts: pd.Timestamp) -> pd.DataFrame | None:
+    symbol = code + (".KQ" if market == "KOSDAQ" else ".KS")
     payload = get_json(f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}",
-                       {"range": "60d", "interval": "60m"}, timeout=10)["chart"]
+                       {"range": "1y", "interval": "1d"}, timeout=10)["chart"]
     if not payload.get("result"):
         return None
-    return completed_bars(payload["result"][0], now)
+    return db.drop_incomplete_today(yahoo_daily(payload["result"][0]), now_ts)
+
+
+def code_version() -> dict:
+    def git(*args):
+        return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True, timeout=10).stdout.strip()
+    try:
+        return {"git_sha": git("rev-parse", "--short", "HEAD"), "dirty": bool(git("status", "--porcelain"))}
+    except Exception:
+        return {"git_sha": None, "dirty": None}
+
+
+def load_ledger() -> pd.DataFrame:
+    if not LEDGER_PATH.exists():
+        return sb.new_ledger()
+    return pd.read_csv(LEDGER_PATH, dtype={"code": str, "market": str, "signal_date": str,
+                                           "entry_date": str, "exit_date": str}, encoding="utf-8-sig",
+                       keep_default_na=False, na_values=[""])[sb.LEDGER_COLS]
+
 
 def run_scan():
     now = datetime.now(KST)
-    now_str = now.strftime("%Y-%m-%d %H:%M")
-    timestamp_key = now.strftime("%Y%m%d_%H%M")
-    
-    print(f"[{now_str} KST] VCP 슈퍼 신고가 스캔 실행 시작 (대상 {SCAN_LIMIT}종목)...")
-    uni = get_universe()
     now_ts = pd.Timestamp(now)
-    
-    scored = []
+    now_str = now.strftime("%Y-%m-%d %H:%M")
+    run_id = now.strftime("%Y%m%d_%H%M")
+    version = code_version()  # 산출물을 쓰기 전에 기록(dirty 판정 왜곡 방지)
+
+    print(f"[{now_str} KST] 추세 돌파 신호판 스캔 시작 (대상 {SCAN_LIMIT}종목, 일봉 완료봉 기준)...", flush=True)
+    uni = get_universe()
+
     def process(rec):
         try:
-            df = fetch_bars(rec, now_ts)
-            if df is None or len(df) < 60 or df.Volume.iloc[-1] <= 0:
-                return None
-            res = detect_vcp(df).iloc[-1]
-            c = df.Close.iloc[-1]
-            # 일일 환산 20일 평균 거래량 * 1.5
-            daily_vol = df.Volume.groupby(df.index.date).sum()
-            daily_v_ma20 = daily_vol.iloc[:-1].tail(20).mean() if len(daily_vol) > 1 else daily_vol.mean()
-            req_vol_daily = int(daily_v_ma20 * 1.5) if pd.notna(daily_v_ma20) else 0
-
-            return {
-                "code": rec["code"], "name": rec["name"], "price": int(c),
-                "eligible": bool(res["eligible"]), "score": float(res["score"]),
-                "vcp_stage": str(res["vcp_stage"]), "vcp_ratio": float(res["vcp_ratio"]),
-                "vol_spike": float(res["vol_spike"]), "vol_dryup": float(res["vol_dryup"]),
-                "pivot_level": int(res["pivot_level"]), "extension_atr": float(res["extension_atr"]),
-                "near_pivot": bool(c >= res["pivot_level"] * 0.96 and c < res["pivot_level"] and res["vcp_ratio"] <= 0.65),
-                "req_vol_daily": req_vol_daily,
-                "timestamp": now_str
-            }
+            df = fetch_daily(rec["code"], rec["market"], now_ts)
         except Exception:
-            return None
+            return {"rec": rec, "state": "fail"}
+        if df is None or len(df) < MIN_SESSIONS:
+            return {"rec": rec, "state": "short"}
+        return {"rec": rec, "state": "ok", "daily": df}
 
     with ThreadPoolExecutor(max_workers=WORKERS) as pool:
-        results = pool.map(process, uni)
-        for r in results:
-            if r is not None:
-                scored.append(r)
-                
-    matches = [r for r in scored if r["eligible"]]
-    top5 = sorted(matches, key=lambda x: (-x["score"], x["code"]))[:TOP_N]
-    watches = [r for r in scored if not r["eligible"] and r["near_pivot"]]
-    watchlist = sorted(watches, key=lambda x: (x["vcp_ratio"], x["code"]))[:TOP_N]
-    
-    print(f"스캔 완료: 총 {len(scored)}개 분석 | 최종 후보 {len(top5)}개 | 관찰 종목 {len(watchlist)}개")
-    
-    # 디렉토리 생성
+        fetched = list(pool.map(process, uni))
+
+    ok = [f for f in fetched if f["state"] == "ok"]
+    n_fail = sum(f["state"] == "fail" for f in fetched)
+    n_short = sum(f["state"] == "short" for f in fetched)
+    if not ok:
+        raise RuntimeError(f"일봉 수신 전부 실패 또는 부족 (실패 {n_fail}, 부족 {n_short})")
+
+    # 시장 마지막 완료 세션 = 종목별 마지막 봉 일자의 최빈값(거래정지 종목 등 낡은 봉은 제외)
+    last_dates = pd.Series([f["daily"].index[-1] for f in ok])
+    last_session = last_dates.mode().max()
+
+    greens, yellows, stale, n_trend = [], [], 0, 0
+    daily_by_code = {}
+    for f in ok:
+        rec, df = f["rec"], f["daily"]
+        daily_by_code[rec["code"]] = df
+        if df.index[-1] != last_session:
+            stale += 1
+            continue
+        checks = db.daily_checks(df)
+        last = checks.iloc[-1]
+        n_trend += int(bool(last["trend_ok"]))
+        close = float(df["Close"].iloc[-1])
+        if bool(last["signal"]):
+            greens.append({
+                "code": rec["code"], "name": rec["name"], "market": rec["market"], "close": close,
+                "pivot_level": float(last["pivot_level"]), "vol_spike": float(last["vol_spike"]),
+                "extension_atr": float(last["extension_atr"]),
+                "turnover": close * float(df["Volume"].iloc[-1]), "signal_date": last_session,
+            })
+            continue
+        need = db.next_session_requirements(df, last)
+        if need:
+            yellows.append({"code": rec["code"], "name": rec["name"], "market": rec["market"],
+                            "close": close, **need})
+
+    top_green, green_more = sb.pick_greens(greens)
+    top_yellow, yellow_more = sb.pick_yellows(yellows)
+
+    # 전진 기록 원장: 신호는 전부(잘린 것 포함) 기록, 지난 신호의 결과를 일봉으로 확정
+    ledger = sb.append_signals(load_ledger(), greens, run_id)
+    for code, market in sb.unresolved_codes(ledger):
+        if code in daily_by_code:
+            continue
+        try:
+            df = fetch_daily(code, market, now_ts)
+            if df is not None:
+                daily_by_code[code] = df
+        except Exception:
+            print(f"[경고] 원장 종목 {code} 일봉 수신 실패 - 결과 확정 보류", flush=True)
+    ledger = sb.resolve_ledger(ledger, daily_by_code, db.resolve_outcome)
+    summary = sb.summarize_ledger(ledger)
+
+    meta = {"now_str": now_str, "last_session": str(last_session.date()), "n_total": len(uni),
+            "n_ok": len(ok) - stale, "n_fail": n_fail,
+            "n_trend": n_trend}
+    board = sb.render_board(meta, top_green, green_more, top_yellow, yellow_more, summary)
+
+    print(f"스캔 완료: 분석 {meta['n_ok']}/{len(uni)} (실패 {n_fail}, 데이터부족 {n_short}, 낡은봉 {stale}) | "
+          f"🟢 {len(greens)}개 | 🟡 {len(yellows)}개 | 기준일 {meta['last_session']}", flush=True)
+
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    
-    # 1. 마크다운 보고서 작성
-    md_lines = [
-        f"# 🎯 VCP 슈퍼 신고가 스캐너 결과 ({now_str} KST)\n",
-        f"- **스캔 시각**: {now_str} KST",
-        f"- **유니버스 분석 완료**: {len(scored)}개 중소형주\n",
-        "## 🏆 최종 후보 (VCP 수축 + 거래량 폭발 + 피봇 돌파 완료)",
-    ]
-    if top5:
-        md_lines.append("| 종목(코드) | 현재가 | 피봇돌파선 | 거래량폭발 | VCP수축 | 점수 |")
-        md_lines.append("|:---|:---:|:---:|:---:|:---:|:---:|")
-        for r in top5:
-            md_lines.append(f"| **{r['name']}** ({r['code']}) | {r['price']:,}원 | {r['pivot_level']:,}원 | **{r['vol_spike']}배** | {format_stage(r['vcp_stage'], r['vcp_ratio'])} | **{r['score']}점** |")
-    else:
-        md_lines.append("\n*현재 5중 안전 기준을 100% 충족한 최종 후보가 없습니다. (무리한 뇌동매매 방지)*\n")
-        
-    md_lines.append("\n## 👀 관찰 종목 (VCP 수축 완료, 피봇 4% 턱밑 대기)")
-    if watchlist:
-        md_lines.append("| 종목(코드) | 현재가 | 피봇돌파선 | 돌파필요 거래량(일일) | VCP수축 |")
-        md_lines.append("|:---|:---:|:---:|:---:|:---:|")
-        for r in watchlist:
-            md_lines.append(f"| **{r['name']}** ({r['code']}) | {r['price']:,}원 | {r['pivot_level']:,}원 | **{format_vol(r['req_vol_daily'])}** | {format_stage(r['vcp_stage'], r['vcp_ratio'])} |")
-    else:
-        md_lines.append("\n*관찰 후보 없음*\n")
-        
-    md_lines.append("\n---\n*※ 본 스캐너는 완료봉 기준 연구용 지표이며, 주문/매수 API를 포함하지 않습니다.*")
-    
-    report_content = "\n".join(md_lines)
-    
-    # 최신 보고서 저장
-    with open(OUTPUT_DIR / "latest_vcp.md", "w", encoding="utf-8") as f:
-        f.write(report_content)
-        
-    # CSV 스냅샷 저장
-    if top5 or watchlist:
-        df_all = pd.DataFrame(top5 + watchlist)
-        df_all.to_csv(OUTPUT_DIR / f"{timestamp_key}.csv", index=False, encoding="utf-8-sig")
-        
-    # 2. 루트 README.md 대시보드 갱신
-    embed_md = generate_embed_markdown(now_str, len(scored), top5, watchlist)
-    update_root_readme(embed_md)
+    header = (f"# 🚦 추세 돌파 신호판 ({now_str} KST)\n\n")
+    (OUTPUT_DIR / "latest_vcp.md").write_text(
+        header + board + "\n---\n*※ 완료된 일봉 기준 연구용 지표이며, 주문/매수 API를 포함하지 않습니다.*\n",
+        encoding="utf-8")
 
+    if greens or yellows:
+        rows = [{"tier": "GREEN", **{k: v for k, v in g.items() if k != "signal_date"},
+                 "signal_date": str(last_session.date())} for g in greens]
+        rows += [{"tier": "YELLOW", **y} for y in yellows]
+        pd.DataFrame(rows).to_csv(OUTPUT_DIR / f"{run_id}.csv", index=False, encoding="utf-8-sig")
+    pd.DataFrame(uni).to_csv(OUTPUT_DIR / f"universe_{run_id}.csv", index=False, encoding="utf-8-sig")
+    ledger.to_csv(LEDGER_PATH, index=False, encoding="utf-8-sig")
+    manifest = {
+        "run_id": run_id, "fetched_at": now.isoformat(), "last_session": meta["last_session"],
+        "universe": {"source": "naver marketValue + FinanceDataReader KRX listing", "count": len(uni),
+                     "rule": f"시총 {MCAP_MIN:,}~{MCAP_MAX:,}원, 거래대금 상위 {SCAN_LIMIT}, 종목군 기준 시각=실행 시각",
+                     "survivorship": "실행 시점 종목군(과거 종목군·상폐 미포함)"},
+        "prices": {"source": "yahoo finance chart v8", "interval": "1d", "range": "1y", "adjusted": False,
+                   "today_bar_rule": f"{db.MARKET_DONE_HOUR}:00 KST 전에는 오늘 일봉 제외"},
+        "params": {"lookback": db.LOOKBACK, "min_vol_spike": db.MIN_VOL_SPIKE,
+                   "max_extension_atr": db.MAX_EXTENSION_ATR, "watch_band": db.WATCH_BAND,
+                   "target": db.TARGET_PCT, "stop": db.STOP_PCT, "max_sessions": db.MAX_SESSIONS},
+        "counts": {"analyzed": meta["n_ok"], "fetch_fail": n_fail, "short_history": n_short, "stale_bar": stale,
+                   "trend_ok": n_trend, "green": len(greens), "yellow": len(yellows)},
+        "code": version, "ledger": summary,
+    }
+    (OUTPUT_DIR / f"manifest_{run_id}.json").write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+
+    update_root_readme(board)
     print(f"결과 파일 저장 완료: {OUTPUT_DIR / 'latest_vcp.md'}", flush=True)
-    return len(top5), len(watchlist)
+    return len(greens), len(yellows)
 
-def format_vol(v: int) -> str:
-    if not v or pd.isna(v):
-        return "-"
-    if v >= 100_000_000:
-        return f"약 {v / 100_000_000:.1f}억 주"
-    elif v >= 10_000:
-        return f"약 {v / 10_000:.1f}만 주"
-    return f"{v:,}주"
-
-def format_stage(stage: str, ratio: float) -> str:
-    short_stage = "3T" if "3T" in stage else ("2T" if "2T" in stage else stage)
-    return f"{short_stage} ({ratio:.2f})"
-
-def generate_embed_markdown(now_str: str, total_count: int, top5: list, watchlist: list) -> str:
-    lines = [
-        f"> **최근 스캔**: `{now_str} KST` | **유니버스 분석**: `{total_count}종목` | **최종 후보(돌파)**: `{len(top5)}건` | **관찰 종목(수축)**: `{len(watchlist)}건`\n",
-        "### 🏆 최종 후보 (VCP 수축 + 거래량 폭발 + 피봇 돌파 완료)\n",
-    ]
-    if top5:
-        lines.append("| 종목(코드) | 현재가 | 피봇돌파선 | 거래량폭발 | VCP수축 | 점수 |")
-        lines.append("|:---|:---:|:---:|:---:|:---:|:---:|")
-        for r in top5:
-            lines.append(f"| **{r['name']}** ({r['code']}) | {r['price']:,}원 | {r['pivot_level']:,}원 | **{r['vol_spike']}배** | {format_stage(r['vcp_stage'], r['vcp_ratio'])} | **{r['score']}점** |")
-    else:
-        lines.append("*현재 5중 안전 기준을 100% 충족한 최종 후보가 없습니다. (무리한 뇌동매매 방지)*")
-        
-    lines.append("\n### 👀 관찰 종목 (VCP 수축 완료, 피봇 4% 턱밑 대기)\n")
-    if watchlist:
-        lines.append("| 종목(코드) | 현재가 | 피봇돌파선 | 돌파필요 거래량(일일) | VCP수축 |")
-        lines.append("|:---|:---:|:---:|:---:|:---:|")
-        for r in watchlist:
-            lines.append(f"| **{r['name']}** ({r['code']}) | {r['price']:,}원 | {r['pivot_level']:,}원 | **{format_vol(r['req_vol_daily'])}** | {format_stage(r['vcp_stage'], r['vcp_ratio'])} |")
-    else:
-        lines.append("*관찰 후보 없음*")
-        
-    lines.append("\n---\n*※ 본 스캐너는 완료봉 기준 연구용 지표이며, 주문/매수 API를 일체 포함하지 않습니다.*")
-    return "\n".join(lines)
 
 def update_root_readme(embed_md: str) -> None:
     if not ROOT_README_PATH.exists():
@@ -257,6 +266,7 @@ def update_root_readme(embed_md: str) -> None:
     new_content = f"{pre}{VCP_MARK_START}\n\n{embed_md}\n\n{VCP_MARK_END}{post}"
     ROOT_README_PATH.write_text(new_content, encoding="utf-8")
     print(f"루트 README.md VCP 대시보드 마커 갱신 완료 ({ROOT_README_PATH})", flush=True)
+
 
 if __name__ == "__main__":
     run_scan()

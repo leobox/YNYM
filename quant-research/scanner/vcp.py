@@ -1,4 +1,8 @@
-"""T-047: VCP (Volatility Contraction Pattern, 변동성 축소 패턴) 운영 판정 모듈.
+"""[T-052 주의] 운영 스캐너는 이 모듈을 더 이상 쓰지 않는다(`scanner/daily_breakout.py`로 대체).
+이 함수를 60분봉에 적용하면 rolling 창이 일봉이 아닌 시간 단위가 되어 T-046 검증(일봉)과 다른 전략이 되고,
+2026-09-20 재검증에서 랜덤 대비 12백분위·계좌 -61%(mp=1)였다. 연구·패리티 테스트 용도로만 남긴다.
+
+T-047: VCP (Volatility Contraction Pattern, 변동성 축소 패턴) 운영 판정 모듈.
 
 마크 미너비니(Mark Minervini)의 VCP 이론 및 2026년 실증 검증(T-046) 기준:
 1. 추세 정배열: MA5 > MA20 > MA60 > MA120 (장기 상승 추세 기반)

@@ -226,6 +226,11 @@ def render_html(top5, watchlist, now_str):
     return "".join(html)
 
 def run():
+    # [T-052] 이 Colab 사본은 60분봉에 일봉용 창을 적용하는 옛 로직이라 2026-09-20 감사에서 미채택(랜덤 대비 12백분위).
+    # 일봉 재설계본은 GitHub Actions 신호판(README, quant-research/data/vcp_snapshots/latest_vcp.md)에만 반영됐다.
+    # Colab 단일 셀 동기화는 후속 작업이며, 그때까지 낡은 신호를 내지 않도록 실행을 막는다.
+    print("이 Colab 스캐너는 T-052에서 운영 중단되었습니다. 루트 README의 '추세 돌파 신호판'을 확인하세요.")
+    return
     now = pd.Timestamp.now(tz='Asia/Seoul')
     now_str = now.strftime('%Y-%m-%d %H:%M')
     print(f"[{now_str}] VCP 슈퍼 신고가 스캐닝 시작 (유니버스 {SCAN_LIMIT}개)...")

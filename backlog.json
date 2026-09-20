@@ -1830,6 +1830,45 @@
           "note": "VCP 관찰종목 돌파필요 거래량(일일) 산출 및 5컬럼 모바일 최적화 표 갱신, 수동 스캔 완주, README 및 스냅샷 최신화"
         }
       ]
+    },
+    {
+      "id": "T-052",
+      "title": "quant-research: VCP 스캐너를 일봉 기반 신호등(초록/노랑) 표시로 재설계 + 전진 기록",
+      "summary": "2026-09-20 적대적 감사(채팅 보고): 운영은 60분봉/검증은 일봉 불일치, VCP 수축 조건은 성과 기여 없음. 일봉 완료봉 기준 4체크(추세/60일돌파/거래량/과열아님)로 재설계, 초보자용 카드 표시, 전진 기록 원장으로 진짜 OOS 축적",
+      "doc": "docs/tasks/T-052.md",
+      "status": "review",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "일봉 4체크 신호판 재설계·118 테스트 통과·실데이터 스캔 확인. 채택 판정 아님: 전진 기록(확정 100건/30일) 사전 고정 기준 대기, Colab 동기화 후속",
+      "done_at": null,
+      "updated_at": "2026-09-20",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-20",
+      "log": [
+        {
+          "at": "2026-09-20",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-20",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-20",
+          "status": "review",
+          "note": "일봉 4체크 신호판 재설계·118 테스트 통과·실데이터 스캔 확인. 채택 판정 아님: 전진 기록(확정 100건/30일) 사전 고정 기준 대기, Colab 동기화 후속"
+        }
+      ]
     }
   ]
 }

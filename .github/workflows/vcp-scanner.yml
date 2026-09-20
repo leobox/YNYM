@@ -1,9 +1,12 @@
-name: VCP Super New-High Scanner
+name: Trend Breakout Signal Board (VCP Scanner)
 
 on:
   schedule:
-    # 한국 장중 (월~금 KST 09:30, 11:30, 13:30, 15:30 / UTC 00:30, 02:30, 04:30, 06:30) 2시간 주기 자동 스캔
-    - cron: '30 0,2,4,6 * * 1-5'
+    # T-052: 일봉 '완료봉' 기준 신호판. 장 마감(15:30) 후 월~금 KST 16:30, 18:00 (UTC 07:30, 09:00)에 실행.
+    # 야후 일봉 반영이 늦으면 18:00 실행이 보완한다(원장은 (신호일, 종목) 중복 없이 기록).
+    # 장중 실행은 오늘 일봉이 미완료라 결과가 전날과 같으므로 두지 않는다.
+    - cron: '30 7 * * 1-5'
+    - cron: '0 9 * * 1-5'
   workflow_dispatch: # 스마트폰 GitHub 웹/앱에서 버튼 하나로 즉시 수동 실행
 
 permissions:
@@ -65,7 +68,7 @@ jobs:
           if [ -f quant-research/requirements.txt ]; then pip install -r quant-research/requirements.txt; fi
           pip install -q finance-datareader requests pandas numpy
 
-      - name: VCP 슈퍼 신고가 스캐너 실행 (최대 3회 재시도)
+      - name: 추세 돌파 신호판 스캐너 실행 (최대 3회 재시도)
         run: |
           for attempt in 1 2 3; do
             if python quant-research/scripts/run_vcp_scanner.py; then
