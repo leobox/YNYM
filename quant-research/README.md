@@ -20,6 +20,14 @@
 실행하면 `universe`, `scores`, `top5`, `watch` CSV와 해시·행 수가 있는 manifest를
 `pattern_snapshots/`에 남깁니다. Colab 런타임이 초기화되기 전에 내려받아야 합니다.
 
+## VCP 슈퍼 신고가 스캐너 (운영)
+
+- 판정 모듈: [`scanner/vcp.py`](scanner/vcp.py)
+- 일괄 실행기: [`scripts/run_vcp_scanner.py`](scripts/run_vcp_scanner.py)
+- Colab 배포본: [`scripts/vcp_scanner_colab.py`](scripts/vcp_scanner_colab.py)
+- GitHub Actions: [`.github/workflows/vcp-scanner.yml`](../.github/workflows/vcp-scanner.yml)
+- 최신 스캔 스냅샷: [`data/vcp_snapshots/latest_vcp.md`](data/vcp_snapshots/latest_vcp.md)
+
 ## 이전 데이터
 
 `data/imported/`에는 `D:\DEPO_M\agent\results`의 선택된 6개 결과 트리를 보존했습니다.

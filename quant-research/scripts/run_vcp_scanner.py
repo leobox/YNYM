@@ -33,6 +33,9 @@ WORKERS = 6
 MCAP_MIN, MCAP_MAX = 100_000_000_000, 5_000_000_000_000
 MIN_PRICE = 2000
 OUTPUT_DIR = ROOT / "quant-research" / "data" / "vcp_snapshots"
+ROOT_README_PATH = ROOT / "README.md"
+VCP_MARK_START = "<!-- VCP_DASHBOARD:START -->"
+VCP_MARK_END = "<!-- VCP_DASHBOARD:END -->"
 
 def get_json(url: str, params: dict | None = None, max_retries: int = 3, timeout: int = 10):
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
@@ -190,8 +193,51 @@ def run_scan():
         df_all = pd.DataFrame(top5 + watchlist)
         df_all.to_csv(OUTPUT_DIR / f"{timestamp_key}.csv", index=False, encoding="utf-8-sig")
         
-    print(f"결과 파일 저장 완료: {OUTPUT_DIR / 'latest_vcp.md'}")
+    # 2. 루트 README.md 대시보드 갱신
+    embed_md = generate_embed_markdown(now_str, len(scored), top5, watchlist)
+    update_root_readme(embed_md)
+
+    print(f"결과 파일 저장 완료: {OUTPUT_DIR / 'latest_vcp.md'}", flush=True)
     return len(top5), len(watchlist)
+
+def generate_embed_markdown(now_str: str, total_count: int, top5: list, watchlist: list) -> str:
+    lines = [
+        f"> **최근 스캔**: `{now_str} KST` | **유니버스 분석**: `{total_count}종목` | **최종 후보(돌파)**: `{len(top5)}건` | **관찰 종목(수축)**: `{len(watchlist)}건`\n",
+        "### 🏆 최종 후보 (VCP 수축 + 거래량 폭발 + 피봇 돌파 완료)\n",
+    ]
+    if top5:
+        lines.append("| 종목명 | 코드 | 현재가 | VCP단계 | 수축비 | 거래량배수 | 피봇돌파선 | 점수 |")
+        lines.append("|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|")
+        for r in top5:
+            lines.append(f"| **{r['name']}** | {r['code']} | {r['price']:,}원 | {r['vcp_stage']} | {r['vcp_ratio']} | **{r['vol_spike']}배** | {r['pivot_level']:,}원 | **{r['score']}점** |")
+    else:
+        lines.append("*현재 5중 안전 기준을 100% 충족한 최종 후보가 없습니다. (무리한 뇌동매매 방지)*")
+        
+    lines.append("\n### 👀 관찰 종목 (VCP 수축 완료, 피봇 4% 턱밑 대기)\n")
+    if watchlist:
+        lines.append("| 종목명 | 코드 | 현재가 | VCP단계 | 수축비 | 거래량마름 | 피봇저항선 |")
+        lines.append("|:---|:---:|:---:|:---:|:---:|:---:|:---:|")
+        for r in watchlist:
+            lines.append(f"| **{r['name']}** | {r['code']} | {r['price']:,}원 | {r['vcp_stage']} | {r['vcp_ratio']} | {r['vol_dryup']}배 | {r['pivot_level']:,}원 |")
+    else:
+        lines.append("*관찰 후보 없음*")
+        
+    lines.append("\n---\n*※ 본 스캐너는 완료봉 기준 연구용 지표이며, 주문/매수 API를 일체 포함하지 않습니다.*")
+    return "\n".join(lines)
+
+def update_root_readme(embed_md: str) -> None:
+    if not ROOT_README_PATH.exists():
+        print(f"[경고] 루트 README.md가 없습니다: {ROOT_README_PATH}", flush=True)
+        return
+    content = ROOT_README_PATH.read_text(encoding="utf-8")
+    if VCP_MARK_START not in content or VCP_MARK_END not in content:
+        print("[경고] 루트 README.md에 VCP_DASHBOARD 마커가 없습니다.", flush=True)
+        return
+    pre, _, rest = content.partition(VCP_MARK_START)
+    _, _, post = rest.partition(VCP_MARK_END)
+    new_content = f"{pre}{VCP_MARK_START}\n\n{embed_md}\n\n{VCP_MARK_END}{post}"
+    ROOT_README_PATH.write_text(new_content, encoding="utf-8")
+    print(f"루트 README.md VCP 대시보드 마커 갱신 완료 ({ROOT_README_PATH})", flush=True)
 
 if __name__ == "__main__":
     run_scan()
