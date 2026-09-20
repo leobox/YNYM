@@ -1,0 +1,27 @@
+{
+  "test_base_rate": 0.336,
+  "ml_cands": 1332,
+  "ml_precision": 0.494,
+  "breadth_only_precision_same_n": 0.261,
+  "breadth_ge45_precision": 0.324,
+  "ml_share_breadth_ge45": 0.063,
+  "ml_precision_minus_same_day_base": 0.009,
+  "random_benchmark": {
+    "mp1": {
+      "n": 300,
+      "median": 4.46,
+      "p90": 34.25,
+      "p95": 41.52,
+      "ml_ret": 29.41,
+      "ml_pctile": 87.7
+    },
+    "mp3": {
+      "n": 300,
+      "median": 7.64,
+      "p90": 24.31,
+      "p95": 30.12,
+      "ml_ret": 1.54,
+      "ml_pctile": 28.3
+    }
+  }
+}

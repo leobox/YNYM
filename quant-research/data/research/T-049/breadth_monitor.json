@@ -1,0 +1,37 @@
+{
+  "valid_days": 194,
+  "first_valid": "2025-11-28",
+  "breadth_mean": 50.7,
+  "breadth_min": 7.5,
+  "breadth_max": 94.3,
+  "analysis_days": 189,
+  "buckets": {
+    "<25": {
+      "days": 36,
+      "fwd1_mean": 0.902,
+      "fwd5_mean": 1.853,
+      "fwd5_pos_share": 0.56
+    },
+    "25-45": {
+      "days": 44,
+      "fwd1_mean": -0.219,
+      "fwd5_mean": -0.431,
+      "fwd5_pos_share": 0.5
+    },
+    ">=45": {
+      "days": 109,
+      "fwd1_mean": 0.386,
+      "fwd5_mean": 2.667,
+      "fwd5_pos_share": 0.77
+    }
+  },
+  "spearman_fwd1": {
+    "rho": 0.044,
+    "p_naive": 0.5522
+  },
+  "spearman_fwd5": {
+    "rho": 0.045,
+    "p_naive": 0.5394
+  },
+  "note": "fwd5 windows overlap: effective sample ~ days/5, p-values are optimistic"
+}

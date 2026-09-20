@@ -1,0 +1,149 @@
+{
+  "window": [
+    "2025-12-01",
+    "2026-06-24"
+  ],
+  "sessions": 135,
+  "strategies": {
+    "A": {
+      "signals": 610,
+      "mp1": {
+        "trades": 51,
+        "wins": 23,
+        "ret": 29.23,
+        "mdd": -24.21,
+        "pf": 1.22,
+        "no_fill": 11,
+        "skipped": 508,
+        "thirds_pnl": [
+          -226788,
+          279427,
+          239620
+        ],
+        "pctile_vs_random": 93.1
+      },
+      "mp3": {
+        "trades": 149,
+        "wins": 58,
+        "ret": -4.19,
+        "mdd": -25.38,
+        "pf": 0.97,
+        "no_fill": 95,
+        "skipped": 361,
+        "thirds_pnl": [
+          -20885,
+          11544,
+          -32598
+        ],
+        "pctile_vs_random": 83.0,
+        "criteria": {
+          "trades>=30": true,
+          "ret>0": false,
+          "pctile>=95": false,
+          "thirds>=2pos": false
+        },
+        "monitoring_candidate": false
+      }
+    },
+    "B": {
+      "signals": 202,
+      "mp1": {
+        "trades": 43,
+        "wins": 9,
+        "ret": -63.98,
+        "mdd": -67.23,
+        "pf": 0.44,
+        "no_fill": 16,
+        "skipped": 120,
+        "thirds_pnl": [
+          -63355,
+          -251067,
+          -325422
+        ],
+        "pctile_vs_random": 1.7
+      },
+      "mp3": {
+        "trades": 91,
+        "wins": 28,
+        "ret": -25.14,
+        "mdd": -31.23,
+        "pf": 0.72,
+        "no_fill": 47,
+        "skipped": 63,
+        "thirds_pnl": [
+          -42804,
+          -25407,
+          -183152
+        ],
+        "pctile_vs_random": 41.2,
+        "criteria": {
+          "trades>=30": true,
+          "ret>0": false,
+          "pctile>=95": false,
+          "thirds>=2pos": false
+        },
+        "monitoring_candidate": false
+      }
+    },
+    "C": {
+      "signals": 643,
+      "mp1": {
+        "trades": 51,
+        "wins": 20,
+        "ret": -12.21,
+        "mdd": -30.16,
+        "pf": 0.91,
+        "no_fill": 10,
+        "skipped": 542,
+        "thirds_pnl": [
+          -226788,
+          249751,
+          -145095
+        ],
+        "pctile_vs_random": 67.2
+      },
+      "mp3": {
+        "trades": 156,
+        "wins": 60,
+        "ret": -7.59,
+        "mdd": -23.91,
+        "pf": 0.95,
+        "no_fill": 107,
+        "skipped": 375,
+        "thirds_pnl": [
+          -20885,
+          86274,
+          -141286
+        ],
+        "pctile_vs_random": 77.2,
+        "criteria": {
+          "trades>=30": true,
+          "ret>0": false,
+          "pctile>=95": false,
+          "thirds>=2pos": false
+        },
+        "monitoring_candidate": false
+      }
+    }
+  },
+  "random": {
+    "mp1": {
+      "n": 1000,
+      "mean": -20.09,
+      "median": -25.07,
+      "p90": 19.92,
+      "p95": 33.97,
+      "max": 189.41,
+      "share_pos": 0.194
+    },
+    "mp3": {
+      "n": 1000,
+      "mean": -19.41,
+      "median": -21.27,
+      "p90": 3.38,
+      "p95": 13.2,
+      "max": 67.94,
+      "share_pos": 0.125
+    }
+  }
+}

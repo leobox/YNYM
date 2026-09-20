@@ -1,11 +1,13 @@
 import pandas as pd
 
-def simulate_account(entries, data, sessions, mode, fee=0.00175, entry_slippage=0.0, max_positions=1):
+def simulate_account(entries, data, sessions, mode, fee=0.00175, entry_slippage=0.0, max_positions=1,
+                     target_pct=0.10, stop_pct=0.05, exit_slippage=0.0):
     """
     Simulate trading account with realistic execution rules.
     - Entry at next observation bar open (slippage applied)
-    - Target: +10% limit order
-    - Stop: -5% stop loss (same-bar stop has priority over target)
+    - Target: +target_pct limit order (default +10%)
+    - Stop: -stop_pct stop loss (default -5%; same-bar stop has priority over target)
+    - exit_slippage: applied to every sell price (conservative; default 0 keeps legacy behavior)
     - Max hold: 5 trading sessions (exit at 14:00 bar of 5th session)
     - Multi-position support: max_positions controls concurrent positions (default 1)
     - Equal allocation of available cash across empty position slots
@@ -61,8 +63,8 @@ def simulate_account(entries, data, sessions, mode, fee=0.00175, entry_slippage=
                     continue
                 bar = b.loc[ts]
                 age = sessions.index(ts.date()) - p['day'] + 1
-                stop = max(p['entry'] * 0.95, p['peak'] * 0.95) if p['partial'] else p['entry'] * 0.95
-                target = p['entry'] * 1.10
+                stop = max(p['entry'] * (1 - stop_pct), p['peak'] * (1 - stop_pct)) if p['partial'] else p['entry'] * (1 - stop_pct)
+                target = p['entry'] * (1 + target_pct)
                 exit_price = None
                 reason = None
                 
@@ -87,7 +89,7 @@ def simulate_account(entries, data, sessions, mode, fee=0.00175, entry_slippage=
                     if mode == 'partial' and reason == 'TARGET' and sold >= 2:
                         sold = p['initial_qty'] // 2
                         p['partial'] = True
-                    proceeds = sold * exit_price * (1 - fee)
+                    proceeds = sold * exit_price * (1 - exit_slippage) * (1 - fee)
                     cash += proceeds
                     p['proceeds'] += proceeds
                     p['qty'] -= sold
@@ -99,7 +101,7 @@ def simulate_account(entries, data, sessions, mode, fee=0.00175, entry_slippage=
                     p['peak'] = max(p['peak'], float(bar.High))
                     p['last'] = float(bar.Close)
                     if (age >= 5 and ts.hour == 14) or ts == timeline[-1]:
-                        proceeds = p['qty'] * float(bar.Close) * (1 - fee)
+                        proceeds = p['qty'] * float(bar.Close) * (1 - exit_slippage) * (1 - fee)
                         cash += proceeds
                         p['proceeds'] += proceeds
                         p['qty'] = 0
@@ -194,8 +196,8 @@ def simulate_account(entries, data, sessions, mode, fee=0.00175, entry_slippage=
                 continue
             bar = b.loc[ts]
             age = sessions.index(ts.date()) - p['day'] + 1
-            stop = max(p['entry'] * 0.95, p['peak'] * 0.95) if p['partial'] else p['entry'] * 0.95
-            target = p['entry'] * 1.10
+            stop = max(p['entry'] * (1 - stop_pct), p['peak'] * (1 - stop_pct)) if p['partial'] else p['entry'] * (1 - stop_pct)
+            target = p['entry'] * (1 + target_pct)
             exit_price = None
             reason = None
             
@@ -220,7 +222,7 @@ def simulate_account(entries, data, sessions, mode, fee=0.00175, entry_slippage=
                 if mode == 'partial' and reason == 'TARGET' and sold >= 2:
                     sold = p['initial_qty'] // 2
                     p['partial'] = True
-                proceeds = sold * exit_price * (1 - fee)
+                proceeds = sold * exit_price * (1 - exit_slippage) * (1 - fee)
                 cash += proceeds
                 p['proceeds'] += proceeds
                 p['qty'] -= sold
@@ -232,7 +234,7 @@ def simulate_account(entries, data, sessions, mode, fee=0.00175, entry_slippage=
                 p['peak'] = max(p['peak'], float(bar.High))
                 p['last'] = float(bar.Close)
                 if (age >= 5 and ts.hour == 14) or ts == timeline[-1]:
-                    proceeds = p['qty'] * float(bar.Close) * (1 - fee)
+                    proceeds = p['qty'] * float(bar.Close) * (1 - exit_slippage) * (1 - fee)
                     cash += proceeds
                     p['proceeds'] += proceeds
                     p['qty'] = 0

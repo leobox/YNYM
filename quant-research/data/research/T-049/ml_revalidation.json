@@ -1,0 +1,164 @@
+{
+  "split": {
+    "train": [
+      "2025-12-08",
+      "2026-04-15"
+    ],
+    "validate": [
+      "2026-04-24",
+      "2026-06-17"
+    ],
+    "test": [
+      "2026-06-25",
+      "2026-09-16"
+    ]
+  },
+  "variants": {
+    "with_F10": {
+      "validate_table": [
+        {
+          "th": 0.4,
+          "cands": 333,
+          "dates": 18,
+          "precision": 0.574
+        },
+        {
+          "th": 0.45,
+          "cands": 113,
+          "dates": 6,
+          "precision": 0.558
+        },
+        {
+          "th": 0.5,
+          "cands": 48,
+          "dates": 2,
+          "precision": 0.479
+        },
+        {
+          "th": 0.55,
+          "cands": 22,
+          "dates": 2,
+          "precision": 0.591
+        },
+        {
+          "th": 0.6,
+          "cands": 13,
+          "dates": 2,
+          "precision": 0.692
+        },
+        {
+          "th": 0.65,
+          "cands": 2,
+          "dates": 2,
+          "precision": 1.0
+        }
+      ],
+      "validate_base_rate": 0.258,
+      "test_base_rate": 0.336,
+      "chosen_threshold": 0.4,
+      "test": {
+        "cands": 1332,
+        "dates": 43,
+        "precision": 0.494,
+        "mp1": {
+          "trades": 28,
+          "wins": 13,
+          "ret": 29.41,
+          "mdd": -12.48,
+          "pf": 1.42,
+          "no_fill": 6,
+          "skipped": 92
+        },
+        "mp3": {
+          "trades": 70,
+          "wins": 27,
+          "ret": 1.54,
+          "mdd": -17.86,
+          "pf": 1.02,
+          "no_fill": 23,
+          "skipped": 47
+        }
+      },
+      "criteria": {
+        "cands>=100": true,
+        "dates>=15": true,
+        "precision>=base+5pp": true,
+        "mp3_ret>0": true
+      },
+      "adopt": true
+    },
+    "without_F10": {
+      "validate_table": [
+        {
+          "th": 0.4,
+          "cands": 240,
+          "dates": 34,
+          "precision": 0.304
+        },
+        {
+          "th": 0.45,
+          "cands": 91,
+          "dates": 24,
+          "precision": 0.297
+        },
+        {
+          "th": 0.5,
+          "cands": 31,
+          "dates": 11,
+          "precision": 0.323
+        },
+        {
+          "th": 0.55,
+          "cands": 6,
+          "dates": 5,
+          "precision": 0.333
+        },
+        {
+          "th": 0.6,
+          "cands": 0,
+          "dates": 0,
+          "precision": null
+        },
+        {
+          "th": 0.65,
+          "cands": 0,
+          "dates": 0,
+          "precision": null
+        }
+      ],
+      "validate_base_rate": 0.258,
+      "test_base_rate": 0.336,
+      "chosen_threshold": 0.5,
+      "test": {
+        "cands": 91,
+        "dates": 20,
+        "precision": 0.56,
+        "mp1": {
+          "trades": 14,
+          "wins": 4,
+          "ret": -13.9,
+          "mdd": -25.47,
+          "pf": 0.64,
+          "no_fill": 4,
+          "skipped": 27
+        },
+        "mp3": {
+          "trades": 32,
+          "wins": 10,
+          "ret": -6.32,
+          "mdd": -16.94,
+          "pf": 0.78,
+          "no_fill": 8,
+          "skipped": 10
+        }
+      },
+      "criteria": {
+        "cands>=100": false,
+        "dates>=15": true,
+        "precision>=base+5pp": true,
+        "mp3_ret>0": false
+      },
+      "adopt": false
+    }
+  }
+}

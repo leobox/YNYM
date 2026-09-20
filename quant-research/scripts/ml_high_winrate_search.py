@@ -31,6 +31,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
 from research.account_simulator import simulate_account
+from research.regime import compute_market_breadth as _breadth
 
 DATA_DIR = os.path.join(ROOT, 'data', 'imported', 'ytd_11am')
 
@@ -53,13 +54,9 @@ def load_ytd_data():
     return data, names, sessions
 
 def compute_market_breadth(data, sessions):
-    daily_closes = {}
-    for code, df in data.items():
-        daily_closes[code] = df['Close'].groupby(df.index.date).last()
-    df_closes = pd.DataFrame(daily_closes).sort_index()
-    ma20 = df_closes.rolling(20).mean()
-    breadth = (df_closes > ma20).astype(float).mean(axis=1) * 100.0
-    return breadth
+    """[T-049] 20세션 미만 구간은 0%가 아니라 NaN (research.regime)."""
+    return _breadth(data)
+
 
 def extract_10_features_and_labels(data, sessions, breadth, target_pct=0.08, stop_pct=0.04, max_hold=5):
     """
@@ -137,7 +134,7 @@ def extract_10_features_and_labels(data, sessions, breadth, target_pct=0.08, sto
                 continue
                 
             # F10: market_breadth
-            f10 = breadth.get(d, 50.0)
+            f10 = breadth.get(d, np.nan)  # [T-049] 결측은 NaN -> dropna로 제외
             
             # 미래 봉 탐색 (라벨 판정)
             target_price = entry_price * (1.0 + target_pct)

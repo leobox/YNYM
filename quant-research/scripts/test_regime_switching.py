@@ -16,21 +16,15 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
 from research.account_simulator import simulate_account
+from research.regime import compute_market_breadth as _breadth
 from scripts.backtest_surge_precursors import load_data, generate_precursor_signals, evaluate_strategy
 
+
 def compute_market_breadth(data, sessions):
-    """모든 종목의 일별 종가를 모아 당일 20일선 상회 종목 비율(Market Breadth) 계산."""
-    daily_closes = {}
-    for code, df in data.items():
-        daily_closes[code] = df['Close'].groupby(df.index.date).last()
-        
-    df_closes = pd.DataFrame(daily_closes).sort_index()
-    # 20일 이동평균
-    ma20 = df_closes.rolling(20).mean()
-    above_20 = (df_closes > ma20).astype(float)
-    # Market Breadth (%): 0 ~ 100
-    breadth = above_20.mean(axis=1) * 100.0
-    return breadth
+    """[T-049] 20세션 미만 구간은 0%가 아니라 NaN (research.regime)."""
+    return _breadth(data)
+
+
 
 def generate_regime_switched_signals(data, sessions, breadth):
     """
@@ -49,14 +43,18 @@ def generate_regime_switched_signals(data, sessions, breadth):
     
     for idx, r in signals_trend.iterrows():
         sig_date = pd.Timestamp(r['signal_date']).date()
-        mb = breadth.get(sig_date, 50.0)
+        mb = breadth.get(sig_date, np.nan)  # [T-049] 결측을 50%로 위장하지 않는다
+        if pd.isna(mb):
+            continue
         # Bull Regime: MB >= 45%
         if mb >= 45.0:
             switched_rows.append(r)
             
     for idx, r in signals_reversal.iterrows():
         sig_date = pd.Timestamp(r['signal_date']).date()
-        mb = breadth.get(sig_date, 50.0)
+        mb = breadth.get(sig_date, np.nan)
+        if pd.isna(mb):
+            continue
         # Bear Regime: 25% <= MB < 45% (Panic crash 아래면 진입 안 함)
         if 25.0 <= mb < 45.0:
             switched_rows.append(r)
@@ -80,7 +78,7 @@ if __name__ == '__main__':
     
     print("2. Market Breadth(시장 폭, 20일선 상회 비율) 레짐 계산 중...")
     breadth = compute_market_breadth(data, sessions)
-    print(f"  - 평균 시장 폭: {breadth.mean():.1f}%, 최저: {breadth.min():.1f}%, 최고: {breadth.max():.1f}%")
+    print(f"  - 평균 시장 폭(유효 {int(breadth.notna().sum())}일): {breadth.mean():.1f}%, 최저: {breadth.min():.1f}%, 최고: {breadth.max():.1f}%")
     
     print("3. 신호 생성...")
     # 1) 레짐 없는 단순 결합 전략 (Strategy C: Combined)

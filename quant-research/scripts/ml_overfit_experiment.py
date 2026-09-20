@@ -183,9 +183,10 @@ def run_ml_experiment(df_samples, data, sessions):
     # 60개 세션 중 앞의 10거래일 = Train, 뒤의 50거래일 = Test
     # 실질적으로 t=20부터 시작하므로:
     # Train 세션: sessions[20:30] (10일간의 학습 데이터)
-    # Test 세션: sessions[30:] (나머지 30~59: 약 30거래일의 OOS 실전 데이터)
+    # Test 세션: sessions[35:] (embargo 5세션 이후 25거래일의 OOS 실전 데이터)
+    # [T-049] 라벨이 진입 후 5거래일을 보므로 Train 마지막 세션의 라벨 창이 Test에 닿는다 -> 5세션 embargo
     train_dates = set(sessions[20:30])
-    test_dates = set(sessions[30:])
+    test_dates = set(sessions[35:])
     
     train_df = df_samples[df_samples['date'].isin(train_dates)].copy()
     test_df = df_samples[df_samples['date'].isin(test_dates)].copy()
@@ -246,7 +247,7 @@ def run_ml_experiment(df_samples, data, sessions):
             if len(entries) == 0:
                 return {'Period': period_name, 'Trades': 0, 'Win_Rate_%': 0.0, 'Total_Return_%': 0.0, 'MDD_%': 0.0, 'Profit_Factor': 0.0}
             res, trades, eq = simulate_account(
-                entries=entries, data=data, sessions=sess_list, mode='fixed', fee=0.00175, entry_slippage=0.0005, max_positions=1
+                entries=entries, data=data, sessions=sess_list, mode='fixed', fee=0.00175, entry_slippage=0.0005, max_positions=1, exit_slippage=0.0005
             )
             tdf = pd.DataFrame(trades)
             if len(tdf) == 0:
@@ -289,7 +290,7 @@ def run_ml_experiment(df_samples, data, sessions):
     print("=========================================================================================")
     print(df_res.to_string(index=False))
     
-    out_md = os.path.join(ROOT, 'data', 'research', 'T-043_ml_overfit_report.md')
+    out_md = os.path.join(ROOT, 'data', 'research', 'T-043_ml_overfit_report_T049.md')
     with open(out_md, 'w', encoding='utf-8') as f:
         f.write("# T-043 ML 과적합(Overfitting) vs 일반화(Generalization) 백테스트 보고서\n\n")
         f.write(df_res.to_markdown(index=False))
