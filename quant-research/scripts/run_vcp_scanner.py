@@ -128,6 +128,11 @@ def run_scan():
                 return None
             res = detect_vcp(df).iloc[-1]
             c = df.Close.iloc[-1]
+            # 일일 환산 20일 평균 거래량 * 1.5
+            daily_vol = df.Volume.groupby(df.index.date).sum()
+            daily_v_ma20 = daily_vol.iloc[:-1].tail(20).mean() if len(daily_vol) > 1 else daily_vol.mean()
+            req_vol_daily = int(daily_v_ma20 * 1.5) if pd.notna(daily_v_ma20) else 0
+
             return {
                 "code": rec["code"], "name": rec["name"], "price": int(c),
                 "eligible": bool(res["eligible"]), "score": float(res["score"]),
@@ -135,6 +140,7 @@ def run_scan():
                 "vol_spike": float(res["vol_spike"]), "vol_dryup": float(res["vol_dryup"]),
                 "pivot_level": int(res["pivot_level"]), "extension_atr": float(res["extension_atr"]),
                 "near_pivot": bool(c >= res["pivot_level"] * 0.96 and c < res["pivot_level"] and res["vcp_ratio"] <= 0.65),
+                "req_vol_daily": req_vol_daily,
                 "timestamp": now_str
             }
         except Exception:
@@ -164,19 +170,19 @@ def run_scan():
         "## 🏆 최종 후보 (VCP 수축 + 거래량 폭발 + 피봇 돌파 완료)",
     ]
     if top5:
-        md_lines.append("| 종목명 | 코드 | 현재가 | VCP단계 | 수축비 | 거래량배수 | 피봇돌파선 | 점수 |")
-        md_lines.append("|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|")
+        md_lines.append("| 종목(코드) | 현재가 | 피봇돌파선 | 거래량폭발 | VCP수축 | 점수 |")
+        md_lines.append("|:---|:---:|:---:|:---:|:---:|:---:|")
         for r in top5:
-            md_lines.append(f"| **{r['name']}** | {r['code']} | {r['price']:,}원 | {r['vcp_stage']} | {r['vcp_ratio']} | **{r['vol_spike']}배** | {r['pivot_level']:,}원 | **{r['score']}점** |")
+            md_lines.append(f"| **{r['name']}** ({r['code']}) | {r['price']:,}원 | {r['pivot_level']:,}원 | **{r['vol_spike']}배** | {format_stage(r['vcp_stage'], r['vcp_ratio'])} | **{r['score']}점** |")
     else:
         md_lines.append("\n*현재 5중 안전 기준을 100% 충족한 최종 후보가 없습니다. (무리한 뇌동매매 방지)*\n")
         
     md_lines.append("\n## 👀 관찰 종목 (VCP 수축 완료, 피봇 4% 턱밑 대기)")
     if watchlist:
-        md_lines.append("| 종목명 | 코드 | 현재가 | VCP단계 | 수축비 | 거래량마름 | 피봇저항선 |")
-        md_lines.append("|:---|:---:|:---:|:---:|:---:|:---:|:---:|")
+        md_lines.append("| 종목(코드) | 현재가 | 피봇돌파선 | 돌파필요 거래량(일일) | VCP수축 |")
+        md_lines.append("|:---|:---:|:---:|:---:|:---:|")
         for r in watchlist:
-            md_lines.append(f"| **{r['name']}** | {r['code']} | {r['price']:,}원 | {r['vcp_stage']} | {r['vcp_ratio']} | {r['vol_dryup']}배 | {r['pivot_level']:,}원 |")
+            md_lines.append(f"| **{r['name']}** ({r['code']}) | {r['price']:,}원 | {r['pivot_level']:,}원 | **{format_vol(r['req_vol_daily'])}** | {format_stage(r['vcp_stage'], r['vcp_ratio'])} |")
     else:
         md_lines.append("\n*관찰 후보 없음*\n")
         
@@ -200,25 +206,38 @@ def run_scan():
     print(f"결과 파일 저장 완료: {OUTPUT_DIR / 'latest_vcp.md'}", flush=True)
     return len(top5), len(watchlist)
 
+def format_vol(v: int) -> str:
+    if not v or pd.isna(v):
+        return "-"
+    if v >= 100_000_000:
+        return f"약 {v / 100_000_000:.1f}억 주"
+    elif v >= 10_000:
+        return f"약 {v / 10_000:.1f}만 주"
+    return f"{v:,}주"
+
+def format_stage(stage: str, ratio: float) -> str:
+    short_stage = "3T" if "3T" in stage else ("2T" if "2T" in stage else stage)
+    return f"{short_stage} ({ratio:.2f})"
+
 def generate_embed_markdown(now_str: str, total_count: int, top5: list, watchlist: list) -> str:
     lines = [
         f"> **최근 스캔**: `{now_str} KST` | **유니버스 분석**: `{total_count}종목` | **최종 후보(돌파)**: `{len(top5)}건` | **관찰 종목(수축)**: `{len(watchlist)}건`\n",
         "### 🏆 최종 후보 (VCP 수축 + 거래량 폭발 + 피봇 돌파 완료)\n",
     ]
     if top5:
-        lines.append("| 종목명 | 코드 | 현재가 | VCP단계 | 수축비 | 거래량배수 | 피봇돌파선 | 점수 |")
-        lines.append("|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|")
+        lines.append("| 종목(코드) | 현재가 | 피봇돌파선 | 거래량폭발 | VCP수축 | 점수 |")
+        lines.append("|:---|:---:|:---:|:---:|:---:|:---:|")
         for r in top5:
-            lines.append(f"| **{r['name']}** | {r['code']} | {r['price']:,}원 | {r['vcp_stage']} | {r['vcp_ratio']} | **{r['vol_spike']}배** | {r['pivot_level']:,}원 | **{r['score']}점** |")
+            lines.append(f"| **{r['name']}** ({r['code']}) | {r['price']:,}원 | {r['pivot_level']:,}원 | **{r['vol_spike']}배** | {format_stage(r['vcp_stage'], r['vcp_ratio'])} | **{r['score']}점** |")
     else:
         lines.append("*현재 5중 안전 기준을 100% 충족한 최종 후보가 없습니다. (무리한 뇌동매매 방지)*")
         
     lines.append("\n### 👀 관찰 종목 (VCP 수축 완료, 피봇 4% 턱밑 대기)\n")
     if watchlist:
-        lines.append("| 종목명 | 코드 | 현재가 | VCP단계 | 수축비 | 거래량마름 | 피봇저항선 |")
-        lines.append("|:---|:---:|:---:|:---:|:---:|:---:|:---:|")
+        lines.append("| 종목(코드) | 현재가 | 피봇돌파선 | 돌파필요 거래량(일일) | VCP수축 |")
+        lines.append("|:---|:---:|:---:|:---:|:---:|")
         for r in watchlist:
-            lines.append(f"| **{r['name']}** | {r['code']} | {r['price']:,}원 | {r['vcp_stage']} | {r['vcp_ratio']} | {r['vol_dryup']}배 | {r['pivot_level']:,}원 |")
+            lines.append(f"| **{r['name']}** ({r['code']}) | {r['price']:,}원 | {r['pivot_level']:,}원 | **{format_vol(r['req_vol_daily'])}** | {format_stage(r['vcp_stage'], r['vcp_ratio'])} |")
     else:
         lines.append("*관찰 후보 없음*")
         

@@ -1791,6 +1791,45 @@
           "note": "VCP 스캐너 수동 실행 및 루트 README.md 대시보드 마커 연동 완료, Actions 워크플로 git add 대상에 README 추가, quant_guard 및 pytest 77건 통과"
         }
       ]
+    },
+    {
+      "id": "T-051",
+      "title": "VCP 관찰종목 모바일 최적화 및 돌파 거래량 표시",
+      "summary": "",
+      "doc": "docs/tasks/T-051.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "VCP 관찰종목 돌파필요 거래량(일일) 산출 및 5컬럼 모바일 최적화 표 갱신, 수동 스캔 완주, README 및 스냅샷 최신화",
+      "done_at": "2026-09-20",
+      "updated_at": "2026-09-20",
+      "done_when": "관찰종목 모바일 최적화 및 돌파필요거래량 표시 완료",
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-09-20",
+      "log": [
+        {
+          "at": "2026-09-20",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-20",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-20",
+          "status": "done",
+          "note": "VCP 관찰종목 돌파필요 거래량(일일) 산출 및 5컬럼 모바일 최적화 표 갱신, 수동 스캔 완주, README 및 스냅샷 최신화"
+        }
+      ]
     }
   ]
 }
