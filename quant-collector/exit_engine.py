@@ -53,7 +53,12 @@ def evaluate_position_exit(
     entry_price = float(position["entry_reference_price"])
     features = position.get("features", {})
     breakout_level = float(features.get("breakout_level", entry_price * 0.98))
-    target_10 = float(position.get("targets", {}).get("tgt_10", entry_price * 1.10))
+    target_profit = float(
+        position.get("targets", {}).get("tgt_5_35")
+        or position.get("targets", {}).get("tgt_535")
+        or position.get("targets", {}).get("tgt_10", entry_price * 1.0535)
+    )
+    target_pct = round((target_profit / entry_price - 1) * 100.0, 2)
     stop_5 = float(position.get("stops", {}).get("stop_5", entry_price * 0.95))
 
     pnl_pct = round((current_price / entry_price - 1) * 100.0, 2)
@@ -83,22 +88,22 @@ def evaluate_position_exit(
         suggested_price = min(current_price, stop_5)
 
     # -------------------------------------------------------------
-    # 2. 목표 달성 익절 (+10% 도달)
+    # 2. 목표 달성 익절 (+5.35% 또는 설정치 도달)
     # -------------------------------------------------------------
-    elif current_price >= target_10 or (last_bar and last_bar["high"] >= target_10):
+    elif current_price >= target_profit or (last_bar and last_bar["high"] >= target_profit):
         decision = ExitSignal.TARGET_HIT
         action_type = "TAKE_PROFIT"
         urgency = "IMMEDIATE"
-        reason = f"목표 수익률 +10%({target_10:,.0f}원) 도달 완료! 전량 익절"
-        suggested_price = target_10
+        reason = f"목표 수익률 +{target_pct}%({target_profit:,.0f}원) 도달 완료! 전량 익절"
+        suggested_price = target_profit
 
     # -------------------------------------------------------------
-    # 3. 고점 대비 되돌림 이익 보존 (+5% 이상 올랐던 종목)
+    # 3. 고점 대비 되돌림 이익 보존 (+3.5% 이상 올랐던 종목)
     # -------------------------------------------------------------
-    elif max_gain_pct >= 5.0:
-        # 고점 대비 -3% 이상 밀리거나, 진입가(+0.5% 이하)로 회귀하려는 경우
+    elif max_gain_pct >= 3.5:
+        # 고점 대비 -1.8% 이상 밀리거나, 진입가(+0.5% 이하)로 회귀하려는 경우
         retreat_from_peak = (current_price / highest_seen - 1) * 100.0
-        if retreat_from_peak <= -3.0 or pnl_pct <= 0.5:
+        if retreat_from_peak <= -1.8 or pnl_pct <= 0.5:
             decision = ExitSignal.TRAILING_PROFIT
             action_type = "TAKE_PROFIT"
             urgency = "HIGH"
@@ -165,7 +170,8 @@ def evaluate_position_exit(
         "max_gain_pct": max_gain_pct,
         "days_held": days_held,
         "breakout_level": breakout_level,
-        "target_10": target_10,
+        "target_profit": target_profit,
+        "target_10": target_profit,
         "stop_5": stop_5,
         "decision": decision,
         "action_type": action_type,

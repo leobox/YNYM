@@ -51,6 +51,22 @@ class TestTargetHit:
         result = evaluate_position_exit(position, bars, 10900.0, NOW)
         assert result["decision"] == ExitSignal.TARGET_HIT
 
+    def test_triggers_on_five_thirty_five_pct_target(self):
+        position = {
+            "code": "218410",
+            "name": "RFHIC",
+            "entry_reference_price": 10000.0,
+            "targets": {"tgt_5_35": 10535.0},
+            "stops": {"stop_5": 9500.0},
+            "highest_seen": 10600.0,
+            "trading_days_observed": 1,
+            "signal_time_kst": "2026-09-17 09:00",
+        }
+        result = evaluate_position_exit(position, [], 10550.0, NOW)
+        assert result["decision"] == ExitSignal.TARGET_HIT
+        assert result["action_type"] == "TAKE_PROFIT"
+        assert result["suggested_price"] == 10535.0
+
 
 class TestTrailingProfit:
     def test_triggers_after_five_pct_gain_and_three_pct_retreat(self):

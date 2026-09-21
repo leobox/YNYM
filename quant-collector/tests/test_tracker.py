@@ -73,14 +73,14 @@ class TestGetSummaryStatsRefKey:
         with open(tracker.resolved_file, "a", encoding="utf-8") as f:
             f.write(__import__("json").dumps(record, ensure_ascii=False) + "\n")
 
-    def test_defaults_to_h5_t10_s5(self, tmp_path):
+    def test_defaults_to_h5_t535_s5(self, tmp_path):
         tracker = make_tracker(tmp_path)
         self._write_resolved(tracker, "s1", {
-            "h5_t10_s5": {"status": "TARGET_FIRST"},
-            "h5_t10_s3": {"status": "STOP_FIRST"},
+            "h5_t535_s5": {"status": "TARGET_FIRST"},
+            "h5_t535_s3": {"status": "STOP_FIRST"},
         })
         stats = tracker.get_summary_stats(strategy_version="s1")
-        assert stats["ref_benchmark"] == "h5_t10_s5"
+        assert stats["ref_benchmark"] == "h5_t535_s5"
         assert stats["target_first"] == 1
         assert stats["stop_first"] == 0
 

@@ -26,9 +26,14 @@ from typing import Dict, Any, List, Optional, Set
 import pandas as pd
 
 KST = timezone(timedelta(hours=9))
-TARGET_PCTS = [3.0, 5.0, 7.0, 10.0]
+TARGET_PCTS = [3.0, 5.0, 5.35, 7.0, 10.0]
 STOP_PCTS = [3.0, 5.0]
 HORIZONS = [3, 5]  # 거래일 기준
+
+
+def eval_key(h: int, t_pct: float, s_pct: float) -> str:
+    t_str = "535" if t_pct == 5.35 else str(int(t_pct))
+    return f"h{h}_t{t_str}_s{int(s_pct)}"
 
 
 class SignalTracker:
@@ -85,7 +90,8 @@ class SignalTracker:
         now_dt = datetime.now(KST)
 
         # 목표/손절 매트릭스 사전 계산
-        targets = {f"tgt_{int(p)}": round(entry_reference_price * (1 + p / 100.0), 2) for p in TARGET_PCTS}
+        targets = {f"tgt_{int(p)}": round(entry_reference_price * (1 + p / 100.0), 2) for p in TARGET_PCTS if p != 5.35}
+        targets["tgt_5_35"] = round(entry_reference_price * 1.0535, 2)
         stops = {f"stop_{int(p)}": round(entry_reference_price * (1 - p / 100.0), 2) for p in STOP_PCTS}
 
         # 라벨 판정 상태 초기화 (조합별: (tgt, stop, horizon))
@@ -93,7 +99,7 @@ class SignalTracker:
         for h in HORIZONS:
             for t_pct in TARGET_PCTS:
                 for s_pct in STOP_PCTS:
-                    key = f"h{h}_t{int(t_pct)}_s{int(s_pct)}"
+                    key = eval_key(h, t_pct, s_pct)
                     evaluations[key] = {
                         "status": "PENDING",
                         "exit_price": None,
@@ -167,7 +173,14 @@ class SignalTracker:
             for h in HORIZONS:
                 for t_pct in TARGET_PCTS:
                     for s_pct in STOP_PCTS:
-                        key = f"h{h}_t{int(t_pct)}_s{int(s_pct)}"
+                        key = eval_key(h, t_pct, s_pct)
+                        if key not in sig["evaluations"]:
+                            sig["evaluations"][key] = {
+                                "status": "PENDING",
+                                "exit_price": None,
+                                "exit_time": None,
+                                "return_pct": None,
+                            }
                         eval_state = sig["evaluations"][key]
 
                         if eval_state["status"] != "PENDING":
@@ -269,16 +282,14 @@ class SignalTracker:
         self._save_pending()
         return newly_resolved
 
-    def get_summary_stats(self, strategy_version: Optional[str] = None, ref_key: str = "h5_t10_s5") -> Dict[str, Any]:
+    def get_summary_stats(self, strategy_version: Optional[str] = None, ref_key: str = "h5_t535_s5") -> Dict[str, Any]:
         """현재까지 추적 중인 신호 및 완료된 신호의 통계 요약
 
         strategy_version을 주면 그 전략으로 등록된 신호만 집계한다(운영 신호와
         병렬 실험 전략의 성과를 섞지 않기 위함).
 
         ref_key: 어떤 목표/손절/기간 조합을 익절·손절 판정 기준으로 쓸지
-        (evaluations 딕셔너리의 키, 예: "h5_t10_s5" = +10% 익절/-5% 손절/5거래일).
-        전략마다 실제 가격 변동폭이 달라 최적 조합이 다를 수 있어 파라미터화했다
-        (예: volume_zscore_accel_v1은 과거 데이터 검증 결과 h5_t10_s3이 더 나음).
+        (evaluations 딕셔너리의 키, 기본값: "h5_t535_s5" = +5.35% 익절/-5% 손절/5거래일).
         """
         total_pending = sum(
             1 for sig in self.pending_signals.values()
@@ -297,7 +308,10 @@ class SignalTracker:
                         if strategy_version is not None and record.get("strategy_version") != strategy_version:
                             continue
                         resolved_count += 1
-                        st = record.get("evaluations", {}).get(ref_key, {}).get("status")
+                        evals = record.get("evaluations", {})
+                        st = evals.get(ref_key, {}).get("status")
+                        if st is None and ref_key == "h5_t535_s5":
+                            st = evals.get("h5_t5_s5", {}).get("status") or evals.get("h5_t10_s5", {}).get("status")
                         if st == "TARGET_FIRST":
                             target_first_count += 1
                         elif st in ("STOP_FIRST", "AMBIGUOUS_STOP"):

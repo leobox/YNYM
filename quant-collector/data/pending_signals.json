@@ -139,7 +139,29 @@
         "return_pct": null
       }
     },
-    "is_fully_resolved": false
+    "is_fully_resolved": false,
+    "last_exit_eval": {
+      "code": "281820",
+      "name": "케이씨텍",
+      "entry_price": 73300.0,
+      "current_price": 79100.0,
+      "pnl_pct": 7.91,
+      "highest_seen": 79100.0,
+      "max_gain_pct": 7.91,
+      "days_held": 3,
+      "breakout_level": 71100.0,
+      "target_profit": 80630.0,
+      "target_10": 80630.0,
+      "stop_5": 69635.0,
+      "decision": "HOLD",
+      "action_type": "KEEP",
+      "urgency": "LOW",
+      "reason": "돌파선 위에서 양호하게 상승 추세 유지 중",
+      "suggested_price": 79100.0,
+      "evaluated_at": "2026-09-21 21:55",
+      "signal_id": "algorithm260917_v1_281820_2026-09-17_1300",
+      "strategy_version": "algorithm260917_v1"
+    }
   },
   "algorithm260917_v1_229640_2026-09-18_0900": {
     "signal_id": "algorithm260917_v1_229640_2026-09-18_0900",
@@ -280,7 +302,29 @@
         "return_pct": null
       }
     },
-    "is_fully_resolved": false
+    "is_fully_resolved": false,
+    "last_exit_eval": {
+      "code": "229640",
+      "name": "LS에코에너지",
+      "entry_price": 60800.0,
+      "current_price": 61300.0,
+      "pnl_pct": 0.82,
+      "highest_seen": 63000.0,
+      "max_gain_pct": 3.62,
+      "days_held": 2,
+      "breakout_level": 58700.0,
+      "target_profit": 66880.0,
+      "target_10": 66880.0,
+      "stop_5": 57760.0,
+      "decision": "TRAILING_PROFIT",
+      "action_type": "TAKE_PROFIT",
+      "urgency": "HIGH",
+      "reason": "최고 수익률 +3.62% 기록 후 고점 대비 -2.7% 되돌림 발생. 수익 보존 매도",
+      "suggested_price": 61300.0,
+      "evaluated_at": "2026-09-21 21:55",
+      "signal_id": "algorithm260917_v1_229640_2026-09-18_0900",
+      "strategy_version": "algorithm260917_v1"
+    }
   },
   "algorithm260917_v1_103590_2026-09-18_0900": {
     "signal_id": "algorithm260917_v1_103590_2026-09-18_0900",
@@ -421,7 +465,29 @@
         "return_pct": null
       }
     },
-    "is_fully_resolved": false
+    "is_fully_resolved": false,
+    "last_exit_eval": {
+      "code": "103590",
+      "name": "일진전기",
+      "entry_price": 76200.0,
+      "current_price": 73900.0,
+      "pnl_pct": -3.02,
+      "highest_seen": 77600.0,
+      "max_gain_pct": 1.84,
+      "days_held": 2,
+      "breakout_level": 71400.0,
+      "target_profit": 83820.0,
+      "target_10": 83820.0,
+      "stop_5": 72390.0,
+      "decision": "HOLD",
+      "action_type": "KEEP",
+      "urgency": "LOW",
+      "reason": "돌파선 위에서 양호하게 상승 추세 유지 중",
+      "suggested_price": 73900.0,
+      "evaluated_at": "2026-09-21 21:55",
+      "signal_id": "algorithm260917_v1_103590_2026-09-18_0900",
+      "strategy_version": "algorithm260917_v1"
+    }
   },
   "algorithm260917_v1_420770_2026-09-18_0900": {
     "signal_id": "algorithm260917_v1_420770_2026-09-18_0900",
@@ -562,7 +628,29 @@
         "return_pct": null
       }
     },
-    "is_fully_resolved": false
+    "is_fully_resolved": false,
+    "last_exit_eval": {
+      "code": "420770",
+      "name": "기가비스",
+      "entry_price": 108900.0,
+      "current_price": 111400.0,
+      "pnl_pct": 2.3,
+      "highest_seen": 113500.0,
+      "max_gain_pct": 4.22,
+      "days_held": 2,
+      "breakout_level": 107000.0,
+      "target_profit": 119790.0,
+      "target_10": 119790.0,
+      "stop_5": 103455.0,
+      "decision": "TRAILING_PROFIT",
+      "action_type": "TAKE_PROFIT",
+      "urgency": "HIGH",
+      "reason": "최고 수익률 +4.22% 기록 후 고점 대비 -1.9% 되돌림 발생. 수익 보존 매도",
+      "suggested_price": 111400.0,
+      "evaluated_at": "2026-09-21 21:55",
+      "signal_id": "algorithm260917_v1_420770_2026-09-18_0900",
+      "strategy_version": "algorithm260917_v1"
+    }
   },
   "algorithm260917_v1_090710_2026-09-18_0900": {
     "signal_id": "algorithm260917_v1_090710_2026-09-18_0900",
@@ -703,7 +791,29 @@
         "return_pct": null
       }
     },
-    "is_fully_resolved": false
+    "is_fully_resolved": false,
+    "last_exit_eval": {
+      "code": "090710",
+      "name": "휴림로봇",
+      "entry_price": 6400.0,
+      "current_price": 6570.0,
+      "pnl_pct": 2.66,
+      "highest_seen": 6640.0,
+      "max_gain_pct": 3.75,
+      "days_held": 2,
+      "breakout_level": 6220.0,
+      "target_profit": 7040.0,
+      "target_10": 7040.0,
+      "stop_5": 6080.0,
+      "decision": "HOLD",
+      "action_type": "KEEP",
+      "urgency": "LOW",
+      "reason": "돌파선 위에서 양호하게 상승 추세 유지 중",
+      "suggested_price": 6570.0,
+      "evaluated_at": "2026-09-21 21:55",
+      "signal_id": "algorithm260917_v1_090710_2026-09-18_0900",
+      "strategy_version": "algorithm260917_v1"
+    }
   },
   "algorithm260917_v1_483650_2026-09-18_1000": {
     "signal_id": "algorithm260917_v1_483650_2026-09-18_1000",
@@ -844,7 +954,29 @@
         "return_pct": null
       }
     },
-    "is_fully_resolved": false
+    "is_fully_resolved": false,
+    "last_exit_eval": {
+      "code": "483650",
+      "name": "달바글로벌",
+      "entry_price": 181000.0,
+      "current_price": 183500.0,
+      "pnl_pct": 1.38,
+      "highest_seen": 186600.0,
+      "max_gain_pct": 3.09,
+      "days_held": 2,
+      "breakout_level": 175700.0,
+      "target_profit": 199100.0,
+      "target_10": 199100.0,
+      "stop_5": 171950.0,
+      "decision": "HOLD",
+      "action_type": "KEEP",
+      "urgency": "LOW",
+      "reason": "돌파선 위에서 양호하게 상승 추세 유지 중",
+      "suggested_price": 183500.0,
+      "evaluated_at": "2026-09-21 21:55",
+      "signal_id": "algorithm260917_v1_483650_2026-09-18_1000",
+      "strategy_version": "algorithm260917_v1"
+    }
   },
   "algorithm260917_v1_020150_2026-09-18_1200": {
     "signal_id": "algorithm260917_v1_020150_2026-09-18_1200",
@@ -985,7 +1117,29 @@
         "return_pct": null
       }
     },
-    "is_fully_resolved": false
+    "is_fully_resolved": false,
+    "last_exit_eval": {
+      "code": "020150",
+      "name": "롯데에너지머티리얼즈",
+      "entry_price": 43300.0,
+      "current_price": 41700.0,
+      "pnl_pct": -3.7,
+      "highest_seen": 44200.0,
+      "max_gain_pct": 2.08,
+      "days_held": 2,
+      "breakout_level": 43150.0,
+      "target_profit": 47630.0,
+      "target_10": 47630.0,
+      "stop_5": 41135.0,
+      "decision": "BREAKOUT_COLLAPSE",
+      "action_type": "CUT_LOSS",
+      "urgency": "HIGH",
+      "reason": "돌파 기준선(43,150원) 종가 하향 이탈(-4.06%)! 가짜 돌파로 판단하여 조기 손절(-3.70%)",
+      "suggested_price": 41700.0,
+      "evaluated_at": "2026-09-21 21:55",
+      "signal_id": "algorithm260917_v1_020150_2026-09-18_1200",
+      "strategy_version": "algorithm260917_v1"
+    }
   },
   "algorithm260917_v1_079550_2026-09-18_1300": {
     "signal_id": "algorithm260917_v1_079550_2026-09-18_1300",
@@ -1126,7 +1280,29 @@
         "return_pct": null
       }
     },
-    "is_fully_resolved": false
+    "is_fully_resolved": false,
+    "last_exit_eval": {
+      "code": "079550",
+      "name": "LIG디펜스앤에어로스페이스",
+      "entry_price": 752000.0,
+      "current_price": 733000.0,
+      "pnl_pct": -2.53,
+      "highest_seen": 780000.0,
+      "max_gain_pct": 3.72,
+      "days_held": 2,
+      "breakout_level": 735000.0,
+      "target_profit": 827200.0,
+      "target_10": 827200.0,
+      "stop_5": 714400.0,
+      "decision": "TRAILING_PROFIT",
+      "action_type": "TAKE_PROFIT",
+      "urgency": "HIGH",
+      "reason": "최고 수익률 +3.72% 기록 후 고점 대비 -6.0% 되돌림 발생. 수익 보존 매도",
+      "suggested_price": 733000.0,
+      "evaluated_at": "2026-09-21 21:55",
+      "signal_id": "algorithm260917_v1_079550_2026-09-18_1300",
+      "strategy_version": "algorithm260917_v1"
+    }
   },
   "algorithm260917_v1_489790_2026-09-18_1400": {
     "signal_id": "algorithm260917_v1_489790_2026-09-18_1400",
@@ -1266,7 +1442,29 @@
         "return_pct": null
       }
     },
-    "is_fully_resolved": false
+    "is_fully_resolved": false,
+    "last_exit_eval": {
+      "code": "489790",
+      "name": "한화비전",
+      "entry_price": 48150.0,
+      "current_price": 47100.0,
+      "pnl_pct": -2.18,
+      "highest_seen": 48150.0,
+      "max_gain_pct": 0.0,
+      "days_held": 1,
+      "breakout_level": 47500.0,
+      "target_profit": 52965.0,
+      "target_10": 52965.0,
+      "stop_5": 45742.5,
+      "decision": "BREAKOUT_COLLAPSE",
+      "action_type": "CUT_LOSS",
+      "urgency": "HIGH",
+      "reason": "돌파 기준선(47,500원) 종가 하향 이탈(-2.00%)! 가짜 돌파로 판단하여 조기 손절(-2.18%)",
+      "suggested_price": 47100.0,
+      "evaluated_at": "2026-09-21 21:55",
+      "signal_id": "algorithm260917_v1_489790_2026-09-18_1400",
+      "strategy_version": "algorithm260917_v1"
+    }
   },
   "algorithm260917_v1_237690_2026-09-18_1400": {
     "signal_id": "algorithm260917_v1_237690_2026-09-18_1400",
@@ -1406,7 +1604,29 @@
         "return_pct": null
       }
     },
-    "is_fully_resolved": false
+    "is_fully_resolved": false,
+    "last_exit_eval": {
+      "code": "237690",
+      "name": "에스티팜",
+      "entry_price": 93600.0,
+      "current_price": 91100.0,
+      "pnl_pct": -2.67,
+      "highest_seen": 93600.0,
+      "max_gain_pct": 0.0,
+      "days_held": 1,
+      "breakout_level": 93300.0,
+      "target_profit": 102960.0,
+      "target_10": 102960.0,
+      "stop_5": 88920.0,
+      "decision": "BREAKOUT_COLLAPSE",
+      "action_type": "CUT_LOSS",
+      "urgency": "HIGH",
+      "reason": "돌파 기준선(93,300원) 종가 하향 이탈(-2.68%)! 가짜 돌파로 판단하여 조기 손절(-2.67%)",
+      "suggested_price": 91100.0,
+      "evaluated_at": "2026-09-21 21:55",
+      "signal_id": "algorithm260917_v1_237690_2026-09-18_1400",
+      "strategy_version": "algorithm260917_v1"
+    }
   },
   "algorithm260917_v1_140410_2026-09-18_1400": {
     "signal_id": "algorithm260917_v1_140410_2026-09-18_1400",
@@ -1546,7 +1766,29 @@
         "return_pct": null
       }
     },
-    "is_fully_resolved": false
+    "is_fully_resolved": false,
+    "last_exit_eval": {
+      "code": "140410",
+      "name": "메지온",
+      "entry_price": 75400.0,
+      "current_price": 79300.0,
+      "pnl_pct": 5.17,
+      "highest_seen": 80000.0,
+      "max_gain_pct": 6.1,
+      "days_held": 1,
+      "breakout_level": 75000.0,
+      "target_profit": 82940.0,
+      "target_10": 82940.0,
+      "stop_5": 71630.0,
+      "decision": "HOLD",
+      "action_type": "KEEP",
+      "urgency": "LOW",
+      "reason": "돌파선 위에서 양호하게 상승 추세 유지 중",
+      "suggested_price": 79300.0,
+      "evaluated_at": "2026-09-21 21:55",
+      "signal_id": "algorithm260917_v1_140410_2026-09-18_1400",
+      "strategy_version": "algorithm260917_v1"
+    }
   },
   "volume_zscore_accel_v1_140410_2026-09-18_1400": {
     "signal_id": "volume_zscore_accel_v1_140410_2026-09-18_1400",
@@ -1679,7 +1921,29 @@
         "return_pct": null
       }
     },
-    "is_fully_resolved": false
+    "is_fully_resolved": false,
+    "last_exit_eval": {
+      "code": "140410",
+      "name": "메지온",
+      "entry_price": 75400.0,
+      "current_price": 79300.0,
+      "pnl_pct": 5.17,
+      "highest_seen": 80000.0,
+      "max_gain_pct": 6.1,
+      "days_held": 1,
+      "breakout_level": 74100.0,
+      "target_profit": 82940.0,
+      "target_10": 82940.0,
+      "stop_5": 71630.0,
+      "decision": "HOLD",
+      "action_type": "KEEP",
+      "urgency": "LOW",
+      "reason": "돌파선 위에서 양호하게 상승 추세 유지 중",
+      "suggested_price": 79300.0,
+      "evaluated_at": "2026-09-21 21:55",
+      "signal_id": "volume_zscore_accel_v1_140410_2026-09-18_1400",
+      "strategy_version": "volume_zscore_accel_v1"
+    }
   },
   "algorithm260917_v1_319660_2026-09-21_0900": {
     "signal_id": "algorithm260917_v1_319660_2026-09-21_0900",
@@ -1819,7 +2083,29 @@
         "return_pct": null
       }
     },
-    "is_fully_resolved": false
+    "is_fully_resolved": false,
+    "last_exit_eval": {
+      "code": "319660",
+      "name": "피에스케이",
+      "entry_price": 133300.0,
+      "current_price": 138300.0,
+      "pnl_pct": 3.75,
+      "highest_seen": 139900.0,
+      "max_gain_pct": 4.95,
+      "days_held": 1,
+      "breakout_level": 129700.0,
+      "target_profit": 146630.0,
+      "target_10": 146630.0,
+      "stop_5": 126635.0,
+      "decision": "HOLD",
+      "action_type": "KEEP",
+      "urgency": "LOW",
+      "reason": "돌파선 위에서 양호하게 상승 추세 유지 중",
+      "suggested_price": 138300.0,
+      "evaluated_at": "2026-09-21 21:55",
+      "signal_id": "algorithm260917_v1_319660_2026-09-21_0900",
+      "strategy_version": "algorithm260917_v1"
+    }
   },
   "algorithm260917_v1_089030_2026-09-21_0900": {
     "signal_id": "algorithm260917_v1_089030_2026-09-21_0900",
@@ -1959,7 +2245,29 @@
         "return_pct": null
       }
     },
-    "is_fully_resolved": false
+    "is_fully_resolved": false,
+    "last_exit_eval": {
+      "code": "089030",
+      "name": "테크윙",
+      "entry_price": 47600.0,
+      "current_price": 48300.0,
+      "pnl_pct": 1.47,
+      "highest_seen": 48900.0,
+      "max_gain_pct": 2.73,
+      "days_held": 1,
+      "breakout_level": 47500.0,
+      "target_profit": 52360.0,
+      "target_10": 52360.0,
+      "stop_5": 45220.0,
+      "decision": "HOLD",
+      "action_type": "KEEP",
+      "urgency": "LOW",
+      "reason": "돌파선 위에서 양호하게 상승 추세 유지 중",
+      "suggested_price": 48300.0,
+      "evaluated_at": "2026-09-21 21:55",
+      "signal_id": "algorithm260917_v1_089030_2026-09-21_0900",
+      "strategy_version": "algorithm260917_v1"
+    }
   },
   "algorithm260917_v1_033640_2026-09-21_0900": {
     "signal_id": "algorithm260917_v1_033640_2026-09-21_0900",
@@ -2099,7 +2407,29 @@
         "return_pct": null
       }
     },
-    "is_fully_resolved": false
+    "is_fully_resolved": false,
+    "last_exit_eval": {
+      "code": "033640",
+      "name": "네패스",
+      "entry_price": 27250.0,
+      "current_price": 27700.0,
+      "pnl_pct": 1.65,
+      "highest_seen": 28000.0,
+      "max_gain_pct": 2.75,
+      "days_held": 1,
+      "breakout_level": 27000.0,
+      "target_profit": 29975.0,
+      "target_10": 29975.0,
+      "stop_5": 25887.5,
+      "decision": "HOLD",
+      "action_type": "KEEP",
+      "urgency": "LOW",
+      "reason": "돌파선 위에서 양호하게 상승 추세 유지 중",
+      "suggested_price": 27700.0,
+      "evaluated_at": "2026-09-21 21:55",
+      "signal_id": "algorithm260917_v1_033640_2026-09-21_0900",
+      "strategy_version": "algorithm260917_v1"
+    }
   },
   "algorithm260917_v1_028260_2026-09-21_1000": {
     "signal_id": "algorithm260917_v1_028260_2026-09-21_1000",
@@ -2239,7 +2569,29 @@
         "return_pct": null
       }
     },
-    "is_fully_resolved": false
+    "is_fully_resolved": false,
+    "last_exit_eval": {
+      "code": "028260",
+      "name": "삼성물산",
+      "entry_price": 367000.0,
+      "current_price": 368500.0,
+      "pnl_pct": 0.41,
+      "highest_seen": 369000.0,
+      "max_gain_pct": 0.54,
+      "days_held": 1,
+      "breakout_level": 365000.0,
+      "target_profit": 403700.0,
+      "target_10": 403700.0,
+      "stop_5": 348650.0,
+      "decision": "CAUTION",
+      "action_type": "KEEP",
+      "urgency": "MEDIUM",
+      "reason": "돌파선(365,000원) 1% 이내로 근접. 지지 실패 시 매도 준비",
+      "suggested_price": 368500.0,
+      "evaluated_at": "2026-09-21 21:55",
+      "signal_id": "algorithm260917_v1_028260_2026-09-21_1000",
+      "strategy_version": "algorithm260917_v1"
+    }
   },
   "algorithm260917_v1_005290_2026-09-21_1000": {
     "signal_id": "algorithm260917_v1_005290_2026-09-21_1000",
@@ -2379,6 +2731,28 @@
         "return_pct": null
       }
     },
-    "is_fully_resolved": false
+    "is_fully_resolved": false,
+    "last_exit_eval": {
+      "code": "005290",
+      "name": "동진쎄미켐",
+      "entry_price": 42450.0,
+      "current_price": 42700.0,
+      "pnl_pct": 0.59,
+      "highest_seen": 42700.0,
+      "max_gain_pct": 0.59,
+      "days_held": 1,
+      "breakout_level": 41750.0,
+      "target_profit": 46695.0,
+      "target_10": 46695.0,
+      "stop_5": 40327.5,
+      "decision": "HOLD",
+      "action_type": "KEEP",
+      "urgency": "LOW",
+      "reason": "돌파선 위에서 양호하게 상승 추세 유지 중",
+      "suggested_price": 42700.0,
+      "evaluated_at": "2026-09-21 21:55",
+      "signal_id": "algorithm260917_v1_005290_2026-09-21_1000",
+      "strategy_version": "algorithm260917_v1"
+    }
   }
 }

@@ -249,7 +249,7 @@ def hourly_pattern(df: pd.DataFrame, require_volume: bool = True, volume_weight:
 
     eligible = (fs > 0) & (ms > ms.shift(3)) & (c > f) & (c > m)
     if require_volume:
-        eligible &= vr >= 1
+        eligible &= vr >= 1.5
     eligible &= gap.shift(1).rolling(20).min() < 0
     eligible &= c >= 2000
 
@@ -434,16 +434,23 @@ def build_results(rows: List[Dict[str, Any]]) -> Tuple[pd.DataFrame, pd.DataFram
         return pd.DataFrame(), pd.DataFrame()
 
     df_rows = pd.DataFrame(rows)
-    # 1. Top 5 최종 조건 충족
-    top = (
-        df_rows[df_rows["_match"]]
-        .sort_values(["점수", "코드"], ascending=[False, True])
-        .head(TOP_N)
-        .reset_index(drop=True)
-    )
-    if not top.empty:
+    # 1. Top 5 최종 조건 충족 (고승률 80.8% base_breakout 우선 순위 정렬)
+    df_matched = df_rows[df_rows["_match"]].copy() if not df_rows.empty else pd.DataFrame()
+    if not df_matched.empty:
+        df_matched["_p_rank"] = df_matched["_features"].apply(
+            lambda f: 1 if f.get("pattern_type") == "base_breakout" else 2
+        )
+        top = (
+            df_matched
+            .sort_values(["_p_rank", "점수", "코드"], ascending=[True, False, True])
+            .head(TOP_N)
+            .reset_index(drop=True)
+            .drop(columns=["_p_rank"])
+        )
         top["점수"] = top["점수"].round(1)
         top.insert(0, "순위", range(1, len(top) + 1))
+    else:
+        top = pd.DataFrame()
 
     # 2. Watch 다음 봉 지지 대기
     watch_rows = []
@@ -640,7 +647,7 @@ def render_markdown_dashboard(
     lines.extend([
         "---",
         "",
-        f"{H2} 📈 누적 전진 검증 성과 (+10% 익절 vs -5% 손절 / 5일 기준)",
+        f"{H2} 📈 누적 전진 검증 성과 (+5.35% 익절 vs -5% 손절 / 5일 기준)",
         "",
         f"- **완료된 평가 표본 수**: `{tot_res}건` (목표: 독립 표본 300건 이상)",
         f"- **TARGET_FIRST (익절 선접촉)**: `{tracker_stats['target_first']}건`",
@@ -813,7 +820,7 @@ def run_collector():
 
     # 8. README.md 모바일 대시보드 갱신
     # [T-041] 병렬 실험 전부 폐기(docs/tasks/T-041.md) — 운영 전략(STRATEGY_VERSION) 단일 구성.
-    tracker_stats = tracker.get_summary_stats(strategy_version=STRATEGY_VERSION)
+    tracker_stats = tracker.get_summary_stats(strategy_version=STRATEGY_VERSION, ref_key="h5_t535_s5")
     pending_list = list(tracker.pending_signals.values())
 
     md_dashboard = render_markdown_dashboard(

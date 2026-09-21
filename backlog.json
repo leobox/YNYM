@@ -2,7 +2,7 @@
   "$schema_version": "1.0",
   "meta": {
     "project": "Leobox Multi-root Workspace",
-    "updated": "2026-09-20",
+    "updated": "2026-09-21",
     "context_doc": "README.md",
     "doc_dir": "docs/tasks",
     "stack": "Multi-agent (Gemini + Claude + Codex) / Python(Quant) / GitHub Actions / Android",
@@ -607,7 +607,7 @@
       "title": "Intel Arc A350M 로컬 GPU 연산 환경 설정",
       "summary": "Intel Arc 전용 Python 환경, 노트북 커널, 진단 도구 및 그래픽 드라이버 설치",
       "doc": "docs/tasks/T-021.md",
-      "status": "blocked",
+      "status": "done",
       "priority": "P1",
       "category": "infra",
       "phase": "0. 공통 인프라 & 대시보드",
@@ -615,13 +615,13 @@
       "deps": [],
       "where": "tools/gpu",
       "refs": [],
-      "note": "Intel 공식 드라이버 32.0.101.8993 설치 완료(코드 14). Windows PnP 커널 드라이버 스택 갱신을 위해 시스템 재부팅 필요(Device is pending system reboot). 재부팅 후 pwsh -NoProfile -File tools/gpu/run.ps1 실행 시 최종 연산 검증 완료 예정.",
-      "done_at": null,
-      "updated_at": "2026-09-18",
+      "note": "재부팅 후 Intel Arc A350M(GPU.1/xpu:0) 정상 인식 확인. PyTorch XPU(역전파/행렬곱 0.169ms) 및 OpenVINO(GPU.1) 벤치마크 전 항목 통과. 실제 로컬 이미지 생성 21.3초 달성(3배 가속).",
+      "done_at": "2026-09-20",
+      "updated_at": "2026-09-20",
       "done_when": "별도 Python 환경 및 재실행 가능한 진단 도구 구성, Arc 실제 연산 검증과 제한사항 기록",
       "gate": null,
       "parent": null,
-      "owner": "Codex",
+      "owner": "Gemini",
       "claimed_at": "2026-09-18",
       "log": [
         {
@@ -643,6 +643,16 @@
           "at": "2026-09-18",
           "status": "blocked",
           "note": "Intel 공식 드라이버 32.0.101.8993 설치 완료(코드 14). Windows PnP 커널 드라이버 스택 갱신을 위해 시스템 재부팅 필요(Device is pending system reboot). 재부팅 후 pwsh -NoProfile -File tools/gpu/run.ps1 실행 시 최종 연산 검증 완료 예정."
+        },
+        {
+          "at": "2026-09-20",
+          "status": "in_progress",
+          "note": "Intel 공식 드라이버 32.0.101.8993 설치 완료(코드 14). Windows PnP 커널 드라이버 스택 갱신을 위해 시스템 재부팅 필요(Device is pending system reboot). 재부팅 후 pwsh -NoProfile -File tools/gpu/run.ps1 실행 시 최종 연산 검증 완료 예정."
+        },
+        {
+          "at": "2026-09-20",
+          "status": "done",
+          "note": "재부팅 후 Intel Arc A350M(GPU.1/xpu:0) 정상 인식 확인. PyTorch XPU(역전파/행렬곱 0.169ms) 및 OpenVINO(GPU.1) 벤치마크 전 항목 통과. 실제 로컬 이미지 생성 21.3초 달성(3배 가속)."
         }
       ]
     },
@@ -1867,6 +1877,499 @@
           "at": "2026-09-20",
           "status": "review",
           "note": "일봉 4체크 신호판 재설계·118 테스트 통과·실데이터 스캔 확인. 채택 판정 아님: 전진 기록(확정 100건/30일) 사전 고정 기준 대기, Colab 동기화 후속"
+        }
+      ]
+    },
+    {
+      "id": "T-053",
+      "title": "shorttoon: 숏툰 제작용 프로젝트 폴더 추가 (Gemini 협업)",
+      "summary": "shorttoon/ 폴더(AGENTS.md, README.md) 생성 및 워크스페이스·루트 문서 등록",
+      "doc": "docs/tasks/T-053.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "infra",
+      "phase": "0. 공통 인프라 & 대시보드",
+      "estimate_min": 30,
+      "deps": [],
+      "where": "shorttoon/",
+      "refs": [],
+      "note": "shorttoon/ 폴더(AGENTS.md, README.md) 생성, leobox.code-workspace·루트 AGENTS.md·README.md 등록, backlog check 통과",
+      "done_at": "2026-09-20",
+      "updated_at": "2026-09-20",
+      "done_when": "shorttoon/ 폴더(AGENTS.md·README.md)가 있고 워크스페이스·루트 문서에 등록됨",
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-20",
+      "log": [
+        {
+          "at": "2026-09-20",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-20",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-20",
+          "status": "done",
+          "note": "shorttoon/ 폴더(AGENTS.md, README.md) 생성, leobox.code-workspace·루트 AGENTS.md·README.md 등록, backlog check 통과"
+        }
+      ]
+    },
+    {
+      "id": "T-054",
+      "title": "shorttoon: 60부작 시나리오 전편 퀄리티 고도화 및 대사 다듬기 (클로드)",
+      "summary": "",
+      "doc": "docs/tasks/T-054.md",
+      "status": "cancelled",
+      "priority": "P1",
+      "category": "infra",
+      "phase": "0. 공통 인프라 & 대시보드",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "2026-09-20 사용자 결정: shorttoon 프로젝트 전체 폐기. 작업 중단.",
+      "done_at": "2026-09-20",
+      "updated_at": "2026-09-20",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-20",
+      "log": [
+        {
+          "at": "2026-09-20",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-20",
+          "status": "in_progress",
+          "note": "영어권 배포로 방향 확정(2026-09-20): 6화~ 시나리오는 영어 대본 기준으로 작성. scripts/ep01_en.json 포맷 참고"
+        },
+        {
+          "at": "2026-09-20",
+          "status": "review",
+          "note": "영어 60화 웹툰 컷 대본 + 시리즈 바이블 완료, check_scripts.py 60화 통과(0건). 유머/감정선은 주관적이라 사용자 검토 요청. Gemini 초안은 SUPERSEDED 표시 후 보존"
+        },
+        {
+          "at": "2026-09-20",
+          "status": "cancelled",
+          "note": "2026-09-20 사용자 결정: shorttoon 프로젝트 전체 폐기. 작업 중단."
+        }
+      ]
+    },
+    {
+      "id": "T-055",
+      "title": "shorttoon: 1화 쇼츠 영상 파이프라인 및 유튜브 업로드 준비 (제미나이)",
+      "summary": "",
+      "doc": "docs/tasks/T-055.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "infra",
+      "phase": "0. 공통 인프라 & 대시보드",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "1화 쇼츠 영상(ep01_regression_shorts.mp4, 1080x1920) 렌더링 완료 및 유튜브 업로드 패키지 준비 완료",
+      "done_at": "2026-09-20",
+      "updated_at": "2026-09-20",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-09-20",
+      "log": [
+        {
+          "at": "2026-09-20",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-20",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-20",
+          "status": "done",
+          "note": "1화 쇼츠 영상(ep01_regression_shorts.mp4, 1080x1920) 렌더링 완료 및 유튜브 업로드 패키지 준비 완료"
+        }
+      ]
+    },
+    {
+      "id": "T-056",
+      "title": "shorttoon: 6화~60화 전편 시나리오 초안 작성 (제미나이)",
+      "summary": "",
+      "doc": "docs/tasks/T-056.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "infra",
+      "phase": "0. 공통 인프라 & 대시보드",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "6화~60화 전편 시나리오 초안(총 55개 에피소드 풀 콘티) 작성 완료 및 클로드 인수인계 완료",
+      "done_at": "2026-09-20",
+      "updated_at": "2026-09-20",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-09-20",
+      "log": [
+        {
+          "at": "2026-09-20",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-20",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-20",
+          "status": "done",
+          "note": "6화~60화 전편 시나리오 초안(총 55개 에피소드 풀 콘티) 작성 완료 및 클로드 인수인계 완료"
+        }
+      ]
+    },
+    {
+      "id": "T-057",
+      "title": "shorttoon: 1화 영문판 리메이크 (컷별 풀블리드 아트·모션·영어 더빙/자막)",
+      "summary": "",
+      "doc": "docs/tasks/T-057.md",
+      "status": "cancelled",
+      "priority": "P1",
+      "category": "infra",
+      "phase": "0. 공통 인프라 & 대시보드",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "2026-09-20 사용자 결정: shorttoon 프로젝트 전체 폐기. 작업 중단.",
+      "done_at": "2026-09-20",
+      "updated_at": "2026-09-20",
+      "done_when": "ep01 컷별 9:16 원화 프롬프트, 영어 대본, 새 렌더러로 영문 MP4 생성 및 프레임 육안 확인",
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-20",
+      "log": [
+        {
+          "at": "2026-09-20",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-20",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-20",
+          "status": "blocked",
+          "note": "코드/대본/프롬프트 완료. Gemini가 scripts/ep01_en_image_prompts.md 기준 원화 9장(assets/ep01_en/cutNN.png) 생성해야 최종 렌더 가능"
+        },
+        {
+          "at": "2026-09-20",
+          "status": "in_progress",
+          "note": "코드/대본/프롬프트 완료. Gemini가 scripts/ep01_en_image_prompts.md 기준 원화 9장(assets/ep01_en/cutNN.png) 생성해야 최종 렌더 가능"
+        },
+        {
+          "at": "2026-09-20",
+          "status": "blocked",
+          "note": "Gemini가 scripts/ep01_en_image_prompts.md 하단 완성 프롬프트 9개로 원화 생성 → assets/ep01_en/cutNN.png 저장 필요. 이 PC엔 이미지 생성 수단 없음"
+        },
+        {
+          "at": "2026-09-20",
+          "status": "cancelled",
+          "note": "2026-09-20 사용자 결정: shorttoon 프로젝트 전체 폐기. 작업 중단."
+        }
+      ]
+    },
+    {
+      "id": "T-058",
+      "title": "shorttoon: 글로벌 영문 숏툰으로 프로젝트 전면 리뉴얼 및 60부작 시나리오 글로벌화 (제미나이)",
+      "summary": "",
+      "doc": "docs/tasks/T-058.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "infra",
+      "phase": "0. 공통 인프라 & 대시보드",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "글로벌 영문 마스터플랜 및 60부작 전편 영문 시나리오 풀 콘티 작성 완료",
+      "done_at": "2026-09-20",
+      "updated_at": "2026-09-20",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-09-20",
+      "log": [
+        {
+          "at": "2026-09-20",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-20",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-20",
+          "status": "done",
+          "note": "글로벌 영문 마스터플랜 및 60부작 전편 영문 시나리오 풀 콘티 작성 완료"
+        }
+      ]
+    },
+    {
+      "id": "T-059",
+      "title": "shorttoon: 정식 웹툰 챕터판 전환 — 16챕터 플랜·극화체 아트 바이블·1챕터 파일럿 (클로드)",
+      "summary": "",
+      "doc": "docs/tasks/T-059.md",
+      "status": "cancelled",
+      "priority": "P1",
+      "category": "infra",
+      "phase": "0. 공통 인프라 & 대시보드",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "2026-09-20 사용자 결정: shorttoon 프로젝트 전체 폐기. 작업 중단.",
+      "done_at": "2026-09-20",
+      "updated_at": "2026-09-20",
+      "done_when": "CHAPTER_PLAN_EN.md, art_style.json, ch01 파일럿 대본, 프롬프트 생성 스크립트가 있고 검증됨",
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-20",
+      "log": [
+        {
+          "at": "2026-09-20",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-20",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-20",
+          "status": "review",
+          "note": "챕터판 전환안(16챕터)+극화체 아트규격+1챕터 파일럿 55패널+프롬프트 생성기 완료. 포맷 확정(챕터판/쇼츠/병행)과 이름(Ji-eun) 통일은 사용자 결정 필요"
+        },
+        {
+          "at": "2026-09-20",
+          "status": "cancelled",
+          "note": "2026-09-20 사용자 결정: shorttoon 프로젝트 전체 폐기. 작업 중단."
+        }
+      ]
+    },
+    {
+      "id": "T-060",
+      "title": "infra: 로컬 이미지 생성 환경 구축 (Stable Diffusion / DirectML / OpenVINO on Intel Arc)",
+      "summary": "",
+      "doc": "docs/tasks/T-060.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "infra",
+      "phase": "0. 공통 인프라 & 대시보드",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "Intel OpenVINO GenAI 기반 로컬 SD 1.5 생성 파이프라인 구축 완료 (tools/gpu/generate_local.py). GPU 가속으로 512x768 모노키니 테스트 이미지 생성 검증 성공.",
+      "done_at": "2026-09-20",
+      "updated_at": "2026-09-20",
+      "done_when": "로컬 환경에서 2.5D/3D 프롬프트로 이미지 생성 및 저장 성공 검증",
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-09-20",
+      "log": [
+        {
+          "at": "2026-09-20",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-20",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-20",
+          "status": "done",
+          "note": "Intel OpenVINO GenAI 기반 로컬 SD 1.5 생성 파이프라인 구축 완료 (tools/gpu/generate_local.py). GPU 가속으로 512x768 모노키니 테스트 이미지 생성 검증 성공."
+        }
+      ]
+    },
+    {
+      "id": "T-061",
+      "title": "infra: 로컬 2.5D 특화 체크포인트 변환 및 해변 모노키니 비교 생성",
+      "summary": "",
+      "doc": "docs/tasks/T-061.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "infra",
+      "phase": "0. 공통 인프라 & 대시보드",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "2.5D MeinaMix V11 체크포인트 OpenVINO 로드 완료 및 로컬 GPU 생성 검증 성공. 17:54 쿼터 리셋 직후 8K 2.5D vs 3D 해변 모노키니 비교 생성 완료.",
+      "done_at": "2026-09-20",
+      "updated_at": "2026-09-20",
+      "done_when": "2.5D 모델 로컬 변환/로드 완료 및 동일 프롬프트 비교 이미지 생성 검증",
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-09-20",
+      "log": [
+        {
+          "at": "2026-09-20",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-20",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-20",
+          "status": "done",
+          "note": "2.5D MeinaMix V11 체크포인트 OpenVINO 로드 완료 및 로컬 GPU 생성 검증 성공. 17:54 쿼터 리셋 직후 8K 2.5D vs 3D 해변 모노키니 비교 생성 완료."
+        }
+      ]
+    },
+    {
+      "id": "T-062",
+      "title": "infra: 로컬 이미지 퀄리티·얼굴 고정 파이프라인 검증 (A350M: 2.5D 체크포인트·업스케일·IP-Adapter)",
+      "summary": "A350M(GPU.1)에서 2.5D 체크포인트 재생성, 4GB 업스케일 메모리 측정, 5장면 얼굴 일관성(IP-Adapter) 실험으로 로컬 채택 여부 판단",
+      "doc": "docs/tasks/T-062.md",
+      "status": "cancelled",
+      "priority": "P1",
+      "category": "infra",
+      "phase": "0. 공통 인프라 & 대시보드",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "2026-09-20 사용자 결정: shorttoon 프로젝트 전체 폐기. 작업 중단.",
+      "done_at": "2026-09-20",
+      "updated_at": "2026-09-20",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-20",
+      "log": [
+        {
+          "at": "2026-09-20",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-20",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-20",
+          "status": "cancelled",
+          "note": "2026-09-20 사용자 결정: shorttoon 프로젝트 전체 폐기. 작업 중단."
+        }
+      ]
+    },
+    {
+      "id": "T-063",
+      "title": "quant-research: 엣지 탐색기 — 사전 고정·랜덤 대조군·시도 횟수 보정을 강제하는 가설 검증 틀",
+      "summary": "",
+      "doc": "docs/tasks/T-063.md",
+      "status": "review",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "탐색기 틀 구현·테스트 134 passed·quant_guard 통과. Discovery 후보 5개는 Backward(옛 구간 2016-09~2023-09)에서 0/5 통과 → 이 문법으로는 채택 엣지 없음, Validation/Holdout 미열람. 독립 검토 대기",
+      "done_at": null,
+      "updated_at": "2026-09-20",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-20",
+      "log": [
+        {
+          "at": "2026-09-20",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-20",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-20",
+          "status": "review",
+          "note": "탐색기 틀 구현·테스트 134 passed·quant_guard 통과. Discovery 후보 5개는 Backward(옛 구간 2016-09~2023-09)에서 0/5 통과 → 이 문법으로는 채택 엣지 없음, Validation/Holdout 미열람. 독립 검토 대기"
+        }
+      ]
+    },
+    {
+      "id": "T-064",
+      "title": "quant-collector: 메인 README 대시보드 상단 복원 및 +5.35% 익절·진입 강화 로직 적용",
+      "summary": "",
+      "doc": "docs/tasks/T-064.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "README 최상단에 콜렉터 대시보드 복원, +5.35% 익절 목표 및 거래량 1.5배/기반돌파 우선 진입 필터 적용, 테스트 27개 통과",
+      "done_at": "2026-09-21",
+      "updated_at": "2026-09-21",
+      "done_when": "루트 README 최상단에 콜렉터 배치 및 VCP 섹션 제거, +5.35% 익절 목표 반영, 진입 필터(거래량/돌파) 강화, 단위 테스트 통과 및 30분 액션 실행 검증",
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-21",
+      "log": [
+        {
+          "at": "2026-09-21",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-21",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-21",
+          "status": "done",
+          "note": "README 최상단에 콜렉터 대시보드 복원, +5.35% 익절 목표 및 거래량 1.5배/기반돌파 우선 진입 필터 적용, 테스트 27개 통과"
         }
       ]
     }
