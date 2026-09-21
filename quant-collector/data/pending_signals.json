@@ -322,7 +322,7 @@
       "2026-09-21"
     ],
     "highest_seen": 77600.0,
-    "lowest_seen": 72700.0,
+    "lowest_seen": 72600.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "STOP_FIRST",
@@ -886,7 +886,7 @@
       "2026-09-21"
     ],
     "highest_seen": 44200.0,
-    "lowest_seen": 41600.0,
+    "lowest_seen": 41400.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "STOP_FIRST",
@@ -1027,7 +1027,7 @@
       "2026-09-21"
     ],
     "highest_seen": 780000.0,
-    "lowest_seen": 727000.0,
+    "lowest_seen": 725000.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "TARGET_FIRST",
@@ -1167,7 +1167,7 @@
       "2026-09-21"
     ],
     "highest_seen": 48150.0,
-    "lowest_seen": 46550.0,
+    "lowest_seen": 46500.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "STOP_FIRST",
@@ -2140,7 +2140,7 @@
       "2026-09-21"
     ],
     "highest_seen": 369000.0,
-    "lowest_seen": 365500.0,
+    "lowest_seen": 364000.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "PENDING",
@@ -2279,7 +2279,7 @@
     "observed_dates": [
       "2026-09-21"
     ],
-    "highest_seen": 42450.0,
+    "highest_seen": 42550.0,
     "lowest_seen": 42000.0,
     "evaluations": {
       "h3_t3_s3": {
