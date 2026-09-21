@@ -429,26 +429,115 @@ def attach_quotes(tables: List[pd.DataFrame]) -> List[pd.DataFrame]:
     return out
 
 
+def calculate_smart_rank(
+    features: Optional[Dict[str, Any]],
+    signal_time_str: Optional[str] = None,
+    entry_price: Optional[float] = None,
+) -> Dict[str, Any]:
+    """
+    돌파 건전도, 유동성(거래대금), 진입 시간대, 패턴을 종합 평가한 스마트 랭킹 메트릭 산출
+    - 돌파이격 골디락스 구간 (+1.2% ~ +4.0% 안착) 가산 (+15점)
+    - 턱걸이 돌파 (< +0.8%) 감점 (-20점, 붕괴 위험)
+    - 과열 상투 돌파 (> +5.5%) 감점 (-15점, 고점 추격매수 위험)
+    - 오전 주도주 슬롯 (09:00, 10:00) 가산 (+10점)
+    - 1시간 거래대금 (>= 20억: +10점, >= 50억: +15점) 및 VR (>= 2.0: +5점) 가산
+    - 박스권 돌파 (base_breakout) 가산 (+10점)
+    """
+    feat = features or {}
+    base_score = float(feat.get("score", 50.0))
+    brk_lvl = float(feat.get("breakout_level", 0.0))
+    amt = float(feat.get("trigger_amount_e8", feat.get("trigger_amount", 0.0)))
+    vr = float(feat.get("volume_ratio", 0.0))
+    pattern = str(feat.get("pattern_type", ""))
+
+    p = entry_price if (entry_price is not None and entry_price > 0) else float(feat.get("current_close", feat.get("trigger_close", 0.0)))
+
+    # 1. 돌파 이격률
+    if brk_lvl > 0 and p > 0:
+        gap_pct = (p - brk_lvl) / brk_lvl * 100.0
+    else:
+        gap_pct = 0.0
+
+    # 건전도 판정 및 가산/감점
+    if 1.2 <= gap_pct <= 4.0:
+        health = "안착🟢"
+        gap_score = 15.0
+    elif gap_pct < 0.8:
+        health = "턱걸이⚠️"
+        gap_score = -20.0
+    elif gap_pct > 5.5:
+        health = "과열⚠️"
+        gap_score = -15.0
+    else:
+        health = "보통⚪"
+        gap_score = 0.0
+
+    # 2. 시간대 가산점 (오전 09:00, 10:00 장 초반 주도주 우대)
+    time_score = 0.0
+    t_str = str(signal_time_str or "")
+    if "09:00" in t_str or "10:00" in t_str:
+        time_score = 10.0
+    elif "11:00" in t_str or "12:00" in t_str:
+        time_score = 5.0
+
+    # 3. 거래대금 및 VR 가산점
+    liq_score = 0.0
+    if amt >= 50.0:
+        liq_score += 15.0
+    elif amt >= 20.0:
+        liq_score += 10.0
+    elif amt >= 10.0:
+        liq_score += 5.0
+
+    if vr >= 2.0:
+        liq_score += 5.0
+
+    # 4. 패턴 가산점
+    pat_score = 10.0 if pattern == "base_breakout" else 0.0
+
+    raw_score = base_score * 0.4 + 30.0 + gap_score + time_score + liq_score + pat_score
+    smart_score = round(max(0.0, min(100.0, raw_score)), 1)
+
+    return {
+        "smart_score": smart_score,
+        "gap_pct": round(gap_pct, 2),
+        "health": health,
+        "amount_e8": round(amt, 1),
+        "vr": round(vr, 2),
+        "pattern": pattern,
+    }
+
+
 def build_results(rows: List[Dict[str, Any]]) -> Tuple[pd.DataFrame, pd.DataFrame]:
     if not rows:
         return pd.DataFrame(), pd.DataFrame()
 
     df_rows = pd.DataFrame(rows)
-    # 1. Top 5 최종 조건 충족 (고승률 80.8% base_breakout 우선 순위 정렬)
+    # 1. Top 5 최종 조건 충족 (스마트 랭킹 종합 점수 우선 순위 정렬)
     df_matched = df_rows[df_rows["_match"]].copy() if not df_rows.empty else pd.DataFrame()
     if not df_matched.empty:
-        df_matched["_p_rank"] = df_matched["_features"].apply(
-            lambda f: 1 if f.get("pattern_type") == "base_breakout" else 2
-        )
+        smart_ranks = []
+        for _, r in df_matched.iterrows():
+            feat = r.get("_features", {})
+            sig_time = r.get("_bar_time_full", r.get("기준봉(KST)", ""))
+            p = float(r.get("현재가", r.get("돌파봉종가", 0.0)))
+            sr = calculate_smart_rank(feat, sig_time, p)
+            smart_ranks.append(sr)
+
+        df_matched["스마트점수"] = [sr["smart_score"] for sr in smart_ranks]
+        df_matched["돌파이격"] = [sr["gap_pct"] for sr in smart_ranks]
+        df_matched["건전도"] = [sr["health"] for sr in smart_ranks]
+        df_matched["VR"] = [sr["vr"] for sr in smart_ranks]
+
         top = (
             df_matched
-            .sort_values(["_p_rank", "점수", "코드"], ascending=[True, False, True])
+            .sort_values(["스마트점수", "점수", "코드"], ascending=[False, False, True])
             .head(TOP_N)
             .reset_index(drop=True)
-            .drop(columns=["_p_rank"])
         )
         top["점수"] = top["점수"].round(1)
-        top.insert(0, "순위", range(1, len(top) + 1))
+        rank_badges = ["🥇 1위", "🥈 2위", "🥉 3위", "4위", "5위"]
+        top.insert(0, "순위", [rank_badges[i] if i < len(rank_badges) else f"{i+1}위" for i in range(len(top))])
     else:
         top = pd.DataFrame()
 
@@ -484,7 +573,7 @@ def _render_signal_rows(
     new_codes: Set[str],
     empty_message: str,
 ) -> List[str]:
-    """전략 하나에 속한 pending 신호 목록을 긴급도순 정렬된 마스터 표로 렌더링한다."""
+    """전략 하나에 속한 pending 신호 목록을 긴급도순 및 스마트 랭킹 지표와 함께 렌더링한다."""
     if not sig_list:
         return [f"*{empty_message}*\n"]
 
@@ -517,18 +606,37 @@ def _render_signal_rows(
         stop_5 = sig.get("stops", {}).get("stop_5", entry_p * 0.95)
         days = sig.get("trading_days_observed", 0)
 
-        rows.append((priority[group], -pnl if group == "SELL" else 0.0, {
+        # 스마트 랭킹 및 세부 지표 산출
+        feat = sig.get("features", {})
+        sig_time = sig.get("signal_time_kst", "")
+        sig_time_short = sig_time[5:] if len(sig_time) >= 16 else sig_time
+        sr = calculate_smart_rank(feat, sig_time, entry_p)
+
+        gap_str = f"{sr['gap_pct']:+.2f}% ({sr['health']})"
+        amt_vr_str = f"{sr['amount_e8']:.1f}억 ({sr['vr']:.1f}x)"
+        time_days_str = f"{sig_time_short} ({days}일차)"
+
+        # 정렬: 긴급도(SELL>RECHECK>CAUTION>NEW>HOLD) -> SELL은 -pnl, 나머지는 스마트점수 내림차순
+        sort_sub = -pnl if group == "SELL" else -sr["smart_score"]
+
+        rows.append((priority[group], sort_sub, {
             "badge": badge, "name": sig["name"], "code": code,
             "cur_p": cur_p, "pnl": pnl, "pnl_color": pnl_color,
             "stop_5": stop_5, "days": days,
+            "gap_str": gap_str, "amt_vr_str": amt_vr_str,
+            "time_days_str": time_days_str,
+            "smart_score": sr["smart_score"],
         }))
 
     rows.sort(key=lambda x: (x[0], x[1]))
 
-    out = ["| 상태 | 종목(코드) | 현재가(수익률) | 손절가 | 경과 |", "|:---:|:---|:---:|:---:|:---:|"]
+    out = [
+        "| 상태 | 종목(코드) | 현재가(수익률) | 손절가 | 돌파이격 (판정) | 대금 · VR | 신호시각 (경과) |",
+        "|:---:|:---|:---:|:---:|:---:|:---:|:---:|",
+    ]
     for _, _, d in rows:
         out.append(
-            f"| {d['badge']} | **{d['name']}** ({d['code']}) | {d['cur_p']:,.0f} ({d['pnl_color']}{d['pnl']:+.2f}%) | {d['stop_5']:,.0f} | {d['days']}일차 |"
+            f"| {d['badge']} | **{d['name']}** ({d['code']}) | {d['cur_p']:,.0f} ({d['pnl_color']}{d['pnl']:+.2f}%) | {d['stop_5']:,.0f} | {d['gap_str']} | {d['amt_vr_str']} | {d['time_days_str']} |"
         )
     out.append("")
     return out
@@ -628,12 +736,37 @@ def render_markdown_dashboard(
             lines.append(f"- **{tag} · {a['name']}** ({a['code']}) {a['current_price']:,.0f}원 ({pnl_color}{a['pnl_pct']:+.2f}%)")
         lines.extend(["", "---", ""])
 
-    # 1. 추적 중인 모든 신호(보유+관찰+신규)를 종목당 1행으로 통합한 마스터 표
+    # 1. 신규 조건 충족 후보 (스마트 랭킹 우선순위 Top 5)
+    if not top.empty:
+        lines.append(f"{H2} 🎯 금일 조건 충족 신규 진입 후보 (스마트 랭킹 우선순위)")
+        lines.append("")
+        lines.append("> 돌파 건전도(이격 +1.2~+4.0% 안착 🟢), 오전 골든타임(09~10시), 거래대금 및 수급을 종합 평가한 진입 추천 순위입니다.")
+        lines.append("")
+        lines.append("| 순위 | 종목(코드) | 현재가 | 돌파이격 (판정) | 거래대금 · VR | 신호시각 | 스마트점수 |")
+        lines.append("|:---:|:---|:---:|:---:|:---:|:---:|:---:|")
+        for _, r in top.iterrows():
+            c_code = r["코드"]
+            c_name = r["종목"]
+            p = r["현재가"] if pd.notna(r.get("현재가")) else r["돌파봉종가"]
+            p_str = f"{p:,.0f}원" if pd.notna(p) and p > 0 else "-"
+            rank_str = r.get("순위", "-")
+            gap_val = r.get("돌파이격")
+            gap_str = f"{gap_val:+.2f}% ({r.get('건전도', '-')})" if pd.notna(gap_val) else "-"
+            amt = r.get("돌파봉대금_억", 0.0)
+            vr = r.get("VR", 0.0)
+            amt_vr = f"{amt:.1f}억 ({vr:.1f}x)" if pd.notna(amt) and pd.notna(vr) else "-"
+            sig_t = r.get("기준봉(KST)", "-")
+            s_score_val = r.get("스마트점수")
+            s_score = f"{s_score_val:.1f}점" if pd.notna(s_score_val) else "-"
+            lines.append(f"| {rank_str} | **{c_name}** ({c_code}) | {p_str} | {gap_str} | {amt_vr} | {sig_t} | {s_score} |")
+        lines.extend(["", "---", ""])
+
+    # 2. 추적 중인 모든 신호(보유+관찰+신규)를 종목당 1행으로 통합한 마스터 표
     lines.extend([
         f"{H2} 📊 추적 중인 신호 현황 (가상 매수 100만원 가정)",
         "",
-        "> 조건 충족·관찰 등록된 모든 신호를 한 표로 모아 긴급도순(매도 > 재확인 > 주의 > 신규 > 보유)으로 정렬했습니다. 🔥는 돌파 당시 거래대금이 평소 대비 "
-        f"{OVERHEAT_TRIGGER_RATIO:.0f}배 이상 폭증한 과열 진입이니 참고만 하세요(확정 표본 쌓이기 전이라 제외는 안 함).",
+        "> 조건 충족·관찰 등록된 모든 신호를 한 표로 모아 긴급도순(매도 > 재확인 > 주의 > 신규 > 보유) 및 스마트점수순으로 정렬했습니다. "
+        "돌파이격은 골디락스 안착(+1.2%~+4.0% 🟢), 턱걸이 위험(<0.8% ⚠️), 과열 추격위험(>5.5% ⚠️)으로 구분됩니다.",
         "",
     ])
 

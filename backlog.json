@@ -2372,6 +2372,45 @@
           "note": "README 최상단에 콜렉터 대시보드 복원, +5.35% 익절 목표 및 거래량 1.5배/기반돌파 우선 진입 필터 적용, 테스트 27개 통과"
         }
       ]
+    },
+    {
+      "id": "T-065",
+      "title": "quant-collector: 스마트 랭킹(Smart Rank) 산출 및 대시보드 지표(돌파이격·거래대금·시각) 표시",
+      "summary": "",
+      "doc": "docs/tasks/T-065.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "스마트 랭킹(Smart Rank) 로직 및 대시보드 차별점 지표(돌파이격 골디락스 안착/턱걸이/과열 판정, 거래대금, VR, 시각) 표시 구현 완료, 단위 테스트 33개 통과",
+      "done_at": "2026-09-21",
+      "updated_at": "2026-09-21",
+      "done_when": "돌파이격 골디락스·대금·시간대 기반 스마트 랭킹 스코어 산출 및 README 대시보드 표에 건전도(안착/턱걸이/과열)와 거래대금·시각 노출 완료, 테스트 통과",
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-21",
+      "log": [
+        {
+          "at": "2026-09-21",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-21",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-21",
+          "status": "done",
+          "note": "스마트 랭킹(Smart Rank) 로직 및 대시보드 차별점 지표(돌파이격 골디락스 안착/턱걸이/과열 판정, 거래대금, VR, 시각) 표시 구현 완료, 단위 테스트 33개 통과"
+        }
+      ]
     }
   ]
 }
