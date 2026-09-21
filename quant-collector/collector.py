@@ -737,6 +737,7 @@ def render_markdown_dashboard(
         lines.extend(["", "---", ""])
 
     # 1. 신규 조건 충족 후보 (스마트 랭킹 우선순위 Top 5)
+    # A. 실시간 스캔에서 신규 조건 충족(top)이 발생했을 때
     if not top.empty:
         lines.append(f"{H2} 🎯 금일 조건 충족 신규 진입 후보 (스마트 랭킹 우선순위)")
         lines.append("")
@@ -760,6 +761,50 @@ def render_markdown_dashboard(
             s_score = f"{s_score_val:.1f}점" if pd.notna(s_score_val) else "-"
             lines.append(f"| {rank_str} | **{c_name}** ({c_code}) | {p_str} | {gap_str} | {amt_vr} | {sig_t} | {s_score} |")
         lines.extend(["", "---", ""])
+    else:
+        # B. 장 마감 후나 스캔 간격 중에는 최근 거래일의 신규 포착 종목들을 스마트 랭킹 상단 표로 상시 노출
+        dates = sorted({s.get("signal_time_kst", "")[:10] for s in main_list if s.get("signal_time_kst")}, reverse=True)
+        latest_date = dates[0] if dates else ""
+        today_sigs = [s for s in main_list if s.get("signal_time_kst", "").startswith(latest_date)]
+        if today_sigs:
+            ranked_today = []
+            for s in today_sigs:
+                feat = s.get("features", {})
+                sig_time = s.get("signal_time_kst", "")
+                entry = float(s.get("entry_reference_price", 0.0))
+                sr = calculate_smart_rank(feat, sig_time, entry)
+                ev = eval_by_sigid.get(s["signal_id"]) or {}
+                cur_p = ev.get("current_price", entry)
+                pnl = ev.get("pnl_pct", 0.0)
+                ranked_today.append({
+                    "name": s["name"],
+                    "code": s["code"],
+                    "cur_p": cur_p,
+                    "pnl": pnl,
+                    "smart_score": sr["smart_score"],
+                    "health": sr["health"],
+                    "gap_pct": sr["gap_pct"],
+                    "amount_e8": sr["amount_e8"],
+                    "vr": sr["vr"],
+                    "sig_time": sig_time[-5:],
+                })
+            ranked_today.sort(key=lambda x: (x["smart_score"], x["pnl"]), reverse=True)
+            rank_badges = ["🥇 1위", "🥈 2위", "🥉 3위", "4위", "5위"]
+
+            lines.append(f"{H2} 🎯 최근 신규 포착 종목 ({latest_date} 스마트 랭킹 순위)")
+            lines.append("")
+            lines.append(f"> 가장 최근 거래일(`{latest_date}`)에 신규 포착된 종목들을 스마트 랭킹 점수순으로 정렬한 진입 추천 순위입니다. 장 시작 전/장 마감 후에도 1~2위를 쉽게 판단할 수 있습니다.")
+            lines.append("")
+            lines.append("| 순위 | 종목(코드) | 현재가(수익률) | 돌파이격 (판정) | 거래대금 · VR | 신호시각 | 스마트점수 |")
+            lines.append("|:---:|:---|:---:|:---:|:---:|:---:|:---:|")
+            for idx, r in enumerate(ranked_today[:5]):
+                badge = rank_badges[idx] if idx < len(rank_badges) else f"{idx+1}위"
+                pnl_c = "🔴" if r["pnl"] >= 0 else "🔵"
+                p_str = f"{r['cur_p']:,.0f} ({pnl_c}{r['pnl']:+.2f}%)"
+                gap_str = f"{r['gap_pct']:+.2f}% ({r['health']})"
+                amt_vr = f"{r['amount_e8']:.1f}억 ({r['vr']:.1f}x)"
+                lines.append(f"| {badge} | **{r['name']}** ({r['code']}) | {p_str} | {gap_str} | {amt_vr} | {r['sig_time']} | **{r['smart_score']:.1f}점** |")
+            lines.extend(["", "---", ""])
 
     # 2. 추적 중인 모든 신호(보유+관찰+신규)를 종목당 1행으로 통합한 마스터 표
     lines.extend([
