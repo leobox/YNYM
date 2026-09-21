@@ -886,7 +886,7 @@
       "2026-09-21"
     ],
     "highest_seen": 44200.0,
-    "lowest_seen": 41400.0,
+    "lowest_seen": 41250.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "STOP_FIRST",
@@ -1307,7 +1307,7 @@
       "2026-09-21"
     ],
     "highest_seen": 93600.0,
-    "lowest_seen": 90700.0,
+    "lowest_seen": 90400.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "STOP_FIRST",
@@ -2279,7 +2279,7 @@
     "observed_dates": [
       "2026-09-21"
     ],
-    "highest_seen": 42550.0,
+    "highest_seen": 42600.0,
     "lowest_seen": 42000.0,
     "evaluations": {
       "h3_t3_s3": {
