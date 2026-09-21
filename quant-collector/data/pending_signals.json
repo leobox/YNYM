@@ -322,7 +322,7 @@
       "2026-09-21"
     ],
     "highest_seen": 77600.0,
-    "lowest_seen": 72900.0,
+    "lowest_seen": 72700.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "STOP_FIRST",
@@ -886,7 +886,7 @@
       "2026-09-21"
     ],
     "highest_seen": 44200.0,
-    "lowest_seen": 41750.0,
+    "lowest_seen": 41700.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "STOP_FIRST",
@@ -1446,7 +1446,7 @@
     "observed_dates": [
       "2026-09-21"
     ],
-    "highest_seen": 79400.0,
+    "highest_seen": 79800.0,
     "lowest_seen": 74600.0,
     "evaluations": {
       "h3_t3_s3": {
@@ -1579,7 +1579,7 @@
     "observed_dates": [
       "2026-09-21"
     ],
-    "highest_seen": 79400.0,
+    "highest_seen": 79800.0,
     "lowest_seen": 74600.0,
     "evaluations": {
       "h3_t3_s3": {
@@ -1860,7 +1860,7 @@
       "2026-09-21"
     ],
     "highest_seen": 48900.0,
-    "lowest_seen": 47500.0,
+    "lowest_seen": 47200.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "PENDING",
@@ -2000,7 +2000,7 @@
       "2026-09-21"
     ],
     "highest_seen": 28000.0,
-    "lowest_seen": 27250.0,
+    "lowest_seen": 27100.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "PENDING",
@@ -2135,10 +2135,12 @@
       "sma12": 356083.3333333333,
       "sma26": 353721.1538461539
     },
-    "trading_days_observed": 0,
-    "observed_dates": [],
-    "highest_seen": 367000.0,
-    "lowest_seen": 367000.0,
+    "trading_days_observed": 1,
+    "observed_dates": [
+      "2026-09-21"
+    ],
+    "highest_seen": 369000.0,
+    "lowest_seen": 365500.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "PENDING",
@@ -2273,10 +2275,12 @@
       "sma12": 41279.166666666664,
       "sma26": 40557.692307692305
     },
-    "trading_days_observed": 0,
-    "observed_dates": [],
+    "trading_days_observed": 1,
+    "observed_dates": [
+      "2026-09-21"
+    ],
     "highest_seen": 42450.0,
-    "lowest_seen": 42450.0,
+    "lowest_seen": 42000.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "PENDING",
