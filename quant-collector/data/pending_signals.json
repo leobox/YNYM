@@ -137,6 +137,30 @@
         "exit_price": null,
         "exit_time": null,
         "return_pct": null
+      },
+      "h3_t535_s3": {
+        "status": "TIMEOUT",
+        "exit_price": 76200.0,
+        "exit_time": "2026-09-21 14:00",
+        "return_pct": 3.96
+      },
+      "h3_t535_s5": {
+        "status": "TIMEOUT",
+        "exit_price": 76200.0,
+        "exit_time": "2026-09-21 14:00",
+        "return_pct": 3.96
+      },
+      "h5_t535_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t535_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
       }
     },
     "is_fully_resolved": false,
@@ -296,6 +320,30 @@
         "return_pct": -3.0
       },
       "h5_t10_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t535_s3": {
+        "status": "STOP_FIRST",
+        "exit_price": 58976.0,
+        "exit_time": "2026-09-21 09:00",
+        "return_pct": -3.0
+      },
+      "h3_t535_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t535_s3": {
+        "status": "STOP_FIRST",
+        "exit_price": 58976.0,
+        "exit_time": "2026-09-21 09:00",
+        "return_pct": -3.0
+      },
+      "h5_t535_s5": {
         "status": "PENDING",
         "exit_price": null,
         "exit_time": null,
@@ -463,6 +511,30 @@
         "exit_price": null,
         "exit_time": null,
         "return_pct": null
+      },
+      "h3_t535_s3": {
+        "status": "STOP_FIRST",
+        "exit_price": 73914.0,
+        "exit_time": "2026-09-21 09:00",
+        "return_pct": -3.0
+      },
+      "h3_t535_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t535_s3": {
+        "status": "STOP_FIRST",
+        "exit_price": 73914.0,
+        "exit_time": "2026-09-21 09:00",
+        "return_pct": -3.0
+      },
+      "h5_t535_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
       }
     },
     "is_fully_resolved": false,
@@ -622,6 +694,30 @@
         "return_pct": null
       },
       "h5_t10_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t535_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t535_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t535_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t535_s5": {
         "status": "PENDING",
         "exit_price": null,
         "exit_time": null,
@@ -789,6 +885,30 @@
         "exit_price": null,
         "exit_time": null,
         "return_pct": null
+      },
+      "h3_t535_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t535_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t535_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t535_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
       }
     },
     "is_fully_resolved": false,
@@ -948,6 +1068,30 @@
         "return_pct": null
       },
       "h5_t10_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t535_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t535_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t535_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t535_s5": {
         "status": "PENDING",
         "exit_price": null,
         "exit_time": null,
@@ -1115,6 +1259,30 @@
         "exit_price": null,
         "exit_time": null,
         "return_pct": null
+      },
+      "h3_t535_s3": {
+        "status": "STOP_FIRST",
+        "exit_price": 42001.0,
+        "exit_time": "2026-09-21 09:00",
+        "return_pct": -3.0
+      },
+      "h3_t535_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t535_s3": {
+        "status": "STOP_FIRST",
+        "exit_price": 42001.0,
+        "exit_time": "2026-09-21 09:00",
+        "return_pct": -3.0
+      },
+      "h5_t535_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
       }
     },
     "is_fully_resolved": false,
@@ -1274,6 +1442,30 @@
         "return_pct": -3.0
       },
       "h5_t10_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t535_s3": {
+        "status": "STOP_FIRST",
+        "exit_price": 729440.0,
+        "exit_time": "2026-09-21 13:00",
+        "return_pct": -3.0
+      },
+      "h3_t535_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t535_s3": {
+        "status": "STOP_FIRST",
+        "exit_price": 729440.0,
+        "exit_time": "2026-09-21 13:00",
+        "return_pct": -3.0
+      },
+      "h5_t535_s5": {
         "status": "PENDING",
         "exit_price": null,
         "exit_time": null,
@@ -1440,6 +1632,30 @@
         "exit_price": null,
         "exit_time": null,
         "return_pct": null
+      },
+      "h3_t535_s3": {
+        "status": "STOP_FIRST",
+        "exit_price": 46705.5,
+        "exit_time": "2026-09-21 09:00",
+        "return_pct": -3.0
+      },
+      "h3_t535_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t535_s3": {
+        "status": "STOP_FIRST",
+        "exit_price": 46705.5,
+        "exit_time": "2026-09-21 09:00",
+        "return_pct": -3.0
+      },
+      "h5_t535_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
       }
     },
     "is_fully_resolved": false,
@@ -1598,6 +1814,30 @@
         "return_pct": -3.0
       },
       "h5_t10_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t535_s3": {
+        "status": "STOP_FIRST",
+        "exit_price": 90792.0,
+        "exit_time": "2026-09-21 09:00",
+        "return_pct": -3.0
+      },
+      "h3_t535_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t535_s3": {
+        "status": "STOP_FIRST",
+        "exit_price": 90792.0,
+        "exit_time": "2026-09-21 09:00",
+        "return_pct": -3.0
+      },
+      "h5_t535_s5": {
         "status": "PENDING",
         "exit_price": null,
         "exit_time": null,
@@ -1764,6 +2004,30 @@
         "exit_price": null,
         "exit_time": null,
         "return_pct": null
+      },
+      "h3_t535_s3": {
+        "status": "TARGET_FIRST",
+        "exit_price": 79433.90000000001,
+        "exit_time": "2026-09-21 11:00",
+        "return_pct": 5.35
+      },
+      "h3_t535_s5": {
+        "status": "TARGET_FIRST",
+        "exit_price": 79433.90000000001,
+        "exit_time": "2026-09-21 11:00",
+        "return_pct": 5.35
+      },
+      "h5_t535_s3": {
+        "status": "TARGET_FIRST",
+        "exit_price": 79433.90000000001,
+        "exit_time": "2026-09-21 11:00",
+        "return_pct": 5.35
+      },
+      "h5_t535_s5": {
+        "status": "TARGET_FIRST",
+        "exit_price": 79433.90000000001,
+        "exit_time": "2026-09-21 11:00",
+        "return_pct": 5.35
       }
     },
     "is_fully_resolved": false,
@@ -1919,6 +2183,30 @@
         "exit_price": null,
         "exit_time": null,
         "return_pct": null
+      },
+      "h3_t535_s3": {
+        "status": "TARGET_FIRST",
+        "exit_price": 79433.90000000001,
+        "exit_time": "2026-09-21 11:00",
+        "return_pct": 5.35
+      },
+      "h3_t535_s5": {
+        "status": "TARGET_FIRST",
+        "exit_price": 79433.90000000001,
+        "exit_time": "2026-09-21 11:00",
+        "return_pct": 5.35
+      },
+      "h5_t535_s3": {
+        "status": "TARGET_FIRST",
+        "exit_price": 79433.90000000001,
+        "exit_time": "2026-09-21 11:00",
+        "return_pct": 5.35
+      },
+      "h5_t535_s5": {
+        "status": "TARGET_FIRST",
+        "exit_price": 79433.90000000001,
+        "exit_time": "2026-09-21 11:00",
+        "return_pct": 5.35
       }
     },
     "is_fully_resolved": false,
@@ -2077,6 +2365,30 @@
         "return_pct": null
       },
       "h5_t10_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t535_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t535_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t535_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t535_s5": {
         "status": "PENDING",
         "exit_price": null,
         "exit_time": null,
@@ -2243,6 +2555,30 @@
         "exit_price": null,
         "exit_time": null,
         "return_pct": null
+      },
+      "h3_t535_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t535_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t535_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t535_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
       }
     },
     "is_fully_resolved": false,
@@ -2401,6 +2737,30 @@
         "return_pct": null
       },
       "h5_t10_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t535_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t535_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t535_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t535_s5": {
         "status": "PENDING",
         "exit_price": null,
         "exit_time": null,
@@ -2567,6 +2927,30 @@
         "exit_price": null,
         "exit_time": null,
         "return_pct": null
+      },
+      "h3_t535_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t535_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t535_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t535_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
       }
     },
     "is_fully_resolved": false,
@@ -2725,6 +3109,30 @@
         "return_pct": null
       },
       "h5_t10_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t535_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t535_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t535_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t535_s5": {
         "status": "PENDING",
         "exit_price": null,
         "exit_time": null,
