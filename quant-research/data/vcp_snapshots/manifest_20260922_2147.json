@@ -1,0 +1,50 @@
+{
+  "run_id": "20260922_2147",
+  "fetched_at": "2026-09-22T21:47:01.464447+09:00",
+  "last_session": "2026-09-22",
+  "universe": {
+    "source": "naver marketValue + FinanceDataReader KRX listing",
+    "count": 150,
+    "rule": "시총 100,000,000,000~5,000,000,000,000원, 거래대금 상위 150, 종목군 기준 시각=실행 시각",
+    "survivorship": "실행 시점 종목군(과거 종목군·상폐 미포함)"
+  },
+  "prices": {
+    "source": "yahoo finance chart v8",
+    "interval": "1d",
+    "range": "1y",
+    "adjusted": false,
+    "today_bar_rule": "16:00 KST 전에는 오늘 일봉 제외"
+  },
+  "params": {
+    "lookback": 60,
+    "min_vol_spike": 1.5,
+    "max_extension_atr": 3.8,
+    "watch_band": 0.04,
+    "target": 0.1,
+    "stop": 0.05,
+    "max_sessions": 5
+  },
+  "counts": {
+    "analyzed": 146,
+    "fetch_fail": 0,
+    "short_history": 4,
+    "stale_bar": 0,
+    "trend_ok": 10,
+    "green": 1,
+    "yellow": 0
+  },
+  "code": {
+    "git_sha": "ce1904d",
+    "dirty": false
+  },
+  "ledger": {
+    "total": 1,
+    "target": 0,
+    "stop": 0,
+    "time": 0,
+    "open": 1,
+    "no_fill": 0,
+    "resolved": 0,
+    "mean_net_return_pct": null
+  }
+}
