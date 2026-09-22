@@ -1532,7 +1532,7 @@
       "2026-09-22"
     ],
     "highest_seen": 139900.0,
-    "lowest_seen": 130600.0,
+    "lowest_seen": 130500.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "TARGET_FIRST",
@@ -1719,7 +1719,7 @@
       "2026-09-22"
     ],
     "highest_seen": 49500.0,
-    "lowest_seen": 47150.0,
+    "lowest_seen": 47100.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "TARGET_FIRST",
@@ -3291,20 +3291,20 @@
     "observed_dates": [
       "2026-09-22"
     ],
-    "highest_seen": 31300.0,
+    "highest_seen": 31400.0,
     "lowest_seen": 30350.0,
     "evaluations": {
       "h3_t3_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TARGET_FIRST",
+        "exit_price": 31363.5,
+        "exit_time": "2026-09-22 13:00",
+        "return_pct": 3.0
       },
       "h3_t3_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TARGET_FIRST",
+        "exit_price": 31363.5,
+        "exit_time": "2026-09-22 13:00",
+        "return_pct": 3.0
       },
       "h3_t5_s3": {
         "status": "PENDING",
@@ -3355,16 +3355,16 @@
         "return_pct": null
       },
       "h5_t3_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TARGET_FIRST",
+        "exit_price": 31363.5,
+        "exit_time": "2026-09-22 13:00",
+        "return_pct": 3.0
       },
       "h5_t3_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TARGET_FIRST",
+        "exit_price": 31363.5,
+        "exit_time": "2026-09-22 13:00",
+        "return_pct": 3.0
       },
       "h5_t5_s3": {
         "status": "PENDING",
