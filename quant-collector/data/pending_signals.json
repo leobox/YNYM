@@ -1,193 +1,4 @@
 {
-  "algorithm260917_v1_281820_2026-09-17_1300": {
-    "signal_id": "algorithm260917_v1_281820_2026-09-17_1300",
-    "strategy_version": "algorithm260917_v1",
-    "code": "281820",
-    "name": "케이씨텍",
-    "market": "KOSPI",
-    "signal_time_kst": "2026-09-17 13:00",
-    "registered_at_kst": "2026-09-17 14:31:26",
-    "entry_reference_price": 73300.0,
-    "targets": {
-      "tgt_3": 75499.0,
-      "tgt_5": 76965.0,
-      "tgt_7": 78431.0,
-      "tgt_10": 80630.0
-    },
-    "stops": {
-      "stop_3": 71101.0,
-      "stop_5": 69635.0
-    },
-    "features": {
-      "score": 63.729843930974866,
-      "pattern_type": "base_breakout",
-      "volume_ratio": 1.203910252853152,
-      "above60": true,
-      "extension_atr": 2.89,
-      "trigger_amount_e8": 8.651322,
-      "trigger_ratio": 0.9685008800256675,
-      "breakout_level": 71100.0,
-      "trigger_close": 71700.0,
-      "current_close": 73300.0,
-      "atr_14": 1528.5714285714287,
-      "sma12": 69666.66666666667,
-      "sma26": 68876.92307692308
-    },
-    "trading_days_observed": 4,
-    "observed_dates": [
-      "2026-09-17",
-      "2026-09-18",
-      "2026-09-21",
-      "2026-09-22"
-    ],
-    "highest_seen": 79800.0,
-    "lowest_seen": 71700.0,
-    "evaluations": {
-      "h3_t3_s3": {
-        "status": "TARGET_FIRST",
-        "exit_price": 75499.0,
-        "exit_time": "2026-09-21 09:00",
-        "return_pct": 3.0
-      },
-      "h3_t3_s5": {
-        "status": "TARGET_FIRST",
-        "exit_price": 75499.0,
-        "exit_time": "2026-09-21 09:00",
-        "return_pct": 3.0
-      },
-      "h3_t5_s3": {
-        "status": "TIMEOUT",
-        "exit_price": 74700.0,
-        "exit_time": "2026-09-21 09:00",
-        "return_pct": 1.91
-      },
-      "h3_t5_s5": {
-        "status": "TIMEOUT",
-        "exit_price": 74700.0,
-        "exit_time": "2026-09-21 09:00",
-        "return_pct": 1.91
-      },
-      "h3_t7_s3": {
-        "status": "TIMEOUT",
-        "exit_price": 74700.0,
-        "exit_time": "2026-09-21 09:00",
-        "return_pct": 1.91
-      },
-      "h3_t7_s5": {
-        "status": "TIMEOUT",
-        "exit_price": 74700.0,
-        "exit_time": "2026-09-21 09:00",
-        "return_pct": 1.91
-      },
-      "h3_t10_s3": {
-        "status": "TIMEOUT",
-        "exit_price": 74700.0,
-        "exit_time": "2026-09-21 09:00",
-        "return_pct": 1.91
-      },
-      "h3_t10_s5": {
-        "status": "TIMEOUT",
-        "exit_price": 74700.0,
-        "exit_time": "2026-09-21 09:00",
-        "return_pct": 1.91
-      },
-      "h5_t3_s3": {
-        "status": "TARGET_FIRST",
-        "exit_price": 75499.0,
-        "exit_time": "2026-09-21 09:00",
-        "return_pct": 3.0
-      },
-      "h5_t3_s5": {
-        "status": "TARGET_FIRST",
-        "exit_price": 75499.0,
-        "exit_time": "2026-09-21 09:00",
-        "return_pct": 3.0
-      },
-      "h5_t5_s3": {
-        "status": "TARGET_FIRST",
-        "exit_price": 76965.0,
-        "exit_time": "2026-09-22 09:00",
-        "return_pct": 5.0
-      },
-      "h5_t5_s5": {
-        "status": "TARGET_FIRST",
-        "exit_price": 76965.0,
-        "exit_time": "2026-09-22 09:00",
-        "return_pct": 5.0
-      },
-      "h5_t7_s3": {
-        "status": "TARGET_FIRST",
-        "exit_price": 78431.0,
-        "exit_time": "2026-09-22 09:00",
-        "return_pct": 7.0
-      },
-      "h5_t7_s5": {
-        "status": "TARGET_FIRST",
-        "exit_price": 78431.0,
-        "exit_time": "2026-09-22 09:00",
-        "return_pct": 7.0
-      },
-      "h5_t10_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
-      },
-      "h5_t10_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
-      },
-      "h3_t535_s3": {
-        "status": "TIMEOUT",
-        "exit_price": 76200.0,
-        "exit_time": "2026-09-21 14:00",
-        "return_pct": 3.96
-      },
-      "h3_t535_s5": {
-        "status": "TIMEOUT",
-        "exit_price": 76200.0,
-        "exit_time": "2026-09-21 14:00",
-        "return_pct": 3.96
-      },
-      "h5_t535_s3": {
-        "status": "TARGET_FIRST",
-        "exit_price": 77221.55,
-        "exit_time": "2026-09-22 09:00",
-        "return_pct": 5.35
-      },
-      "h5_t535_s5": {
-        "status": "TARGET_FIRST",
-        "exit_price": 77221.55,
-        "exit_time": "2026-09-22 09:00",
-        "return_pct": 5.35
-      }
-    },
-    "is_fully_resolved": false,
-    "last_exit_eval": {
-      "code": "281820",
-      "name": "케이씨텍",
-      "entry_price": 73300.0,
-      "current_price": 79100.0,
-      "pnl_pct": 7.91,
-      "highest_seen": 79100.0,
-      "max_gain_pct": 7.91,
-      "days_held": 3,
-      "breakout_level": 71100.0,
-      "target_profit": 80630.0,
-      "target_10": 80630.0,
-      "stop_5": 69635.0,
-      "decision": "HOLD",
-      "action_type": "KEEP",
-      "urgency": "LOW",
-      "reason": "돌파선 위에서 양호하게 상승 추세 유지 중",
-      "suggested_price": 79100.0,
-      "evaluated_at": "2026-09-21 21:55",
-      "signal_id": "algorithm260917_v1_281820_2026-09-17_1300",
-      "strategy_version": "algorithm260917_v1"
-    }
-  },
   "algorithm260917_v1_229640_2026-09-18_0900": {
     "signal_id": "algorithm260917_v1_229640_2026-09-18_0900",
     "strategy_version": "algorithm260917_v1",
@@ -1721,7 +1532,7 @@
       "2026-09-22"
     ],
     "highest_seen": 139900.0,
-    "lowest_seen": 131700.0,
+    "lowest_seen": 130600.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "TARGET_FIRST",
@@ -1908,7 +1719,7 @@
       "2026-09-22"
     ],
     "highest_seen": 49500.0,
-    "lowest_seen": 47200.0,
+    "lowest_seen": 47150.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "TARGET_FIRST",
@@ -2656,7 +2467,7 @@
       "2026-09-22"
     ],
     "highest_seen": 90500.0,
-    "lowest_seen": 88900.0,
+    "lowest_seen": 88000.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "PENDING",
@@ -2821,7 +2632,7 @@
       "2026-09-22"
     ],
     "highest_seen": 8490.0,
-    "lowest_seen": 8360.0,
+    "lowest_seen": 8250.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "PENDING",
@@ -2986,7 +2797,7 @@
       "2026-09-22"
     ],
     "highest_seen": 48800.0,
-    "lowest_seen": 48150.0,
+    "lowest_seen": 47850.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "PENDING",
@@ -3150,7 +2961,7 @@
     "observed_dates": [
       "2026-09-22"
     ],
-    "highest_seen": 22650.0,
+    "highest_seen": 22800.0,
     "lowest_seen": 21000.0,
     "evaluations": {
       "h3_t3_s3": {
@@ -3190,16 +3001,16 @@
         "return_pct": 5.35
       },
       "h3_t7_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TARGET_FIRST",
+        "exit_price": 22737.5,
+        "exit_time": "2026-09-22 13:00",
+        "return_pct": 7.0
       },
       "h3_t7_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TARGET_FIRST",
+        "exit_price": 22737.5,
+        "exit_time": "2026-09-22 13:00",
+        "return_pct": 7.0
       },
       "h3_t10_s3": {
         "status": "PENDING",
@@ -3250,16 +3061,16 @@
         "return_pct": 5.35
       },
       "h5_t7_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TARGET_FIRST",
+        "exit_price": 22737.5,
+        "exit_time": "2026-09-22 13:00",
+        "return_pct": 7.0
       },
       "h5_t7_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TARGET_FIRST",
+        "exit_price": 22737.5,
+        "exit_time": "2026-09-22 13:00",
+        "return_pct": 7.0
       },
       "h5_t10_s3": {
         "status": "PENDING",
@@ -3316,7 +3127,7 @@
       "2026-09-22"
     ],
     "highest_seen": 57300.0,
-    "lowest_seen": 55100.0,
+    "lowest_seen": 55000.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "PENDING",
@@ -3480,7 +3291,7 @@
     "observed_dates": [
       "2026-09-22"
     ],
-    "highest_seen": 30750.0,
+    "highest_seen": 31300.0,
     "lowest_seen": 30350.0,
     "evaluations": {
       "h3_t3_s3": {
@@ -3645,7 +3456,7 @@
     "observed_dates": [
       "2026-09-22"
     ],
-    "highest_seen": 219500.0,
+    "highest_seen": 223000.0,
     "lowest_seen": 216500.0,
     "evaluations": {
       "h3_t3_s3": {
