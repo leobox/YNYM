@@ -416,7 +416,7 @@
       "2026-09-21",
       "2026-09-22"
     ],
-    "highest_seen": 78500.0,
+    "highest_seen": 79100.0,
     "lowest_seen": 72600.0,
     "evaluations": {
       "h3_t3_s3": {
@@ -2282,7 +2282,7 @@
       "2026-09-22"
     ],
     "highest_seen": 385500.0,
-    "lowest_seen": 362000.0,
+    "lowest_seen": 361000.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "TARGET_FIRST",
@@ -2468,7 +2468,7 @@
       "2026-09-21",
       "2026-09-22"
     ],
-    "highest_seen": 43450.0,
+    "highest_seen": 43600.0,
     "lowest_seen": 42000.0,
     "evaluations": {
       "h3_t3_s3": {
@@ -2656,7 +2656,7 @@
       "2026-09-22"
     ],
     "highest_seen": 90500.0,
-    "lowest_seen": 89300.0,
+    "lowest_seen": 89200.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "PENDING",
@@ -2821,7 +2821,7 @@
       "2026-09-22"
     ],
     "highest_seen": 8490.0,
-    "lowest_seen": 8400.0,
+    "lowest_seen": 8390.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "PENDING",
@@ -3480,7 +3480,7 @@
     "observed_dates": [
       "2026-09-22"
     ],
-    "highest_seen": 30650.0,
+    "highest_seen": 30750.0,
     "lowest_seen": 30350.0,
     "evaluations": {
       "h3_t3_s3": {
@@ -3641,10 +3641,12 @@
       "sma12": 209500.0,
       "sma26": 206826.92307692306
     },
-    "trading_days_observed": 0,
-    "observed_dates": [],
-    "highest_seen": 218000.0,
-    "lowest_seen": 218000.0,
+    "trading_days_observed": 1,
+    "observed_dates": [
+      "2026-09-22"
+    ],
+    "highest_seen": 218500.0,
+    "lowest_seen": 216500.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "PENDING",
