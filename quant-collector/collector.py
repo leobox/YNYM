@@ -1,12 +1,12 @@
 """
 Quant Data Collector & Forward Labeling Engine
 ---------------------------------------------
-GitHub Actions(장중 09:37~16:37, 7분30초/37분30초 30분 주기) 및 모바일 수동(workflow_dispatch)으로 실행되는 실전 수집기 & 전진 라벨러입니다.
-1. 네이버 시총 랭킹 기반 KOSPI200+KOSDAQ150 근사 유니버스(350종목) + 기존 추적 중인 pending 종목의 60분봉 수집
-2. '조건 충족' 및 '관찰' 후보 포착 및 특징값 고정 (Snapshot)
-3. 향후 3~5거래일 완료봉 추적을 통한 다중 목표(+3/5/7/10%)/손절(-3/5%) 선접촉 라벨링 확정
+GitHub Actions(한국 정규장 09:00~15:55 KST 5분 주기, UTC 00:00~06:55) 및 모바일 수동(workflow_dispatch)으로 실행되는 실전 수집기 & 전진 라벨러입니다.
+1. 네이버 시총 랭킹 기반 KOSPI200+KOSDAQ150 근사 유니버스(350종목) + 기존 추적 중인 pending 종목의 5m/10m/30m/60m 다중 분봉 수집 및 보관
+2. 60분봉 기반 '조건 충족' 및 '관찰' 후보 포착 및 스마트 랭킹(스마트점수·돌파건전도·유동성) 산출
+3. 5분봉 정밀 추적을 통한 다중 목표(+3/5/5.35/7/10%)/손절(-3/5%) 선접촉 라벨링 확정
 4. 2차 판독기(위험 필터 / 메타 모델) 학습용 원본 데이터셋 자동 축적
-5. GitHub 모바일 앱(README.md)에 실시간 스캔 및 추적 진행 현황 자동 갱신
+5. GitHub 모바일 앱(README.md)에 5분 주기 실시간 스캔 및 추적 진행 현황 자동 갱신
 
 [절대 안전 불변식]
 - 실제 거래, 매수, 매도, 계좌 연동 로직은 작성하지 않으며 일체 호출하지 않습니다.
@@ -171,28 +171,103 @@ def completed_bars(item: Dict[str, Any], now: pd.Timestamp) -> pd.DataFrame:
     return df[ends <= now]
 
 
-def fetch_bars(code: str, market: str, now: pd.Timestamp) -> pd.DataFrame:
+def parse_multiframe_bars(item: Dict[str, Any], now: pd.Timestamp) -> Dict[str, pd.DataFrame]:
+    """5분봉 원본 데이터셋으로부터 5m, 10m, 30m, 60m 완료봉을 정합성 있게 생성한다."""
+    quotes = item["indicators"]["quote"][0]
+    raw_df = pd.DataFrame(
+        quotes,
+        index=pd.to_datetime(item["timestamp"], unit="s", utc=True).tz_convert("Asia/Seoul"),
+    )
+    raw_df = raw_df.rename(columns=str.title)[["Open", "High", "Low", "Close", "Volume"]].dropna()
+    raw_df = raw_df[~raw_df.index.duplicated()].sort_index()
+
+    # 한국 정규장 필터 (09:00 ~ 15:30)
+    raw_df = raw_df[(raw_df.index.hour >= 9) & ((raw_df.index.hour < 15) | ((raw_df.index.hour == 15) & (raw_df.index.minute <= 30)))]
+    # 거래량 0인 더미 봉 제외
+    raw_df = raw_df[~((raw_df.Volume == 0) & (raw_df.High == raw_df.Low))]
+    # 5분봉 완료 여부 판정 (ends = index + 5m)
+    ends_5m = raw_df.index + pd.Timedelta(minutes=5)
+    df_5m = raw_df[ends_5m <= now].copy()
+
+    def resample_by_day(df: pd.DataFrame, rule_min: int) -> pd.DataFrame:
+        if df.empty:
+            return pd.DataFrame(columns=["Open", "High", "Low", "Close", "Volume"])
+        res_list = []
+        for _, g in df.groupby(df.index.date):
+            agg = g.resample(f"{rule_min}min", origin="start").agg({
+                "Open": "first", "High": "max", "Low": "min", "Close": "last", "Volume": "sum"
+            }).dropna()
+            # 60분봉의 경우 15:00은 30분짜리 장마감 봉
+            ends = agg.index + pd.to_timedelta(
+                np.where((rule_min == 60) & (agg.index.hour == 15), 30, rule_min), unit="m"
+            )
+            agg = agg[ends <= now]
+            # 더미 봉 제외
+            agg = agg[~((agg.Volume == 0) & (agg.High == agg.Low))]
+            if not agg.empty:
+                res_list.append(agg)
+        if not res_list:
+            return pd.DataFrame(columns=["Open", "High", "Low", "Close", "Volume"])
+        out = pd.concat(res_list)
+        return out[~out.index.duplicated()].sort_index()
+
+    df_10m = resample_by_day(df_5m, 10)
+    df_30m = resample_by_day(df_5m, 30)
+    df_60m = resample_by_day(df_5m, 60)
+
+    return {
+        "5m": df_5m,
+        "10m": df_10m,
+        "30m": df_30m,
+        "60m": df_60m,
+    }
+
+
+def fetch_all_bars(code: str, market: str, now: pd.Timestamp) -> Dict[str, pd.DataFrame]:
+    """단 1회의 5m API 요청으로 5m, 10m, 30m, 60m 완료봉 데이터셋을 일괄 추출한다."""
     symbol = code + (".KQ" if market == "KOSDAQ" else ".KS")
-    payload = get_json(
+    try:
+        payload = get_json(
+            f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}",
+            {"range": "60d", "interval": "5m"},
+            timeout=10,
+        )["chart"]
+        if payload.get("result"):
+            return parse_multiframe_bars(payload["result"][0], now)
+    except Exception as e:
+        # 5m 조회 실패 시 60m 원본 fallback
+        pass
+
+    payload_60m = get_json(
         f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}",
         {"range": "60d", "interval": "60m"},
         timeout=10,
     )["chart"]
-    if not payload["result"]:
-        raise RuntimeError(str(payload.get("error")))
-    return completed_bars(payload["result"][0], now)
+    if not payload_60m.get("result"):
+        raise RuntimeError(str(payload_60m.get("error")))
+    df_60m = completed_bars(payload_60m["result"][0], now)
+    return {"60m": df_60m, "30m": pd.DataFrame(), "10m": pd.DataFrame(), "5m": pd.DataFrame()}
 
 
-def save_bar_history(code: str, df_bars: pd.DataFrame) -> None:
-    """[T-040] 종목별 60분봉 원본 이력을 증분 저장한다 (향후 피처 재실험/ML 학습용).
+def fetch_bars(code: str, market: str, now: pd.Timestamp) -> pd.DataFrame:
+    """기존 단일 60분봉 조회 하위 호환 함수"""
+    bars_dict = fetch_all_bars(code, market, now)
+    return bars_dict.get("60m", pd.DataFrame())
 
-    fetch_bars는 매번 최근 60일 롤링 윈도우 전체를 돌려주는데, 그걸 스캔마다 그대로
-    다시 저장하면 대부분 겹치는 내용이라 저장소가 과도하게 커진다. 이미 저장된 마지막
-    타임스탬프 이후의 신규 완료봉만 골라 append해서 시간이 지날수록 60일보다 긴 이력이
-    조금씩 쌓이게 한다.
+
+def save_bar_history(code: str, df_bars: pd.DataFrame, timeframe: str = "60m") -> None:
+    """[T-040, T-067] 종목별 분봉(60m, 30m, 10m, 5m) 원본 이력을 증분 저장한다.
+
+    60m은 기존 호환성을 위해 {code}.csv에 유지하며, 5m/10m/30m은 {code}_{timeframe}.csv에
+    마지막 타임스탬프 이후 신규 행만 증분 append하여 데이터 정합성을 유지한다.
     """
+    if df_bars.empty:
+        return
     BARS_HISTORY_DIR.mkdir(parents=True, exist_ok=True)
-    path = BARS_HISTORY_DIR / f"{code}.csv"
+    if timeframe == "60m":
+        path = BARS_HISTORY_DIR / f"{code}.csv"
+    else:
+        path = BARS_HISTORY_DIR / f"{code}_{timeframe}.csv"
 
     if not path.exists():
         df_bars.to_csv(path)
@@ -324,9 +399,10 @@ def valid_ohlcv(df: pd.DataFrame) -> bool:
     return not bool(bad.any())
 
 
-def score_stock(rec: Dict[str, Any], now: pd.Timestamp) -> Tuple[Optional[Dict[str, Any]], Optional[pd.DataFrame], Optional[str]]:
+def score_stock(rec: Dict[str, Any], now: pd.Timestamp) -> Tuple[Optional[Dict[str, Any]], Optional[Dict[str, pd.DataFrame]], Optional[str]]:
     try:
-        df = fetch_bars(rec["code"], rec["market"], now)
+        bars_dict = fetch_all_bars(rec["code"], rec["market"], now)
+        df = bars_dict.get("60m", pd.DataFrame())
         if not valid_ohlcv(df):
             return None, None, "가격/거래량 정합성 오류"
         if len(df) < 120 or df.Volume.iloc[-1] <= 0 or df.Close.iloc[-1] < MIN_PRICE:
@@ -336,7 +412,29 @@ def score_stock(rec: Dict[str, Any], now: pd.Timestamp) -> Tuple[Optional[Dict[s
 
         s = hourly_pattern(df, volume_weight=VOLUME_WEIGHT, max_extension_atr=MAX_EXTENSION_ATR).iloc[-1]
         conf = confirmed_breakout(df).iloc[-1]
-        matched = bool(s.eligible and conf.hold)
+
+        # 하위 분봉(10m, 5m, 30m) 기반 조기 돌파(Early Trigger) 감지
+        early_trigger = False
+        early_tf = ""
+        brk_lvl = float(conf.breakout_level)
+
+        if brk_lvl > 0:
+            for tf_candidate in ["10m", "5m", "30m"]:
+                df_sub = bars_dict.get(tf_candidate, pd.DataFrame())
+                if len(df_sub) >= 5:
+                    last_sub = df_sub.iloc[-1]
+                    sub_c = float(last_sub.Close)
+                    sub_v = float(last_sub.Volume)
+                    sub_amt = sub_c * sub_v
+                    sub_gap = (sub_c - brk_lvl) / brk_lvl * 100.0
+                    vol_avg = float(df_sub.Volume.tail(15).mean())
+                    # 돌파선 안착(+0.8~+4.0%) & 거래량 증가 & 거래대금 1억 이상
+                    if (0.8 <= sub_gap <= 4.0) and (vol_avg > 0 and sub_v >= vol_avg * 1.3) and sub_amt >= 1e8:
+                        early_trigger = True
+                        early_tf = tf_candidate
+                        break
+
+        matched = bool(s.eligible and (conf.hold or early_trigger))
         if not np.isfinite(s.score):
             return None, None, "지표 계산 불가"
 
@@ -344,11 +442,14 @@ def score_stock(rec: Dict[str, Any], now: pd.Timestamp) -> Tuple[Optional[Dict[s
         fast, medium = c.rolling(12).mean(), c.rolling(26).mean()
         atr_val = _atr(df).iloc[-1]
 
+        mode_badge = f"⚡ 조기({early_tf})" if early_trigger and not conf.hold else ("🟢 확정(60m)" if conf.hold else "제외")
+
         row = {
             "종목": rec["name"],
             "코드": rec["code"],
             "시장": rec["market"],
             "구분": "일치" if matched else "제외",
+            "돌파모드": mode_badge,
             "점수": float(s.score),
             "이격ATR": round(float((c.iloc[-1] - medium.iloc[-1]) / atr_val), 2) if pd.notna(atr_val) and atr_val > 0 else np.nan,
             "돌파선": round(float(conf.breakout_level), 2),
@@ -360,6 +461,8 @@ def score_stock(rec: Dict[str, Any], now: pd.Timestamp) -> Tuple[Optional[Dict[s
             "_bar_time_full": df.index[-1].strftime("%Y-%m-%d %H:%M"),
             "_base": bool(s.eligible),
             "_match": matched,
+            "_early_trigger": early_trigger,
+            "_early_tf": early_tf,
             "_waiting": bool(s.eligible and conf.waiting),
             "_current_amount": float(conf.current_amount),
             "_current_ratio": float(conf.current_ratio),
@@ -383,10 +486,12 @@ def score_stock(rec: Dict[str, Any], now: pd.Timestamp) -> Tuple[Optional[Dict[s
             "atr_14": float(atr_val) if pd.notna(atr_val) else 0.0,
             "sma12": float(fast.iloc[-1]),
             "sma26": float(medium.iloc[-1]),
+            "early_trigger": early_trigger,
+            "early_tf": early_tf,
         }
         row["_features"] = features
 
-        return row, df, None
+        return row, bars_dict, None
     except Exception as e:
         return None, None, str(e)[:100]
 
@@ -495,7 +600,10 @@ def calculate_smart_rank(
     # 4. 패턴 가산점
     pat_score = 10.0 if pattern == "base_breakout" else 0.0
 
-    raw_score = base_score * 0.4 + 30.0 + gap_score + time_score + liq_score + pat_score
+    # 5. 조기 돌파 가산점 (10m/5m/30m 빠른 타점 우대)
+    early_score = 10.0 if feat.get("early_trigger", False) else 0.0
+
+    raw_score = base_score * 0.4 + 30.0 + gap_score + time_score + liq_score + pat_score + early_score
     smart_score = round(max(0.0, min(100.0, raw_score)), 1)
 
     return {
@@ -685,13 +793,13 @@ def render_markdown_dashboard(
         lines.extend(["# ⏱️ Quant Pattern Scanner & Position Exit Monitor", ""])
 
     lines.append(
-        f"> **최근 스캔**: `{now_str} KST` | **유니버스**: `{scan_count}종목` | **조건 충족**: `{len(top)}건` | **관찰**: `{len(watch)}건` | **추적 중**: `{len(main_list)}건`"
+        f"> ⏱️ **실시간 갱신**: `{now_str} KST (5분 상시 주기)` | 📊 **감시 유니버스**: `{scan_count}종목` | ⚡ **조기/확정 돌파**: `{len(top)}건` | 🎯 **활성 추적**: `{len(main_list)}건`"
     )
     lines.append("")
 
     if not embed:
         lines.extend([
-            "한국 정규장 30분 주기(09:37~16:37, 7분30초/37분30초)로 실행되며, **매수 진입 포지션에 대한 실시간 매도·청산 신호**와 **신규 후보**를 아래 표 하나로 통합해 모니터링합니다.",
+            "GitHub Actions가 **5분마다 상시 자동 실행**되며, 5m/10m/30m/60m 다중 분봉 수집 및 조기 돌파(Early Trigger)와 **매수 포지션에 대한 실시간 매도·청산 신호**를 통합 모니터링합니다.",
             "",
             "---",
             "",
@@ -724,16 +832,19 @@ def render_markdown_dashboard(
                 "",
             ])
 
-    # [최우선 알림] 긴급 매도/청산 신호는 짧게 요약만 상단에, 상세는 통합 표에서 확인
+    # [최우선 알림] 긴급 매도/청산 신호는 테이블 형태로 깔끔하게 상단 표출
     if sell_alerts:
-        lines.append(f"{H2} 🚨 [긴급] 실시간 매도·청산 권고 신호 발생!")
+        lines.append(f"{H2} 🚨 [긴급] 실시간 매도·청산 권고 신호 ({len(sell_alerts)}건)")
         lines.append("")
-        lines.append("> 청산 조건(익절/손절/돌파선붕괴)이 감지되었습니다. 상세 사유는 아래 표를 확인 후 MTS에서 대응하세요.")
+        lines.append("> 5분 단위 실시간 청산 조건(목표 익절 / 이익 보존 / 돌파선 붕괴 / 절대 손절)이 감지되었습니다. MTS에서 신속히 대응하세요.")
         lines.append("")
+        lines.append("| 구분 | 종목(코드) | 현재가(수익률) | 권고 사유 |")
+        lines.append("|:---:|:---|:---:|:---|")
         for a in sell_alerts:
             tag = "🔴 익절" if a["action_type"] == "TAKE_PROFIT" else "🔴 손절"
             pnl_color = "🔴" if a["pnl_pct"] >= 0 else "🔵"
-            lines.append(f"- **{tag} · {a['name']}** ({a['code']}) {a['current_price']:,.0f}원 ({pnl_color}{a['pnl_pct']:+.2f}%)")
+            rsn = a.get("reason", "청산 조건 도달")
+            lines.append(f"| **{tag}** | **{a['name']}** ({a['code']}) | {a['current_price']:,.0f}원 ({pnl_color}{a['pnl_pct']:+.2f}%) | {rsn} |")
         lines.extend(["", "---", ""])
 
     # 1. 신규 조건 충족 후보 (스마트 랭킹 우선순위 Top 5)
@@ -743,14 +854,15 @@ def render_markdown_dashboard(
         lines.append("")
         lines.append("> 돌파 건전도(이격 +1.2~+4.0% 안착 🟢), 오전 골든타임(09~10시), 거래대금 및 수급을 종합 평가한 진입 추천 순위입니다.")
         lines.append("")
-        lines.append("| 순위 | 종목(코드) | 현재가 | 돌파이격 (판정) | 거래대금 · VR | 신호시각 | 스마트점수 |")
-        lines.append("|:---:|:---|:---:|:---:|:---:|:---:|:---:|")
+        lines.append("| 순위 | 종목(코드) | 돌파모드 | 현재가 | 돌파이격 (판정) | 거래대금 · VR | 신호시각 | 스마트점수 |")
+        lines.append("|:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|")
         for _, r in top.iterrows():
             c_code = r["코드"]
             c_name = r["종목"]
             p = r["현재가"] if pd.notna(r.get("현재가")) else r["돌파봉종가"]
             p_str = f"{p:,.0f}원" if pd.notna(p) and p > 0 else "-"
             rank_str = r.get("순위", "-")
+            mode_str = r.get("돌파모드", "🟢 확정(60m)")
             gap_val = r.get("돌파이격")
             gap_str = f"{gap_val:+.2f}% ({r.get('건전도', '-')})" if pd.notna(gap_val) else "-"
             amt = r.get("돌파봉대금_억", 0.0)
@@ -759,7 +871,7 @@ def render_markdown_dashboard(
             sig_t = r.get("기준봉(KST)", "-")
             s_score_val = r.get("스마트점수")
             s_score = f"{s_score_val:.1f}점" if pd.notna(s_score_val) else "-"
-            lines.append(f"| {rank_str} | **{c_name}** ({c_code}) | {p_str} | {gap_str} | {amt_vr} | {sig_t} | {s_score} |")
+            lines.append(f"| {rank_str} | **{c_name}** ({c_code}) | {mode_str} | {p_str} | {gap_str} | {amt_vr} | {sig_t} | {s_score} |")
         lines.extend(["", "---", ""])
     else:
         # B. 장 마감 후나 스캔 간격 중에는 최근 거래일의 신규 포착 종목들을 스마트 랭킹 상단 표로 상시 노출
@@ -894,7 +1006,7 @@ def run_collector():
                     "market": sig["market"],
                 })
 
-    print(f"-> 총 {len(all_scan_targets)}개 대상 60분봉 수집 및 패턴 채점 진행 중...")
+    print(f"-> 총 {len(all_scan_targets)}개 대상 다중 분봉(5m/10m/30m/60m) 수집 및 패턴 채점 진행 중...")
 
     rows = []
     errors = []
@@ -902,22 +1014,51 @@ def run_collector():
 
     with ThreadPoolExecutor(max_workers=WORKERS) as pool:
         results = pool.map(lambda s: (s, score_stock(s, now_ts)), all_scan_targets)
-        for rec, (row, df_bars, err) in results:
-            if row is not None and df_bars is not None:
+        for rec, (row, bars_res, err) in results:
+            if row is not None and bars_res is not None:
                 rows.append(row)
-                save_bar_history(rec["code"], df_bars)
-                # 최근 20개 완료봉을 추적용으로 보관
-                candle_list = []
-                for idx, b in df_bars.tail(20).iterrows():
-                    candle_list.append({
-                        "time_kst": idx.strftime("%Y-%m-%d %H:%M"),
-                        "open": float(b.Open),
-                        "high": float(b.High),
-                        "low": float(b.Low),
-                        "close": float(b.Close),
-                        "volume": int(b.Volume),
-                    })
-                collected_candles_by_code[rec["code"]] = candle_list
+                if isinstance(bars_res, dict):
+                    df_60m = bars_res.get("60m", pd.DataFrame())
+                    df_30m = bars_res.get("30m", pd.DataFrame())
+                    df_10m = bars_res.get("10m", pd.DataFrame())
+                    df_5m = bars_res.get("5m", pd.DataFrame())
+
+                    # 다중 분봉 이력 저장 (60m은 기존 경로 유지, 30m/10m/5m은 접미사 분리 보관)
+                    if not df_60m.empty:
+                        save_bar_history(rec["code"], df_60m, "60m")
+                    if not df_30m.empty:
+                        save_bar_history(rec["code"], df_30m, "30m")
+                    if not df_10m.empty:
+                        save_bar_history(rec["code"], df_10m, "10m")
+                    if not df_5m.empty:
+                        save_bar_history(rec["code"], df_5m, "5m")
+
+                    # 트래커 및 청산 엔진용 완료봉 목록 (정밀한 5분봉 완료봉 전달, 5거래일 커버)
+                    candle_list = []
+                    source_df = df_5m if not df_5m.empty else df_60m
+                    for idx, b in source_df.tail(400).iterrows():
+                        candle_list.append({
+                            "time_kst": idx.strftime("%Y-%m-%d %H:%M"),
+                            "open": float(b.Open),
+                            "high": float(b.High),
+                            "low": float(b.Low),
+                            "close": float(b.Close),
+                            "volume": int(b.Volume),
+                        })
+                    collected_candles_by_code[rec["code"]] = candle_list
+                else:
+                    save_bar_history(rec["code"], bars_res, "60m")
+                    candle_list = []
+                    for idx, b in bars_res.tail(40).iterrows():
+                        candle_list.append({
+                            "time_kst": idx.strftime("%Y-%m-%d %H:%M"),
+                            "open": float(b.Open),
+                            "high": float(b.High),
+                            "low": float(b.Low),
+                            "close": float(b.Close),
+                            "volume": int(b.Volume),
+                        })
+                    collected_candles_by_code[rec["code"]] = candle_list
             else:
                 errors.append(err)
 
