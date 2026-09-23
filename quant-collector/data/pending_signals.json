@@ -795,7 +795,7 @@
       "2026-09-22",
       "2026-09-23"
     ],
-    "highest_seen": 144300.0,
+    "highest_seen": 144800.0,
     "lowest_seen": 129000.0,
     "evaluations": {
       "h3_t3_s3": {
@@ -1547,7 +1547,7 @@
       "2026-09-22",
       "2026-09-23"
     ],
-    "highest_seen": 45800.0,
+    "highest_seen": 46000.0,
     "lowest_seen": 41850.0,
     "evaluations": {
       "h3_t3_s3": {
@@ -1694,5 +1694,172 @@
       "signal_id": "algorithm260917_v1_005290_2026-09-21_1000",
       "strategy_version": "algorithm260917_v1"
     }
+  },
+  "algorithm260917_v1_036830_2026-09-23_1300": {
+    "signal_id": "algorithm260917_v1_036830_2026-09-23_1300",
+    "strategy_version": "algorithm260917_v1",
+    "code": "036830",
+    "name": "솔브레인홀딩스",
+    "market": "KOSDAQ",
+    "signal_time_kst": "2026-09-23 13:00",
+    "registered_at_kst": "2026-09-23 14:17:40",
+    "entry_reference_price": 41550.0,
+    "targets": {
+      "tgt_3": 42796.5,
+      "tgt_5": 43627.5,
+      "tgt_7": 44458.5,
+      "tgt_10": 45705.0,
+      "tgt_5_35": 43772.93
+    },
+    "stops": {
+      "stop_3": 40303.5,
+      "stop_5": 39472.5
+    },
+    "features": {
+      "score": 68.61434865530143,
+      "pattern_type": "base_breakout",
+      "volume_ratio": 1.5881101973817198,
+      "above60": true,
+      "extension_atr": 2.07,
+      "trigger_amount_e8": 1.228055,
+      "trigger_ratio": 0.7040903351016026,
+      "breakout_level": 40350.0,
+      "trigger_close": 39500.0,
+      "current_close": 41850.0,
+      "atr_14": 698.2501514797679,
+      "sma12": 39912.5,
+      "sma26": 40402.88461538462,
+      "early_trigger": true,
+      "early_tf": "30m"
+    },
+    "trading_days_observed": 1,
+    "observed_dates": [
+      "2026-09-23"
+    ],
+    "highest_seen": 41950.0,
+    "lowest_seen": 39550.0,
+    "evaluations": {
+      "h3_t3_s3": {
+        "status": "STOP_FIRST",
+        "exit_price": 39550.0,
+        "exit_time": "2026-09-23 13:05",
+        "return_pct": -4.81
+      },
+      "h3_t3_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t5_s3": {
+        "status": "STOP_FIRST",
+        "exit_price": 39550.0,
+        "exit_time": "2026-09-23 13:05",
+        "return_pct": -4.81
+      },
+      "h3_t5_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t535_s3": {
+        "status": "STOP_FIRST",
+        "exit_price": 39550.0,
+        "exit_time": "2026-09-23 13:05",
+        "return_pct": -4.81
+      },
+      "h3_t535_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t7_s3": {
+        "status": "STOP_FIRST",
+        "exit_price": 39550.0,
+        "exit_time": "2026-09-23 13:05",
+        "return_pct": -4.81
+      },
+      "h3_t7_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t10_s3": {
+        "status": "STOP_FIRST",
+        "exit_price": 39550.0,
+        "exit_time": "2026-09-23 13:05",
+        "return_pct": -4.81
+      },
+      "h3_t10_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t3_s3": {
+        "status": "STOP_FIRST",
+        "exit_price": 39550.0,
+        "exit_time": "2026-09-23 13:05",
+        "return_pct": -4.81
+      },
+      "h5_t3_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t5_s3": {
+        "status": "STOP_FIRST",
+        "exit_price": 39550.0,
+        "exit_time": "2026-09-23 13:05",
+        "return_pct": -4.81
+      },
+      "h5_t5_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t535_s3": {
+        "status": "STOP_FIRST",
+        "exit_price": 39550.0,
+        "exit_time": "2026-09-23 13:05",
+        "return_pct": -4.81
+      },
+      "h5_t535_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t7_s3": {
+        "status": "STOP_FIRST",
+        "exit_price": 39550.0,
+        "exit_time": "2026-09-23 13:05",
+        "return_pct": -4.81
+      },
+      "h5_t7_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t10_s3": {
+        "status": "STOP_FIRST",
+        "exit_price": 39550.0,
+        "exit_time": "2026-09-23 13:05",
+        "return_pct": -4.81
+      },
+      "h5_t10_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      }
+    },
+    "is_fully_resolved": false
   }
 }
