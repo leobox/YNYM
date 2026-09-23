@@ -6,6 +6,10 @@ on:
     - cron: '*/5 * * * *'
   workflow_dispatch: # 스마트폰 웹 브라우저 또는 GitHub 웹에서 버튼 클릭으로 즉시 수동 실행
 
+concurrency:
+  group: quant-collector
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
