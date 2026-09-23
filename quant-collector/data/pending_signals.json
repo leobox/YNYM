@@ -33,13 +33,14 @@
       "sma12": 6145.833333333333,
       "sma26": 6140.192307692308
     },
-    "trading_days_observed": 3,
+    "trading_days_observed": 4,
     "observed_dates": [
       "2026-09-18",
       "2026-09-21",
-      "2026-09-22"
+      "2026-09-22",
+      "2026-09-23"
     ],
-    "highest_seen": 6700.0,
+    "highest_seen": 7030.0,
     "lowest_seen": 6210.0,
     "evaluations": {
       "h3_t3_s3": {
@@ -103,28 +104,28 @@
         "return_pct": 3.0
       },
       "h5_t5_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TARGET_FIRST",
+        "exit_price": 6720.0,
+        "exit_time": "2026-09-23 09:00",
+        "return_pct": 5.0
       },
       "h5_t5_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TARGET_FIRST",
+        "exit_price": 6720.0,
+        "exit_time": "2026-09-23 09:00",
+        "return_pct": 5.0
       },
       "h5_t7_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TARGET_FIRST",
+        "exit_price": 6848.0,
+        "exit_time": "2026-09-23 09:00",
+        "return_pct": 7.0
       },
       "h5_t7_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TARGET_FIRST",
+        "exit_price": 6848.0,
+        "exit_time": "2026-09-23 09:00",
+        "return_pct": 7.0
       },
       "h5_t10_s3": {
         "status": "PENDING",
@@ -151,16 +152,16 @@
         "return_pct": 0.78
       },
       "h5_t535_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TARGET_FIRST",
+        "exit_price": 6742.400000000001,
+        "exit_time": "2026-09-23 09:00",
+        "return_pct": 5.35
       },
       "h5_t535_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TARGET_FIRST",
+        "exit_price": 6742.400000000001,
+        "exit_time": "2026-09-23 09:00",
+        "return_pct": 5.35
       }
     },
     "is_fully_resolved": false,
@@ -221,13 +222,14 @@
       "sma12": 169566.66666666666,
       "sma26": 167261.53846153847
     },
-    "trading_days_observed": 3,
+    "trading_days_observed": 4,
     "observed_dates": [
       "2026-09-18",
       "2026-09-21",
-      "2026-09-22"
+      "2026-09-22",
+      "2026-09-23"
     ],
-    "highest_seen": 186600.0,
+    "highest_seen": 189000.0,
     "lowest_seen": 176100.0,
     "evaluations": {
       "h3_t3_s3": {
@@ -409,11 +411,12 @@
       "sma12": 45904.166666666664,
       "sma26": 45076.92307692308
     },
-    "trading_days_observed": 3,
+    "trading_days_observed": 4,
     "observed_dates": [
       "2026-09-18",
       "2026-09-21",
-      "2026-09-22"
+      "2026-09-22",
+      "2026-09-23"
     ],
     "highest_seen": 49600.0,
     "lowest_seen": 46500.0,
@@ -597,14 +600,15 @@
       "sma12": 91533.33333333333,
       "sma26": 90388.46153846153
     },
-    "trading_days_observed": 3,
+    "trading_days_observed": 4,
     "observed_dates": [
       "2026-09-18",
       "2026-09-21",
-      "2026-09-22"
+      "2026-09-22",
+      "2026-09-23"
     ],
     "highest_seen": 94000.0,
-    "lowest_seen": 90400.0,
+    "lowest_seen": 90200.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "STOP_FIRST",
@@ -751,375 +755,6 @@
       "strategy_version": "algorithm260917_v1"
     }
   },
-  "algorithm260917_v1_140410_2026-09-18_1400": {
-    "signal_id": "algorithm260917_v1_140410_2026-09-18_1400",
-    "strategy_version": "algorithm260917_v1",
-    "code": "140410",
-    "name": "메지온",
-    "market": "KOSDAQ",
-    "signal_time_kst": "2026-09-18 14:00",
-    "registered_at_kst": "2026-09-18 15:11:55",
-    "entry_reference_price": 75400.0,
-    "targets": {
-      "tgt_3": 77662.0,
-      "tgt_5": 79170.0,
-      "tgt_7": 80678.0,
-      "tgt_10": 82940.0
-    },
-    "stops": {
-      "stop_3": 73138.0,
-      "stop_5": 71630.0
-    },
-    "features": {
-      "score": 68.61924910245969,
-      "pattern_type": "base_breakout",
-      "volume_ratio": 1.8250745244845312,
-      "above60": true,
-      "extension_atr": 2.67,
-      "trigger_amount_e8": 12.217255,
-      "trigger_ratio": 2.600992601685575,
-      "breakout_level": 75000.0,
-      "trigger_close": 74500.0,
-      "current_close": 75400.0,
-      "atr_14": 1085.7142857142858,
-      "sma12": 73608.33333333333,
-      "sma26": 72500.0
-    },
-    "trading_days_observed": 3,
-    "observed_dates": [
-      "2026-09-18",
-      "2026-09-21",
-      "2026-09-22"
-    ],
-    "highest_seen": 82000.0,
-    "lowest_seen": 74300.0,
-    "evaluations": {
-      "h3_t3_s3": {
-        "status": "TARGET_FIRST",
-        "exit_price": 77662.0,
-        "exit_time": "2026-09-21 09:00",
-        "return_pct": 3.0
-      },
-      "h3_t3_s5": {
-        "status": "TARGET_FIRST",
-        "exit_price": 77662.0,
-        "exit_time": "2026-09-21 09:00",
-        "return_pct": 3.0
-      },
-      "h3_t5_s3": {
-        "status": "TARGET_FIRST",
-        "exit_price": 79170.0,
-        "exit_time": "2026-09-21 09:00",
-        "return_pct": 5.0
-      },
-      "h3_t5_s5": {
-        "status": "TARGET_FIRST",
-        "exit_price": 79170.0,
-        "exit_time": "2026-09-21 09:00",
-        "return_pct": 5.0
-      },
-      "h3_t7_s3": {
-        "status": "TARGET_FIRST",
-        "exit_price": 80678.0,
-        "exit_time": "2026-09-22 09:05",
-        "return_pct": 7.0
-      },
-      "h3_t7_s5": {
-        "status": "TARGET_FIRST",
-        "exit_price": 80678.0,
-        "exit_time": "2026-09-22 09:05",
-        "return_pct": 7.0
-      },
-      "h3_t10_s3": {
-        "status": "TIMEOUT",
-        "exit_price": 79200.0,
-        "exit_time": "2026-09-22 14:55",
-        "return_pct": 5.04
-      },
-      "h3_t10_s5": {
-        "status": "TIMEOUT",
-        "exit_price": 79200.0,
-        "exit_time": "2026-09-22 14:55",
-        "return_pct": 5.04
-      },
-      "h5_t3_s3": {
-        "status": "TARGET_FIRST",
-        "exit_price": 77662.0,
-        "exit_time": "2026-09-21 09:00",
-        "return_pct": 3.0
-      },
-      "h5_t3_s5": {
-        "status": "TARGET_FIRST",
-        "exit_price": 77662.0,
-        "exit_time": "2026-09-21 09:00",
-        "return_pct": 3.0
-      },
-      "h5_t5_s3": {
-        "status": "TARGET_FIRST",
-        "exit_price": 79170.0,
-        "exit_time": "2026-09-21 09:00",
-        "return_pct": 5.0
-      },
-      "h5_t5_s5": {
-        "status": "TARGET_FIRST",
-        "exit_price": 79170.0,
-        "exit_time": "2026-09-21 09:00",
-        "return_pct": 5.0
-      },
-      "h5_t7_s3": {
-        "status": "TARGET_FIRST",
-        "exit_price": 80678.0,
-        "exit_time": "2026-09-22 09:05",
-        "return_pct": 7.0
-      },
-      "h5_t7_s5": {
-        "status": "TARGET_FIRST",
-        "exit_price": 80678.0,
-        "exit_time": "2026-09-22 09:05",
-        "return_pct": 7.0
-      },
-      "h5_t10_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
-      },
-      "h5_t10_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
-      },
-      "h3_t535_s3": {
-        "status": "TARGET_FIRST",
-        "exit_price": 79433.90000000001,
-        "exit_time": "2026-09-21 11:15",
-        "return_pct": 5.35
-      },
-      "h3_t535_s5": {
-        "status": "TARGET_FIRST",
-        "exit_price": 79433.90000000001,
-        "exit_time": "2026-09-21 11:15",
-        "return_pct": 5.35
-      },
-      "h5_t535_s3": {
-        "status": "TARGET_FIRST",
-        "exit_price": 79433.90000000001,
-        "exit_time": "2026-09-21 11:15",
-        "return_pct": 5.35
-      },
-      "h5_t535_s5": {
-        "status": "TARGET_FIRST",
-        "exit_price": 79433.90000000001,
-        "exit_time": "2026-09-21 11:15",
-        "return_pct": 5.35
-      }
-    },
-    "is_fully_resolved": false,
-    "last_exit_eval": {
-      "code": "140410",
-      "name": "메지온",
-      "entry_price": 75400.0,
-      "current_price": 79300.0,
-      "pnl_pct": 5.17,
-      "highest_seen": 80000.0,
-      "max_gain_pct": 6.1,
-      "days_held": 1,
-      "breakout_level": 75000.0,
-      "target_profit": 82940.0,
-      "target_10": 82940.0,
-      "stop_5": 71630.0,
-      "decision": "HOLD",
-      "action_type": "KEEP",
-      "urgency": "LOW",
-      "reason": "돌파선 위에서 양호하게 상승 추세 유지 중",
-      "suggested_price": 79300.0,
-      "evaluated_at": "2026-09-21 21:55",
-      "signal_id": "algorithm260917_v1_140410_2026-09-18_1400",
-      "strategy_version": "algorithm260917_v1"
-    }
-  },
-  "volume_zscore_accel_v1_140410_2026-09-18_1400": {
-    "signal_id": "volume_zscore_accel_v1_140410_2026-09-18_1400",
-    "strategy_version": "volume_zscore_accel_v1",
-    "code": "140410",
-    "name": "메지온",
-    "market": "KOSDAQ",
-    "signal_time_kst": "2026-09-18 14:00",
-    "registered_at_kst": "2026-09-18 15:11:55",
-    "entry_reference_price": 75400.0,
-    "targets": {
-      "tgt_3": 77662.0,
-      "tgt_5": 79170.0,
-      "tgt_7": 80678.0,
-      "tgt_10": 82940.0
-    },
-    "stops": {
-      "stop_3": 73138.0,
-      "stop_5": 71630.0
-    },
-    "features": {
-      "pattern_type": "volume_zscore_accel",
-      "breakout_level": 74100.0,
-      "current_close": 75400.0,
-      "value_z": 2.36,
-      "today_value_e8": 77.2,
-      "extension_pct": 9.19
-    },
-    "trading_days_observed": 3,
-    "observed_dates": [
-      "2026-09-18",
-      "2026-09-21",
-      "2026-09-22"
-    ],
-    "highest_seen": 82000.0,
-    "lowest_seen": 74300.0,
-    "evaluations": {
-      "h3_t3_s3": {
-        "status": "TARGET_FIRST",
-        "exit_price": 77662.0,
-        "exit_time": "2026-09-21 09:00",
-        "return_pct": 3.0
-      },
-      "h3_t3_s5": {
-        "status": "TARGET_FIRST",
-        "exit_price": 77662.0,
-        "exit_time": "2026-09-21 09:00",
-        "return_pct": 3.0
-      },
-      "h3_t5_s3": {
-        "status": "TARGET_FIRST",
-        "exit_price": 79170.0,
-        "exit_time": "2026-09-21 09:00",
-        "return_pct": 5.0
-      },
-      "h3_t5_s5": {
-        "status": "TARGET_FIRST",
-        "exit_price": 79170.0,
-        "exit_time": "2026-09-21 09:00",
-        "return_pct": 5.0
-      },
-      "h3_t7_s3": {
-        "status": "TARGET_FIRST",
-        "exit_price": 80678.0,
-        "exit_time": "2026-09-22 09:05",
-        "return_pct": 7.0
-      },
-      "h3_t7_s5": {
-        "status": "TARGET_FIRST",
-        "exit_price": 80678.0,
-        "exit_time": "2026-09-22 09:05",
-        "return_pct": 7.0
-      },
-      "h3_t10_s3": {
-        "status": "TIMEOUT",
-        "exit_price": 79200.0,
-        "exit_time": "2026-09-22 14:55",
-        "return_pct": 5.04
-      },
-      "h3_t10_s5": {
-        "status": "TIMEOUT",
-        "exit_price": 79200.0,
-        "exit_time": "2026-09-22 14:55",
-        "return_pct": 5.04
-      },
-      "h5_t3_s3": {
-        "status": "TARGET_FIRST",
-        "exit_price": 77662.0,
-        "exit_time": "2026-09-21 09:00",
-        "return_pct": 3.0
-      },
-      "h5_t3_s5": {
-        "status": "TARGET_FIRST",
-        "exit_price": 77662.0,
-        "exit_time": "2026-09-21 09:00",
-        "return_pct": 3.0
-      },
-      "h5_t5_s3": {
-        "status": "TARGET_FIRST",
-        "exit_price": 79170.0,
-        "exit_time": "2026-09-21 09:00",
-        "return_pct": 5.0
-      },
-      "h5_t5_s5": {
-        "status": "TARGET_FIRST",
-        "exit_price": 79170.0,
-        "exit_time": "2026-09-21 09:00",
-        "return_pct": 5.0
-      },
-      "h5_t7_s3": {
-        "status": "TARGET_FIRST",
-        "exit_price": 80678.0,
-        "exit_time": "2026-09-22 09:05",
-        "return_pct": 7.0
-      },
-      "h5_t7_s5": {
-        "status": "TARGET_FIRST",
-        "exit_price": 80678.0,
-        "exit_time": "2026-09-22 09:05",
-        "return_pct": 7.0
-      },
-      "h5_t10_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
-      },
-      "h5_t10_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
-      },
-      "h3_t535_s3": {
-        "status": "TARGET_FIRST",
-        "exit_price": 79433.90000000001,
-        "exit_time": "2026-09-21 11:15",
-        "return_pct": 5.35
-      },
-      "h3_t535_s5": {
-        "status": "TARGET_FIRST",
-        "exit_price": 79433.90000000001,
-        "exit_time": "2026-09-21 11:15",
-        "return_pct": 5.35
-      },
-      "h5_t535_s3": {
-        "status": "TARGET_FIRST",
-        "exit_price": 79433.90000000001,
-        "exit_time": "2026-09-21 11:15",
-        "return_pct": 5.35
-      },
-      "h5_t535_s5": {
-        "status": "TARGET_FIRST",
-        "exit_price": 79433.90000000001,
-        "exit_time": "2026-09-21 11:15",
-        "return_pct": 5.35
-      }
-    },
-    "is_fully_resolved": false,
-    "last_exit_eval": {
-      "code": "140410",
-      "name": "메지온",
-      "entry_price": 75400.0,
-      "current_price": 79300.0,
-      "pnl_pct": 5.17,
-      "highest_seen": 80000.0,
-      "max_gain_pct": 6.1,
-      "days_held": 1,
-      "breakout_level": 74100.0,
-      "target_profit": 82940.0,
-      "target_10": 82940.0,
-      "stop_5": 71630.0,
-      "decision": "HOLD",
-      "action_type": "KEEP",
-      "urgency": "LOW",
-      "reason": "돌파선 위에서 양호하게 상승 추세 유지 중",
-      "suggested_price": 79300.0,
-      "evaluated_at": "2026-09-21 21:55",
-      "signal_id": "volume_zscore_accel_v1_140410_2026-09-18_1400",
-      "strategy_version": "volume_zscore_accel_v1"
-    }
-  },
   "algorithm260917_v1_319660_2026-09-21_0900": {
     "signal_id": "algorithm260917_v1_319660_2026-09-21_0900",
     "strategy_version": "algorithm260917_v1",
@@ -1154,12 +789,13 @@
       "sma12": 126775.0,
       "sma26": 123419.23076923077
     },
-    "trading_days_observed": 2,
+    "trading_days_observed": 3,
     "observed_dates": [
       "2026-09-21",
-      "2026-09-22"
+      "2026-09-22",
+      "2026-09-23"
     ],
-    "highest_seen": 139900.0,
+    "highest_seen": 140800.0,
     "lowest_seen": 129000.0,
     "evaluations": {
       "h3_t3_s3": {
@@ -1181,10 +817,10 @@
         "return_pct": -3.0
       },
       "h3_t5_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TARGET_FIRST",
+        "exit_price": 139965.0,
+        "exit_time": "2026-09-23 09:25",
+        "return_pct": 5.0
       },
       "h3_t7_s3": {
         "status": "STOP_FIRST",
@@ -1193,10 +829,10 @@
         "return_pct": -3.0
       },
       "h3_t7_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TIMEOUT",
+        "exit_price": 137600.0,
+        "exit_time": "2026-09-23 10:10",
+        "return_pct": 3.23
       },
       "h3_t10_s3": {
         "status": "STOP_FIRST",
@@ -1205,10 +841,10 @@
         "return_pct": -3.0
       },
       "h3_t10_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TIMEOUT",
+        "exit_price": 137600.0,
+        "exit_time": "2026-09-23 10:10",
+        "return_pct": 3.23
       },
       "h5_t3_s3": {
         "status": "TARGET_FIRST",
@@ -1229,10 +865,10 @@
         "return_pct": -3.0
       },
       "h5_t5_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TARGET_FIRST",
+        "exit_price": 139965.0,
+        "exit_time": "2026-09-23 09:25",
+        "return_pct": 5.0
       },
       "h5_t7_s3": {
         "status": "STOP_FIRST",
@@ -1265,10 +901,10 @@
         "return_pct": -3.0
       },
       "h3_t535_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TARGET_FIRST",
+        "exit_price": 140431.55000000002,
+        "exit_time": "2026-09-23 09:25",
+        "return_pct": 5.35
       },
       "h5_t535_s3": {
         "status": "STOP_FIRST",
@@ -1277,10 +913,10 @@
         "return_pct": -3.0
       },
       "h5_t535_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TARGET_FIRST",
+        "exit_price": 140431.55000000002,
+        "exit_time": "2026-09-23 09:25",
+        "return_pct": 5.35
       }
     },
     "is_fully_resolved": false,
@@ -1341,12 +977,13 @@
       "sma12": 45862.5,
       "sma26": 45097.11538461538
     },
-    "trading_days_observed": 2,
+    "trading_days_observed": 3,
     "observed_dates": [
       "2026-09-21",
-      "2026-09-22"
+      "2026-09-22",
+      "2026-09-23"
     ],
-    "highest_seen": 49500.0,
+    "highest_seen": 50500.0,
     "lowest_seen": 45500.0,
     "evaluations": {
       "h3_t3_s3": {
@@ -1368,10 +1005,10 @@
         "return_pct": -3.68
       },
       "h3_t5_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TARGET_FIRST",
+        "exit_price": 49980.0,
+        "exit_time": "2026-09-23 09:25",
+        "return_pct": 5.0
       },
       "h3_t7_s3": {
         "status": "STOP_FIRST",
@@ -1380,10 +1017,10 @@
         "return_pct": -3.68
       },
       "h3_t7_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TIMEOUT",
+        "exit_price": 49000.0,
+        "exit_time": "2026-09-23 10:10",
+        "return_pct": 2.94
       },
       "h3_t10_s3": {
         "status": "STOP_FIRST",
@@ -1392,10 +1029,10 @@
         "return_pct": -3.68
       },
       "h3_t10_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TIMEOUT",
+        "exit_price": 49000.0,
+        "exit_time": "2026-09-23 10:10",
+        "return_pct": 2.94
       },
       "h5_t3_s3": {
         "status": "STOP_FIRST",
@@ -1416,10 +1053,10 @@
         "return_pct": -3.68
       },
       "h5_t5_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TARGET_FIRST",
+        "exit_price": 49980.0,
+        "exit_time": "2026-09-23 09:25",
+        "return_pct": 5.0
       },
       "h5_t7_s3": {
         "status": "STOP_FIRST",
@@ -1452,10 +1089,10 @@
         "return_pct": -3.68
       },
       "h3_t535_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TARGET_FIRST",
+        "exit_price": 50146.600000000006,
+        "exit_time": "2026-09-23 09:25",
+        "return_pct": 5.35
       },
       "h5_t535_s3": {
         "status": "STOP_FIRST",
@@ -1464,10 +1101,10 @@
         "return_pct": -3.68
       },
       "h5_t535_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TARGET_FIRST",
+        "exit_price": 50146.600000000006,
+        "exit_time": "2026-09-23 09:25",
+        "return_pct": 5.35
       }
     },
     "is_fully_resolved": false,
@@ -1528,10 +1165,11 @@
       "sma12": 26466.666666666668,
       "sma26": 24959.615384615383
     },
-    "trading_days_observed": 2,
+    "trading_days_observed": 3,
     "observed_dates": [
       "2026-09-21",
-      "2026-09-22"
+      "2026-09-22",
+      "2026-09-23"
     ],
     "highest_seen": 28700.0,
     "lowest_seen": 26000.0,
@@ -1567,10 +1205,10 @@
         "return_pct": -4.4
       },
       "h3_t7_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TIMEOUT",
+        "exit_price": 27350.0,
+        "exit_time": "2026-09-23 10:10",
+        "return_pct": 0.37
       },
       "h3_t10_s3": {
         "status": "STOP_FIRST",
@@ -1579,10 +1217,10 @@
         "return_pct": -4.4
       },
       "h3_t10_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TIMEOUT",
+        "exit_price": 27350.0,
+        "exit_time": "2026-09-23 10:10",
+        "return_pct": 0.37
       },
       "h5_t3_s3": {
         "status": "STOP_FIRST",
@@ -1639,10 +1277,10 @@
         "return_pct": -4.4
       },
       "h3_t535_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TIMEOUT",
+        "exit_price": 27350.0,
+        "exit_time": "2026-09-23 10:10",
+        "return_pct": 0.37
       },
       "h5_t535_s3": {
         "status": "STOP_FIRST",
@@ -1715,10 +1353,11 @@
       "sma12": 356083.3333333333,
       "sma26": 353721.1538461539
     },
-    "trading_days_observed": 2,
+    "trading_days_observed": 3,
     "observed_dates": [
       "2026-09-21",
-      "2026-09-22"
+      "2026-09-22",
+      "2026-09-23"
     ],
     "highest_seen": 385500.0,
     "lowest_seen": 361000.0,
@@ -1748,28 +1387,28 @@
         "return_pct": 5.0
       },
       "h3_t7_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TIMEOUT",
+        "exit_price": 372500.0,
+        "exit_time": "2026-09-23 10:10",
+        "return_pct": 1.5
       },
       "h3_t7_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TIMEOUT",
+        "exit_price": 372500.0,
+        "exit_time": "2026-09-23 10:10",
+        "return_pct": 1.5
       },
       "h3_t10_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TIMEOUT",
+        "exit_price": 372500.0,
+        "exit_time": "2026-09-23 10:10",
+        "return_pct": 1.5
       },
       "h3_t10_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TIMEOUT",
+        "exit_price": 372500.0,
+        "exit_time": "2026-09-23 10:10",
+        "return_pct": 1.5
       },
       "h5_t3_s3": {
         "status": "TARGET_FIRST",
@@ -1820,16 +1459,16 @@
         "return_pct": null
       },
       "h3_t535_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TIMEOUT",
+        "exit_price": 372500.0,
+        "exit_time": "2026-09-23 10:10",
+        "return_pct": 1.5
       },
       "h3_t535_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TIMEOUT",
+        "exit_price": 372500.0,
+        "exit_time": "2026-09-23 10:10",
+        "return_pct": 1.5
       },
       "h5_t535_s3": {
         "status": "PENDING",
@@ -1902,73 +1541,74 @@
       "sma12": 41279.166666666664,
       "sma26": 40557.692307692305
     },
-    "trading_days_observed": 2,
+    "trading_days_observed": 3,
     "observed_dates": [
       "2026-09-21",
-      "2026-09-22"
+      "2026-09-22",
+      "2026-09-23"
     ],
-    "highest_seen": 43600.0,
+    "highest_seen": 44200.0,
     "lowest_seen": 41850.0,
     "evaluations": {
       "h3_t3_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TARGET_FIRST",
+        "exit_price": 43723.5,
+        "exit_time": "2026-09-23 09:00",
+        "return_pct": 3.0
       },
       "h3_t3_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TARGET_FIRST",
+        "exit_price": 43723.5,
+        "exit_time": "2026-09-23 09:00",
+        "return_pct": 3.0
       },
       "h3_t5_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TIMEOUT",
+        "exit_price": 43800.0,
+        "exit_time": "2026-09-23 10:10",
+        "return_pct": 3.18
       },
       "h3_t5_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TIMEOUT",
+        "exit_price": 43800.0,
+        "exit_time": "2026-09-23 10:10",
+        "return_pct": 3.18
       },
       "h3_t7_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TIMEOUT",
+        "exit_price": 43800.0,
+        "exit_time": "2026-09-23 10:10",
+        "return_pct": 3.18
       },
       "h3_t7_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TIMEOUT",
+        "exit_price": 43800.0,
+        "exit_time": "2026-09-23 10:10",
+        "return_pct": 3.18
       },
       "h3_t10_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TIMEOUT",
+        "exit_price": 43800.0,
+        "exit_time": "2026-09-23 10:10",
+        "return_pct": 3.18
       },
       "h3_t10_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TIMEOUT",
+        "exit_price": 43800.0,
+        "exit_time": "2026-09-23 10:10",
+        "return_pct": 3.18
       },
       "h5_t3_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TARGET_FIRST",
+        "exit_price": 43723.5,
+        "exit_time": "2026-09-23 09:00",
+        "return_pct": 3.0
       },
       "h5_t3_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TARGET_FIRST",
+        "exit_price": 43723.5,
+        "exit_time": "2026-09-23 09:00",
+        "return_pct": 3.0
       },
       "h5_t5_s3": {
         "status": "PENDING",
@@ -2007,16 +1647,16 @@
         "return_pct": null
       },
       "h3_t535_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TIMEOUT",
+        "exit_price": 43800.0,
+        "exit_time": "2026-09-23 10:10",
+        "return_pct": 3.18
       },
       "h3_t535_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TIMEOUT",
+        "exit_price": 43800.0,
+        "exit_time": "2026-09-23 10:10",
+        "return_pct": 3.18
       },
       "h5_t535_s3": {
         "status": "PENDING",
@@ -2092,18 +1732,19 @@
       "early_trigger": true,
       "early_tf": "30m"
     },
-    "trading_days_observed": 1,
+    "trading_days_observed": 2,
     "observed_dates": [
-      "2026-09-22"
+      "2026-09-22",
+      "2026-09-23"
     ],
-    "highest_seen": 76900.0,
-    "lowest_seen": 74500.0,
+    "highest_seen": 77500.0,
+    "lowest_seen": 72400.0,
     "evaluations": {
       "h3_t3_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "STOP_FIRST",
+        "exit_price": 73235.0,
+        "exit_time": "2026-09-23 09:10",
+        "return_pct": -3.0
       },
       "h3_t3_s5": {
         "status": "PENDING",
@@ -2112,10 +1753,10 @@
         "return_pct": null
       },
       "h3_t5_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "STOP_FIRST",
+        "exit_price": 73235.0,
+        "exit_time": "2026-09-23 09:10",
+        "return_pct": -3.0
       },
       "h3_t5_s5": {
         "status": "PENDING",
@@ -2124,10 +1765,10 @@
         "return_pct": null
       },
       "h3_t535_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "STOP_FIRST",
+        "exit_price": 73235.0,
+        "exit_time": "2026-09-23 09:10",
+        "return_pct": -3.0
       },
       "h3_t535_s5": {
         "status": "PENDING",
@@ -2136,10 +1777,10 @@
         "return_pct": null
       },
       "h3_t7_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "STOP_FIRST",
+        "exit_price": 73235.0,
+        "exit_time": "2026-09-23 09:10",
+        "return_pct": -3.0
       },
       "h3_t7_s5": {
         "status": "PENDING",
@@ -2148,10 +1789,10 @@
         "return_pct": null
       },
       "h3_t10_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "STOP_FIRST",
+        "exit_price": 73235.0,
+        "exit_time": "2026-09-23 09:10",
+        "return_pct": -3.0
       },
       "h3_t10_s5": {
         "status": "PENDING",
@@ -2160,10 +1801,10 @@
         "return_pct": null
       },
       "h5_t3_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "STOP_FIRST",
+        "exit_price": 73235.0,
+        "exit_time": "2026-09-23 09:10",
+        "return_pct": -3.0
       },
       "h5_t3_s5": {
         "status": "PENDING",
@@ -2172,10 +1813,10 @@
         "return_pct": null
       },
       "h5_t5_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "STOP_FIRST",
+        "exit_price": 73235.0,
+        "exit_time": "2026-09-23 09:10",
+        "return_pct": -3.0
       },
       "h5_t5_s5": {
         "status": "PENDING",
@@ -2184,10 +1825,10 @@
         "return_pct": null
       },
       "h5_t535_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "STOP_FIRST",
+        "exit_price": 73235.0,
+        "exit_time": "2026-09-23 09:10",
+        "return_pct": -3.0
       },
       "h5_t535_s5": {
         "status": "PENDING",
@@ -2196,10 +1837,10 @@
         "return_pct": null
       },
       "h5_t7_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "STOP_FIRST",
+        "exit_price": 73235.0,
+        "exit_time": "2026-09-23 09:10",
+        "return_pct": -3.0
       },
       "h5_t7_s5": {
         "status": "PENDING",
@@ -2208,10 +1849,10 @@
         "return_pct": null
       },
       "h5_t10_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "STOP_FIRST",
+        "exit_price": 73235.0,
+        "exit_time": "2026-09-23 09:10",
+        "return_pct": -3.0
       },
       "h5_t10_s5": {
         "status": "PENDING",
@@ -2259,18 +1900,19 @@
       "early_trigger": true,
       "early_tf": "10m"
     },
-    "trading_days_observed": 1,
+    "trading_days_observed": 2,
     "observed_dates": [
-      "2026-09-22"
+      "2026-09-22",
+      "2026-09-23"
     ],
     "highest_seen": 224500.0,
-    "lowest_seen": 218500.0,
+    "lowest_seen": 216000.0,
     "evaluations": {
       "h3_t3_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "STOP_FIRST",
+        "exit_price": 216795.0,
+        "exit_time": "2026-09-23 09:55",
+        "return_pct": -3.0
       },
       "h3_t3_s5": {
         "status": "PENDING",
@@ -2279,10 +1921,10 @@
         "return_pct": null
       },
       "h3_t5_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "STOP_FIRST",
+        "exit_price": 216795.0,
+        "exit_time": "2026-09-23 09:55",
+        "return_pct": -3.0
       },
       "h3_t5_s5": {
         "status": "PENDING",
@@ -2291,10 +1933,10 @@
         "return_pct": null
       },
       "h3_t535_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "STOP_FIRST",
+        "exit_price": 216795.0,
+        "exit_time": "2026-09-23 09:55",
+        "return_pct": -3.0
       },
       "h3_t535_s5": {
         "status": "PENDING",
@@ -2303,10 +1945,10 @@
         "return_pct": null
       },
       "h3_t7_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "STOP_FIRST",
+        "exit_price": 216795.0,
+        "exit_time": "2026-09-23 09:55",
+        "return_pct": -3.0
       },
       "h3_t7_s5": {
         "status": "PENDING",
@@ -2315,10 +1957,10 @@
         "return_pct": null
       },
       "h3_t10_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "STOP_FIRST",
+        "exit_price": 216795.0,
+        "exit_time": "2026-09-23 09:55",
+        "return_pct": -3.0
       },
       "h3_t10_s5": {
         "status": "PENDING",
@@ -2327,10 +1969,10 @@
         "return_pct": null
       },
       "h5_t3_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "STOP_FIRST",
+        "exit_price": 216795.0,
+        "exit_time": "2026-09-23 09:55",
+        "return_pct": -3.0
       },
       "h5_t3_s5": {
         "status": "PENDING",
@@ -2339,10 +1981,10 @@
         "return_pct": null
       },
       "h5_t5_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "STOP_FIRST",
+        "exit_price": 216795.0,
+        "exit_time": "2026-09-23 09:55",
+        "return_pct": -3.0
       },
       "h5_t5_s5": {
         "status": "PENDING",
@@ -2351,10 +1993,10 @@
         "return_pct": null
       },
       "h5_t535_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "STOP_FIRST",
+        "exit_price": 216795.0,
+        "exit_time": "2026-09-23 09:55",
+        "return_pct": -3.0
       },
       "h5_t535_s5": {
         "status": "PENDING",
@@ -2363,10 +2005,10 @@
         "return_pct": null
       },
       "h5_t7_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "STOP_FIRST",
+        "exit_price": 216795.0,
+        "exit_time": "2026-09-23 09:55",
+        "return_pct": -3.0
       },
       "h5_t7_s5": {
         "status": "PENDING",
@@ -2375,10 +2017,10 @@
         "return_pct": null
       },
       "h5_t10_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "STOP_FIRST",
+        "exit_price": 216795.0,
+        "exit_time": "2026-09-23 09:55",
+        "return_pct": -3.0
       },
       "h5_t10_s5": {
         "status": "PENDING",
