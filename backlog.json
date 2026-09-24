@@ -2,7 +2,7 @@
   "$schema_version": "1.0",
   "meta": {
     "project": "Leobox Multi-root Workspace",
-    "updated": "2026-09-22",
+    "updated": "2026-09-24",
     "context_doc": "README.md",
     "doc_dir": "docs/tasks",
     "stack": "Multi-agent (Gemini + Claude + Codex) / Python(Quant) / GitHub Actions / Android",
@@ -2677,6 +2677,45 @@
           "at": "2026-09-22",
           "status": "in_progress",
           "note": ""
+        }
+      ]
+    },
+    {
+      "id": "T-073",
+      "title": "quant-collector: GitHub Actions 스케줄러 운영 정상화",
+      "summary": "",
+      "doc": "docs/tasks/T-073.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "알고리즘 변경 없이 평일 장중 1시간 주기·고정 런너·Node 24 액션·push 복구를 적용; pytest 35개와 정적검사 통과, GitHub Actions 수동 검증 실행 #41 성공",
+      "done_at": "2026-09-24",
+      "updated_at": "2026-09-24",
+      "done_when": "알고리즘 변경 없이 Actions 실패 원인을 제거하고 workflow_dispatch를 유지하며 워크플로 검증을 통과한다",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-09-24",
+      "log": [
+        {
+          "at": "2026-09-24",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-24",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-24",
+          "status": "done",
+          "note": "알고리즘 변경 없이 평일 장중 1시간 주기·고정 런너·Node 24 액션·push 복구를 적용; pytest 35개와 정적검사 통과, GitHub Actions 수동 검증 실행 #41 성공"
         }
       ]
     }
