@@ -1,10 +1,20 @@
-## ⏱️ Quant Collector 모바일 운영 센터 (15분 자동 갱신 · 조기 돌파 하이브리드)
+## ⏱️ Quant Collector 모바일 운영 센터 (15분 예약 갱신 · LRM-60 v2.0)
 
-> GitHub Actions가 **평일 장중 15분 주기로 자동 실행**되며, 5m/10m/30m/60m 다중 분봉 수집 및 조기 돌파(Early Trigger)와 +5.35% 익절/손절 청산 신호를 자동 갱신합니다. 전체 이력·누적 통계는 [`quant-collector/README.md`](quant-collector/README.md)를 참고하세요.
+> GitHub Actions가 평일 장중 **15분 간격으로 예약 실행**됩니다. LRM-60 v2.0은 완료된 60분봉의 4대 게이트와 3슬롯 가상 계좌를 기록합니다. 기존 조기 돌파·청산 표는 별도 전략의 이력입니다. 상세 내용은 [`quant-collector/README.md`](quant-collector/README.md)를 참고하세요.
 
 <!-- QUANT_DASHBOARD:START -->
 
-> ⏱️ **실시간 갱신**: `2026-09-24 21:32 KST (15분 운영 주기)` | 📊 **감시 유니버스**: `350종목` | ⚡ **조기/확정 돌파**: `0건` | 🎯 **활성 추적**: `9건`
+### 🧭 LRM-60 v2.0 · 4대 게이트 / 3슬롯
+
+> 첫 성공 실행의 완료 60분봉을 기다리고 있습니다. 이후 게이트 통과·다음 봉 시가 대기·가상 보유 및 순자산이 이곳에 표시됩니다.
+
+> 🧪 손절 버퍼 3%·+5% 절반 익절·전일 확정 지수 20일선 필터는 별도 가상 계좌에서만 관찰합니다. 성과 개선은 검증되지 않았습니다.
+
+---
+
+> ⚠️ 아래는 **이전 실행 스냅샷**(`2026-09-24 21:32 KST`)입니다. 최신 권고로 해석하지 마세요. 새 코드의 첫 성공 실행 후 자동 교체됩니다.
+
+> 📊 **감시 유니버스**: `350종목` | ⚡ **조기/확정 돌파**: `0건` | 🎯 **활성 추적**: `9건`
 
 ### 🚨 [긴급] 실시간 매도·청산 권고 신호 (7건)
 
@@ -73,7 +83,7 @@ Gemini(Antigravity), Claude(Claude Code), OpenAI Codex / Copilot이 유기적으
 | 폴더 | 표시 이름 | 용도 및 규칙 |
 | :--- | :--- | :--- |
 | [`quant-research/`](file:///D:/leobox/quant-research/README.md) | **📈 Quant Research** | 퀀트 알고리즘 연구, 시계열 분석, 백테스팅 ([`AGENTS.md`](file:///D:/leobox/quant-research/AGENTS.md)) |
-| [`quant-collector/`](file:///D:/leobox/quant-collector/README.md) | **⏱️ Quant Collector** | 1시간 주기 GitHub Actions 자동 수집 및 모바일 수동 실행 ([`AGENTS.md`](file:///D:/leobox/quant-collector/AGENTS.md)) |
+| [`quant-collector/`](file:///D:/leobox/quant-collector/README.md) | **⏱️ Quant Collector** | 15분 간격 GitHub Actions 자동 수집 및 모바일 수동 실행 ([`AGENTS.md`](file:///D:/leobox/quant-collector/AGENTS.md)) |
 | [`gym-app/`](file:///D:/leobox/gym-app/README.md) | **🏋️ Gym App** | 오프라인 퍼스트 안드로이드 헬스 기록 앱 ([`AGENTS.md`](file:///D:/leobox/gym-app/AGENTS.md)) |
 
 ---

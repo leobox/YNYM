@@ -7,7 +7,7 @@
 ## 📂 프로젝트 구성
 
 1. **`quant-research/`** : 모바일 Colab 주식 패턴 스캐너, 데이터 재현, 전략 백테스팅. 기준은 `quant-research/설계문서.md`와 `quant-research/AGENTS.md`.
-2. **`quant-collector/`** : 1시간 주기 GitHub Actions 자동 실행 및 모바일 수동 실행 데이터 수집 (주문/매수 절대 금지)
+2. **`quant-collector/`** : 평일 장중 15분 간격 GitHub Actions 자동 실행 및 모바일 수동 실행 데이터 수집 (주문/매수 절대 금지)
 3. **`gym-app/`** : 오프라인 퍼스트 안드로이드 헬스/운동 루틴 기록 앱
 
 ---

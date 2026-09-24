@@ -1,12 +1,13 @@
 """
 Quant Data Collector & Forward Labeling Engine
 ---------------------------------------------
-GitHub Actions(평일 장중 15분 주기, KST 09:07~16:52) 및 모바일 수동(workflow_dispatch)으로 실행되는 실전 수집기 & 전진 라벨러입니다.
+GitHub Actions(평일 장중 15분 예약 주기) 및 모바일 수동(workflow_dispatch)으로 실행되는 시세 수집기 & 전진 라벨러입니다.
 1. 네이버 시총 랭킹 기반 KOSPI200+KOSDAQ150 근사 유니버스(350종목) + 기존 추적 중인 pending 종목의 5m/10m/30m/60m 다중 분봉 수집 및 보관
 2. 60분봉 기반 '조건 충족' 및 '관찰' 후보 포착 및 스마트 랭킹(스마트점수·돌파건전도·유동성) 산출
 3. 5분봉 정밀 추적을 통한 다중 목표(+3/5/5.35/7/10%)/손절(-3/5%) 선접촉 라벨링 확정
 4. 2차 판독기(위험 필터 / 메타 모델) 학습용 원본 데이터셋 자동 축적
-5. GitHub 모바일 앱(README.md)에 15분 주기 스캔 및 추적 진행 현황 자동 갱신
+5. LRM-60 v2.0 완료봉 4대 게이트와 3슬롯 가상 계좌를 별도 기록
+6. GitHub 모바일 앱(README.md)에 15분 주기 스캔 및 추적 진행 현황 자동 갱신
 
 [절대 안전 불변식]
 - 실제 거래, 매수, 매도, 계좌 연동 로직은 작성하지 않으며 일체 호출하지 않습니다.
@@ -29,6 +30,7 @@ import requests
 
 from tracker import SignalTracker
 from exit_engine import evaluate_position_exit, ExitSignal
+from lrm60 import LRM60PaperBook
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
@@ -41,6 +43,8 @@ DATA_DIR = BASE_DIR / "data"
 BARS_HISTORY_DIR = DATA_DIR / "bars_history"
 README_PATH = BASE_DIR / "README.md"
 ROOT_README_PATH = BASE_DIR.parent / "README.md"
+LRM_STATE_PATH = DATA_DIR / "lrm60_state.json"
+LRM_EXPERIMENT_STATE_PATH = DATA_DIR / "lrm60_experiment_state.json"
 DASHBOARD_MARK_START = "<!-- QUANT_DASHBOARD:START -->"
 DASHBOARD_MARK_END = "<!-- QUANT_DASHBOARD:END -->"
 STRATEGY_VERSION = "algorithm260917_v1"
@@ -95,6 +99,28 @@ def get_json(url: str, params: Optional[Dict[str, Any]] = None, max_retries: int
                 backoff *= 2.0
 
     raise RuntimeError(f"HTTP 요청 실패: {url} | {str(last_err)[:100]}")
+
+
+def fetch_index_feeds() -> Dict[str, pd.DataFrame]:
+    """Naver daily index history; today's unfinished candle is never a regime input."""
+    feeds = {}
+    for market in ("KOSPI", "KOSDAQ"):
+        try:
+            payload = get_json(
+                f"https://api.stock.naver.com/chart/domestic/index/{market}",
+                {"periodType": "dayCandle"}, timeout=10,
+            )
+            rows = payload["priceInfos"]
+            frame = pd.DataFrame(rows)
+            frame.index = pd.to_datetime(frame["localDate"], format="%Y%m%d", errors="raise")
+            frame["Close"] = pd.to_numeric(frame["closePrice"], errors="coerce")
+            frame = frame[["Close"]].sort_index()
+            if frame.index.has_duplicates or (frame["Close"] <= 0).any():
+                raise ValueError("중복 날짜 또는 유효하지 않은 종가")
+            feeds[market] = frame
+        except (KeyError, TypeError, ValueError, RuntimeError) as exc:
+            print(f"[경고] {market} 지수 일봉 조회 실패: {exc}; 실험 계좌 신규 진입 차단")
+    return feeds
 
 
 def get_universe() -> List[Dict[str, Any]]:
@@ -182,7 +208,8 @@ def parse_multiframe_bars(item: Dict[str, Any], now: pd.Timestamp) -> Dict[str, 
     raw_df = raw_df[~raw_df.index.duplicated()].sort_index()
 
     # 한국 정규장 필터 (09:00 ~ 15:30)
-    raw_df = raw_df[(raw_df.index.hour >= 9) & ((raw_df.index.hour < 15) | ((raw_df.index.hour == 15) & (raw_df.index.minute <= 30)))]
+    # 15:25~15:30 is the final five-minute input; 15:30 is outside the regular session.
+    raw_df = raw_df[(raw_df.index.hour >= 9) & ((raw_df.index.hour < 15) | ((raw_df.index.hour == 15) & (raw_df.index.minute < 30)))]
     # 거래량 0인 더미 봉 제외
     raw_df = raw_df[~((raw_df.Volume == 0) & (raw_df.High == raw_df.Low))]
     # 5분봉 완료 여부 판정 (ends = index + 5m)
@@ -406,9 +433,9 @@ def score_stock(rec: Dict[str, Any], now: pd.Timestamp) -> Tuple[Optional[Dict[s
         if not valid_ohlcv(df):
             return None, None, "가격/거래량 정합성 오류"
         if len(df) < 120 or df.Volume.iloc[-1] <= 0 or df.Close.iloc[-1] < MIN_PRICE:
-            return None, None, "봉 부족/거래정지/가격조건 미달"
+            return None, bars_dict, "봉 부족/거래정지/가격조건 미달"
         if now - df.index[-1] > pd.Timedelta(days=7):
-            return None, None, "최근 7일 데이터 없음"
+            return None, bars_dict, "최근 7일 데이터 없음"
 
         s = hourly_pattern(df, volume_weight=VOLUME_WEIGHT, max_extension_atr=MAX_EXTENSION_ATR).iloc[-1]
         conf = confirmed_breakout(df).iloc[-1]
@@ -436,7 +463,7 @@ def score_stock(rec: Dict[str, Any], now: pd.Timestamp) -> Tuple[Optional[Dict[s
 
         matched = bool(s.eligible and (conf.hold or early_trigger))
         if not np.isfinite(s.score):
-            return None, None, "지표 계산 불가"
+            return None, bars_dict, "지표 계산 불가"
 
         c = df.Close
         fast, medium = c.rolling(12).mean(), c.rolling(26).mean()
@@ -750,6 +777,97 @@ def _render_signal_rows(
     return out
 
 
+def render_lrm60_panel(state: Dict[str, Any], heading: str = "##",
+                       experiment: Optional[Dict[str, Any]] = None) -> List[str]:
+    """Timestamped LRM-60 panel for the GitHub mobile README."""
+    last = state.get("last_bar_ts")
+    if not last:
+        lines = [
+            f"{heading} 🧭 LRM-60 v2.0 · 완료봉 신호",
+            "",
+            "> 첫 완료 60분봉 수집을 기다리고 있습니다. 가상 계좌는 첫 실행부터 전진 기록합니다.",
+            "", "---", "",
+        ]
+        if experiment:
+            lines += [f"{heading} 🧪 후속안 · 분리 가상 계좌", "",
+                      "> 아직 첫 완료봉을 기다리는 중입니다. 개선 효과는 검증되지 않았습니다.",
+                      "", "---", ""]
+        return lines
+
+    bar_time = pd.Timestamp(last).strftime("%m-%d %H:%M")
+    coverage = state.get("coverage", {})
+    counts = state.get("gate_counts", {})
+    positions = state.get("positions", {})
+    pending = state.get("pending", [])
+    equity = state.get("equity")
+    equity_text = f"{equity:,.0f}원" if equity is not None else "평가 보류(보유 종목 봉 결측/무거래)"
+    lines = [
+        f"{heading} 🧭 LRM-60 v2.0 · 4대 게이트 / 3슬롯",
+        "",
+        f"> **기준 완료봉:** `{bar_time} KST` · **4대 게이트 통과:** `{coverage.get('passed', 0)}건` "
+        f"· **다음 봉 시가 대기:** `{len(pending)}건` · **가상 보유:** `{len(positions)}/3` "
+        f"· **가상 순자산:** `{equity_text}`",
+        "",
+        f"> 게이트별 통과: 정배열 `{counts.get('trend', 0)}` · 직전 20봉 돌파 `{counts.get('breakout', 0)}` "
+        f"· 10억/2.5배 `{counts.get('liquidity', 0)}` · CLI/D_base `{counts.get('candle', 0)}` "
+        f"(평가 가능 `{coverage.get('evaluated', 0)}`종목, 봉 결측 `{coverage.get('missing_bar', 0)}`종목)",
+        "",
+    ]
+    if state.get("last_candidates"):
+        pending_codes = {item["code"] for item in pending}
+        lines += [
+            "| 상태 | 종목 | 신호봉 종가 | 거래대금 | 상대 대금 | D_base | 다음 단계 |",
+            "|:---:|:---|---:|---:|---:|---:|:---|",
+        ]
+        for item in state["last_candidates"][:5]:
+            selected = item["code"] in pending_codes
+            status = "🟡 3슬롯 대기" if selected else "⚪ 순위 밖/슬롯 없음"
+            next_step = "다음 완료봉 시가의 갭·거래 여부 확인" if selected else "이번 봉 진입 대상 아님"
+            lines.append(
+                f"| {status} | **{item['name']}** ({item['code']}) | "
+                f"{item['signal_close']:,.0f}원 | {item['amount_e8']:.1f}억 | "
+                f"{item['r_vol']:.2f}배 | {item['d_base_pct']:+.2f}% | {next_step} |"
+            )
+    else:
+        lines.append("> 이번 기준봉에서 4대 게이트를 모두 통과한 종목이 없습니다.")
+    lines.append("")
+
+    if positions:
+        lines += ["**가상 보유 슬롯**", "", "| 종목 | 가상 진입가 | 구조 손절선 | 목표가 | 보유 완료봉 |",
+                  "|:---|---:|---:|---:|---:|"]
+        for code, pos in sorted(positions.items()):
+            stop = max(pos["entry_price"] * .96, pos["breakout_level"] * .99)
+            target = pos["entry_price"] * 1.08
+            lines.append(f"| {pos['name']} ({code}) | {pos['entry_price']:,.0f}원 | "
+                         f"{stop:,.0f}원 | {target:,.0f}원 | {pos['bars_held']} |")
+        lines.append("")
+
+    lines += [
+        "> 신호는 완료봉 기준 관측값입니다. 체결·순자산은 가상 계산이며 실제 주문이나 수익 보장이 아닙니다. "
+        "15:00 봉 누락·무거래·데이터 지연은 별도 확인하세요.",
+        "", "---", "",
+    ]
+    if experiment:
+        ex_regime = experiment.get("regime", {})
+        regime_text = " · ".join(
+            f"{market} {'통과' if ex_regime.get(market) is True else '차단' if ex_regime.get(market) is False else '데이터 없음'}"
+            for market in ("KOSPI", "KOSDAQ")
+        )
+        ex_equity = experiment.get("equity")
+        lines += [
+            f"{heading} 🧪 백테스트 후속안 · 분리 가상 계좌",
+            "",
+            f"> 손절 버퍼 3% · +5% 1/2 분할 익절(잔여 +8%) · 전일 확정 지수 종가 > 20일 평균",
+            f"> 지수 국면: {regime_text} · 대기 {len(experiment.get('pending', []))}건 · "
+            f"보유 {len(experiment.get('positions', {}))}/3 · "
+            f"가상 순자산 {f'{ex_equity:,.0f}원' if ex_equity is not None else '평가 보류'}",
+            "",
+            "> 아직 재백테스트·전진 검증되지 않은 가설입니다. 공식 v2.0과 성과를 합산하지 않습니다.",
+            "", "---", "",
+        ]
+    return lines
+
+
 def render_markdown_dashboard(
     top: pd.DataFrame,
     watch: pd.DataFrame,
@@ -760,6 +878,8 @@ def render_markdown_dashboard(
     scan_count: int,
     experiments: Optional[List[Dict[str, Any]]] = None,
     embed: bool = False,
+    lrm_state: Optional[Dict[str, Any]] = None,
+    lrm_experiment_state: Optional[Dict[str, Any]] = None,
 ) -> str:
     """GitHub 모바일 앱 및 웹 첫 화면(README.md)에 표시될 종합 대시보드 리포트
 
@@ -790,20 +910,23 @@ def render_markdown_dashboard(
 
     lines = []
     if not embed:
-        lines.extend(["# ⏱️ Quant Pattern Scanner & Position Exit Monitor", ""])
+        lines.extend(["# ⏱️ Quant Collector · LRM-60 v2.0", ""])
 
     lines.append(
-        f"> ⏱️ **실시간 갱신**: `{now_str} KST (15분 운영 주기)` | 📊 **감시 유니버스**: `{scan_count}종목` | ⚡ **조기/확정 돌파**: `{len(top)}건` | 🎯 **활성 추적**: `{len(main_list)}건`"
+        f"> ⏱️ **수집 시각**: `{now_str} KST (15분 예약 주기)` | 📊 **감시 유니버스**: `{scan_count}종목` | "
+        f"⚡ **기존 패턴 포착**: `{len(top)}건` | 🎯 **기존 활성 추적**: `{len(main_list)}건`"
     )
     lines.append("")
 
     if not embed:
         lines.extend([
-            "GitHub Actions가 **평일 장중 15분 주기로 자동 실행**되며, 5m/10m/30m/60m 다중 분봉 수집 및 조기 돌파(Early Trigger)와 **매수 포지션에 대한 매도·청산 신호**를 통합 모니터링합니다.",
+            "GitHub Actions가 **평일 장중 15분 간격으로 예약 실행**됩니다. LRM-60 신호는 완료된 60분봉에서만 확정하며, 아래의 기존 추적 표는 별도 전략의 과거 기록입니다.",
             "",
             "---",
             "",
         ])
+
+    lines.extend(render_lrm60_panel(lrm_state or {}, H2, lrm_experiment_state))
 
     # 병렬 실험 전략들을 최상단에 노출한다 (운영 신호와는 표·통계 모두 분리 유지)
     if experiments:
@@ -986,37 +1109,43 @@ def run_collector():
 
     print(f"=== [Quant Collector] 전진 라벨러 & 스캔 시작: {now_str} KST ===")
     tracker = SignalTracker(DATA_DIR)
+    lrm_book = LRM60PaperBook(LRM_STATE_PATH)
+    lrm_experiment = LRM60PaperBook(LRM_EXPERIMENT_STATE_PATH, experimental=True)
+    index_feeds = fetch_index_feeds()
 
     # 1. 대상 유니버스 확보 (KOSPI200+KOSDAQ150 근사, 최대 350종목)
     universe_stocks = get_universe()
     universe_codes = {s["code"] for s in universe_stocks}
 
     # 2. 유니버스에서 빠졌더라도 현재 추적 중인 Pending 종목 코드도 함께 수집 대상에 포함
-    tracked_codes = tracker.get_tracked_codes()
-    missing_tracked = tracked_codes - universe_codes
-    all_scan_targets = list(universe_stocks)
-
+    target_by_code = {rec["code"]: rec for rec in universe_stocks}
+    tracked_records = list(tracker.pending_signals.values())
+    tracked_records += list(lrm_book.state["positions"].values())
+    tracked_records += lrm_book.state["pending"]
+    tracked_records += list(lrm_experiment.state["positions"].values())
+    tracked_records += lrm_experiment.state["pending"]
+    for sig in tracked_records:
+        code = sig["code"]
+        if code not in target_by_code and sig.get("market"):
+            target_by_code[code] = {
+                "code": code, "name": sig["name"], "market": sig["market"],
+            }
+    all_scan_targets = list(target_by_code.values())
+    missing_tracked = set(target_by_code) - universe_codes
     if missing_tracked:
-        print(f"-> 유니버스 외 추적 중인 Pending 종목 {len(missing_tracked)}개 추가 수집 목록 포함")
-        for sig in tracker.pending_signals.values():
-            if sig["code"] in missing_tracked:
-                all_scan_targets.append({
-                    "code": sig["code"],
-                    "name": sig["name"],
-                    "market": sig["market"],
-                })
+        print(f"-> 유니버스 외 추적 중인 종목 {len(missing_tracked)}개 추가 수집 목록 포함")
 
     print(f"-> 총 {len(all_scan_targets)}개 대상 다중 분봉(5m/10m/30m/60m) 수집 및 패턴 채점 진행 중...")
 
     rows = []
     errors = []
     collected_candles_by_code = {}
+    lrm_feeds = {}
 
     with ThreadPoolExecutor(max_workers=WORKERS) as pool:
         results = pool.map(lambda s: (s, score_stock(s, now_ts)), all_scan_targets)
         for rec, (row, bars_res, err) in results:
-            if row is not None and bars_res is not None:
-                rows.append(row)
+            if bars_res is not None:
                 if isinstance(bars_res, dict):
                     df_60m = bars_res.get("60m", pd.DataFrame())
                     df_30m = bars_res.get("30m", pd.DataFrame())
@@ -1025,6 +1154,7 @@ def run_collector():
 
                     # 다중 분봉 이력 저장 (60m은 기존 경로 유지, 30m/10m/5m은 접미사 분리 보관)
                     if not df_60m.empty:
+                        lrm_feeds[rec["code"]] = df_60m
                         save_bar_history(rec["code"], df_60m, "60m")
                     if not df_30m.empty:
                         save_bar_history(rec["code"], df_30m, "30m")
@@ -1047,6 +1177,7 @@ def run_collector():
                         })
                     collected_candles_by_code[rec["code"]] = candle_list
                 else:
+                    lrm_feeds[rec["code"]] = bars_res
                     save_bar_history(rec["code"], bars_res, "60m")
                     candle_list = []
                     for idx, b in bars_res.tail(40).iterrows():
@@ -1059,10 +1190,21 @@ def run_collector():
                             "volume": int(b.Volume),
                         })
                     collected_candles_by_code[rec["code"]] = candle_list
+            if row is not None:
+                rows.append(row)
             else:
-                errors.append(err)
+                errors.append({"code": rec["code"], "reason": err})
 
     print(f"-> 채점 완료: 성공 {len(rows)} / 제외·오류 {len(errors)}")
+
+    # LRM-60은 위와 동일한 완료 60분봉을 사용한다. 이전 실행의 가상 계좌만 전진시킨다.
+    lrm_advanced = lrm_book.advance(lrm_feeds, target_by_code)
+    lrm_state = lrm_book.state
+    lrm_experiment.advance(lrm_feeds, target_by_code, index_feeds)
+    lrm_experiment_state = lrm_experiment.state
+    print(f"-> LRM-60: 기준봉 {lrm_state['last_bar_ts'] or '없음'} | "
+          f"4대 게이트 통과 {lrm_state['coverage'].get('passed', 0)}건 | "
+          f"3슬롯 가상 보유 {len(lrm_state['positions'])}건 | 신규 봉 {lrm_advanced}")
 
     # 3. Top 5 및 Watch 종목 도출
     top, watch = build_results(rows)
@@ -1119,6 +1261,9 @@ def run_collector():
     watch_clean = watch_quoted.drop(columns=["_features"], errors="ignore")
     top_clean.to_csv(day_dir / f"{stamp_time}_top5.csv", index=False, encoding="utf-8-sig")
     watch_clean.to_csv(day_dir / f"{stamp_time}_watch.csv", index=False, encoding="utf-8-sig")
+    pd.DataFrame(lrm_state["last_candidates"]).to_csv(
+        day_dir / f"{stamp_time}_lrm60.csv", index=False, encoding="utf-8-sig"
+    )
 
     # 7. 실시간 보유 포지션 매도·청산 신호 평가
     exit_evaluations = []
@@ -1150,6 +1295,8 @@ def run_collector():
         pending_list,
         now_str,
         len(universe_stocks),
+        lrm_state=lrm_state,
+        lrm_experiment_state=lrm_experiment_state,
     )
 
     with open(README_PATH, "w", encoding="utf-8") as f:
@@ -1164,6 +1311,8 @@ def run_collector():
         pending_list,
         now_str,
         len(universe_stocks),
+        lrm_state=lrm_state,
+        lrm_experiment_state=lrm_experiment_state,
         embed=True,
     )
     update_root_readme(md_embed)
