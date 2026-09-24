@@ -2802,7 +2802,7 @@
       "title": "quant-collector: LRM-60 v2 운영 스캔·README 대시보드·15분 Actions",
       "summary": "",
       "doc": "docs/tasks/T-077.md",
-      "status": "in_progress",
+      "status": "done",
       "priority": "P1",
       "category": "quant_ops",
       "phase": "2. 퀀트 데이터 자동 수집",
@@ -2810,8 +2810,8 @@
       "deps": [],
       "where": null,
       "refs": [],
-      "note": null,
-      "done_at": null,
+      "note": "LRM-60 공식/실험 가상 계좌와 README, 15분 예약 검증; collector 41개·spec 6개 테스트, 정적검사 통과, Actions 수동 실행 #36009854037 성공 및 원격 README 갱신 확인",
+      "done_at": "2026-09-24",
       "updated_at": "2026-09-24",
       "done_when": null,
       "gate": null,
@@ -2828,6 +2828,11 @@
           "at": "2026-09-24",
           "status": "in_progress",
           "note": ""
+        },
+        {
+          "at": "2026-09-24",
+          "status": "done",
+          "note": "LRM-60 공식/실험 가상 계좌와 README, 15분 예약 검증; collector 41개·spec 6개 테스트, 정적검사 통과, Actions 수동 실행 #36009854037 성공 및 원격 README 갱신 확인"
         }
       ]
     }

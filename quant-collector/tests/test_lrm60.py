@@ -124,3 +124,7 @@ def test_dashboard_keeps_official_and_experiment_separate():
     assert "4대 게이트 통과:** `1건`" in panel
     assert "KOSPI 통과" in panel and "KOSDAQ 데이터 없음" in panel
     assert "1,005,000원" in panel and "공식 v2.0과 성과를 합산하지 않습니다" in panel
+    panel = "\n".join(render_lrm60_panel(
+        {**official, "last_bar_ts": "2026-09-21T14:00:00+09:00"}, "##", experiment,
+        "2026-09-21 15:52"))
+    assert "15:00~15:30 완료봉이 공급되지 않아" in panel

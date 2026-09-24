@@ -778,7 +778,8 @@ def _render_signal_rows(
 
 
 def render_lrm60_panel(state: Dict[str, Any], heading: str = "##",
-                       experiment: Optional[Dict[str, Any]] = None) -> List[str]:
+                       experiment: Optional[Dict[str, Any]] = None,
+                       now_str: Optional[str] = None) -> List[str]:
     """Timestamped LRM-60 panel for the GitHub mobile README."""
     last = state.get("last_bar_ts")
     if not last:
@@ -813,6 +814,19 @@ def render_lrm60_panel(state: Dict[str, Any], heading: str = "##",
         f"(평가 가능 `{coverage.get('evaluated', 0)}`종목, 봉 결측 `{coverage.get('missing_bar', 0)}`종목)",
         "",
     ]
+    last_point = pd.Timestamp(last)
+    now_point = pd.Timestamp(now_str) if now_str else None
+    missing_close = (now_point is not None and last_point.hour == 14 and
+                     (now_point.date() > last_point.date() or
+                      (now_point.date() == last_point.date() and
+                       (now_point.hour > 15 or
+                        (now_point.hour == 15 and now_point.minute >= 45)))))
+    if missing_close:
+        lines += [
+            "> ⚠️ 마지막 세션의 **15:00~15:30 완료봉이 공급되지 않아** 14:00 봉까지만 평가했습니다. "
+            "종가를 현재가로 복원하거나 15시 신호를 추정하지 않습니다.",
+            "",
+        ]
     if state.get("last_candidates"):
         pending_codes = {item["code"] for item in pending}
         lines += [
@@ -926,7 +940,7 @@ def render_markdown_dashboard(
             "",
         ])
 
-    lines.extend(render_lrm60_panel(lrm_state or {}, H2, lrm_experiment_state))
+    lines.extend(render_lrm60_panel(lrm_state or {}, H2, lrm_experiment_state, now_str))
 
     # 병렬 실험 전략들을 최상단에 노출한다 (운영 신호와는 표·통계 모두 분리 유지)
     if experiments:
