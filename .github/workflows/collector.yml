@@ -1,9 +1,9 @@
-name: Quant Hourly Collector
+name: Quant 15m Collector
 
 on:
   schedule:
-    # KST 평일 09:17~16:17, 정각 혼잡을 피한 1시간 주기 (UTC 00:17~07:17)
-    - cron: '17 0-7 * * 1-5'
+    # KST 평일 09:07~16:52, 정각 혼잡을 피한 15분 주기 (UTC 00:07~07:52)
+    - cron: '7,22,37,52 0-7 * * 1-5'
   workflow_dispatch: # 스마트폰 웹 브라우저 또는 GitHub 웹에서 버튼 클릭으로 즉시 수동 실행
 
 concurrency:
@@ -58,7 +58,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "새로 기록된 시세 데이터 변경사항이 없습니다."
           else
-            git commit -m "chore(collector): hourly automated refresh [skip ci]"
+            git commit -m "chore(collector): 15m automated refresh [skip ci]"
             for attempt in 1 2 3 4 5; do
               if git pull --rebase origin main && git push origin HEAD:main; then
                 break

@@ -2718,6 +2718,40 @@
           "note": "알고리즘 변경 없이 평일 장중 1시간 주기·고정 런너·Node 24 액션·push 복구를 적용; pytest 35개와 정적검사 통과, GitHub Actions 수동 검증 실행 #41 성공"
         }
       ]
+    },
+    {
+      "id": "T-074",
+      "title": "quant-collector: GitHub Actions 15분 운영 주기 전환",
+      "summary": "",
+      "doc": "docs/tasks/T-074.md",
+      "status": "in_progress",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": null,
+      "done_at": null,
+      "updated_at": "2026-09-24",
+      "done_when": "알고리즘 변경 없이 평일 장중 15분 주기로 실행되고 workflow_dispatch 및 단일 실행 잠금을 유지하며 실제 Actions 검증을 통과한다",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-09-24",
+      "log": [
+        {
+          "at": "2026-09-24",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-24",
+          "status": "in_progress",
+          "note": ""
+        }
+      ]
     }
   ]
 }
