@@ -1,12 +1,12 @@
 """
 Quant Data Collector & Forward Labeling Engine
 ---------------------------------------------
-GitHub Actions(한국 정규장 09:00~15:55 KST 5분 주기, UTC 00:00~06:55) 및 모바일 수동(workflow_dispatch)으로 실행되는 실전 수집기 & 전진 라벨러입니다.
+GitHub Actions(평일 장중 1시간 주기, KST 09:17~16:17) 및 모바일 수동(workflow_dispatch)으로 실행되는 실전 수집기 & 전진 라벨러입니다.
 1. 네이버 시총 랭킹 기반 KOSPI200+KOSDAQ150 근사 유니버스(350종목) + 기존 추적 중인 pending 종목의 5m/10m/30m/60m 다중 분봉 수집 및 보관
 2. 60분봉 기반 '조건 충족' 및 '관찰' 후보 포착 및 스마트 랭킹(스마트점수·돌파건전도·유동성) 산출
 3. 5분봉 정밀 추적을 통한 다중 목표(+3/5/5.35/7/10%)/손절(-3/5%) 선접촉 라벨링 확정
 4. 2차 판독기(위험 필터 / 메타 모델) 학습용 원본 데이터셋 자동 축적
-5. GitHub 모바일 앱(README.md)에 5분 주기 실시간 스캔 및 추적 진행 현황 자동 갱신
+5. GitHub 모바일 앱(README.md)에 1시간 주기 스캔 및 추적 진행 현황 자동 갱신
 
 [절대 안전 불변식]
 - 실제 거래, 매수, 매도, 계좌 연동 로직은 작성하지 않으며 일체 호출하지 않습니다.
@@ -793,13 +793,13 @@ def render_markdown_dashboard(
         lines.extend(["# ⏱️ Quant Pattern Scanner & Position Exit Monitor", ""])
 
     lines.append(
-        f"> ⏱️ **실시간 갱신**: `{now_str} KST (5분 상시 주기)` | 📊 **감시 유니버스**: `{scan_count}종목` | ⚡ **조기/확정 돌파**: `{len(top)}건` | 🎯 **활성 추적**: `{len(main_list)}건`"
+        f"> ⏱️ **실시간 갱신**: `{now_str} KST (1시간 운영 주기)` | 📊 **감시 유니버스**: `{scan_count}종목` | ⚡ **조기/확정 돌파**: `{len(top)}건` | 🎯 **활성 추적**: `{len(main_list)}건`"
     )
     lines.append("")
 
     if not embed:
         lines.extend([
-            "GitHub Actions가 **5분마다 상시 자동 실행**되며, 5m/10m/30m/60m 다중 분봉 수집 및 조기 돌파(Early Trigger)와 **매수 포지션에 대한 실시간 매도·청산 신호**를 통합 모니터링합니다.",
+            "GitHub Actions가 **평일 장중 1시간 주기로 자동 실행**되며, 5m/10m/30m/60m 다중 분봉 수집 및 조기 돌파(Early Trigger)와 **매수 포지션에 대한 매도·청산 신호**를 통합 모니터링합니다.",
             "",
             "---",
             "",

@@ -1,9 +1,9 @@
-name: Quant 5m Auto Refresh Collector
+name: Quant Hourly Collector
 
 on:
   schedule:
-    # 5분마다 상시 자동 실행 및 대시보드 리프레시
-    - cron: '*/5 * * * *'
+    # KST 평일 09:17~16:17, 정각 혼잡을 피한 1시간 주기 (UTC 00:17~07:17)
+    - cron: '17 0-7 * * 1-5'
   workflow_dispatch: # 스마트폰 웹 브라우저 또는 GitHub 웹에서 버튼 클릭으로 즉시 수동 실행
 
 concurrency:
@@ -15,15 +15,15 @@ permissions:
 
 jobs:
   run-collector:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
 
     steps:
       - name: 저장소 체크아웃
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Python 3.11 설정
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
           cache: 'pip'
@@ -52,17 +52,18 @@ jobs:
 
       - name: 수집된 시세 데이터 및 대시보드 자동 커밋 및 푸시
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git add quant-collector/data/ quant-collector/README.md README.md
           if git diff --staged --quiet; then
             echo "새로 기록된 시세 데이터 변경사항이 없습니다."
           else
-            git commit -m "chore(collector): 5m automated refresh [skip ci]"
+            git commit -m "chore(collector): hourly automated refresh [skip ci]"
             for attempt in 1 2 3 4 5; do
-              if git pull --rebase origin main && git push; then
+              if git pull --rebase origin main && git push origin HEAD:main; then
                 break
               fi
+              git rebase --abort 2>/dev/null || true
               if [ "$attempt" -eq 5 ]; then
                 echo "5회 재시도 후에도 push 실패"
                 exit 1
