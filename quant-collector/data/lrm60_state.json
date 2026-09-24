@@ -1,0 +1,25 @@
+{
+  "version": "lrm60_v2",
+  "cash": 1000000.0,
+  "equity": 1000000.0,
+  "positions": {},
+  "pending": [],
+  "trades": [],
+  "last_bar_ts": "2026-09-23T14:00:00+09:00",
+  "last_candidates": [],
+  "gate_counts": {
+    "trend": 91,
+    "breakout": 3,
+    "liquidity": 18,
+    "candle": 26
+  },
+  "coverage": {
+    "scanned": 350,
+    "evaluated": 350,
+    "passed": 0,
+    "missing_bar": 0,
+    "insufficient": 0
+  },
+  "data_gaps": [],
+  "regime": {}
+}
