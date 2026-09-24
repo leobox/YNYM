@@ -2757,6 +2757,45 @@
           "note": "알고리즘 변경 없이 KST 평일 09:07~16:52 15분 주기로 전환; pytest 35개와 정적검사 통과, GitHub Actions 수동 검증 실행 #42의 수집·push 전 단계 성공"
         }
       ]
+    },
+    {
+      "id": "T-075",
+      "title": "quant-research: LRM-60 공식 연구 사양 확정 및 트레일링 갭 보정",
+      "summary": "",
+      "doc": "docs/tasks/T-075.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "사용자 승인에 따라 LRM-60 v2.0 공식 연구 사양 확정; 트레일링 갭 과대 체결, 무거래 봉, 기간 말 청산 보정; 연구 테스트 153건 및 정적/백로그 검사 통과",
+      "done_at": "2026-09-24",
+      "updated_at": "2026-09-24",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-24",
+      "log": [
+        {
+          "at": "2026-09-24",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-24",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-24",
+          "status": "done",
+          "note": "사용자 승인에 따라 LRM-60 v2.0 공식 연구 사양 확정; 트레일링 갭 과대 체결, 무거래 봉, 기간 말 청산 보정; 연구 테스트 153건 및 정적/백로그 검사 통과"
+        }
+      ]
     }
   ]
 }
