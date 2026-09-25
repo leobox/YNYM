@@ -25,6 +25,7 @@ from pure_quant_portfolio_manager import (  # noqa: E402
     calculate_market_breadth,
     compute_factor_rankings,
 )
+from factor_evidence import explain_rank, profile_fact
 
 KST = ZoneInfo("Asia/Seoul")
 DATA = ROOT / "quant-collector" / "data"
@@ -152,19 +153,32 @@ def render_panel(now: datetime, decision_date: pd.Timestamp, universe: dict[str,
     lines = [
         "### 🧮 모드 2 · 일봉 팩터 관찰 (가상)", "",
         f"> 일봉 기준 `{decision_date.date()}` · 확인 `{now.strftime('%Y-%m-%d %H:%M')} KST` · "
-        f"유효 종목 `{len(universe)}/{UNIVERSE_SIZE}` · Breadth(SMA60 위) `{b_val:.1f}%` · **{regime}**", "",
+        f"유효 종목 `{len(universe)}/{UNIVERSE_SIZE}` · 자격 통과 `{len(ranking)}종목` · "
+        f"Breadth(SMA60 위) `{b_val:.1f}%` · **{regime}**", "",
         "> 팩터: 60일 모멘텀(최근 5일 제외) 30% · 변동성 조정 모멘텀 40% · CMF20 30%. "
         "현재 시총 상위 종목군 기준이며 과거 3년 성과를 재현한 표본은 아닙니다.", "",
+        "> 아래 이유는 [수신 원본·실패·해시](quant-collector/data/mode2_latest_manifest.json)와 "
+        "[계산식](quant-research/scripts/pure_quant_portfolio_manager.py)에 연결된 수치 설명입니다. "
+        "회사 설명은 공식 출처와 확인일이 있는 항목만 별도 참고로 붙입니다. "
+        "출처 없는 473개 정적 설명은 사용하지 않습니다.", "",
+        "> 변동성 조정 모멘텀은 일반적인 샤프 지수가 아닙니다. CMF는 종가 위치·거래량 지표이며 "
+        "기관·외국인 순매수를 식별하지 않습니다. 점수는 자격 통과 종목끼리의 상대 순위입니다.", "",
     ]
     if stale:
         lines += ["> ⚠️ 오늘 날짜의 새 완료 일봉이 없습니다(휴장 또는 공급 지연). "
                   "위에 표시된 과거 거래일 기준값만 관측하고 새 계획은 만들지 않았습니다.", ""]
     if not ranking.empty:
         lines += ["**완료 일봉 팩터 상위 5종목 · 관찰 순위**", "",
-                  "| 순위 | 종목(코드) | 종가 | 종합 순위점수 |", "|---:|:---|---:|---:|"]
+                  "| 순위 | 종목·평가일 종가·상대점수 | 수치 기반 판정이유·출처 있는 회사 참고 |",
+                  "|---:|:---|:---|"]
         for idx, row in enumerate(ranking.head(5).itertuples(), 1):
-            lines.append(f"| {idx} | {names.get(row.code, row.code)} ({row.code}) | "
-                         f"{row.close:,.0f}원 | {row.composite_score:.3f} |")
+            company_context = profile_fact(row.code)
+            detail = explain_rank(row)
+            if company_context:
+                detail += f"<br>{company_context}"
+            lines.append(f"| {idx} | **{names.get(row.code, row.code)}** ({row.code})<br>"
+                         f"{row.close:,.0f}원 · **{row.composite_score:.3f}** | "
+                         f"{detail} |")
         lines.append("")
     if missing_holdings:
         lines += [f"> ⚠️ 가상 보유 `{', '.join(missing_holdings)}`의 일봉이 없어 에어백 판단을 보류했습니다.", ""]

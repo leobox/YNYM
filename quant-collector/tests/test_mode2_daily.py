@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from types import SimpleNamespace
 from zoneinfo import ZoneInfo
 
 import numpy as np
@@ -8,6 +9,7 @@ import pytest
 from mode2_daily import (END, START, chart_to_frame, choose_session,
                          render_panel, update_readme)
 from pure_quant_portfolio_manager import compute_factor_rankings
+from factor_evidence import explain_rank, profile_fact
 
 
 KST = ZoneInfo("Asia/Seoul")
@@ -55,6 +57,20 @@ def test_factor_momentum_matches_shift_5_and_60():
     assert ranking.iloc[0]["mom60_5"] == pytest.approx(expected)
 
 
+def test_factor_explanation_uses_only_observed_values_and_score_parts():
+    row = SimpleNamespace(mom60_5=.42, risk_adj_mom=.81, cmf20=-.12,
+                          rank_ramom=.8, rank_mom=.7, rank_cmf=.2,
+                          composite_score=.59)
+    reason = explain_rank(row)
+    assert "+42.0%" in reason and "-0.12" in reason
+    assert "0.320 + 추세 0.210 + CMF 0.060" in reason
+    assert "기관" not in reason and "샤프" not in reason
+    with pytest.raises(ValueError, match="contributions"):
+        explain_rank(SimpleNamespace(**{**vars(row), "composite_score": .99}))
+    assert "cosmax.com" in profile_fact("192820")
+    assert profile_fact("999999") == ""
+
+
 def test_panel_stale_data_preserves_plan_and_readme_sections(tmp_path):
     frames = {f"{i:06d}": daily_frame(last="2026-09-23", scale=1 + i / 1000)
               for i in range(120)}
@@ -64,6 +80,8 @@ def test_panel_stale_data_preserves_plan_and_readme_sections(tmp_path):
     panel, new_state = render_panel(datetime(2026, 9, 25, 16, 20, tzinfo=KST),
                                     date, frames, {}, tmp_path / "paper.json", state)
     assert "오늘 날짜의 새 완료 일봉이 없습니다" in panel
+    assert "기관·외국인 순매수를 식별하지 않습니다" in panel
+    assert "수신 원본·실패·해시" in panel
     assert new_state == state
     readme = tmp_path / "README.md"
     readme.write_text("before\n" + START + "\nold\n" + END + "\nlegacy\n", encoding="utf-8")

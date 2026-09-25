@@ -1,12 +1,11 @@
-name: LRM-60 v2.0 · 15분 수집
+name: LRM-60 v2.0 · 15분 수집 / 모드 2 근거 관찰
 
 on:
   schedule:
-    # KST 평일 09:07~16:07, 15분 간격 (UTC 00:07~07:07)
-    # 시작 분을 명시해 GitHub cron 파서 호환성을 확보한다.
-    - cron: '7,22,37,52 0-7 * * 1-5'
-    # KST 평일 16:17: Yahoo 완료 일봉 확인 후 모드 2 패널 생성
-    - cron: '17 7 * * 1-5'
+    # KST 평일 09:09~16:54, 15분 간격 (UTC 00:09~07:54)
+    - cron: '9,24,39,54 0-7 * * 1-5'
+    # KST 평일 16:19/16:34/16:49: 완료 일봉을 15분마다 재확인
+    - cron: '19,34,49 7 * * 1-5'
   workflow_dispatch:
     inputs:
       task:
@@ -27,7 +26,7 @@ permissions:
 
 jobs:
   collect:
-    if: github.event.schedule == '7,22,37,52 0-7 * * 1-5' || (github.event_name == 'workflow_dispatch' && inputs.task == 'collector')
+    if: github.event.schedule == '9,24,39,54 0-7 * * 1-5' || (github.event_name == 'workflow_dispatch' && inputs.task == 'collector')
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
@@ -82,7 +81,7 @@ jobs:
             sleep $((attempt * 5))
           done
   mode2-daily:
-    if: github.event.schedule == '17 7 * * 1-5' || (github.event_name == 'workflow_dispatch' && inputs.task == 'mode2')
+    if: github.event.schedule == '19,34,49 7 * * 1-5' || (github.event_name == 'workflow_dispatch' && inputs.task == 'mode2')
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:

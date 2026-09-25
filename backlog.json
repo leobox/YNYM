@@ -2874,6 +2874,40 @@
           "note": "180개 테스트 및 quant_guard 통과; 공개 일봉 138/150 실수신·README 패널 확인; Actions 최초 예약 실행은 배포 후 확인"
         }
       ]
+    },
+    {
+      "id": "T-079",
+      "title": "모드 2 팩터 근거 표시 및 GitHub 15분 갱신 검증",
+      "summary": "",
+      "doc": "docs/tasks/T-079.md",
+      "status": "in_progress",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": null,
+      "done_at": null,
+      "updated_at": "2026-09-25",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-25",
+      "log": [
+        {
+          "at": "2026-09-25",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-25",
+          "status": "in_progress",
+          "note": ""
+        }
+      ]
     }
   ]
 }
