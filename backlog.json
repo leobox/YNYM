@@ -2,7 +2,7 @@
   "$schema_version": "1.0",
   "meta": {
     "project": "Leobox Multi-root Workspace",
-    "updated": "2026-09-24",
+    "updated": "2026-09-25",
     "context_doc": "README.md",
     "doc_dir": "docs/tasks",
     "stack": "Multi-agent (Gemini + Claude + Codex) / Python(Quant) / GitHub Actions / Android",
@@ -2833,6 +2833,45 @@
           "at": "2026-09-24",
           "status": "done",
           "note": "LRM-60 공식/실험 가상 계좌와 README, 15분 예약 검증; collector 41개·spec 6개 테스트, 정적검사 통과, Actions 수동 실행 #36009854037 성공 및 원격 README 갱신 확인"
+        }
+      ]
+    },
+    {
+      "id": "T-078",
+      "title": "모드 2 일봉 팩터 운영 패널을 GitHub Actions에 통합",
+      "summary": "일봉 소스·시점·결측 검증 후 장마감 팩터/브레드스/에어백/월간 리밸런싱 가상 계획을 모바일 README에 표시",
+      "doc": "docs/tasks/T-078.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "0. 공통 인프라 & 대시보드",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "180개 테스트 및 quant_guard 통과; 공개 일봉 138/150 실수신·README 패널 확인; Actions 최초 예약 실행은 배포 후 확인",
+      "done_at": "2026-09-25",
+      "updated_at": "2026-09-25",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-25",
+      "log": [
+        {
+          "at": "2026-09-25",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-25",
+          "status": "in_progress",
+          "note": "Codex: 원격 main 기준 격리 worktree에서 모드 2 장마감 운영 패널 구현"
+        },
+        {
+          "at": "2026-09-25",
+          "status": "done",
+          "note": "180개 테스트 및 quant_guard 통과; 공개 일봉 138/150 실수신·README 패널 확인; Actions 최초 예약 실행은 배포 후 확인"
         }
       ]
     }

@@ -1,0 +1,84 @@
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
+
+import numpy as np
+import pandas as pd
+import pytest
+
+from mode2_daily import (END, START, chart_to_frame, choose_session,
+                         render_panel, update_readme)
+from pure_quant_portfolio_manager import compute_factor_rankings
+
+
+KST = ZoneInfo("Asia/Seoul")
+
+
+def daily_frame(last="2026-09-25", rows=150, scale=1.0):
+    dates = pd.bdate_range(end=last, periods=rows)
+    close = np.linspace(80.0, 160.0, rows) * scale
+    return pd.DataFrame({"Open": close * .995, "High": close * 1.02,
+                         "Low": close * .98, "Close": close,
+                         "Volume": np.full(rows, 10_000_000)}, index=dates)
+
+
+def test_chart_requires_matching_symbol_and_valid_ohlcv():
+    stamp = int(pd.Timestamp("2026-09-23 09:00", tz=KST).timestamp())
+    payload = {"chart": {"error": None, "result": [{
+        "meta": {"symbol": "005930.KS", "exchangeTimezoneName": "Asia/Seoul"},
+        "timestamp": [stamp],
+        "indicators": {"quote": [{"open": [100], "high": [110],
+                                  "low": [90], "close": [105], "volume": [1000]}]},
+    }]}}
+    assert chart_to_frame(payload, "005930.KS").index[0] == pd.Timestamp("2026-09-23")
+    with pytest.raises(ValueError, match="symbol"):
+        chart_to_frame(payload, "000660.KS")
+    payload["chart"]["result"][0]["indicators"]["quote"][0]["high"] = [99]
+    with pytest.raises(ValueError, match="OHLCV"):
+        chart_to_frame(payload, "005930.KS")
+
+
+def test_common_session_excludes_incomplete_today_and_accepts_prior_session():
+    frames = {f"{i:06d}": daily_frame() for i in range(120)}
+    now = datetime(2026, 9, 25, 15, 50, tzinfo=KST)
+    date, aligned = choose_session(frames, now)
+    assert date == pd.Timestamp("2026-09-24")
+    assert len(aligned) == 120
+    date, _ = choose_session(frames, datetime(2026, 9, 25, 16, 20, tzinfo=KST))
+    assert date == pd.Timestamp("2026-09-25")
+
+
+def test_factor_momentum_matches_shift_5_and_60():
+    frame = daily_frame()
+    ranking = compute_factor_rankings({"000001": frame}, frame.index[-1])
+    assert len(ranking) == 1
+    expected = (frame["Close"].iloc[-6] - frame["Close"].iloc[-61]) / frame["Close"].iloc[-61]
+    assert ranking.iloc[0]["mom60_5"] == pytest.approx(expected)
+
+
+def test_panel_stale_data_preserves_plan_and_readme_sections(tmp_path):
+    frames = {f"{i:06d}": daily_frame(last="2026-09-23", scale=1 + i / 1000)
+              for i in range(120)}
+    date = pd.Timestamp("2026-09-23")
+    state = {"last_plan_date": "2026-09-22", "top_codes": ["000001"],
+             "reference_closes": {"000001": 160.0}}
+    panel, new_state = render_panel(datetime(2026, 9, 25, 16, 20, tzinfo=KST),
+                                    date, frames, {}, tmp_path / "paper.json", state)
+    assert "오늘 날짜의 새 완료 일봉이 없습니다" in panel
+    assert new_state == state
+    readme = tmp_path / "README.md"
+    readme.write_text("before\n" + START + "\nold\n" + END + "\nlegacy\n", encoding="utf-8")
+    update_readme(panel, readme)
+    text = readme.read_text(encoding="utf-8")
+    assert "legacy" in text and "old" not in text and "모드 2" in text
+
+
+def test_panel_current_session_creates_ten_targets_only_once(tmp_path):
+    frames = {f"{i:06d}": daily_frame(scale=1 + i / 1000) for i in range(120)}
+    now = datetime(2026, 9, 25, 16, 20, tzinfo=KST)
+    date = pd.Timestamp("2026-09-25")
+    panel, state = render_panel(now, date, frames, {}, tmp_path / "paper.json", {})
+    assert len(state["top_codes"]) == 10
+    assert "20거래일 리밸런싱 검토표" in panel
+    _, again = render_panel(now + timedelta(minutes=1), date, frames, {},
+                            tmp_path / "paper.json", state)
+    assert again == state

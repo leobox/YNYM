@@ -32,3 +32,4 @@ sample/
 # T-063 edge explorer: raw daily history (manifest under quant-research/data/research/T-063 is tracked)
 quant-research/data/daily_3y/
 quant-research/data/daily_10y/
+quant-collector/data/mode2_snapshots/
