@@ -2880,7 +2880,7 @@
       "title": "모드 2 팩터 근거 표시 및 GitHub 15분 갱신 검증",
       "summary": "",
       "doc": "docs/tasks/T-079.md",
-      "status": "in_progress",
+      "status": "done",
       "priority": "P1",
       "category": "quant_research",
       "phase": "1. 퀀트 알고리즘 연구",
@@ -2888,8 +2888,8 @@
       "deps": [],
       "where": null,
       "refs": [],
-      "note": null,
-      "done_at": null,
+      "note": "e015e65 main 반영, 모드2·수집 Actions 수동 실행 성공, GitHub README 근거 표 갱신 확인",
+      "done_at": "2026-09-25",
       "updated_at": "2026-09-25",
       "done_when": null,
       "gate": null,
@@ -2906,6 +2906,11 @@
           "at": "2026-09-25",
           "status": "in_progress",
           "note": ""
+        },
+        {
+          "at": "2026-09-25",
+          "status": "done",
+          "note": "e015e65 main 반영, 모드2·수집 Actions 수동 실행 성공, GitHub README 근거 표 갱신 확인"
         }
       ]
     }
