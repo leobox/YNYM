@@ -1,0 +1,71 @@
+name: LRM-60 v2.0 · 15분 수집
+
+on:
+  schedule:
+    # KST 평일 09:07~16:07, 15분 간격 (UTC 00:07~07:07)
+    - cron: '7/15 0-7 * * 1-5'
+  workflow_dispatch:
+
+concurrency:
+  group: lrm60-15m-collector
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  collect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: 저장소 체크아웃
+        uses: actions/checkout@v5
+
+      - name: Python 3.11 설정
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: quant-collector/requirements.txt
+
+      - name: 수집기 의존성 설치
+        working-directory: quant-collector
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: 완료봉 수집 및 LRM-60 가상 기록
+        working-directory: quant-collector
+        run: |
+          for attempt in 1 2 3; do
+            if python collector.py; then
+              exit 0
+            fi
+            if [ "$attempt" -eq 3 ]; then
+              echo "3회 재시도 후 수집 실패"
+              exit 1
+            fi
+            sleep $((attempt * 15))
+          done
+
+      - name: 데이터·운영 대시보드 기록
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add quant-collector/data/ quant-collector/README.md README.md
+          if git diff --staged --quiet; then
+            echo "기록할 변경사항 없음"
+            exit 0
+          fi
+          git commit -m "chore(collector): refresh LRM-60 15m [skip ci]"
+          for attempt in 1 2 3 4 5; do
+            if git pull --rebase origin main && git push origin HEAD:main; then
+              exit 0
+            fi
+            git rebase --abort 2>/dev/null || true
+            if [ "$attempt" -eq 5 ]; then
+              echo "5회 재시도 후 push 실패"
+              exit 1
+            fi
+            sleep $((attempt * 5))
+          done

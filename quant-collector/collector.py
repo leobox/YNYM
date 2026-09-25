@@ -926,10 +926,12 @@ def render_markdown_dashboard(
     if not embed:
         lines.extend(["# ⏱️ Quant Collector · LRM-60 v2.0", ""])
 
-    lines.append(
-        f"> ⏱️ **수집 시각**: `{now_str} KST (15분 예약 주기)` | 📊 **감시 유니버스**: `{scan_count}종목` | "
-        f"⚡ **기존 패턴 포착**: `{len(top)}건` | 🎯 **기존 활성 추적**: `{len(main_list)}건`"
+    summary = (
+        f"> ⏱️ **수집 시각**: `{now_str} KST (15분 예약 주기)` | 📊 **감시 유니버스**: `{scan_count}종목`"
     )
+    if not embed:
+        summary += f" | ⚡ **기존 패턴 포착**: `{len(top)}건` | 🎯 **기존 활성 추적**: `{len(main_list)}건`"
+    lines.append(summary)
     lines.append("")
 
     if not embed:
@@ -943,7 +945,7 @@ def render_markdown_dashboard(
     lines.extend(render_lrm60_panel(lrm_state or {}, H2, lrm_experiment_state, now_str))
 
     # 병렬 실험 전략들을 최상단에 노출한다 (운영 신호와는 표·통계 모두 분리 유지)
-    if experiments:
+    if experiments and not embed:
         for exp in experiments:
             exp_list = [s for s in pending_list if s.get("strategy_version") == exp["strategy_version"]]
             stats = exp["stats"]
@@ -970,7 +972,7 @@ def render_markdown_dashboard(
             ])
 
     # [최우선 알림] 긴급 매도/청산 신호는 테이블 형태로 깔끔하게 상단 표출
-    if sell_alerts:
+    if sell_alerts and not embed:
         lines.append(f"{H2} 🚨 [긴급] 실시간 매도·청산 권고 신호 ({len(sell_alerts)}건)")
         lines.append("")
         lines.append("> 5분 단위 실시간 청산 조건(목표 익절 / 이익 보존 / 돌파선 붕괴 / 절대 손절)이 감지되었습니다. MTS에서 신속히 대응하세요.")
@@ -1055,33 +1057,35 @@ def render_markdown_dashboard(
                 lines.append(f"| {badge} | **{r['name']}** ({r['code']}) | {p_str} | {gap_str} | {amt_vr} | {r['sig_time']} | **{r['smart_score']:.1f}점** |")
             lines.extend(["", "---", ""])
 
-    # 2. 추적 중인 모든 신호(보유+관찰+신규)를 종목당 1행으로 통합한 마스터 표
-    lines.extend([
-        f"{H2} 📊 추적 중인 신호 현황 (가상 매수 100만원 가정)",
-        "",
-        "> 조건 충족·관찰 등록된 모든 신호를 한 표로 모아 긴급도순(매도 > 재확인 > 주의 > 신규 > 보유) 및 스마트점수순으로 정렬했습니다. "
-        "돌파이격은 골디락스 안착(+1.2%~+4.0% 🟢), 턱걸이 위험(<0.8% ⚠️), 과열 추격위험(>5.5% ⚠️)으로 구분됩니다.",
-        "",
-    ])
+    # 기존 전략의 전체 추적표는 루트 README에서는 숨기고,
+    # quant-collector/README.md(상세 이력)에서만 제공한다.
+    if not embed:
+        lines.extend([
+            f"{H2} 📊 추적 중인 신호 현황 (가상 매수 100만원 가정)",
+            "",
+            "> 조건 충족·관찰 등록된 모든 신호를 한 표로 모아 긴급도순(매도 > 재확인 > 주의 > 신규 > 보유) 및 스마트점수순으로 정렬했습니다. "
+            "돌파이격은 골디락스 안착(+1.2%~+4.0% 🟢), 턱걸이 위험(<0.8% ⚠️), 과열 추격위험(>5.5% ⚠️)으로 구분됩니다.",
+            "",
+        ])
+        lines.extend(_render_signal_rows(main_list, eval_by_sigid, new_codes, "현재 추적 중인 활성 신호가 없습니다"))
 
-    lines.extend(_render_signal_rows(main_list, eval_by_sigid, new_codes, "현재 추적 중인 활성 신호가 없습니다"))
+    if not embed:
+        # 2. 누적 통계 박스 (상세 수집기 README 전용)
+        tot_res = tracker_stats["total_resolved"]
+        win_r = tracker_stats["win_rate"]
+        win_str = f"**{win_r}%**" if win_r is not None else "데이터 축적 중"
 
-    # 2. 누적 통계 박스
-    tot_res = tracker_stats["total_resolved"]
-    win_r = tracker_stats["win_rate"]
-    win_str = f"**{win_r}%**" if win_r is not None else "데이터 축적 중"
-
-    lines.extend([
-        "---",
-        "",
-        f"{H2} 📈 누적 전진 검증 성과 (+5.35% 익절 vs -5% 손절 / 5일 기준)",
-        "",
-        f"- **완료된 평가 표본 수**: `{tot_res}건` (목표: 독립 표본 300건 이상)",
-        f"- **TARGET_FIRST (익절 선접촉)**: `{tracker_stats['target_first']}건`",
-        f"- **STOP_FIRST (손절 선접촉)**: `{tracker_stats['stop_first']}건`",
-        f"- **TIMEOUT (만기 종료)**: `{tracker_stats['timeout']}건`",
-        f"- **익절 성공률 (Win Rate)**: {win_str}",
-    ])
+        lines.extend([
+            "---",
+            "",
+            f"{H2} 📈 누적 전진 검증 성과 (+5.35% 익절 vs -5% 손절 / 5일 기준)",
+            "",
+            f"- **완료된 평가 표본 수**: `{tot_res}건` (목표: 독립 표본 300건 이상)",
+            f"- **TARGET_FIRST (익절 선접촉)**: `{tracker_stats['target_first']}건`",
+            f"- **STOP_FIRST (손절 선접촉)**: `{tracker_stats['stop_first']}건`",
+            f"- **TIMEOUT (만기 종료)**: `{tracker_stats['timeout']}건`",
+            f"- **익절 성공률 (Win Rate)**: {win_str}",
+        ])
 
     if not embed:
         lines.extend([
