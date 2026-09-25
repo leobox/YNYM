@@ -1,6 +1,6 @@
 {
-  "run_id": "20260925T143842+0900",
-  "fetched_at_kst": "2026-09-25T14:38:42.668464+09:00",
+  "run_id": "20260925T162527+0900",
+  "fetched_at_kst": "2026-09-25T16:25:27.564401+09:00",
   "source": "Yahoo Finance chart API, range=1y interval=1d; raw OHLCV",
   "universe": "latest collector market-cap snapshot, top 150 current names",
   "requested": 150,
@@ -9,855 +9,855 @@
       "code": "402340",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "e3eb6adad7fdb2a97ff8c3e4f17a75cf1a5382375304056a81f71f7d0e5f1993"
-    },
-    {
-      "code": "005930",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "61adca5d61afec1d53cb25484efe28658e3e42eecf0d0998bf18d41036d37118"
+      "sha256": "c404b8fead545a973ad3bffdf3f67b44a5d8393061ed11c60285a1663f53ccbd"
     },
     {
       "code": "207940",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "313087c4c608782a4c518ba9fe0da363fe1fc681d35fb6663e288b8881f7bba0"
-    },
-    {
-      "code": "105560",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "dfbac7d0d62557d58e3a4f1855ccd9acd26d6b7484310f5a9792228c3f3e7acd"
-    },
-    {
-      "code": "373220",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "cf9f1d040926e528e65c3017384a1f2ef789197e6106a96008116958371f959d"
-    },
-    {
-      "code": "005380",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "c2933ea70b8db424c4cb5f7787bc07933c0b872ca2bd2d3d1529506c1adcff8c"
-    },
-    {
-      "code": "028260",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "d5fb9a6d2f169f907000da284301df62e673740544ff3d0d1819206784cddcab"
-    },
-    {
-      "code": "329180",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "96d5957bcb3912b5abd334d0970140974954c20ea5335bc722b9acce25cd081b"
-    },
-    {
-      "code": "000270",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "d76cb4a123f3fb51f8eddd6d2d16c67e365c0274e44813033ea671bc926fe959"
-    },
-    {
-      "code": "000660",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "07cc36daecdc14343989519b36042c6827ed28ed873c1719ed892e131520531b"
+      "sha256": "28983950fc234c6605488ca3d40080218080653c2bfab440768593baa0db455a"
     },
     {
       "code": "034730",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "8a9d30e8b1b89ce03302947c0a5c8b5740e7c475fcc9c78e6da4c42bc787e342"
+      "sha256": "3ef07c40b56144b5d6411548feb9ddd50fbbf982216c09351980cf4b112c62e6"
+    },
+    {
+      "code": "329180",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "d52e8303d1bf18eb1d0716f919c244b02634040cd3fe42fcb6e47c3906016c76"
+    },
+    {
+      "code": "028260",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "e8d02b1905795a9e49f684fc83a86586bde7ab33d7c415d2aa658704c945adb6"
+    },
+    {
+      "code": "000660",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "e5d52e2ae64f7d2a04b274f1237431d5ae315cf291fe91ceec68e5dfdb8b3fad"
+    },
+    {
+      "code": "000270",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "650b7fefd1734e8ad5507909ebcf9ccdaf2893f1dbeb451f5823803072ea2168"
+    },
+    {
+      "code": "105560",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "88f432b3309a69554608c5dd2c6262c10284d33878db85f16d72d5553ece7924"
     },
     {
       "code": "032830",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "5345593203ee79a84097425559f8fed3be93d3efdb9e95c0a3116785cbc0f15a"
+      "sha256": "f3bb53fa684e28045c552721e7c4d50c4d8d6d30952c95bc976d1f3e595e9541"
+    },
+    {
+      "code": "005930",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "33beb4feb0ab303a6ffc19d2b19ce95a7e7c9bc01a5ae0786eb97480747d7df7"
+    },
+    {
+      "code": "005380",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "f2547dd67370202a57761a8a6ff3bd9a65bdcd03f39b138504d2034f72ebdfe4"
+    },
+    {
+      "code": "373220",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "7c7f700132cec389c64e4aadb397becc66a5d61dd570476a11f244da04a66525"
     },
     {
       "code": "006400",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "868f6d51723da0f7abd9d923b1ccfe5276ac5d30277042461019a97cff8df285"
+      "sha256": "ca7608b1b001eecb5b9af79ce7873f33f2ff314a334c0dc6cfe4ae01105ffab1"
     },
     {
       "code": "055550",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "e47d32ecd1283d17901164b0b83906bcc164e2d4d57fbd1ac4b79e10cd1aa1c1"
-    },
-    {
-      "code": "086790",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "df17785228c793e57d9699a310e1d8092fdd9e3b07c19b8f46942b213224ce40"
+      "sha256": "0cf1952720b9ff620833b81633c976a808dfd6effe55035b8776cead49f30751"
     },
     {
       "code": "068270",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "9c47c05abac008ff89a567895d54b78b172e077a8c9cfb2bf4cf28b1964577fe"
+      "sha256": "d0e25a2c1fa799f095e65430f3e5f5bcbe320ce577bd21fa5b839409cc44e4df"
+    },
+    {
+      "code": "086790",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "91d6f29b5f30dfc2f6b47b1e665aad178bc3df428789bbf1477334d23ce5465a"
     },
     {
       "code": "066570",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "0348d8831018639069b3942d9d3892b81e0b1cf9181020a359bd24e91f439fc8"
-    },
-    {
-      "code": "035420",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "17d0f820d15c2a16242199ce172b220e868f7daf66aa84125eb3972a6c21b112"
-    },
-    {
-      "code": "298040",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "ae083e0c9da610fb6c87559cd2cc0e2ddac202d1af66445c4d874dd4ae316729"
-    },
-    {
-      "code": "316140",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "f913c8abd1ff9f6146296f8bb7718f276e63666b0003c824220d13fcb2b8fd59"
-    },
-    {
-      "code": "267260",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "749796c60b2679e59f52d425255e717e12b75ff5931f9c649449c49b088ed00a"
-    },
-    {
-      "code": "000810",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "033cccdbba0d19b59e429979735c12c5619b8e48202671f24d464418cf2f1249"
-    },
-    {
-      "code": "010120",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "8e2954acfe85d21a7ed4b917a32ded9d171fe5d2ea672323a5d71a84e6f8d853"
-    },
-    {
-      "code": "096770",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "0e1167f6ac19cf5015689e7c639e7c713aa2500d3d3b011a9dde36aa9c1c5891"
+      "sha256": "efaae3a378a6e7ac10fe5745fea69c1e93161a5d380ad989b67aa990e9f285cd"
     },
     {
       "code": "012330",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "cd220f820e5bac8789ccdc6df29cf235b21b558e5b69e261116a2b438b2591e5"
+      "sha256": "b8007803c1141d328eda04578b74c2de5bd7797abd5c6d68acd93cfffe7de9ab"
+    },
+    {
+      "code": "035420",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "cb325e1576b01eedf44164f9f4dd7c8d008c63f56693537d30edc16ccf416f5f"
+    },
+    {
+      "code": "000810",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "5af0670fc5456e0c126b138205bee3a6ad409b517079844c33122dcd539b1f2d"
+    },
+    {
+      "code": "010120",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "23834e38a534789041c34f118cb1e7a491a278607b52ec53cda4a74204482b00"
+    },
+    {
+      "code": "316140",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "3ff030912e6f42a56987788d1f0cb4f8b292063107afe41a0ca56885fe65b11a"
+    },
+    {
+      "code": "298040",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "8d005ac7b7ef53b71644458c6767e93d244ba0066e78489d34bf9710dcc76ab6"
+    },
+    {
+      "code": "267260",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "dd7fc9ccf21a7ead2417e729069ce2310949c9f930d0d3f420b3b605f07f86da"
     },
     {
       "code": "005490",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "e2d571da7e6d2295feb0090f020de283e1bb422fc554386d07b72501e88e0bcc"
+      "sha256": "3b2b6e23d1a4481660f3bcde694617ee48a5a73da845bbac1154c308e4a60e6c"
+    },
+    {
+      "code": "096770",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "6e96c516057b16fc6a44c478c2460c62b95e0c606c0d3935e7d384a222a8f78b"
     },
     {
       "code": "000150",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "1eee4a24febf279b228902b610996d8125c9dd5d2cc0d12f313361f17feb3f6d"
-    },
-    {
-      "code": "042700",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "10c98a461fdd14b1a602419dbac9935dc6f8e0d305ffa8936233c2d0ef808dac"
-    },
-    {
-      "code": "010130",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "c7b73b8f24be7002f47e7f0e287b71e4d7446ec411b0d73b1e3a7fe275211e0b"
+      "sha256": "7db6246d610ca699cf9cb782fd337166e36836b6357efa6497c1517f8814275b"
     },
     {
       "code": "009540",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "4f9b86a3f6164409dec832bff58a366422c92ba349b5c44eb4e5f7e5e80830f8"
+      "sha256": "e40dbc228902d7a7bac85f3e2f80d4d65603e7acca2727aac5e4e92adf997c20"
+    },
+    {
+      "code": "042700",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "b57ad961cd0f3d786eb125beb5c80cbc82b1484858127910afe9fbf294d22e03"
+    },
+    {
+      "code": "010130",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "8516821bff0d5e396bad3597ef3d1215facce20eaa48d5ac42873b03eeacf077"
     },
     {
       "code": "011200",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "9387482cbf4a7513f38dbaca258512e0a57cb48d55294932757e0018a45e25c4"
+      "sha256": "f7648468b630eac7c11a476926f567a2fdc95c6b6026923e5c843498dba0eba5"
     },
     {
       "code": "015760",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "79b75f145a03e8923ad4e5528a76fef78e62c33abfa4f96e9b0a18e7c7b4237c"
+      "sha256": "9b20a1d5ca6c3e4e0016ecfb3bbbdd47687944243039780c54a263d3aefef542"
     },
     {
       "code": "033780",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "1c62a3ea7f0788a7cae3ddbfeedbf2576d6ee06632d7293339419803ee3d0be6"
-    },
-    {
-      "code": "010950",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "77b48fa8ab88c866dfd7547e13f5d6560d3c3b7449b8f034a4ddc82e2572d8a4"
+      "sha256": "14433b8bd7db5181d5e83512a05b26e35237933217ab4e083ff038733b0c5de9"
     },
     {
       "code": "196170",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "f62bd3694ed43dfb6dc5b357344e74ace6ffa5bb72d44ecef21ccd426ebf06bd"
+      "sha256": "b0bc15c9538a06576466bfc3f4683bbeeeaa6a45a10c54efaa0e52e39a367c8b"
     },
     {
       "code": "051910",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "98b03460489dc413080f643c83ce86b6a5b71327c67ac32e4bb168caff9756ff"
+      "sha256": "de3d022ad4454e31e9a0c5a6b1a102109de5ada6459e74d09815b143f9761070"
+    },
+    {
+      "code": "010950",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "d7c8165c9db4748669ebb25d3dab9e79f6ca3242f16899505582cfb334354e92"
     },
     {
       "code": "006800",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "c79c5a6148286a62c3e7515440835f6f0f25da3da6167dc2f1d74a6cebfbd167"
-    },
-    {
-      "code": "267250",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "0b61a5150df7db0c7855537ceb4a7df5f9019a5cf07e4baf8b44f23dc46fb156"
-    },
-    {
-      "code": "018260",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "ac9839cecd726ae924f8b80e1b12ecf7ba4132c751890b6ca09cfa0397b9e769"
-    },
-    {
-      "code": "079550",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "595da22c77c29403179a87e53d9f0eb98798a248ecb665135f6d4c6fccce0602"
+      "sha256": "cea90bfa391f6cbb4c385a8a1840590431a9a471609ca934c71a14ba6017ff9a"
     },
     {
       "code": "003550",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "5f95a6dd3c1be8baf63deceb55e79cd5e6e95cc92cac0cbf65df8b4e00e8ea6e"
+      "sha256": "93788aba1bdea1626d92fa3737fef147530906317da0cc4f7cafa7a0e2269d7b"
     },
     {
-      "code": "003670",
+      "code": "267250",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "af09b196d7d196876b4ff77fc5e6fed40d37c2fe6c8de512f3a5be80ab284aa3"
+      "sha256": "9973876589cefbc426c43bd9b5d29ea649d124eb92cd57e8857d941135358fbe"
+    },
+    {
+      "code": "018260",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "9324d13c7ffb2bc7b9cb6c9d2bb02fb18525ded3b443837b18cf15b19a49ff21"
     },
     {
       "code": "024110",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "845daa851796e766e214e81498adda9fdf9238cfe81e475069d7c17b725252f8"
+      "sha256": "fc98853a2b79bc4ec1db79b89227a587d519435bdef7498133a1d6857c5e18ad"
+    },
+    {
+      "code": "003670",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "650bea63640060f119add20e1b4568d94649bde4ff9fbc09834e571035d359f3"
+    },
+    {
+      "code": "079550",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "0715d1aad4a9e27906302c31bc2a42614f6875ecd555efd42c0c8b585f18448b"
     },
     {
       "code": "035720",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "90ffc21d5acce515e49af9e8f8a191789a6315627337fbde3e86c434e167f831"
+      "sha256": "1145127c99e7e8d603c0e32f9ee06cd4da833d952f2a9284c668943e58b78806"
     },
     {
       "code": "278470",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "2a4499a5f97191629ca7aa7da2b16e0705d3f08db054fb599a9cd52d08141396"
+      "sha256": "97e2a3ada026be9a6760d221a1b5cf60c83de0ac28d289dd395c13c14daee03e"
     },
     {
       "code": "272210",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "93c85b1c717298810b8f0e420eec09249432569aaa7cad9893a8dc022538bd67"
-    },
-    {
-      "code": "030200",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "c51ef09674b22670cf720417f3cce8d79be62865d1c20e87192c89eec57a974d"
-    },
-    {
-      "code": "064350",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "2028b02ced81175eb25ca1e0dd1aa9d9bc1be6ef4f7eea14d1b4b1393c195e93"
+      "sha256": "660262bb4d7439dd751b31ec9477238d96141f440ffcbbb4f9abcd6bfc0dc4ff"
     },
     {
       "code": "086280",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "6b7c64b793a24d5ef41b2cddf62df6e91c99f5d93f3525ff6d331620b32c06a2"
+      "sha256": "9f0c07aca54693194a532afac0a85939b77ae0f0c438f335d4e811ac2adf30b8"
     },
     {
-      "code": "011070",
+      "code": "064350",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "ac619d216c222ff6540e3d182e441d74057dc497e9547169c975c8477cdbc2b9"
+      "sha256": "b83436d5e072b3570a99c2e3224ee3c4f5528b8cb12cccc10a9dc1d90ccf99d2"
+    },
+    {
+      "code": "030200",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "31b16119933ecc21e3f52322040bccd00e04597a93d322377a180a97bfde40a8"
     },
     {
       "code": "047810",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "db89f140268aabc79aa916b63b486a4b7822860e9362517054a04d08ff34adb9"
+      "sha256": "45ea8e0dc3302bf1a52db83ee80d591181c56d133651d65fb40d61e62d3b0279"
+    },
+    {
+      "code": "011070",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "71acf0e4f6ae32c03ad53c41bb23fd0bab8c929cbab63454ba983f97e7979f4a"
     },
     {
       "code": "005830",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "367b0152772eb1c29f9d68c2f43b7a253311d4c0dc5d3ba80148b696da6bcc1e"
-    },
-    {
-      "code": "086520",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "951c36854a09a1454075a561edd9b56e172010f47742fbbcc7861b16e01c769e"
-    },
-    {
-      "code": "003490",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "23255967ccb0d6d3ae5899fa5da239bf67b16596ad4d01a7b337553da161d9d5"
-    },
-    {
-      "code": "307950",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "3531cf7c6138e4ad30548c47c313dcc030618c92b94c074209b05f1e1f3419cc"
+      "sha256": "65fde32c654225699701361d0264de774efea5f6d54b93d1fb2ef734700148ed"
     },
     {
       "code": "443060",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "d07004470aeca7fe819c351102776eac7592044bb97c9c76f447873147fa1493"
+      "sha256": "9078ca49095ec0669b5ece96817f7846d97a85b3640328b2be49f6bebec2739a"
+    },
+    {
+      "code": "003490",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "ae9155c26b7c8a058717c9898bae5171fdc962b1c6cc8f5fc8555525b60c70ca"
+    },
+    {
+      "code": "307950",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "84f7cb0546f39f91fc0899bfe3a69e2c49deedb95292c1df18338c5ba21a160e"
+    },
+    {
+      "code": "086520",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "bc372563123fd01aa27d7dcad76e34477fb6f70b78abd76715f729e867bb33ba"
     },
     {
       "code": "071050",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "098c658767ced9b47477191427722326a110f3c6d8cf2e11198084d463b7f2fe"
-    },
-    {
-      "code": "078930",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "cdaa2a8f734c5c70017954e3bcb2b9d9d885217fb40b754d427cf5c5eaebeccb"
+      "sha256": "21a8d19486e420c0dbd743e4b3c6fcdc1b9db4bfaeec7ed87d17374144cda3bf"
     },
     {
       "code": "247540",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "b90dd1c170910872cc7779919f4c37e055f4dd0d6d5f136ad253156d5aed268a"
-    },
-    {
-      "code": "036930",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "f463ece67457e4275492f6ee6b5cce0dbf6b64539f45288df055908a263e0c97"
-    },
-    {
-      "code": "323410",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "00dbe69d792255c398e44497e5d55491ccf8b94a31a77dd75f6dd1ab5b01b379"
+      "sha256": "136ee9191a008d9155c9296333636a2a380a9bbf81413faade4f033bd79c84ae"
     },
     {
       "code": "006260",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "ad1ea6718d297be9917035fc13ddebd425b73b79e2f81d782b4c7af60c97e4cb"
+      "sha256": "c1ae0ed0418bf6d0fa2ac402a6c558815207d6b4c30ff8f7583a558abc62a57c"
     },
     {
-      "code": "005940",
+      "code": "078930",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "7c5037e593278ffeb52b14ef53977c14bb8d2ec4d27bb442897881f1c5da9826"
+      "sha256": "6fd749f46ad1936d5a834f3490aec689de35a03e3292c765d7b9e6aa80f1fa6b"
     },
     {
       "code": "028050",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "1780e699fad09f131486f5e79225fc503299f2d30d4e9d487e2492adedce0534"
+      "sha256": "6affc55a1a62629d0923236c186c50a419961ad68407b5fde2724225d35184bb"
+    },
+    {
+      "code": "005940",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "cb8dd5f531944e47a75e64040f653d28af63a749c47a63dffc82bcb1e1e4d787"
+    },
+    {
+      "code": "323410",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "2d2895b59417d8fa4af30202119c96be025638c3b065365203cf4485bbcbbb6d"
+    },
+    {
+      "code": "036930",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "61a1c9dabd939552ec5db4ac119befdcbdeb5040a3702ffe992b391b787d227c"
     },
     {
       "code": "000500",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "3ef6df97efb54fc518914e1a944261b618b23d1d34f34abf4e49100c6317f96b"
+      "sha256": "01d433f6ec8f085cf9060ad1af75e95edfaa157d20c78cf2412989926a5b333a"
     },
     {
       "code": "180640",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "e3c1d74212beaad1acfd27f4441eff64adfb292ed8c9d09487bf7afc5d2e4d13"
-    },
-    {
-      "code": "003230",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "8d0a1ed536b905370d004cdf9e777fefe88017f513add4d40f91c9ef1c9e5fd2"
+      "sha256": "62dc764b3a54bf7a13e3fa05f599044bf279c2d7779788ff55cd427c9182bcd0"
     },
     {
       "code": "259960",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "904c987bdec28416e379948e43e03bba80ba95972a326df259188406b217008d"
+      "sha256": "a0594329f8d43505f6c67b9b4212101148b45472effaaf1b5b4dfcf4a20b7d0a"
+    },
+    {
+      "code": "003230",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "694b0675bf2479d3f7f3b9723f0a1a082857d509771ae2e07da146ec3dd4a3ee"
     },
     {
       "code": "277810",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "f23683b9d4320c5d671716c71aa9f08dafdd5742afc18fbd028136f42927c1a3"
-    },
-    {
-      "code": "090430",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "b56f506751b84d57eed9de343612df21678172e0d8a6ba3fa43cee59385f777f"
+      "sha256": "2cb618f59de5a74be5d38d751cf20cf545b3a7be34a400aa173063db160fc462"
     },
     {
       "code": "0126Z0",
       "rows": 204,
       "last_date": "2026-09-23",
-      "sha256": "d6b2d6defb744b234703f92145deebc84ff149136b072d348c4211acc21e1890"
+      "sha256": "f2f341fb658712c2f369a484d638e2db5a319c8444c10a844acb7d9abd22fd95"
     },
     {
-      "code": "016360",
+      "code": "090430",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "a19abc89e7e371ef984d07b2d285d78cfbe582816c550f794bab5a3dc1a2315c"
+      "sha256": "ca6c5bc2ab89c3dd51c1a5c5d070bc2624e3ead789bd40303343d0e32abb9be7"
     },
     {
       "code": "047040",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "9a38536ef6e4575246352de29bd76f2d9756cddb85bfe4da92afa5c1e14be003"
+      "sha256": "4790be519cb13921423a7d50ef603163a5b412dce0938fa8f451cc07fc55d804"
     },
     {
-      "code": "021240",
+      "code": "016360",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "8bebb2b14250fdd958efc2c239db488a13b217355681768598d941cc2a6e55fc"
+      "sha256": "8f5e0964e931e30fe20625f85672d69ab2106b13416966f7d8df6a2fce00590c"
     },
     {
       "code": "161390",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "07cc86bb342e3acfbabf9103aa0c96ad1bbaeed9e5f0322b99d75a434a513521"
+      "sha256": "48ffeb1aa85569416a1c6a117701c6511ff10ab99dfc85227aa9f533b76ce4b9"
     },
     {
       "code": "039490",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "2407c2ae2fba62cc6e9fc27b3bd0850410b100139d4d0fcf658ff65920197768"
+      "sha256": "f191538f73b3e58b1d6ae2d643ea39455010f5b248929071f1a36a508908ba59"
     },
     {
-      "code": "000880",
+      "code": "021240",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "972e2026f6a9d70bbce534579fe501e7154837644913cc9b4f48d902e88fed35"
+      "sha256": "19e086a54d5912fe92edd19b1d725337673ab73f1a3642c322cf115a4c5a1856"
     },
     {
       "code": "352820",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "87db418c04c64af2d655403a97e98e052704835d099180f23af68814a6c0df48"
+      "sha256": "4368c91cb2a9793d35f24f1623b88d57cd1dace04646bcb4765b3311e880955b"
+    },
+    {
+      "code": "000880",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "558d0e6a6e573f0d3bd34fc11c153174c115aa2f474310707d52b5460465e73a"
     },
     {
       "code": "064400",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "22445568113345786f5228eb708ce6f9f994d9b93a02eff0416ce78b5290ef65"
+      "sha256": "ea9b2f0649e177a1cd0028532640ad38e7b2686ead18a75213e33f365f8f4df9"
     },
     {
       "code": "128940",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "6a4a1b58d8496a179b7cf06c6372281c1af4ed6017ed9f54a49d0dedda0b0b23"
-    },
-    {
-      "code": "062040",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "05ec85d7db4782c5cf55a2a68edb8f32d28e41076076afed8782f41580c289f4"
+      "sha256": "5c089ccbb060f71413b76bd077869a111f02b063f31da88f1707d8dfa9d14c5d"
     },
     {
       "code": "240810",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "f8ac91e826602dabe9e28c532e382dce00fb7710f6121772b7b1302a9d2cd409"
+      "sha256": "90887928a843c2f28b4dc54fa05ab9a3feb25cb72d61daca2b435e77a5e11c31"
+    },
+    {
+      "code": "062040",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "a8dc72ebe2be5a49e981189682edec15a2b39cd8ec9a3ecc78fcc038e44855fa"
     },
     {
       "code": "267270",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "8d4f3726a0c35620f46914f981b3b88597b1312b2bbfe464e5497a6317b1978a"
+      "sha256": "bcafa5f05a18f6a9ac9d4e1ea620d1ee2e949684c6df07dffe6f04c0fb7fa7b2"
     },
     {
       "code": "032640",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "e9e6beac3ff61e16d6258aa71739367d9f4d2ec89196933eb0e7f83ed86705d9"
+      "sha256": "c3f3db3596ca88595ac4eeb0e84c7bc347112f5cba17aef52535c63ec16d1288"
     },
     {
       "code": "001440",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "3fb0d348444cf37c16867a5341b7dd1a61f6d33687ec52c3d7c4dbca29d9ebe7"
+      "sha256": "1598fcd2d1a87b2e670cc0febaf2f2291a9de39d00453596a304dc1dfafa48bb"
     },
     {
       "code": "326030",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "26c28cec828ea7d2fd472378c5add484ba2331a216be0a1a0a73b9ad6eba2e00"
+      "sha256": "7bf59906bc1678efee3bde1011c418e0ded9bbcde8605cd4b355cf709a34492d"
     },
     {
       "code": "353200",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "8944b53e05d1fed1289398afa1fa32263eae7eede2de8d0b1846269655ee6fcf"
-    },
-    {
-      "code": "222800",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "a18ed03eaeabbb8303dc5fedfbd1991afd4fc8d25307b0823993091be717efd1"
+      "sha256": "2a64d448831591ee5f97da1fa2c7ac900fe231346dfe436f0073ceaf4e9af2fe"
     },
     {
       "code": "039030",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "0f5166a5729a13ee2b4ecc2a87359b79699c6e7195e0055a1033a56387d4a64e"
+      "sha256": "c171a8336374df394957d37c0b988e751921a9d866dac163f26b8fe6b1807fb9"
+    },
+    {
+      "code": "222800",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "1cd14a7992dcbd8657c65552663df2936c7001fe1c508564bff30d6fa40accc4"
     },
     {
       "code": "000990",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "fcf80e95d98e3a3998f1ec0080996b50066c53a5669c7cf8773e2c1098745c60"
-    },
-    {
-      "code": "175330",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "aedc73def353a85fdd643a6ee446db6761008d65d4247ed7415af05e9c71e028"
+      "sha256": "227df43c7a8e589c7dafc4e275bf3b0562fb62852e7895088513fbbd7b9deadf"
     },
     {
       "code": "058470",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "e833b23f1a6850037f4760eb396397a2c539e67dfbc8f52f2297a82c7e2fad48"
+      "sha256": "0b74a7f3af421b916a25c1496e782616270d88a4f9822ad34e447f84178ac7ae"
+    },
+    {
+      "code": "175330",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "cbd0e64ab11bca60d4267e05335a536bc3a78604519545078d9b504535f23565"
     },
     {
       "code": "241560",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "08025665c1a96205b1e7c6bf56f985315056bce1a281ed599b5edca823684089"
+      "sha256": "8260e00e53f92e6defe4ac2160752ccdb51236dd2f89edf8b3dfe1a88b202c80"
     },
     {
       "code": "377300",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "b1f1c91936337c24dfae1d606caec082829f097840dc9744623837f300dcfef7"
-    },
-    {
-      "code": "052690",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "caaa68335ba7bea28e6415d1d1d2600daf36f9c22720676fc2f9547f91b18309"
+      "sha256": "00a85c3fa1d46ea0675163842a71668f455251fcbe15099feb26b7c489d7d01c"
     },
     {
       "code": "000100",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "4d2645aa975bf2b345d59b5e685a08b7d5f9d78e2a4d2298fbab531e01784946"
+      "sha256": "2724f9ed509f8ee36384419d0c6952322f70472bc25ae0efae5e3c5f23857ce5"
+    },
+    {
+      "code": "052690",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "d3e0e07c69c30dfb35fedd902106aaa5312912923ec385eea249f5350a9c3191"
     },
     {
       "code": "088350",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "c91b14f3eb97e2e38f1fdb99cdabf7ea13e8f7259ea23202a56c43b60db7a3bc"
+      "sha256": "748de12fb2083f5f69fe14ad96db4f59548ac9f136533b8b6ac59e6f23ae722f"
     },
     {
       "code": "029780",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "7b9a2824aa0643cbfe4be120fbab083f5fc0a380dafd7b705d2477e4fcba91b9"
+      "sha256": "1983216a55f3f58669864d05ffc93e3443f576ec346a424b1ba0cf537ac586a2"
     },
     {
       "code": "138930",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "7e391822fcf6dad4cc332b2b1d3817d7cc17e7e242b97fd388f3c52bd117b187"
-    },
-    {
-      "code": "088980",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "ff86247bcbc7ca957d949b66082beb9f8f00decc0500e508ee1b548ab4e8ecdb"
-    },
-    {
-      "code": "036570",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "2f508004cb464fde7e3d0966f946bf6925b6eea1fbf095d8d4ba22f3450f7461"
+      "sha256": "d30c0cc78e095cafd308de0befd696d89b182e286495a1213e991fa5de044b74"
     },
     {
       "code": "454910",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "fe305581812f41697fddb691359db6b4bd575218cac6903812aed9c5fc599fae"
+      "sha256": "6f54c1eb485bc3c0b481d423479b8c17bf9786734a47e106758bf431c30b9047"
+    },
+    {
+      "code": "088980",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "31ff952981beccc5792a4ba460be92fdca940165073e6f43709a42301e52d2f4"
+    },
+    {
+      "code": "036570",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "88eca351cc7dbc0fab305e5535c7562d2e6cb2dbc13023474048ecb9df374006"
     },
     {
       "code": "403870",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "0796bd0a8f44cc6a088680d62884ab1d5b32c11d5831d314df69c6ef996cbdc8"
+      "sha256": "d226a37b60d8db3b8d4d6352946646529ee5673d1bf3561b9fea4ae3833d0e86"
     },
     {
       "code": "095340",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "51097aa106b4854fccfe18945c86ce459c5ec48f09163248a53bf0f32bf91f22"
-    },
-    {
-      "code": "066970",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "703c5a28cd7b66470f7c34168bc2c888e06d58719d400456bf820edf88cfdeb0"
+      "sha256": "f00be60ee27149888a0da1a1fffc775ba073318dd6b9ba6b9527b825772f20e8"
     },
     {
       "code": "108490",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "204cc2841537fc0ec52d5b07939b3a67b9101cf3d27d8c945e1506c573178bbc"
+      "sha256": "2f111d4f8d3934fed662a9d27b7dd4b635b9998676fddd7e6deb8eb0157020a5"
+    },
+    {
+      "code": "066970",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "9c9152946c53be972e06cdf1d0a7245b1812716d6652d8fb6a128c49794d4f7d"
     },
     {
       "code": "011790",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "967cabf462180ae97c942bf595db26fe9bd2b004a7b75f7b44111b7d91aa952d"
-    },
-    {
-      "code": "271560",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "3106b7b801d97c7daef47a2674494cf4f798c86ca3ad96ada14d5d7085913e55"
+      "sha256": "b774023aaee276e58a9526b5990db737342f2e33b741c126a15e94580d80475f"
     },
     {
       "code": "051900",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "898f62d7a849615221142d7bf293a609400e0059753bc2571e7e9f747b440a61"
+      "sha256": "df620c083bbdd58a1de09cf3410bd7149cd82f546a3df2f3e420af943107523c"
     },
     {
-      "code": "004020",
+      "code": "271560",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "476ec683d4065e5c2c7bf02961596c8254da68850fb7ab9b68890dcd460d0f7d"
+      "sha256": "94f539bedf8bf44c0db74eac91fc5f1e58201ced2bc30ae98f2b169457d38434"
     },
     {
       "code": "028300",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "07225b84b8983fc99c573a5df9387c7188a45eb976ef8ca01aee91f3f704fe87"
+      "sha256": "f55624ed5aa3da6a14a502cd2770ced811af6ca172e03e4c71104614cdb23f74"
     },
     {
       "code": "319660",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "2c6e0e5b557a01754e910114087d2acbcd88ecb5a317181e955d5740f6dc55a2"
+      "sha256": "e6b7ea8931e98cf771315141e680533751aa645588ea6640d075ac7d437f60c8"
     },
     {
-      "code": "002380",
+      "code": "004020",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "f38ad0b97a18b0752ea2006d9517101d6dbf36a78862a7f0acf97bcf1cc898f4"
+      "sha256": "1e2c8fb2ac3f593a695c9bc1e7d711aba2e8ea7ea41b44485f707f89e78a5db2"
     },
     {
       "code": "440110",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "97673684c05340f5555caa38f2ddffae0da1f2f89861cd134b9d138904197be4"
+      "sha256": "2be8bebf92daf5c70ffab6d1da05573377768aa0b94e4cef30231ceaa5f3a7db"
     },
     {
-      "code": "082740",
+      "code": "002380",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "a6dea65f6dbbcd72439671fcf22001369b9d4156cf698b2e93a473387ec502dd"
+      "sha256": "ac55f1f3b7da90dc8a652834f5ed050476cb1b7f08cd9b962ebc47d57dc0fa63"
     },
     {
       "code": "001450",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "327e52d07bea7b0ae1e288d669cd5e1c476c91c68d8d485ce84434c67de4036a"
+      "sha256": "e2b2ff729745b3df8bc620f3062a01d78ebeccacbf7d3263bd89577d399e935d"
     },
     {
-      "code": "103590",
+      "code": "082740",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "bb9eb52cdcf7d51b3e7e9879d49898ec2b8639f2f6249488001ba74625267e16"
+      "sha256": "4307bc835a8f8892293cd5c4a5dd8cd8b752be897549978149e14cf9d5574a5d"
     },
     {
       "code": "000250",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "30ffdde7854db8bb941da16f3b269e358512cfeec090e1a64707ae44baf9f8db"
+      "sha256": "1f6a9992b6aa12d56bfab827a43a9072676a7bed426af1bd108d916cec3c0fc6"
     },
     {
-      "code": "084370",
+      "code": "103590",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "c467d1b43b1e93334fb61d21814bdf69ea85b7a4f0fc2087ba42d6be56bf4528"
-    },
-    {
-      "code": "001040",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "eb316c9fed82675546a581794c09cede79a3b9a2d7b71745c70db2f86da1a166"
+      "sha256": "3977c19ff3651df1d4a18bb8724a550a326760695184e669782d39f50711342f"
     },
     {
       "code": "010060",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "a74c9bb6c60ab2fc20307ba1b0847dc2eb26ee2a26e8a8bc890e970bf39c7dd8"
+      "sha256": "d9e40b33290fcad4959e7b98d859bfd3c34af4bab4b5a532bd7a66ddf21eac6d"
+    },
+    {
+      "code": "001040",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "3daf571870b4e80890e279e0ccfedbca1a33039301c2dadbb6ad1994767c1388"
+    },
+    {
+      "code": "084370",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "84900758c678cd350857bb57293a210bb3f03115710913a7d638d4a277ebc4d9"
     },
     {
       "code": "031980",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "bcbc12f7a0d77cfd9788738a0d2b7ece2c4a64f2173515660b437f41ffa67436"
+      "sha256": "c957975a2613d9bc796dd0e4f885837416a8a4f44ab991dc450ca9c395cf8275"
     },
     {
       "code": "008930",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "6cf471f8d56950b0f5a7b44227620b4a90b2e25e1c27401c7fdd6f1d18b956c8"
-    },
-    {
-      "code": "161890",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "1e3a978a209301869f0d6c02c784ffddcb8d87a342aed0c87f54e6f9330e1199"
+      "sha256": "00dee886b56fc077ecc5cc3781697d363f094d98837818f75ac97f8d5609c5b7"
     },
     {
       "code": "087010",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "e6a8d7764cd5c37964e5249d1afc16cdd114990ba00a96ba54d2ce2a9387ce69"
+      "sha256": "84b3265507771dd17a2ff0b25789a7d4a4c68024ec8dd1d548ba4007c90f666d"
+    },
+    {
+      "code": "161890",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "913ab7ea2c26751812d6953eef0356acc7905e992c0dd87934f3490b61bc1716"
     },
     {
       "code": "214450",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "9ed4ac47cd16ae5130eccae17cc0104dd35a62f6d85b86b92e83edb1034807f5"
+      "sha256": "b3bebce8ab8fda86dd555e0b2bc3ef708fb6627b7678cd3e042c633ece001c91"
     },
     {
       "code": "018880",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "2ee5556601d939d0c2545d379785067429aa87fe17a5297d8148c6195e02f83c"
-    },
-    {
-      "code": "004170",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "1aa050ad431c20601adf3f48ce378bb13e74a1fd0b2cc6125f7911a0904416e2"
-    },
-    {
-      "code": "131290",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "90501274c4147c1b7b8d6e67b15afe6e51cb67c779c9235ed737d242c4cfb775"
+      "sha256": "98f2002c508ac8f159629be0550ab61fcb9dad7ecd48127de8e9c5701d905d61"
     },
     {
       "code": "036460",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "5f9c6010a7ded39a93a22743b67acee29316a6ec0ef2473e584f1ea4754e94a1"
+      "sha256": "11add0f0f0bfa8647f74369f98e43f12bb4b23ede98aaf166582916d0ace6648"
     },
     {
-      "code": "064760",
+      "code": "004170",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "1f670ef55bf0abd12b84e1dbb4a6c7393d606a73b24373732e1f50aa3dfc619a"
+      "sha256": "8c88abcd2b163adcc2579159d3dbd5c5ecf4d7041729b1435765e3b7973a26d6"
     },
     {
-      "code": "336260",
+      "code": "131290",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "25542d73c7daefeb207309b44500a50d1bcea3ad8e410c220405b4509e6d59cc"
+      "sha256": "24155d374e75f90d8e8256559caffa19683395dd0c1c333d718818cbca850bff"
     },
     {
       "code": "375500",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "921edae4996faafe50c14ecf3f4c5510ca38ae528f492622b28a3852dc56efde"
+      "sha256": "f0c244a7a64231459d4013c76d44faaa49132b003ca9603fef969eef3c95ae4d"
     },
     {
-      "code": "111770",
+      "code": "064760",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "de508a7180e85eaf60018a6df7c094e6b3feb2fa307a4661b2b14d70d50b205d"
+      "sha256": "b7478dfb5edfa09b2e0d6a21edabc9ca35da3eb857a160b01db5f7f547167420"
+    },
+    {
+      "code": "336260",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "6fa7b32818cd418129e4b49677c0e797caad9084d6b310b53c4e741e309801fd"
     },
     {
       "code": "012750",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "227cd061b1bc9e6a6fa16ef92fa18532cc69e7af19ae75f8068d46f445b96ee1"
+      "sha256": "221452b061cd8eea92c6a49ce493280834c0d749af3858a0c6f001c89f5b2759"
+    },
+    {
+      "code": "111770",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "5d1ee0039c054977511f93dbd785c313ac7012a08233a6de0974a1e1b7837e03"
     },
     {
       "code": "067310",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "76f7f0371bb02d5109596fa526d03818f77d4697e153ce15955838eb3aa44f2a"
-    },
-    {
-      "code": "192820",
-      "rows": 244,
-      "last_date": "2026-09-23",
-      "sha256": "0d9f519f148d2d01177631006c922b22480d017c4080b6ea07e7a973f799bd50"
+      "sha256": "7f3a3be77d1921685d7d89b4bced3f9f4933e2d133ef0af0d28705654edc9070"
     },
     {
       "code": "035250",
       "rows": 244,
       "last_date": "2026-09-23",
-      "sha256": "6ac922c0624db6e6664330d801afb30d02922e3470da659b93c44bfff98bc9b0"
+      "sha256": "e04e1d972a84c38ceca5534d78d895849f957248a34728d9600c58dfdb99e8f8"
+    },
+    {
+      "code": "192820",
+      "rows": 244,
+      "last_date": "2026-09-23",
+      "sha256": "5362fffbd8f68e932c0d9286b8d59e342068171392762a05444ab3858fe0af3c"
     }
   ],
   "failed": [
     {
-      "code": "012450",
-      "error": "012450.KS: invalid daily OHLCV"
+      "code": "009150",
+      "error": "009150.KS: invalid daily OHLCV"
     },
     {
       "code": "034020",
       "error": "034020.KS: invalid daily OHLCV"
     },
     {
-      "code": "009150",
-      "error": "009150.KS: invalid daily OHLCV"
+      "code": "012450",
+      "error": "012450.KS: invalid daily OHLCV"
     },
     {
       "code": "042660",
       "error": "042660.KS: invalid daily OHLCV"
     },
     {
-      "code": "010140",
-      "error": "010140.KS: invalid daily OHLCV"
-    },
-    {
       "code": "017670",
       "error": "017670.KS: invalid daily OHLCV"
+    },
+    {
+      "code": "010140",
+      "error": "010140.KS: invalid daily OHLCV"
     },
     {
       "code": "000720",
