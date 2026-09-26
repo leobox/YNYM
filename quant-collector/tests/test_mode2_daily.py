@@ -80,6 +80,9 @@ def test_panel_stale_data_preserves_plan_and_readme_sections(tmp_path):
     panel, new_state = render_panel(datetime(2026, 9, 25, 16, 20, tzinfo=KST),
                                     date, frames, {}, tmp_path / "paper.json", state)
     assert "오늘 날짜의 새 완료 일봉이 없습니다" in panel
+    assert "2026-09-23 기준 신규 편입 검토 가능" in panel
+    assert "2026-09-23 완료 일봉 기준 상위 10종목 · 과거 관찰표" in panel
+    assert panel.count("| 10 |") == 1
     assert "SUE 점수와 실적 촉매 핫스왑은 운영 판정에 포함하지 않습니다" in panel
     assert "기관·외국인 순매수를 식별하지 않습니다" in panel
     assert "수신 원본·실패·해시" in panel
@@ -89,6 +92,18 @@ def test_panel_stale_data_preserves_plan_and_readme_sections(tmp_path):
     update_readme(panel, readme)
     text = readme.read_text(encoding="utf-8")
     assert "legacy" in text and "old" not in text and "모드 2" in text
+
+
+def test_stale_session_shows_dated_rankings_without_creating_plan(tmp_path):
+    frames = {f"{i:06d}": daily_frame(last="2026-09-23", scale=1 + i / 1000)
+              for i in range(120)}
+    panel, state = render_panel(datetime(2026, 9, 26, 16, 52, tzinfo=KST),
+                                pd.Timestamp("2026-09-23"), frames, {},
+                                tmp_path / "paper.json", {})
+    assert state == {}
+    assert "2026-09-23 완료 일봉 기준 상위 10종목 · 과거 관찰표" in panel
+    assert "다음 거래일 시가나 신규 편입 확정을 뜻하지 않습니다" in panel
+    assert panel.count("| 10 |") == 1
 
 
 def test_panel_current_session_creates_ten_targets_only_once(tmp_path):

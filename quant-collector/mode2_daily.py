@@ -137,7 +137,7 @@ def render_panel(now: datetime, decision_date: pd.Timestamp, universe: dict[str,
     triggers = [] if missing_holdings else manager.check_catastrophic_stops(str(decision_date.date()))
     stale = decision_date.date() != now.date()
     if stale:
-        regime = "새 일봉 전까지 판단 보류"
+        regime = f"{decision_date.date()} 기준 {regime}"
     dates = list(breadth.dropna().index)
     previous = plan_state.get("last_plan_date")
     last_idx = dates.index(pd.Timestamp(previous)) if previous and pd.Timestamp(previous) in dates else None
@@ -167,7 +167,8 @@ def render_panel(now: datetime, decision_date: pd.Timestamp, universe: dict[str,
     ]
     if stale:
         lines += ["> ⚠️ 오늘 날짜의 새 완료 일봉이 없습니다(휴장 또는 공급 지연). "
-                  "위에 표시된 과거 거래일 기준값만 관측하고 새 계획은 만들지 않았습니다.", ""]
+                  f"아래는 {decision_date.date()} 완료 일봉으로 계산한 마지막 판단입니다. "
+                  "새 일봉·체결 가격을 추정하거나 새 월간 계획을 저장하지 않습니다.", ""]
     if not ranking.empty:
         lines += ["**완료 일봉 팩터 상위 5종목 · 관찰 순위**", "",
                   "| 순위 | 종목·평가일 종가·상대점수 | 수치 기반 판정이유·출처 있는 회사 참고 |",
@@ -203,7 +204,17 @@ def render_panel(now: datetime, decision_date: pd.Timestamp, universe: dict[str,
             lines.append(f"| {idx} | {names.get(code, code)} ({code}) | {px:,.0f}원 | 10% |")
         lines.append("")
     else:
-        lines += ["> 월간 검토표: 완료된 최신 일봉과 충분한 팩터 후보가 확보될 때 생성합니다.", ""]
+        lines += ["> 월간 검토표: 새 계획은 아직 확정되지 않았습니다. "
+                  "아래 기준일 순위는 관찰용이며 가상 체결 기록이 아닙니다.", ""]
+    if stale and not ranking.empty:
+        lines += [f"**{decision_date.date()} 완료 일봉 기준 상위 10종목 · 과거 관찰표**", "",
+                  "> 마지막 확인 종가와 상대 점수입니다. 다음 거래일 시가나 신규 편입 확정을 뜻하지 않습니다.", "",
+                  "| 순위 | 종목(코드) | 기준일 종가 | 상대 점수 |",
+                  "|---:|:---|---:|---:|"]
+        for idx, row in enumerate(ranking.head(10).itertuples(), 1):
+            lines.append(f"| {idx} | {names.get(row.code, row.code)} ({row.code}) | "
+                         f"{row.close:,.0f}원 | {row.composite_score:.3f} |")
+        lines.append("")
     lines += ["> 실거래 주문은 생성·전송하지 않습니다. 수익률은 후속 기간 검증 전까지 미확정입니다.", ""]
     return "\n".join(lines), plan_state
 
