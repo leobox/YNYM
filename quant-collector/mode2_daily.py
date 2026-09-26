@@ -155,25 +155,17 @@ def render_panel(now: datetime, decision_date: pd.Timestamp, universe: dict[str,
         f"> 일봉 기준 `{decision_date.date()}` · 확인 `{now.strftime('%Y-%m-%d %H:%M')} KST` · "
         f"유효 종목 `{len(universe)}/{UNIVERSE_SIZE}` · 자격 통과 `{len(ranking)}종목` · "
         f"Breadth(SMA60 위) `{b_val:.1f}%` · **{regime}**", "",
-        "> 팩터: 60일 모멘텀(최근 5일 제외) 30% · 변동성 조정 모멘텀 40% · CMF20 30%. "
-        "현재 시총 상위 종목군 기준이며 과거 3년 성과를 재현한 표본은 아닙니다.", "",
-        "> SUE 점수와 실적 촉매 핫스왑은 운영 판정에 포함하지 않습니다.", "",
-        "> 아래 이유는 [수신 원본·실패·해시](quant-collector/data/mode2_latest_manifest.json)와 "
-        "[계산식](quant-research/scripts/pure_quant_portfolio_manager.py)에 연결된 수치 설명입니다. "
-        "회사 설명은 공식 출처와 확인일이 있는 항목만 별도 참고로 붙입니다. "
-        "출처 없는 473개 정적 설명은 사용하지 않습니다.", "",
-        "> 변동성 조정 모멘텀은 일반적인 샤프 지수가 아닙니다. CMF는 종가 위치·거래량 지표이며 "
-        "기관·외국인 순매수를 식별하지 않습니다. 점수는 자격 통과 종목끼리의 상대 순위입니다.", "",
     ]
     if stale:
         lines += ["> ⚠️ 오늘 날짜의 새 완료 일봉이 없습니다(휴장 또는 공급 지연). "
                   f"아래는 {decision_date.date()} 완료 일봉으로 계산한 마지막 판단입니다. "
                   "새 일봉·체결 가격을 추정하거나 새 월간 계획을 저장하지 않습니다.", ""]
     if not ranking.empty:
-        lines += ["**완료 일봉 팩터 상위 5종목 · 관찰 순위**", "",
+        lines += [f"**{decision_date.date()} 완료 일봉 팩터 상위 10종목 · 관찰 순위**", "",
+                  "> 마지막 확인 종가와 상대 점수입니다. 다음 거래일 시가나 신규 편입 확정을 뜻하지 않습니다.", "",
                   "| 순위 | 종목·평가일 종가·상대점수 | 수치 기반 판정이유·출처 있는 회사 참고 |",
                   "|---:|:---|:---|"]
-        for idx, row in enumerate(ranking.head(5).itertuples(), 1):
+        for idx, row in enumerate(ranking.head(10).itertuples(), 1):
             company_context = profile_fact(row.code)
             detail = explain_rank(row)
             if company_context:
@@ -182,6 +174,19 @@ def render_panel(now: datetime, decision_date: pd.Timestamp, universe: dict[str,
                          f"{row.close:,.0f}원 · **{row.composite_score:.3f}** | "
                          f"{detail} |")
         lines.append("")
+    else:
+        lines += ["> 완료 일봉에서 팩터 자격을 통과한 종목이 없습니다.", ""]
+    lines += [
+        "> 팩터: 60일 모멘텀(최근 5일 제외) 30% · 변동성 조정 모멘텀 40% · CMF20 30%. "
+        "현재 시총 상위 종목군 기준이며 과거 3년 성과를 재현한 표본은 아닙니다.", "",
+        "> SUE 점수와 실적 촉매 핫스왑은 운영 판정에 포함하지 않습니다.", "",
+        "> 위 이유는 [수신 원본·실패·해시](quant-collector/data/mode2_latest_manifest.json)와 "
+        "[계산식](quant-research/scripts/pure_quant_portfolio_manager.py)에 연결된 수치 설명입니다. "
+        "회사 설명은 공식 출처와 확인일이 있는 항목만 별도 참고로 붙입니다. "
+        "출처 없는 473개 정적 설명은 사용하지 않습니다.", "",
+        "> 변동성 조정 모멘텀은 일반적인 샤프 지수가 아닙니다. CMF는 종가 위치·거래량 지표이며 "
+        "기관·외국인 순매수를 식별하지 않습니다. 점수는 자격 통과 종목끼리의 상대 순위입니다.", "",
+    ]
     if missing_holdings:
         lines += [f"> ⚠️ 가상 보유 `{', '.join(missing_holdings)}`의 일봉이 없어 에어백 판단을 보류했습니다.", ""]
     elif state.positions:
@@ -197,24 +202,10 @@ def render_panel(now: datetime, decision_date: pd.Timestamp, universe: dict[str,
     elif plan_state.get("top_codes"):
         label = "이번 완료 일봉에 갱신" if plan_updated else "마지막 확정 계획 유지"
         lines += [f"> 20거래일 리밸런싱 검토표: `{plan_state['last_plan_date']}` 생성 · {label} · "
-                  "종목당 목표 비중 10%. 실제 주문·체결 기록이 아닙니다.", "",
-                  "| 순위 | 종목(코드) | 계획 당시 종가 | 목표 비중 |", "|---:|:---|---:|---:|"]
-        for idx, code in enumerate(plan_state["top_codes"], 1):
-            px = plan_state["reference_closes"][code]
-            lines.append(f"| {idx} | {names.get(code, code)} ({code}) | {px:,.0f}원 | 10% |")
-        lines.append("")
+                  "종목당 목표 비중 10%. 위 표는 현재 기준일의 관찰 순위이며 실제 주문·체결 기록이 아닙니다.", ""]
     else:
         lines += ["> 월간 검토표: 새 계획은 아직 확정되지 않았습니다. "
-                  "아래 기준일 순위는 관찰용이며 가상 체결 기록이 아닙니다.", ""]
-    if stale and not ranking.empty:
-        lines += [f"**{decision_date.date()} 완료 일봉 기준 상위 10종목 · 과거 관찰표**", "",
-                  "> 마지막 확인 종가와 상대 점수입니다. 다음 거래일 시가나 신규 편입 확정을 뜻하지 않습니다.", "",
-                  "| 순위 | 종목(코드) | 기준일 종가 | 상대 점수 |",
-                  "|---:|:---|---:|---:|"]
-        for idx, row in enumerate(ranking.head(10).itertuples(), 1):
-            lines.append(f"| {idx} | {names.get(row.code, row.code)} ({row.code}) | "
-                         f"{row.close:,.0f}원 | {row.composite_score:.3f} |")
-        lines.append("")
+                  "위 기준일 순위는 관찰용이며 가상 체결 기록이 아닙니다.", ""]
     lines += ["> 실거래 주문은 생성·전송하지 않습니다. 수익률은 후속 기간 검증 전까지 미확정입니다.", ""]
     return "\n".join(lines), plan_state
 

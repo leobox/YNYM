@@ -81,8 +81,10 @@ def test_panel_stale_data_preserves_plan_and_readme_sections(tmp_path):
                                     date, frames, {}, tmp_path / "paper.json", state)
     assert "오늘 날짜의 새 완료 일봉이 없습니다" in panel
     assert "2026-09-23 기준 신규 편입 검토 가능" in panel
-    assert "2026-09-23 완료 일봉 기준 상위 10종목 · 과거 관찰표" in panel
+    assert "2026-09-23 완료 일봉 팩터 상위 10종목 · 관찰 순위" in panel
     assert panel.count("| 10 |") == 1
+    assert panel.count("점수 기여:") == 10
+    assert panel.count("| 순위 | 종목·평가일 종가·상대점수 |") == 1
     assert "SUE 점수와 실적 촉매 핫스왑은 운영 판정에 포함하지 않습니다" in panel
     assert "기관·외국인 순매수를 식별하지 않습니다" in panel
     assert "수신 원본·실패·해시" in panel
@@ -101,9 +103,11 @@ def test_stale_session_shows_dated_rankings_without_creating_plan(tmp_path):
                                 pd.Timestamp("2026-09-23"), frames, {},
                                 tmp_path / "paper.json", {})
     assert state == {}
-    assert "2026-09-23 완료 일봉 기준 상위 10종목 · 과거 관찰표" in panel
+    assert "2026-09-23 완료 일봉 팩터 상위 10종목 · 관찰 순위" in panel
     assert "다음 거래일 시가나 신규 편입 확정을 뜻하지 않습니다" in panel
     assert panel.count("| 10 |") == 1
+    assert panel.count("점수 기여:") == 10
+    assert "과거 관찰표" not in panel
 
 
 def test_panel_current_session_creates_ten_targets_only_once(tmp_path):
@@ -113,6 +117,8 @@ def test_panel_current_session_creates_ten_targets_only_once(tmp_path):
     panel, state = render_panel(now, date, frames, {}, tmp_path / "paper.json", {})
     assert len(state["top_codes"]) == 10
     assert "20거래일 리밸런싱 검토표" in panel
+    assert panel.count("점수 기여:") == 10
+    assert "| 순위 | 종목(코드) | 계획 당시 종가 |" not in panel
     _, again = render_panel(now + timedelta(minutes=1), date, frames, {},
                             tmp_path / "paper.json", state)
     assert again == state
