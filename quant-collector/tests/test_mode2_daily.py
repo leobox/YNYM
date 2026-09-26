@@ -53,7 +53,7 @@ def test_factor_momentum_matches_shift_5_and_60():
     frame = daily_frame()
     ranking = compute_factor_rankings({"000001": frame}, frame.index[-1])
     assert len(ranking) == 1
-    expected = (frame["Close"].iloc[-6] - frame["Close"].iloc[-61]) / frame["Close"].iloc[-61]
+    expected = (frame["Close"].iloc[-5] - frame["Close"].iloc[-60]) / frame["Close"].iloc[-60]
     assert ranking.iloc[0]["mom60_5"] == pytest.approx(expected)
 
 
@@ -80,6 +80,7 @@ def test_panel_stale_data_preserves_plan_and_readme_sections(tmp_path):
     panel, new_state = render_panel(datetime(2026, 9, 25, 16, 20, tzinfo=KST),
                                     date, frames, {}, tmp_path / "paper.json", state)
     assert "오늘 날짜의 새 완료 일봉이 없습니다" in panel
+    assert "SUE 점수와 실적 촉매 핫스왑은 운영 판정에 포함하지 않습니다" in panel
     assert "기관·외국인 순매수를 식별하지 않습니다" in panel
     assert "수신 원본·실패·해시" in panel
     assert new_state == state

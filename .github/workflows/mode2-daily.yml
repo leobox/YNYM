@@ -1,22 +1,22 @@
-name: LRM-60 v2.0 · 15분 수집
+name: Mode 2 · 완료 일봉 팩터 관찰
 
 on:
   schedule:
-    # KST 평일 09:09~16:54, 15분 간격 (UTC 00:09~07:54)
-    - cron: '9,24,39,54 0-7 * * 1-5'
+    # KST 평일 16:19/16:34/16:49 (UTC 07:19/07:34/07:49)
+    - cron: '19,34,49 7 * * 1-5'
   workflow_dispatch:
 
 concurrency:
-  group: lrm60-15m-collector
+  group: mode2-daily
   cancel-in-progress: false
 
 permissions:
   contents: write
 
 jobs:
-  collect:
+  observe:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 5
     steps:
       - name: 저장소 체크아웃
         uses: actions/checkout@v5
@@ -28,35 +28,34 @@ jobs:
           cache: pip
           cache-dependency-path: quant-collector/requirements.txt
 
-      - name: 수집기 의존성 설치
-        working-directory: quant-collector
-        run: |
-          python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: 일봉 계산 의존성 설치
+        run: python -m pip install -r quant-collector/requirements.txt
 
-      - name: 완료봉 수집 및 LRM-60 가상 기록
-        working-directory: quant-collector
-        run: |
-          for attempt in 1 2 3; do
-            if python collector.py; then
-              exit 0
-            fi
-            if [ "$attempt" -eq 3 ]; then
-              echo "3회 재시도 후 수집 실패"
-              exit 1
-            fi
-            sleep $((attempt * 15))
-          done
-      - name: 데이터·운영 대시보드 기록
+      - name: 모드 2 완료 일봉·3팩터 관찰
+        run: python quant-collector/mode2_daily.py
+
+      - name: 원본 수신 스냅샷 보관 (30일)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mode2-daily-${{ github.run_id }}
+          path: quant-collector/data/mode2_snapshots/
+          retention-days: 30
+          if-no-files-found: warn
+
+      - name: 모바일 패널·실행 상태 기록
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add quant-collector/data/ quant-collector/README.md README.md
+          git add README.md quant-collector/data/mode2_latest_manifest.json
+          if [ -f quant-collector/data/mode2_plan_state.json ]; then
+            git add quant-collector/data/mode2_plan_state.json
+          fi
           if git diff --staged --quiet; then
             echo "기록할 변경사항 없음"
             exit 0
           fi
-          git commit -m "chore(collector): refresh LRM-60 15m [skip ci]"
+          git commit -m "chore(mode2): refresh daily factor panel [skip ci]"
           for attempt in 1 2 3 4 5; do
             if git pull --rebase origin main && git push origin HEAD:main; then
               exit 0

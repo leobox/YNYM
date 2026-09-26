@@ -157,6 +157,7 @@ def render_panel(now: datetime, decision_date: pd.Timestamp, universe: dict[str,
         f"Breadth(SMA60 위) `{b_val:.1f}%` · **{regime}**", "",
         "> 팩터: 60일 모멘텀(최근 5일 제외) 30% · 변동성 조정 모멘텀 40% · CMF20 30%. "
         "현재 시총 상위 종목군 기준이며 과거 3년 성과를 재현한 표본은 아닙니다.", "",
+        "> SUE 점수와 실적 촉매 핫스왑은 운영 판정에 포함하지 않습니다.", "",
         "> 아래 이유는 [수신 원본·실패·해시](quant-collector/data/mode2_latest_manifest.json)와 "
         "[계산식](quant-research/scripts/pure_quant_portfolio_manager.py)에 연결된 수치 설명입니다. "
         "회사 설명은 공식 출처와 확인일이 있는 항목만 별도 참고로 붙입니다. "

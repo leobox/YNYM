@@ -1,4 +1,8 @@
-## 🔎 모드 2 동적 판정 탐색기 · 선행 관측 저널
+## 🔎 모드 2 운영 관찰 · 동적 판정 탐색기
+
+**현재 운영 기준은 일봉 3팩터(위험조정 모멘텀 40%·중기 모멘텀 30%·CMF20 30%)와 브레드스 방어입니다.** SUE 점수·실적 촉매 핫스왑은 시점 오류와 미재현 수치가 확인되어 운영에 포함하지 않습니다. 실제 주문은 없습니다.
+
+- [모드 2 전용 GitHub Actions](.github/workflows/mode2-daily.yml): 평일 16:19·16:34·16:49 KST에 완료 일봉을 재확인하고 아래 관찰 패널을 갱신합니다. Actions 화면의 `Run workflow`로 수동 실행할 수 있습니다. 새 완료 일봉이 없으면 기존 계획을 유지하고 기준일을 표시합니다.
 
 - **T-095 탐색기**: 저장된 완료 일봉의 일일 가상 판정과 3팩터 RAG 근거, 분기 EPS 참고 상태를 함께 표시합니다. EPS는 현재 스냅샷의 전년 동기 증감이며 표준화 SUE가 아닙니다. 운영 점수 가산점과 실제 주문은 없습니다. [구현·한계](docs/tasks/T-095.md)
 - **T-096 봉인 저널**: 탐색 결과와 가격·EPS·상태·코드의 SHA-256을 기록합니다. 같은 입력은 기존 기록을 재사용하며, 오래된 일봉이나 판정 도중 바뀐 원본은 봉인하지 않습니다. [구현·검증](docs/tasks/T-096.md)
@@ -9,13 +13,13 @@ python -B quant-research/research/forward_decision_journal.py          # 쓰기 
 python -B quant-research/research/forward_decision_journal.py --capture # 신선한 완료 일봉이 있을 때 기록
 ```
 
-가격 이력과 EPS 캐시는 각 로컬 데이터 원본이 필요합니다. T-096의 준비 상태 명령으로 매번 최신 일봉의 신선도를 확인하세요. 제미나이의 T-095 후속 변경이 완료되면 이 안내를 실제 반영 코드에 맞춰 다시 확인합니다.
+가격 이력과 EPS 캐시는 각 로컬 데이터 원본이 필요합니다. T-096의 준비 상태 명령으로 매번 최신 일봉의 신선도를 확인하세요. GitHub Actions의 일봉 패널은 별도의 공개 시세 수신 결과를 사용하며 EPS 캐시나 SUE 점수를 사용하지 않습니다.
 
 ---
 
 ## ⏱️ Quant Collector 모바일 운영 센터 (15분 수집 · 장마감 팩터 근거)
 
-> GitHub Actions의 60분봉 수집은 평일 장중 **15분 간격**이며, 모드 2 일봉 패널은 완료 일봉을 **16:19·16:34·16:49 KST**에 재확인합니다. 일봉 팩터값은 완료 일봉이 새로 나와야 바뀝니다. 각 패널의 데이터 기준일과 확인 시각을 따로 확인하세요. 모드 2는 가상 관찰·검토표이며 실제 주문이나 검증된 실전 수익률이 아닙니다. 기존 LRM-60 v2.0과 조기 돌파·청산 표는 별도 전략입니다. 상세 내용은 [`quant-collector/README.md`](quant-collector/README.md)를 참고하세요.
+> [60분봉 수집 Actions](.github/workflows/lrm60_15m.yml)은 평일 장중 **15분 간격**이며, [모드 2 일봉 Actions](.github/workflows/mode2-daily.yml)는 완료 일봉을 **16:19·16:34·16:49 KST**에 재확인합니다. 일봉 팩터값은 완료 일봉이 새로 나와야 바뀝니다. 각 패널의 데이터 기준일과 확인 시각을 따로 확인하세요. 모드 2는 SUE를 제외한 가상 관찰·검토표이며 실제 주문이나 검증된 실전 수익률이 아닙니다. 기존 LRM-60 v2.0과 조기 돌파·청산 표는 별도 전략입니다. 상세 내용은 [`quant-collector/README.md`](quant-collector/README.md)를 참고하세요.
 
 <!-- MODE2_DAILY:START -->
 
@@ -24,6 +28,8 @@ python -B quant-research/research/forward_decision_journal.py --capture # 신선
 > 일봉 기준 `2026-09-23` · 확인 `2026-09-25 21:53 KST` · 유효 종목 `138/150` · 자격 통과 `33종목` · Breadth(SMA60 위) `53.6%` · **새 일봉 전까지 판단 보류**
 
 > 팩터: 60일 모멘텀(최근 5일 제외) 30% · 변동성 조정 모멘텀 40% · CMF20 30%. 현재 시총 상위 종목군 기준이며 과거 3년 성과를 재현한 표본은 아닙니다.
+
+> SUE 점수와 실적 촉매 핫스왑은 운영 판정에 포함하지 않습니다.
 
 > 아래 이유는 [수신 원본·실패·해시](quant-collector/data/mode2_latest_manifest.json)와 [계산식](quant-research/scripts/pure_quant_portfolio_manager.py)에 연결된 수치 설명입니다. 회사 설명은 공식 출처와 확인일이 있는 항목만 별도 참고로 붙입니다. 출처 없는 473개 정적 설명은 사용하지 않습니다.
 
@@ -100,23 +106,23 @@ Gemini(Antigravity), Claude(Claude Code), OpenAI Codex / Copilot이 유기적으
 
 | 폴더 | 표시 이름 | 용도 및 규칙 |
 | :--- | :--- | :--- |
-| [`quant-research/`](file:///D:/leobox/quant-research/README.md) | **📈 Quant Research** | 퀀트 알고리즘 연구, 시계열 분석, 백테스팅 ([`AGENTS.md`](file:///D:/leobox/quant-research/AGENTS.md)) |
-| [`quant-collector/`](file:///D:/leobox/quant-collector/README.md) | **⏱️ Quant Collector** | 15분 간격 GitHub Actions 자동 수집 및 모바일 수동 실행 ([`AGENTS.md`](file:///D:/leobox/quant-collector/AGENTS.md)) |
-| [`gym-app/`](file:///D:/leobox/gym-app/README.md) | **🏋️ Gym App** | 오프라인 퍼스트 안드로이드 헬스 기록 앱 ([`AGENTS.md`](file:///D:/leobox/gym-app/AGENTS.md)) |
+| [`quant-research/`](quant-research/README.md) | **📈 Quant Research** | 퀀트 알고리즘 연구, 시계열 분석, 백테스팅 ([`AGENTS.md`](quant-research/AGENTS.md)) |
+| [`quant-collector/`](quant-collector/README.md) | **⏱️ Quant Collector** | 15분 간격 GitHub Actions 자동 수집 및 모바일 수동 실행 ([`AGENTS.md`](quant-collector/AGENTS.md)) |
+| [`gym-app/`](gym-app/README.md) | **🏋️ Gym App** | 오프라인 퍼스트 안드로이드 헬스 기록 앱 ([`AGENTS.md`](gym-app/AGENTS.md)) |
 
 ---
 
 ## 🤖 멀티 에이전트 협업 체계 (Gemini + Claude + Codex)
 
-- **공통 골든 룰**: [`AGENTS.md`](file:///D:/leobox/AGENTS.md)
-- **Claude Code 엔트리**: [`CLAUDE.md`](file:///D:/leobox/CLAUDE.md)
-- **Antigravity(Gemini) 엔트리**: [`GEMINI.md`](file:///D:/leobox/GEMINI.md)
+- **공통 골든 룰**: [`AGENTS.md`](AGENTS.md)
+- **Claude Code 엔트리**: [`CLAUDE.md`](CLAUDE.md)
+- **Antigravity(Gemini) 엔트리**: [`GEMINI.md`](GEMINI.md)
 - **전문 스킬 (Skills)**:
-  - [`backlog-manager`](file:///D:/leobox/.agents/skills/backlog-manager/SKILL.md) : 백로그 조회 및 상태 변경 CLI 제어
-  - [`adversarial-reviewer`](file:///D:/leobox/.agents/skills/adversarial-reviewer/SKILL.md) : 완료 전 적대적 코드 결함 감사
-  - [`quant-backtest-validator`](file:///D:/leobox/.agents/skills/quant-backtest-validator/SKILL.md) : 미래 데이터 누수(Lookahead Bias) 및 과적합 검증
-  - [`collector-safety-check`](file:///D:/leobox/.agents/skills/collector-safety-check/SKILL.md) : 자동 매수/주문 로직 차단 및 멱등성 검사
-  - [`offline-first-reviewer`](file:///D:/leobox/.agents/skills/offline-first-reviewer/SKILL.md) : 오프라인 저장 및 운동 UI 사용성 검증
+  - [`backlog-manager`](.agents/skills/backlog-manager/SKILL.md) : 백로그 조회 및 상태 변경 CLI 제어
+  - [`adversarial-reviewer`](.agents/skills/adversarial-reviewer/SKILL.md) : 완료 전 적대적 코드 결함 감사
+  - [`quant-backtest-validator`](.agents/skills/quant-backtest-validator/SKILL.md) : 미래 데이터 누수(Lookahead Bias) 및 과적합 검증
+  - [`collector-safety-check`](.agents/skills/collector-safety-check/SKILL.md) : 자동 매수/주문 로직 차단 및 멱등성 검사
+  - [`offline-first-reviewer`](.agents/skills/offline-first-reviewer/SKILL.md) : 오프라인 저장 및 운동 UI 사용성 검증
 
 ---
 
@@ -168,4 +174,4 @@ node tools/backlog.mjs sync-db
 
 1. **Antigravity IDE / VS Code 실행**
 2. **`File (파일)`** → **`Open Workspace from File... (파일에서 작업 영역 열기...)`** 클릭
-3. [`leobox.code-workspace`](file:///D:/leobox/leobox.code-workspace) 선택
+3. [`leobox.code-workspace`](leobox.code-workspace) 선택
