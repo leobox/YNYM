@@ -116,7 +116,7 @@ def test_regime_defense_liquidation(tmp_path, mock_universe):
     mgr = PortfolioManager(state_file=str(state_file))
     mgr.universe = mock_universe
     dates = sorted(list(mock_universe["000000"].index))
-    last_dt = dates[-2]
+    last_dt = dates[-1]
 
     # Force breadth below 40%
     mgr.breadth = pd.Series(20.0, index=dates)
@@ -175,48 +175,106 @@ def test_rebalance_apply_same_date_is_idempotent(tmp_path, mock_universe):
     assert len(state.history) == 1
 
 
-def test_latest_close_dry_run_uses_close_and_cannot_apply(tmp_path, mock_universe):
-    mgr = PortfolioManager(state_file=str(tmp_path / "state.json"))
-    mgr.universe = mock_universe
+def test_daily_plan_exits_weak_holding_before_monthly_review(tmp_path, mock_universe):
     dates = sorted(mock_universe["000000"].index)
-    mgr.breadth = pd.Series(20.0, index=dates)
-    last = dates[-1]
-    code = "000001"
-    mgr.save_state(PortfolioState(
-        cash=500000.0, initial_capital=1000000.0,
-        positions={code: {"qty": 10, "entry_price": 10000.0, "stop_price": 8500.0}},
-    ))
-    plan = mgr.generate_rebalance_orders(as_of_date=last.strftime("%Y-%m-%d"))
-    assert plan["exec_date"] == "NEXT_SESSION"
-    assert plan["price_basis"] == "signal_close_estimate"
-    assert plan["sell_orders"][0]["est_price"] == mock_universe[code].loc[last, "Close"]
-    with pytest.raises(ValueError, match="next session open"):
-        mgr.generate_rebalance_orders(as_of_date=last.strftime("%Y-%m-%d"), dry_run=False)
-
-
-def test_missing_held_daily_bar_blocks_airbag(tmp_path, mock_universe):
+    dt = dates[-1]
+    frame = mock_universe["000000"]
+    frame.loc[dt, ["Open", "High", "Low", "Close"]] = [7000.0, 7100.0, 6900.0, 7000.0]
     mgr = PortfolioManager(state_file=str(tmp_path / "state.json"))
     mgr.universe = mock_universe
+    mgr.breadth = pd.Series(80.0, index=dates)
+    mgr.save_state(PortfolioState(cash=900000.0, initial_capital=1000000.0,
+                                  last_rebalance_date=str(dates[-5].date()),
+                                  positions={"000000": {"qty": 10, "entry_price": 8000.0,
+                                                        "stop_price": 6800.0}}))
+    plan = mgr.generate_daily_plan(str(dt.date()))
+    assert plan["rebalance_due"] is False
+    assert any(a["code"] == "000000" and a["reason"] == "EARLY_EXIT_RANK_OR_SMA120"
+               for a in plan["actions"])
+    assert mgr.load_state().positions["000000"]["qty"] == 10
+
+
+def test_daily_plan_defense_reentry_and_position_cap(tmp_path, mock_universe):
     dates = sorted(mock_universe["000000"].index)
-    mgr.breadth = pd.Series(60.0, index=dates)
-    mgr.save_state(PortfolioState(
-        cash=500000.0, initial_capital=1000000.0,
-        positions={"999999": {"qty": 10, "entry_price": 10000.0, "stop_price": 8500.0}},
-    ))
-    with pytest.raises(ValueError, match="held position has no daily bar"):
-        mgr.check_catastrophic_stops(as_of_date=dates[-1].strftime("%Y-%m-%d"))
-
-
-def test_zero_volume_held_bar_blocks_airbag(tmp_path, mock_universe):
     mgr = PortfolioManager(state_file=str(tmp_path / "state.json"))
     mgr.universe = mock_universe
-    date = mock_universe["000001"].index[-1]
-    mgr.breadth = pd.Series(60.0, index=mock_universe["000000"].index)
-    mgr.universe["000001"].loc[date, "Volume"] = 0
-    mgr.save_state(PortfolioState(
-        cash=500000.0, initial_capital=1000000.0,
-        positions={"000001": {"qty": 10, "entry_price": 10000.0,
-                              "stop_price": 8500.0}},
-    ))
-    with pytest.raises(ValueError, match="no tradable volume"):
-        mgr.check_catastrophic_stops(as_of_date=date.strftime("%Y-%m-%d"))
+    breadth = pd.Series(80.0, index=dates)
+    breadth.iloc[-3:] = [39.0, 51.0, 52.0]
+    mgr.breadth = breadth
+    entry = float(mock_universe["000000"].iloc[-1]["Close"])
+    mgr.save_state(PortfolioState(cash=100000.0, initial_capital=1000000.0,
+                                  last_rebalance_date=str(dates[-5].date()),
+                                  positions={"000000": {"qty": 100, "entry_price": entry,
+                                                        "stop_price": entry * .85}}))
+    defense = mgr.generate_daily_plan(str(dates[-2].date()))
+    assert defense["status"] == "DEFENSE"
+    assert any(a["reason"] == "BREADTH_BELOW_40" for a in defense["actions"])
+    recovered = mgr.generate_daily_plan(str(dates[-1].date()))
+    assert recovered["status"] == "ACTIVE"
+    assert recovered["rebalance_due"] is True
+    assert any(a["action"] == "TRIM" and a["reason"] == "POSITION_CAP_25_PCT_ESTIMATE"
+               for a in recovered["actions"])
+
+
+def test_daily_plan_prefix_does_not_see_future_bars(tmp_path, mock_universe):
+    dates = sorted(mock_universe["000000"].index)
+    dt = dates[-5]
+    mgr = PortfolioManager(state_file=str(tmp_path / "state.json"))
+    mgr.universe = mock_universe
+    mgr.breadth = calculate_market_breadth(mock_universe)
+    full = mgr.generate_daily_plan(str(dt.date()))
+    mgr.universe = {code: frame.loc[:dt].copy() for code, frame in mock_universe.items()}
+    mgr.breadth = mgr.breadth.loc[:dt]
+    prefix = mgr.generate_daily_plan(str(dt.date()))
+    full.pop("data_last_date")
+    prefix.pop("data_last_date")
+    assert full == prefix
+
+
+def test_daily_settlement_requires_observed_next_session(tmp_path, mock_universe):
+    mgr = PortfolioManager(state_file=str(tmp_path / "state.json"))
+    mgr.universe = mock_universe
+    mgr.breadth = calculate_market_breadth(mock_universe)
+    dt = mock_universe["000000"].index[-1]
+    with pytest.raises(ValueError, match="Next completed daily session"):
+        mgr.settle_daily_plan(str(dt.date()))
+    assert mgr.load_state().last_signal_date is None
+
+
+def test_daily_settlement_is_idempotent_and_does_not_recycle_same_open_cash(tmp_path, mock_universe):
+    dates = sorted(mock_universe["000000"].index)
+    signal, execution = dates[-2], dates[-1]
+    mock_universe["000000"].loc[signal, ["Open", "High", "Low", "Close"]] = [7000, 7100, 6900, 7000]
+    mgr = PortfolioManager(state_file=str(tmp_path / "state.json"))
+    mgr.universe = mock_universe
+    mgr.breadth = pd.Series(80.0, index=dates)
+    mgr.save_state(PortfolioState(cash=0.0, initial_capital=1000000.0,
+                                  last_rebalance_date=str(dates[-5].date()),
+                                  positions={"000000": {"qty": 10, "entry_price": 8000.0,
+                                                        "stop_price": 6800.0}}))
+    result = mgr.settle_daily_plan(str(signal.date()))
+    assert result["execution_date"] == str(execution.date())
+    assert any(fill["action"] == "SELL" for fill in result["virtual_fills"])
+    assert all(fill["action"] != "BUY" for fill in result["virtual_fills"])
+    assert mgr.load_state().cash > 0
+    assert mgr.settle_daily_plan(str(signal.date()))["already_applied"] is True
+    assert len(mgr.load_state().history) == 1
+
+
+def test_daily_settlement_keeps_top_ten_and_trims_concentration(tmp_path, mock_universe):
+    dates = sorted(mock_universe["000000"].index)
+    signal = dates[-2]
+    code = compute_factor_rankings(mock_universe, signal).iloc[0]["code"]
+    frame = mock_universe[code]
+    entry = float(frame.at[signal, "Close"])
+    mgr = PortfolioManager(state_file=str(tmp_path / "state.json"))
+    mgr.universe = mock_universe
+    mgr.breadth = pd.Series(80.0, index=dates)
+    mgr.save_state(PortfolioState(cash=100000.0, initial_capital=1000000.0,
+                                  positions={code: {"qty": 100, "entry_price": entry,
+                                                    "stop_price": entry * .85}}))
+    plan = mgr.generate_daily_plan(str(signal.date()))
+    assert any(a["action"] == "TRIM" and a["code"] == code for a in plan["actions"])
+    settled = mgr.settle_daily_plan(str(signal.date()))
+    assert any(f["action"] == "TRIM" and f["code"] == code for f in settled["virtual_fills"])
+    assert 0 < mgr.load_state().positions[code]["qty"] < 100

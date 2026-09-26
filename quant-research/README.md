@@ -20,6 +20,29 @@
 실행하면 `universe`, `scores`, `top5`, `watch` CSV와 해시·행 수가 있는 manifest를
 `pattern_snapshots/`에 남깁니다. Colab 런타임이 초기화되기 전에 내려받아야 합니다.
 
+## 모드 2 동적 EPS·RAG 판정 탐색기
+
+모드 2 `daily-plan`은 저장된 완료 일봉의 종가로 다음 거래일의 가상
+판정을 계산합니다. 브레드스 40% 미만 방어, 50% 이상 2일 회복,
+20거래일 점검과 조기 퇴출을 적용합니다. 실제 주문 기능은 없습니다.
+
+```powershell
+python -B quant-research/scripts/pure_quant_portfolio_manager.py daily-plan --date YYYY-MM-DD
+```
+
+완료 일봉 기준 `daily-plan`의 일일 판정과 3팩터 RAG 근거, T-094의
+무인증 분기 EPS 상태를 한 표에서 확인합니다. EPS는 표준화 SUE가 아니므로
+운영 순위에 가산하지 않습니다. 과거 평가일 뒤 수집한 EPS는 숨깁니다.
+
+```powershell
+python -B quant-research/scripts/fetch_quarterly_sue.py
+python -B quant-research/scripts/pure_quant_portfolio_manager.py explore --md-out quant-research/data/research/T-095/dynamic_explorer_latest.md
+```
+
+`explore`는 가상 상태를 변경하지 않으며 `--apply`를 받지 않습니다.
+가격 이력과 EPS 캐시는 별도 로컬 데이터로 준비해야 합니다.
+설계 근거와 한계는 [T-095 작업 기록](../docs/tasks/T-095.md)에 있습니다.
+
 ## VCP 슈퍼 신고가 스캐너 (운영)
 
 - 판정 모듈: [`scanner/vcp.py`](scanner/vcp.py)
