@@ -1,5 +1,7 @@
 ## ⏱️ Quant Collector 모바일 운영 센터 (15분 수집 · 장마감 팩터 근거)
 
+> 🌐 **통합 시장 레짐 (Market Regime)**: **🟢 정상 국면 (신규 편입 검토 가능)** | 📊 **마켓 브레드스(SMA60)**: `53.6%` (40% 미만 시 100% 현금 방어) | 🧭 **지수 20일선**: `KOSPI 통과 🟢` · `KOSDAQ 통과 🟢` (`2026-09-23 기준`)
+
 > [60분봉 수집 Actions](.github/workflows/lrm60_15m.yml)은 평일 장중 **15분 간격**이며, [모드 2 일봉 Actions](.github/workflows/mode2-daily.yml)는 완료 일봉을 **16:19·16:34·16:49 KST**에 재확인합니다. 일봉 팩터값은 완료 일봉이 새로 나와야 바뀝니다. 각 패널의 데이터 기준일과 확인 시각을 따로 확인하세요. 모드 2는 SUE를 제외한 가상 관찰·검토표이며 실제 주문이나 검증된 실전 수익률이 아닙니다. 기존 LRM-60 v2.0과 조기 돌파·청산 표는 별도 전략입니다. 상세 내용은 [`quant-collector/README.md`](quant-collector/README.md)를 참고하세요.
 
 <!-- MODE2_DAILY:START -->
