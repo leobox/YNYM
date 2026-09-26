@@ -1,3 +1,18 @@
+## 🔎 모드 2 동적 판정 탐색기 · 선행 관측 저널
+
+- **T-095 탐색기**: 저장된 완료 일봉의 일일 가상 판정과 3팩터 RAG 근거, 분기 EPS 참고 상태를 함께 표시합니다. EPS는 현재 스냅샷의 전년 동기 증감이며 표준화 SUE가 아닙니다. 운영 점수 가산점과 실제 주문은 없습니다. [구현·한계](docs/tasks/T-095.md)
+- **T-096 봉인 저널**: 탐색 결과와 가격·EPS·상태·코드의 SHA-256을 기록합니다. 같은 입력은 기존 기록을 재사용하며, 오래된 일봉이나 판정 도중 바뀐 원본은 봉인하지 않습니다. [구현·검증](docs/tasks/T-096.md)
+
+```powershell
+python -B quant-research/scripts/pure_quant_portfolio_manager.py explore
+python -B quant-research/research/forward_decision_journal.py          # 쓰기 없는 준비 상태 확인
+python -B quant-research/research/forward_decision_journal.py --capture # 신선한 완료 일봉이 있을 때 기록
+```
+
+가격 이력과 EPS 캐시는 각 로컬 데이터 원본이 필요합니다. T-096의 준비 상태 명령으로 매번 최신 일봉의 신선도를 확인하세요. 제미나이의 T-095 후속 변경이 완료되면 이 안내를 실제 반영 코드에 맞춰 다시 확인합니다.
+
+---
+
 ## ⏱️ Quant Collector 모바일 운영 센터 (15분 수집 · 장마감 팩터 근거)
 
 > GitHub Actions의 60분봉 수집은 평일 장중 **15분 간격**이며, 모드 2 일봉 패널은 완료 일봉을 **16:19·16:34·16:49 KST**에 재확인합니다. 일봉 팩터값은 완료 일봉이 새로 나와야 바뀝니다. 각 패널의 데이터 기준일과 확인 시각을 따로 확인하세요. 모드 2는 가상 관찰·검토표이며 실제 주문이나 검증된 실전 수익률이 아닙니다. 기존 LRM-60 v2.0과 조기 돌파·청산 표는 별도 전략입니다. 상세 내용은 [`quant-collector/README.md`](quant-collector/README.md)를 참고하세요.
