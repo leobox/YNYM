@@ -56,6 +56,15 @@ jobs:
           git add README.md
           if ! git diff --cached --quiet; then
             git commit -m "data: seal dual-strategy forward observation [skip ci]"
-            git pull --rebase origin main
-            git push origin HEAD:main
+            for attempt in 1 2 3 4 5; do
+              if git pull --rebase origin main && git push origin HEAD:main; then
+                exit 0
+              fi
+              git rebase --abort 2>/dev/null || true
+              if [ "$attempt" -eq 5 ]; then
+                echo "5회 재시도 후에도 관찰 기록 push 실패"
+                exit 1
+              fi
+              sleep $((attempt * 5))
+            done
           fi
