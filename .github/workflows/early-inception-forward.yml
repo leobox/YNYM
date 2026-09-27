@@ -1,0 +1,61 @@
+name: Mode 2 and Early Inception daily forward observation
+
+on:
+  schedule:
+    # Weekdays 17:40 KST. Holidays and delayed completed bars are skipped.
+    - cron: '40 8 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dual-strategy-forward
+  cancel-in-progress: false
+
+jobs:
+  observe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: quant-research/requirements.txt
+      - name: Install data and research dependencies
+        run: python -m pip install -r quant-research/requirements.txt
+      - name: Refresh the scan universe and carry forward older signals
+        run: python -B quant-research/scripts/fetch_daily_history.py --range 3y --refresh-universe --carryover-runs quant-research/data/research/T-110/runs
+      - name: Seal one completed-bar decision
+        id: observe
+        shell: bash
+        run: |
+          manifest=$(find quant-research/data/research/T-063 -name 'fetch_manifest_3y_*.json' -printf '%T@ %p\n' | sort -nr | head -1 | cut -d' ' -f2-)
+          result=$(python -B quant-research/scripts/run_early_inception_forward.py --manifest "$manifest" --readme README.md)
+          echo "$result"
+          status=$(printf '%s' "$result" | python -c 'import json,sys; print(json.load(sys.stdin).get("status", "CAPTURED"))')
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+      - name: Preserve exact inputs for the observation
+        if: steps.observe.outputs.status == 'CAPTURED'
+        shell: bash
+        run: |
+          asof=$(python -c 'import json,glob; p=sorted(glob.glob("quant-research/data/research/T-110/runs/*.json"))[-1]; print(json.load(open(p))["as_of"])')
+          mkdir -p quant-research/data/research/T-110/raw
+          tar -czf "quant-research/data/research/T-110/raw/$asof.tar.gz" -C quant-research/data daily_3y
+      - name: Commit immutable research records
+        if: steps.observe.outputs.status == 'CAPTURED'
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add quant-research/data/research/T-063/fetch_manifest_3y_*.json
+          git add quant-research/data/vcp_snapshots/universe_*.csv
+          git add quant-research/data/research/T-110/
+          git add README.md
+          if ! git diff --cached --quiet; then
+            git commit -m "data: seal dual-strategy forward observation [skip ci]"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
