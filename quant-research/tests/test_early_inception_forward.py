@@ -100,6 +100,7 @@ def test_outcomes_stay_pending_until_full_horizon(source):
 def test_two_rankings_are_sealed_separately(source, monkeypatch):
     data, manifest_path, now, _ = source
     finding = inspect(data, manifest_path, now=now)
+    finding["name_by_code"] = {"000001": "테스트종목"}
     day = pd.Timestamp(finding["as_of"])
     monkeypatch.setattr(forward, "calculate_market_breadth",
                         lambda universe: pd.Series({day: 60.0}))
@@ -113,6 +114,24 @@ def test_two_rankings_are_sealed_separately(source, monkeypatch):
     assert record["strategies"]["mode2"]["candidates"][0]["composite_score"] == .9
     assert record["strategies"]["early_inception"]["candidates"][0]["inception_score"] == .7
     assert record["strategies"]["mode2"]["candidates"][0]["market"] == "KOSPI"
+    assert record["strategies"]["mode2"]["candidates"][0]["name"] == "테스트종목"
+
+
+def test_source_universe_names_are_read_only_from_hashed_snapshot(source, monkeypatch, tmp_path):
+    data, manifest_path, now, _ = source
+    snapshot_dir = tmp_path / "quant-research" / "data" / "vcp_snapshots"
+    snapshot_dir.mkdir(parents=True)
+    snapshot = snapshot_dir / "universe_test.csv"
+    snapshot.write_text("code,name,market\n000001,테스트종목,KOSPI\n", encoding="utf-8")
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["universe_file"] = snapshot.name
+    manifest["universe_sha256"] = hashlib.sha256(snapshot.read_bytes()).hexdigest()
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    monkeypatch.setattr(forward, "ROOT", tmp_path)
+    assert inspect(data, manifest_path, now=now)["name_by_code"] == {"000001": "테스트종목"}
+    snapshot.write_text("code,name,market\n000001,다른종목,KOSPI\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="UNIVERSE_HASH_MISMATCH"):
+        inspect(data, manifest_path, now=now)
 
 
 def test_mode2_outcome_waits_for_and_uses_next_20_sessions(source):
@@ -164,3 +183,35 @@ def test_readme_update_keeps_other_dashboard_sections(tmp_path):
     path.write_text("no markers", encoding="utf-8")
     with pytest.raises(ValueError, match="README_PANEL_MARKERS"):
         update_readme_panel(path, "x")
+
+
+def test_main_renders_stock_details_for_both_strategies(tmp_path, monkeypatch):
+    runs = tmp_path / "runs"
+    runs.mkdir()
+    readme = tmp_path / "README.md"
+    readme.write_text("<!-- DUAL_FORWARD:START -->\nold\n<!-- DUAL_FORWARD:END -->\n",
+                      encoding="utf-8")
+    record = {
+        "as_of": "2026-09-25", "fetched_at": "2026-09-25T18:00:00+09:00",
+        "fresh_count": 150, "universe_count": 150, "market_breadth_pct": 55.0,
+        "strategies": {
+            "mode2": {"score_field": "composite_score", "candidates": [{
+                "code": "000001", "name": "모드종목", "close": 10000,
+                "composite_score": .8, "mom60_5": .2, "risk_adj_mom": .7, "cmf20": .1}]},
+            "early_inception": {"score_field": "inception_score", "candidates": [{
+                "code": "000002", "name": "초입종목", "close": 20000,
+                "inception_score": .7, "range_width_ratio": .18, "vol_ratio": 1.5,
+                "vol_spike_1d": 2.0, "cmf20": .2}]},
+        },
+    }
+    monkeypatch.setattr(forward, "capture", lambda *args: {
+        "finding": {"universe": {}, "as_of": record["as_of"]},
+        "record": record, "reused": False})
+    monkeypatch.setattr(forward, "resolve", lambda *args: {"resolved": [], "pending_count": 0})
+    monkeypatch.setattr(forward.sys, "argv", ["forward", "--manifest", str(tmp_path / "x"),
+                                           "--runs", str(runs), "--readme", str(readme)])
+    assert forward.main() == 0
+    panel = readme.read_text(encoding="utf-8")
+    assert "모드종목 (`000001`) | 10,000원 | 0.800 |" in panel
+    assert "초입종목 (`000002`) | 20,000원 | 0.700 |" in panel
+    assert "20일 변동폭 18.0% · 5일 1.50x · CMF20 +0.20" in panel

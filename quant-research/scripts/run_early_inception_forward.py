@@ -100,6 +100,16 @@ def inspect(data_dir: Path, manifest_path: Path, now: datetime | None = None) ->
     if manifest.get("task") == "T-063" and len(primary_codes) < 140:
         raise ValueError("PRIMARY_UNIVERSE_TOO_SMALL")
     symbol_by_code = {item["code"]: item["symbol"] for item in files}
+    name_by_code = {}
+    if manifest.get("universe_file"):
+        universe_path = ROOT / "quant-research/data/vcp_snapshots" / manifest["universe_file"]
+        if not universe_path.is_file():
+            raise ValueError("UNIVERSE_SNAPSHOT_MISSING")
+        expected_hash = manifest.get("universe_sha256")
+        if expected_hash and _sha(universe_path) != expected_hash:
+            raise ValueError("UNIVERSE_HASH_MISMATCH")
+        names = pd.read_csv(universe_path, dtype={"code": str}, encoding="utf-8-sig")
+        name_by_code = dict(zip(names["code"], names["name"]))
     last_dates = {code: frame.index[-1].date() for code, frame in universe.items()}
     if not last_dates:
         raise ValueError("NO_VALID_STOCKS")
@@ -119,7 +129,7 @@ def inspect(data_dir: Path, manifest_path: Path, now: datetime | None = None) ->
     return {"as_of": as_of.isoformat(), "fresh_codes": fresh_codes,
             "universe": universe, "hashes": hashes, "rejected": rejected,
             "fetched_at": fetched_at.isoformat(), "primary_codes": primary_codes,
-            "symbol_by_code": symbol_by_code}
+            "symbol_by_code": symbol_by_code, "name_by_code": name_by_code}
 
 
 def build_record(finding: dict, manifest_path: Path) -> dict:
@@ -139,6 +149,7 @@ def build_record(finding: dict, manifest_path: Path) -> dict:
         for pick in candidates:
             symbol = finding["symbol_by_code"][pick["code"]]
             pick["market"] = "KOSDAQ" if symbol.endswith(".KQ") else "KOSPI"
+            pick["name"] = finding["name_by_code"].get(pick["code"], pick["code"])
         strategies[key] = {"score_field": score_name, "candidates": candidates}
     source = {
         "manifest_sha256": _sha(manifest_path),
@@ -296,7 +307,7 @@ def main() -> int:
                         encoding="utf-8")
     record = result["record"]
     counts = {key: len(block["candidates"]) for key, block in record["strategies"].items()}
-    lines = ["# 모드 2 · 상승 초입 병렬 전진 관찰", "",
+    lines = ["### 모드 2 · 상승 초입 병렬 전진 관찰", "",
              f'- 완료 일봉: {record["as_of"]}',
              f'- 데이터 수신: {record["fetched_at"]}',
              f'- 자격 평가: {record["fresh_count"]}/{record["universe_count"]}종목',
@@ -304,12 +315,21 @@ def main() -> int:
              f'- 모드 2 {counts["mode2"]}종목 · 상승 초입 {counts["early_inception"]}종목',
              f'- 후속 평가 완료: {len(outcomes["resolved"])}건 · 대기: {outcomes["pending_count"]}건']
     for strategy, block in record["strategies"].items():
-        lines.extend(["", f'## {"모드 2" if strategy == "mode2" else "상승 초입"}', "",
-                      "| 순위 | 코드 | 평가일 종가 | 상대점수 | CMF20 |",
-                      "|---:|:---:|---:|---:|---:|"])
+        lines.extend(["", f'#### {"모드 2" if strategy == "mode2" else "상승 초입"} · {record["as_of"]} 종가', "",
+                      "| 순위 | 종목 | 평가일 종가 | 상대점수 | 수치 근거 |",
+                      "|---:|:---|---:|---:|:---|"])
         for rank, pick in enumerate(block["candidates"], 1):
-            lines.append(f'| {rank} | {pick["code"]} | {pick["close"]:,.0f} | '
-                         f'{pick[block["score_field"]]:.3f} | {pick["cmf20"]:+.2f} |')
+            name = str(pick["name"]).replace("|", "/").replace("\n", " ")
+            if strategy == "mode2":
+                reason = (f'60→5거래일 {pick["mom60_5"]:+.1%} · 위험조정 '
+                          f'{pick["risk_adj_mom"]:.2f} · CMF20 {pick["cmf20"]:+.2f}')
+            else:
+                volume = (f'5일 {pick["vol_ratio"]:.2f}x' if pick["vol_ratio"] >= 1.2
+                          else f'당일 {pick["vol_spike_1d"]:.2f}x (5일 {pick["vol_ratio"]:.2f}x)')
+                reason = (f'20일 변동폭 {pick["range_width_ratio"]:.1%} · '
+                          f'{volume} · CMF20 {pick["cmf20"]:+.2f}')
+            lines.append(f'| {rank} | {name} (`{pick["code"]}`) | {pick["close"]:,.0f}원 | '
+                         f'{pick[block["score_field"]]:.3f} | {reason} |')
         if not block["candidates"]:
             lines.append("| - | 조건 충족 없음 | - | - | - |")
     lines.extend(["", "완료 일봉을 이용한 연구 관찰입니다. 실제 주문·매수 추천이나 체결 가격이 아닙니다.",
