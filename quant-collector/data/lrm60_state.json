@@ -1,24 +1,58 @@
 {
   "version": "lrm60_v2",
-  "cash": 1000000.0,
-  "equity": 1000000.0,
+  "cash": 967185.2470484023,
+  "equity": 967185.2470484023,
   "positions": {},
   "pending": [],
-  "trades": [],
-  "last_bar_ts": "2026-09-23T14:00:00+09:00",
+  "trades": [
+    {
+      "code": "005070",
+      "name": "코스모신소재",
+      "entry_ts": "2026-09-28T10:00:00+09:00",
+      "exit_ts": "2026-09-28T10:00:00+09:00",
+      "entry_price": 45918.775,
+      "exit_price": 44015.901,
+      "qty": 7,
+      "pnl": -14044.09,
+      "reason": "STOP_TOUCH"
+    },
+    {
+      "code": "065350",
+      "name": "신성델타테크",
+      "entry_ts": "2026-09-28T10:00:00+09:00",
+      "exit_ts": "2026-09-28T11:00:00+09:00",
+      "entry_price": 32248.300000000003,
+      "exit_price": 31286.4998,
+      "qty": 10,
+      "pnl": -10348.65,
+      "reason": "STOP_TOUCH"
+    },
+    {
+      "code": "001430",
+      "name": "세아베스틸지주",
+      "entry_ts": "2026-09-28T10:00:00+09:00",
+      "exit_ts": "2026-09-28T12:00:00+09:00",
+      "entry_price": 46519.675,
+      "exit_price": 45422.2643,
+      "qty": 7,
+      "pnl": -8422.01,
+      "reason": "STOP_TOUCH"
+    }
+  ],
+  "last_bar_ts": "2026-09-28T13:00:00+09:00",
   "last_candidates": [],
   "gate_counts": {
-    "trend": 91,
-    "breakout": 3,
-    "liquidity": 18,
-    "candle": 26
+    "trend": 115,
+    "breakout": 6,
+    "liquidity": 14,
+    "candle": 47
   },
   "coverage": {
     "scanned": 350,
-    "evaluated": 350,
+    "evaluated": 349,
     "passed": 0,
     "missing_bar": 0,
-    "insufficient": 0
+    "insufficient": 1
   },
   "data_gaps": [],
   "regime": {}
