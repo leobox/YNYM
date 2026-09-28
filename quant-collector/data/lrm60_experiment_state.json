@@ -1,22 +1,8 @@
 {
   "version": "lrm60_v2_experiment_20260924",
-  "cash": 337089.8437727397,
-  "equity": 969839.8437727396,
+  "cash": 648874.1766564123,
+  "equity": null,
   "positions": {
-    "001430": {
-      "code": "001430",
-      "name": "세아베스틸지주",
-      "market": "KOSPI",
-      "entry_ts": "2026-09-28T10:00:00+09:00",
-      "entry_price": 46519.675,
-      "breakout_level": 45950.0,
-      "qty": 7,
-      "cost": 326012.20838375005,
-      "peak_price": 46800.0,
-      "last_close": 45250.0,
-      "bars_held": 4,
-      "target_1_done": false
-    },
     "065350": {
       "code": "065350",
       "name": "신성델타테크",
@@ -27,8 +13,8 @@
       "qty": 10,
       "cost": 322853.85545,
       "peak_price": 32250.0,
-      "last_close": 31600.0,
-      "bars_held": 4,
+      "last_close": 31450.0,
+      "bars_held": 5,
       "target_1_done": false
     }
   },
@@ -44,24 +30,49 @@
       "qty": 7,
       "pnl": -14044.09,
       "reason": "STOP_TOUCH"
+    },
+    {
+      "code": "001430",
+      "name": "세아베스틸지주",
+      "entry_ts": "2026-09-28T10:00:00+09:00",
+      "exit_ts": "2026-09-28T14:00:00+09:00",
+      "entry_price": 46519.675,
+      "exit_price": 44591.8997,
+      "qty": 7,
+      "pnl": -14227.88,
+      "reason": "STOP_TOUCH"
     }
   ],
-  "last_bar_ts": "2026-09-28T13:00:00+09:00",
+  "last_bar_ts": "2026-09-28T14:05:00+09:00",
   "last_candidates": [],
   "gate_counts": {
-    "trend": 115,
-    "breakout": 6,
-    "liquidity": 14,
-    "candle": 47
+    "trend": 0,
+    "breakout": 0,
+    "liquidity": 0,
+    "candle": 0
   },
   "coverage": {
     "scanned": 350,
-    "evaluated": 349,
+    "evaluated": 0,
     "passed": 0,
-    "missing_bar": 0,
+    "missing_bar": 349,
     "insufficient": 1
   },
-  "data_gaps": [],
+  "data_gaps": [
+    {
+      "bar_ts": "2026-09-28T13:05:00+09:00",
+      "codes": [
+        "001430",
+        "065350"
+      ]
+    },
+    {
+      "bar_ts": "2026-09-28T14:05:00+09:00",
+      "codes": [
+        "065350"
+      ]
+    }
+  ],
   "regime": {
     "KOSPI": true,
     "KOSDAQ": true

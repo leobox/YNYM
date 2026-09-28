@@ -39,19 +39,19 @@
       "reason": "STOP_TOUCH"
     }
   ],
-  "last_bar_ts": "2026-09-28T13:00:00+09:00",
+  "last_bar_ts": "2026-09-28T14:05:00+09:00",
   "last_candidates": [],
   "gate_counts": {
-    "trend": 115,
-    "breakout": 6,
-    "liquidity": 14,
-    "candle": 47
+    "trend": 0,
+    "breakout": 0,
+    "liquidity": 0,
+    "candle": 0
   },
   "coverage": {
     "scanned": 350,
-    "evaluated": 349,
+    "evaluated": 0,
     "passed": 0,
-    "missing_bar": 0,
+    "missing_bar": 349,
     "insufficient": 1
   },
   "data_gaps": [],
