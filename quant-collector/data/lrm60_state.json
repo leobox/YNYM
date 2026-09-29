@@ -1,7 +1,7 @@
 {
   "version": "lrm60_v2",
   "cash": 349752.3147934023,
-  "equity": 981472.3147934023,
+  "equity": 986552.3147934023,
   "positions": {
     "252990": {
       "code": "252990",
@@ -13,8 +13,8 @@
       "qty": 16,
       "cost": 308816.7313,
       "peak_price": 20150.0,
-      "last_close": 19870.0,
-      "bars_held": 4,
+      "last_close": 19850.0,
+      "bars_held": 5,
       "target_1_done": false
     },
     "083450": {
@@ -26,9 +26,9 @@
       "breakout_level": 50500.0,
       "qty": 6,
       "cost": 308616.200955,
-      "peak_price": 52900.0,
-      "last_close": 52300.0,
-      "bars_held": 1,
+      "peak_price": 53200.0,
+      "last_close": 53200.0,
+      "bars_held": 2,
       "target_1_done": false
     }
   },
@@ -68,13 +68,13 @@
       "reason": "STOP_TOUCH"
     }
   ],
-  "last_bar_ts": "2026-09-29T13:00:00+09:00",
+  "last_bar_ts": "2026-09-29T14:00:00+09:00",
   "last_candidates": [],
   "gate_counts": {
-    "trend": 80,
-    "breakout": 5,
-    "liquidity": 21,
-    "candle": 36
+    "trend": 88,
+    "breakout": 14,
+    "liquidity": 26,
+    "candle": 48
   },
   "coverage": {
     "scanned": 350,
