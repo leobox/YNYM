@@ -1,0 +1,1575 @@
+{
+  "task": "T-063",
+  "fetched_at": "2026-09-29T22:11:57.274621+09:00",
+  "source": "Yahoo Finance chart API (비공식, range=3y interval=1d)",
+  "universe_file": "universe_20260929_221157.csv",
+  "universe_sha256": "0b20798f70d1dc3c0646e874988302100721dffb42fb442e8db4adbace4a3d57",
+  "primary_codes": [
+    "486510",
+    "0035S0",
+    "001820",
+    "490470",
+    "452190",
+    "010170",
+    "007810",
+    "0010S0",
+    "0161M0",
+    "161580",
+    "256840",
+    "052260",
+    "010060",
+    "067310",
+    "043260",
+    "095610",
+    "098460",
+    "080220",
+    "178320",
+    "108490",
+    "047920",
+    "440110",
+    "323280",
+    "327260",
+    "387690",
+    "356680",
+    "267320",
+    "036540",
+    "336260",
+    "006360",
+    "066970",
+    "319660",
+    "089030",
+    "103590",
+    "950250",
+    "386380",
+    "131290",
+    "950260",
+    "031980",
+    "024850",
+    "456010",
+    "052690",
+    "032820",
+    "131970",
+    "457190",
+    "089970",
+    "475150",
+    "067630",
+    "030530",
+    "084370",
+    "375500",
+    "086960",
+    "087010",
+    "356860",
+    "095340",
+    "0039P0",
+    "232140",
+    "322000",
+    "357780",
+    "093370",
+    "034220",
+    "003570",
+    "051900",
+    "064760",
+    "004310",
+    "001450",
+    "082740",
+    "004170",
+    "338220",
+    "005290",
+    "252990",
+    "028670",
+    "161890",
+    "214450",
+    "183300",
+    "347850",
+    "437730",
+    "420770",
+    "112610",
+    "064290",
+    "483650",
+    "347700",
+    "257720",
+    "077360",
+    "092870",
+    "004020",
+    "011790",
+    "204270",
+    "298380",
+    "145020",
+    "439960",
+    "001040",
+    "328130",
+    "014680",
+    "024060",
+    "036570",
+    "192820",
+    "454910",
+    "003160",
+    "032580",
+    "226950",
+    "475830",
+    "072950",
+    "144960",
+    "218410",
+    "006340",
+    "396300",
+    "004710",
+    "950160",
+    "079370",
+    "083650",
+    "290690",
+    "083450",
+    "052710",
+    "295310",
+    "261780",
+    "425040",
+    "078150",
+    "450080",
+    "003580",
+    "000250",
+    "187660",
+    "141080",
+    "033160",
+    "119850",
+    "126730",
+    "394800",
+    "071970",
+    "058610",
+    "115440",
+    "033640",
+    "281820",
+    "486990",
+    "067290",
+    "002990",
+    "330860",
+    "012210",
+    "319400",
+    "195870",
+    "004370",
+    "080580",
+    "298020",
+    "078600",
+    "069960",
+    "036200",
+    "229640",
+    "417840",
+    "192650",
+    "069540",
+    "478340"
+  ],
+  "carryover_codes": [
+    "042000",
+    "241710",
+    "458870"
+  ],
+  "universe_note": "실행 시점 상위 150 — 생존편향, 상폐 종목 누락",
+  "price_note": "AdjClose 포함. Close는 배당 미보정, OHLC 보정은 탐색기에서 AdjClose/Close 비율로 수행",
+  "requested": 153,
+  "succeeded": 153,
+  "failed": [],
+  "short_history": [
+    "486510",
+    "0035S0",
+    "490470",
+    "452190",
+    "0010S0",
+    "0161M0",
+    "387690",
+    "950250",
+    "386380",
+    "950260",
+    "456010",
+    "475150",
+    "0039P0",
+    "347850",
+    "437730",
+    "483650",
+    "439960",
+    "475830",
+    "295310",
+    "450080",
+    "126730",
+    "394800",
+    "486990",
+    "478340",
+    "458870"
+  ],
+  "files": [
+    {
+      "code": "486510",
+      "symbol": "486510.KQ",
+      "rows": 1,
+      "first": "2026-09-29",
+      "last": "2026-09-29",
+      "null_close": 0,
+      "sha256": "14a9ccb7dff9279e26a67779545dab5f89eb620bba6720e3b042d086269efa0f"
+    },
+    {
+      "code": "0035S0",
+      "symbol": "0035S0.KQ",
+      "rows": 1,
+      "first": "2026-09-29",
+      "last": "2026-09-29",
+      "null_close": 0,
+      "sha256": "c64908202570b501a90ea0fd3fab258dc4ef25584c606239c474f3a823ddb59d"
+    },
+    {
+      "code": "001820",
+      "symbol": "001820.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "f83e50d2a6191777cab450597fd5461c356d30135977ac6e9374af7e9ad41c1d"
+    },
+    {
+      "code": "490470",
+      "symbol": "490470.KQ",
+      "rows": 183,
+      "first": "2025-12-29",
+      "last": "2026-09-29",
+      "null_close": 0,
+      "sha256": "218d65274dc9b9c572f3361b69fc989391a9751ce0244ca660e696583e6acc08"
+    },
+    {
+      "code": "452190",
+      "symbol": "452190.KQ",
+      "rows": 665,
+      "first": "2024-01-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "3d74a1f307104e300b5f8e66cc5a81edf7517cf3e7b3e6b5dc076a13b33df8b7"
+    },
+    {
+      "code": "010170",
+      "symbol": "010170.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "04089779f06eaa3cb8afdb4254b379f8c9894cb98a04b7446debd01886960d83"
+    },
+    {
+      "code": "007810",
+      "symbol": "007810.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "44ff679b6f679538ef601387a7cbc9f63164ad1e773f2dedeb51050cd15fa11b"
+    },
+    {
+      "code": "0010S0",
+      "symbol": "0010S0.KQ",
+      "rows": 3,
+      "first": "2026-09-23",
+      "last": "2026-09-29",
+      "null_close": 0,
+      "sha256": "cd7c37e9a6ecb6fb569bf816c3273b06b9455877ba9002f945b9948e4c0e23a1"
+    },
+    {
+      "code": "0161M0",
+      "symbol": "0161M0.KQ",
+      "rows": 4,
+      "first": "2026-09-22",
+      "last": "2026-09-29",
+      "null_close": 0,
+      "sha256": "a0a565b5ee580dbfe7276979464dfbbbd5065d0f4ba43a978ef098ed03162cb9"
+    },
+    {
+      "code": "161580",
+      "symbol": "161580.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "9663697471d4177f2ebaf68e459d116593aaed845850328c494db954e4931f34"
+    },
+    {
+      "code": "256840",
+      "symbol": "256840.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "d25ac2df7707603e8e9b6104175c1c47db49137dcf6d5566d6a83a7f99d739a4"
+    },
+    {
+      "code": "052260",
+      "symbol": "052260.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "0ca9f3d9b3c1e38d2daf86382076cea34a27a9a269e487e4de96d521639a6d56"
+    },
+    {
+      "code": "010060",
+      "symbol": "010060.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "7c257a151f9b85d10792c6ba3c754b53d62dfd76b6e145a88d8bdfb1ea5655d0"
+    },
+    {
+      "code": "067310",
+      "symbol": "067310.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "c3fbfdc8a7c860e14ac99ca384a8593690f637163b361ba4a07d47fb610eef2f"
+    },
+    {
+      "code": "043260",
+      "symbol": "043260.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "f1fa17d2dddb0bf4e0e7d3a2fe1bcf8f1c552162504f122a910602a709df9e93"
+    },
+    {
+      "code": "095610",
+      "symbol": "095610.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "e8fb21438383ee13380cdc205c0ce4c964f2cca9d38ca1d028f7647fdb35957d"
+    },
+    {
+      "code": "098460",
+      "symbol": "098460.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "26aec17f5bc13d4b84e01515291423ffbf0571e7391717a53b5b0ccb4d42640e"
+    },
+    {
+      "code": "080220",
+      "symbol": "080220.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "762b322d01ede3939b5fabbf1faa63c9fe95af55843c43e519a8e9f928e08394"
+    },
+    {
+      "code": "178320",
+      "symbol": "178320.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "dcccb78588235b4a32f1f386a918ff0d2532246d9199e69001b5f50cd0c91b9e"
+    },
+    {
+      "code": "108490",
+      "symbol": "108490.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "db56cbfa2b3b9a4a3a3c777f798fa1bf0da7538a55ec606ee67f174f1827f1b6"
+    },
+    {
+      "code": "047920",
+      "symbol": "047920.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "22080f7fc22278cd5ccdbf88edfc5e5de7bc3eb67bfa23e8f194b013f0369191"
+    },
+    {
+      "code": "440110",
+      "symbol": "440110.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "27d5685e43c1020d291e398d7b9c3d032b05a1053564df26425466864df012b0"
+    },
+    {
+      "code": "323280",
+      "symbol": "323280.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "37c6732b3dbbe611d1f44d0e9d5ccdb24ec443d13b4a9ec310d482c58a24df46"
+    },
+    {
+      "code": "327260",
+      "symbol": "327260.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "a44eb9472b5b40da2c91fc149bc02375d43810b031c265765c2b0f41c54c9507"
+    },
+    {
+      "code": "387690",
+      "symbol": "387690.KQ",
+      "rows": 53,
+      "first": "2026-07-13",
+      "last": "2026-09-29",
+      "null_close": 0,
+      "sha256": "71cfaa7a992587af5f36100f30f9f42217454d745818fead1a4e4f4a40fc6e2e"
+    },
+    {
+      "code": "356680",
+      "symbol": "356680.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "59aa3224ac8f0d183f81b7b36283ebb1635e9863aa536f2a0a54549caa798bd6"
+    },
+    {
+      "code": "267320",
+      "symbol": "267320.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "d62fa23de3280b8326e0165ed7c83c902d67f4057db077404fdc98957b88fb26"
+    },
+    {
+      "code": "036540",
+      "symbol": "036540.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "228cbcf93d7668d35e0c492479900d4eeccad44ea849bd3da2c6722fed5125ed"
+    },
+    {
+      "code": "336260",
+      "symbol": "336260.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "c22ac99cb71ecde82bb664b62dc17a2a9704c9a865e203f097d5b52bf807d67c"
+    },
+    {
+      "code": "006360",
+      "symbol": "006360.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "530c61d6820be055747efbe2e1092cc1a0fbfedf937b292e453ca28bc0fe36e9"
+    },
+    {
+      "code": "066970",
+      "symbol": "066970.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "e4b78eb0e804c3e90d5004c051cd5dbc1d77ff32e599c0a5ec07d66eba12858c"
+    },
+    {
+      "code": "319660",
+      "symbol": "319660.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "a8b65e76e57991e47eb5c49860b4d1eebb21aa489f2c43eea71286309ad5888e"
+    },
+    {
+      "code": "089030",
+      "symbol": "089030.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "4173341fe25ffb8ba85b5d60467c26caa1fcabb2bab30d12f2fe7d63871de94b"
+    },
+    {
+      "code": "103590",
+      "symbol": "103590.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "de759778240446415eff932459d74b9a0ccc6d226e64f9ea8b6941960bd79509"
+    },
+    {
+      "code": "950250",
+      "symbol": "950250.KQ",
+      "rows": 196,
+      "first": "2025-12-09",
+      "last": "2026-09-29",
+      "null_close": 0,
+      "sha256": "dd1b65ec45b6d652a2d7bc94334bdd7db48b4b28b3d51ca615398e5e0015b0cd"
+    },
+    {
+      "code": "386380",
+      "symbol": "386380.KQ",
+      "rows": 16,
+      "first": "2026-09-04",
+      "last": "2026-09-29",
+      "null_close": 0,
+      "sha256": "d94f1ddced2c6588e8447e30b1710e1348fad00eeca0b38eabbc0e20df07cdac"
+    },
+    {
+      "code": "131290",
+      "symbol": "131290.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "b95bc974d499700d8322a4dd025dd03d5347ab6a15c167847543d53d917c87b3"
+    },
+    {
+      "code": "950260",
+      "symbol": "950260.KQ",
+      "rows": 27,
+      "first": "2026-08-20",
+      "last": "2026-09-29",
+      "null_close": 0,
+      "sha256": "a5dcef73140f3ed69915f3c81ff2bd0e5b29bb2d1296ebd05a5cadf111c15de3"
+    },
+    {
+      "code": "031980",
+      "symbol": "031980.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "fdd8ce90149585927a01087affde40cd5d3f117c8e8ea93520225f51bc84757e"
+    },
+    {
+      "code": "024850",
+      "symbol": "024850.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "ecd9c8cb737f440b1ea6288c4a4d1dab9dc835515c42e63872c30d916b3ef773"
+    },
+    {
+      "code": "456010",
+      "symbol": "456010.KQ",
+      "rows": 576,
+      "first": "2024-05-17",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "77af91c033b4bac5fc3844f16658a692196628317e7670303f79a987ca46b39e"
+    },
+    {
+      "code": "052690",
+      "symbol": "052690.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "2f9c5c1c89e4426700ce274df245d929e3073c931b12a3373179f74a54402f08"
+    },
+    {
+      "code": "032820",
+      "symbol": "032820.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "52a934cf74729e58d233d3aeb899a8116d156e4ec374925006551861cb2c3584"
+    },
+    {
+      "code": "131970",
+      "symbol": "131970.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "163209494b4b3632657634220abbfb3c9e7fefaf7fe37a55c65b8fb24feef695"
+    },
+    {
+      "code": "457190",
+      "symbol": "457190.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "3e8c296bc6775c783ba4caaa8a0a703adf807d57cf28d85a115c8eb93759ca83"
+    },
+    {
+      "code": "089970",
+      "symbol": "089970.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "d8757ca08da9804d263327c64001ddfe278f9b87f8e8a44243532ae6a9841e82"
+    },
+    {
+      "code": "475150",
+      "symbol": "475150.KS",
+      "rows": 607,
+      "first": "2024-03-29",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "51bc12301e622fe75999083c48d46c35fe0589f06dc2bf9118b5bb40f6f7aa0c"
+    },
+    {
+      "code": "067630",
+      "symbol": "067630.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "3fd089c6823225e94b958a186bae5d138797c88d054f3df07edac76d317c6c35"
+    },
+    {
+      "code": "030530",
+      "symbol": "030530.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "b719ff0566ce44e3731ae3b82b65820b6ff77a23029e395d09e101d31f71dc11"
+    },
+    {
+      "code": "084370",
+      "symbol": "084370.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "37d091000f6c231b626a7ecc480eef4dae97ef6ee9e054e01b190472697e31c0"
+    },
+    {
+      "code": "375500",
+      "symbol": "375500.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "00532c457d0310954856fd8c5757d2e268e163d01dd2ac7870cad3191ea7b514"
+    },
+    {
+      "code": "086960",
+      "symbol": "086960.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "f7fe397a15755269c4ddb64ea23b04d5c3a57315ae64213874841c73d277f642"
+    },
+    {
+      "code": "087010",
+      "symbol": "087010.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "61016bf43d8d53753a3bc7cfa00d64f032b0ffdd9a8aa5f5fef856e973e81768"
+    },
+    {
+      "code": "356860",
+      "symbol": "356860.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "795a2b7cea602530666444b05349adbe1bdbc2f82fb0a7b91ad86833455b74f2"
+    },
+    {
+      "code": "095340",
+      "symbol": "095340.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "0972e8e4a847b90ab9d34b3d30c855ded920acdbbc550194a9e3f6eb4d3ec952"
+    },
+    {
+      "code": "0039P0",
+      "symbol": "0039P0.KQ",
+      "rows": 61,
+      "first": "2026-07-01",
+      "last": "2026-09-29",
+      "null_close": 0,
+      "sha256": "8fbcfa9351bd28054cdf48e92c3f5142d79155b2fdff0924a99b542927ed6b14"
+    },
+    {
+      "code": "232140",
+      "symbol": "232140.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "1c049b2a0f5b299cc6c5cd07ecb20163a3c4fa26bec2fbb507cd63dce4965f60"
+    },
+    {
+      "code": "322000",
+      "symbol": "322000.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "d842f04009fd1aa2553c45c768b6091da68e38638f6b35a9b28cbb69ae619000"
+    },
+    {
+      "code": "357780",
+      "symbol": "357780.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "b80c3f8e93462f118c56e63b22125996c15520260e0518c9900e95dfc6f1fb0c"
+    },
+    {
+      "code": "093370",
+      "symbol": "093370.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "c85c50e0e42e60d483c3124b25374b373e8b9beb1748be2992de3879a4995e28"
+    },
+    {
+      "code": "034220",
+      "symbol": "034220.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "7c40402844d573d5ec72c619444619ad9f9b368d679deb8cf72457e7427811b9"
+    },
+    {
+      "code": "003570",
+      "symbol": "003570.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "dd9959466934ddf88915a44be7e4db9bb305aaee724bda3c4c02fd1a4ee0ea14"
+    },
+    {
+      "code": "051900",
+      "symbol": "051900.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "3850f7a75072714c5f3b63e8c4c567c193125eaad197883d7ffd83974e6f6cdf"
+    },
+    {
+      "code": "064760",
+      "symbol": "064760.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "d8b3e279f6002847c05ad497653b1f7a627c9b5b13f620b4ff7a4fc88ed9d8db"
+    },
+    {
+      "code": "004310",
+      "symbol": "004310.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "bede2394dd2d731530d4172ff23289c1d0a2721e53120233561e4bd4d5f1e6fa"
+    },
+    {
+      "code": "001450",
+      "symbol": "001450.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "69a93a5600a72848286075108c7483e6ae3a8f1c21f24063b4a7f30095bb8282"
+    },
+    {
+      "code": "082740",
+      "symbol": "082740.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "8b9396b24177565ecd28fee16c92e837aa23073f5c8275e0238fae7af88ab048"
+    },
+    {
+      "code": "004170",
+      "symbol": "004170.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "16d6d2df02f40714bbb2504177c49ac4faa11c34b44391790594b6669550e536"
+    },
+    {
+      "code": "338220",
+      "symbol": "338220.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "b3316711859b76b769ee8b43e08dcbdda47136f4341f7e2b3af9d0b675b2a8f9"
+    },
+    {
+      "code": "005290",
+      "symbol": "005290.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "01f55fd8ffedbb80bdcc3724f4d0c3cedae9615de5b8da947710d3e07d4cb709"
+    },
+    {
+      "code": "252990",
+      "symbol": "252990.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "9e97c5691ca828ff87a020ab30568e6fc4ff8991b1237dddce72257ac1b97d33"
+    },
+    {
+      "code": "028670",
+      "symbol": "028670.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "bd01f32173b049c930aa2c47c8009916a2271bd3dcfc892f0cae654b7ef0764a"
+    },
+    {
+      "code": "161890",
+      "symbol": "161890.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "e8b45305fab9f4d668c5182ef036d863b8403d3ed36b5506af43fb5796681ecb"
+    },
+    {
+      "code": "214450",
+      "symbol": "214450.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "b22b1f7d9239f414cdcc71da23ce1cde59c19b9266c015fee0053fd651954d5e"
+    },
+    {
+      "code": "183300",
+      "symbol": "183300.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "fb9ebb77d92606dcbbff4fc88cfdf1d949adccf3fddf20cad4c777a7484f2f0c"
+    },
+    {
+      "code": "347850",
+      "symbol": "347850.KQ",
+      "rows": 585,
+      "first": "2024-05-02",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "cabb78a3e6829fb9d4a81453688b39561b8a114c4491044911afdc46d975836b"
+    },
+    {
+      "code": "437730",
+      "symbol": "437730.KQ",
+      "rows": 613,
+      "first": "2024-03-21",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "747ca843d236ad1fb35984925e0aac0586a919f46c2735c2b7cf5bad2ce6a9c9"
+    },
+    {
+      "code": "420770",
+      "symbol": "420770.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "93c2278b258eb78d987c3c959a1ed1b12f83822065537a0cb511fe0fed9f5d20"
+    },
+    {
+      "code": "112610",
+      "symbol": "112610.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "f0ce94a1461c406d902dca49adecc28e9461c71e4d771ce5b665f23b9a466c8e"
+    },
+    {
+      "code": "064290",
+      "symbol": "064290.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "7da5aa5e975f930cdfa98975e44d63be447c5920aa92edfab0099db712210887"
+    },
+    {
+      "code": "483650",
+      "symbol": "483650.KS",
+      "rows": 330,
+      "first": "2025-05-23",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "306188c89563d34c5397f707c32a7e2c11403e5260482ade676dc1c82c065a57"
+    },
+    {
+      "code": "347700",
+      "symbol": "347700.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "9c227a98e409483a35080e3436b0c904226c15cf4d3f220ac486c411e2668fbc"
+    },
+    {
+      "code": "257720",
+      "symbol": "257720.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "9e17f5e39ea8775cdb19a6cfcd1d4dc53ce48e2dd3017ee363b2d3441bee545a"
+    },
+    {
+      "code": "077360",
+      "symbol": "077360.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "c4dda204313b99710e6ad111cef3bfd2d52ba7eae15321f63ebc34cebb6d312b"
+    },
+    {
+      "code": "092870",
+      "symbol": "092870.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "64eab1525799e20cddbe34a2647b3e245140c142dfb925d622bab83a7f24788c"
+    },
+    {
+      "code": "004020",
+      "symbol": "004020.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "c9738bb056ec887220e6cd36d245d32013b5e52cb5cf891fbdcfb2c262a0927e"
+    },
+    {
+      "code": "011790",
+      "symbol": "011790.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "ba2883b4ebf2e8019510e22b2e17cca979b3df153f47b02ca9aed14e8b767804"
+    },
+    {
+      "code": "204270",
+      "symbol": "204270.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "66cda2080fcc7d4fd12366882f6a934f46d026dc575edfdd1ce491bfb436ef99"
+    },
+    {
+      "code": "298380",
+      "symbol": "298380.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "3f9442df54481dbc0e20ac4b5541c4f633d48664795ba1971f2bf9c345a86bf5"
+    },
+    {
+      "code": "145020",
+      "symbol": "145020.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "8149722875d660312649ebcab334e8ab89260eb57683777220160658db67b22e"
+    },
+    {
+      "code": "439960",
+      "symbol": "439960.KQ",
+      "rows": 95,
+      "first": "2026-05-12",
+      "last": "2026-09-29",
+      "null_close": 0,
+      "sha256": "812cb8f8b1755f3f8cfdea2cdc5181a25c02b955fa0d721fe3b2ac7c4b9c698e"
+    },
+    {
+      "code": "001040",
+      "symbol": "001040.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "df4e41dcbec84a8a25bae0d963d6a4e0b5eb3ce71f9608e8bb5019f47b7b086b"
+    },
+    {
+      "code": "328130",
+      "symbol": "328130.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "bf22965648ef672c0a7b41234a4d9fb61048746cd89b6ef45869b11d01f32a05"
+    },
+    {
+      "code": "014680",
+      "symbol": "014680.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "cbe1e5c86835db3e6e10f73471fa301d7c08bff40fb0f0f646ebd7677d61adcf"
+    },
+    {
+      "code": "024060",
+      "symbol": "024060.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "b4cb7723094814173ea37144d0e9d7899a83352b126f95609283989b359a8cf6"
+    },
+    {
+      "code": "036570",
+      "symbol": "036570.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "292a24e1dfb335ee5ded1f4f94f47ac26a6a5ef7381d39cc72b0c11f07cc007a"
+    },
+    {
+      "code": "192820",
+      "symbol": "192820.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "bcbc8b33dcb8d08e33f656434071d78d1ab98dad64bce979d8851d745553c3b4"
+    },
+    {
+      "code": "454910",
+      "symbol": "454910.KS",
+      "rows": 726,
+      "first": "2023-10-05",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "8a78c01a50b7abe4b74f2fe27e9126d277f21ca5a31bcce8811787786649a606"
+    },
+    {
+      "code": "003160",
+      "symbol": "003160.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "4f6f4c14f9421d6b757616e21e20a1c600375f878b6d08f39d3c29af8833be3c"
+    },
+    {
+      "code": "032580",
+      "symbol": "032580.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "2ac274bd92c56e7995f1a328bdb1ad0aed60f9af52122adc60af45c2aa87958f"
+    },
+    {
+      "code": "226950",
+      "symbol": "226950.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "f7790730b51e127f544ce4ec91d989e3daf0f688aeceb461576df0825cd782a6"
+    },
+    {
+      "code": "475830",
+      "symbol": "475830.KQ",
+      "rows": 336,
+      "first": "2025-05-15",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "4446181a8ca26d8775e6dd75acf3ee710db2ddc5c22daf2b32a4677723a7f22d"
+    },
+    {
+      "code": "072950",
+      "symbol": "072950.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "82658fe814cf00b8d344ef73eaba2ddbc7611a52b4ec204bb2378d9135b528aa"
+    },
+    {
+      "code": "144960",
+      "symbol": "144960.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "b9ef24a3dd850b00af4b2ea9b9240d505b15c16951f56dce103fe8d96d50b6fd"
+    },
+    {
+      "code": "218410",
+      "symbol": "218410.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "c58d2cb2c7a22449f5ac7a460f68439f14edbe8ea8bfa2545647f32eaef73570"
+    },
+    {
+      "code": "006340",
+      "symbol": "006340.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "57222110dfed895e4180ffdfc33786a5de4699610a1405fa56980dc8620f70f8"
+    },
+    {
+      "code": "396300",
+      "symbol": "396300.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "e69f0150c104aefba22e1c3bb1cdaabd37af6e150450537f916b846dc3c28aeb"
+    },
+    {
+      "code": "004710",
+      "symbol": "004710.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "01dde2212d9657a52b8b964a5d35d877e131579df41b56716fb5518b04b34377"
+    },
+    {
+      "code": "950160",
+      "symbol": "950160.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "91ee177e37b1bf01736a5d10d81678af0843d18bbf09885fd3bc18251c475cb2"
+    },
+    {
+      "code": "079370",
+      "symbol": "079370.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "03af6f2f27461553bb362dc6875088c7b8f8a470b388a21c93cc983155d5723a"
+    },
+    {
+      "code": "083650",
+      "symbol": "083650.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "91ed9fa9fa033ad82f4d06c1202a6e7e48b49f3c44b983a45b7b4801cecf98f9"
+    },
+    {
+      "code": "290690",
+      "symbol": "290690.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "840fd9436132a8a961f22a5b18f37d81169c3419ca7162dec704746923ee9f6f"
+    },
+    {
+      "code": "083450",
+      "symbol": "083450.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "0d175ade360b6b00be76ac47845fdfe873055d783abc4f5163df71ddbf2b99d8"
+    },
+    {
+      "code": "052710",
+      "symbol": "052710.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "fa1b32a5c59a2f2155e099eb2ca150ae485fffda8502324895d974983f3da3d0"
+    },
+    {
+      "code": "295310",
+      "symbol": "295310.KQ",
+      "rows": 544,
+      "first": "2024-07-03",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "c037e3d7e36c8dd908e72623439afeead9a463e552a22c1c0c49f50104557b58"
+    },
+    {
+      "code": "261780",
+      "symbol": "261780.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "99d6b7eb8e2b74c5b2aaa8bec116f84bd0fad4e696764001ec3951fe8319c435"
+    },
+    {
+      "code": "425040",
+      "symbol": "425040.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "28b9606027325f5461cba4bfdb17c02703b016abe52f4fb3e0d90800d49b93cf"
+    },
+    {
+      "code": "078150",
+      "symbol": "078150.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "57f9d147821bdc351e2af84a9feb41d8ae400e9cfa598ce5438c3eb766dc216e"
+    },
+    {
+      "code": "450080",
+      "symbol": "450080.KS",
+      "rows": 696,
+      "first": "2023-11-17",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "a5d9783d4ba3d27f9f77b7458747fab5f78d41c08d9350a20613def8f3d4e02e"
+    },
+    {
+      "code": "003580",
+      "symbol": "003580.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "e59e76c7fbe78d0f9f2b833b2f66c5a3f1081f28bd91814d986a0bc6b3c33763"
+    },
+    {
+      "code": "000250",
+      "symbol": "000250.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "a9b40d0142266b44fdcf7462f8d8a99e71efc50e5cce8d7a13f9ca1cbe036b37"
+    },
+    {
+      "code": "187660",
+      "symbol": "187660.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "92aa530fd015d55b99d1400d0407c0043a9fb07816c2d529a85398d0dc7cfc54"
+    },
+    {
+      "code": "141080",
+      "symbol": "141080.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "9f12c1662459f5216054deeac59d6b0b0849ed27cb2e46c0937f4f86604b8825"
+    },
+    {
+      "code": "033160",
+      "symbol": "033160.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "da7885f8ed7a872aba47b11d08bdccfcc9bd01c7afc7bc40a84c2d5a11421792"
+    },
+    {
+      "code": "119850",
+      "symbol": "119850.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "4c6d52dd4df3e4c921b004e0efcbdc8fd34ef0b8c07cbed0243bd3ef8d37a28f"
+    },
+    {
+      "code": "126730",
+      "symbol": "126730.KQ",
+      "rows": 583,
+      "first": "2024-05-07",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "4eda945fb770d605cc1272c6204366abd3682fd3453102816d16dd20d773357f"
+    },
+    {
+      "code": "394800",
+      "symbol": "394800.KQ",
+      "rows": 455,
+      "first": "2024-11-14",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "220b8783c710eec48fe2b39f2b482a083903b086afb82b8281b47c9cc4153036"
+    },
+    {
+      "code": "071970",
+      "symbol": "071970.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "632ea6632651f6f4d29cb990eda29e4f9515649d0a26806d46066561b4d7b2cb"
+    },
+    {
+      "code": "058610",
+      "symbol": "058610.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "5e8d402226b451ebbcd5de17325604bef83032820f0c79e4eaa933ef176d3731"
+    },
+    {
+      "code": "115440",
+      "symbol": "115440.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "fdfb99e73c0262a79c600eddf50188c8277da38b70b1493b0405fcf6efe1a7e6"
+    },
+    {
+      "code": "033640",
+      "symbol": "033640.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "833b9567b214b6bfabf36ee68f45cba963d30a3937a5f144aeaf5407e5a0519c"
+    },
+    {
+      "code": "281820",
+      "symbol": "281820.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "df9396159bfdf8c86796589cfddae54fbe468499c4a31e8013004ab1edeb2170"
+    },
+    {
+      "code": "486990",
+      "symbol": "486990.KQ",
+      "rows": 221,
+      "first": "2025-11-04",
+      "last": "2026-09-29",
+      "null_close": 0,
+      "sha256": "2c62a86421fa84cfb83bde34cab5f59091c69c82ab649aa4022a7ab4c1548892"
+    },
+    {
+      "code": "067290",
+      "symbol": "067290.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "236e7db82055e8fde0fdd1cd8d43f6e45f2f2512ca69625336efab86ed7c1231"
+    },
+    {
+      "code": "002990",
+      "symbol": "002990.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "bd63e2c265edf32d9d99e3d88407012cb3d0125458ff251218482dbee042f53e"
+    },
+    {
+      "code": "330860",
+      "symbol": "330860.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "b7bb636a956dc60ce527691375b8dde74b6d9aa324c95a248fcade852b2c49a7"
+    },
+    {
+      "code": "012210",
+      "symbol": "012210.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "418b164ef2805ac8951760177a0cd8e4919528bd5485852e9621f99b6fda61cb"
+    },
+    {
+      "code": "319400",
+      "symbol": "319400.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "e81041322a6c30c5b4e90786fea8cdd502a516cadc75ce390bfc1b6293f20045"
+    },
+    {
+      "code": "195870",
+      "symbol": "195870.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "9e6222b140241f39934594b0db0f48d7b5a4778b494598e103a5377110ab7da8"
+    },
+    {
+      "code": "004370",
+      "symbol": "004370.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "06d1c5e79be05d2684ad5ef18cf85bb079dbed6f77c72e53ef588786a098af90"
+    },
+    {
+      "code": "080580",
+      "symbol": "080580.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "2b7dc64d934dea93a3b6314e2dc9031dab5a93a9072007bcade8be0e4a9e5dd2"
+    },
+    {
+      "code": "298020",
+      "symbol": "298020.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "26b917e6896cc301faad147f8d0e1968dbaf1d39cabc7b7d73c97fceba0d3f4a"
+    },
+    {
+      "code": "078600",
+      "symbol": "078600.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "ac3f928cbf5394ef5d4b656b81a7dc8f5af90d7cacbe7925367353026d90af6d"
+    },
+    {
+      "code": "069960",
+      "symbol": "069960.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "f3b99bf2ab6b46195c1f26a6df374864343f3fd354f8a2ff367f536cb38eaddd"
+    },
+    {
+      "code": "036200",
+      "symbol": "036200.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "1cb9756fd3c3a58665fb1e908625e805c397753ff1ce5d2c477fbf2a284685b1"
+    },
+    {
+      "code": "229640",
+      "symbol": "229640.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "67bbb6c2b6fccdd41ed2e873d6e5d8d8218ea8f40d9f42e8ff2698612bbd719d"
+    },
+    {
+      "code": "417840",
+      "symbol": "417840.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "0965938c6a121ac579c1108213ce1f543a46d2ce8046fbc78e1763289f3eb490"
+    },
+    {
+      "code": "192650",
+      "symbol": "192650.KS",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "cf57db13bb8861799eebeb2ab0309d45c026137e31ff1ebb71b8d69d796405e8"
+    },
+    {
+      "code": "069540",
+      "symbol": "069540.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "38d311b33968ae7370295cf3362bfdc7ce991d5eb9d22772446188b3dd3cad38"
+    },
+    {
+      "code": "478340",
+      "symbol": "478340.KQ",
+      "rows": 190,
+      "first": "2025-12-17",
+      "last": "2026-09-29",
+      "null_close": 0,
+      "sha256": "e60e7e43d605d189dd6d559d0249e825524bcfd3391c35a3c4f3c92b9897f71a"
+    },
+    {
+      "code": "042000",
+      "symbol": "042000.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "81d0464f9ea36d666adad96eed8e7623bb7de6bd55cb5f270638aa38533b4a8c"
+    },
+    {
+      "code": "241710",
+      "symbol": "241710.KQ",
+      "rows": 727,
+      "first": "2023-10-04",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "a0634fb15923eb95d7b3735a94a498b4cbcd315f02c9e546bd9e8c1b75a0ff6c"
+    },
+    {
+      "code": "458870",
+      "symbol": "458870.KQ",
+      "rows": 554,
+      "first": "2024-06-19",
+      "last": "2026-09-29",
+      "null_close": 1,
+      "sha256": "e7b3d6bc68ac96bfe61bdf217e8e425aa9c55b2fccf85bea2fec57bccdcb715e"
+    }
+  ]
+}
