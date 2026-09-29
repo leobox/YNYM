@@ -2,8 +2,10 @@ name: Mode 2 and Early Inception daily forward observation
 
 on:
   schedule:
-    # Weekdays 17:40 KST. Holidays and delayed completed bars are skipped.
+    # Weekdays 17:40 KST, with a 20:17 KST retry for delayed or dropped schedules/data.
+    # A completed decision is sealed once; a repeated run reuses it.
     - cron: '40 8 * * 1-5'
+    - cron: '17 11 * * 1-5'
   workflow_dispatch:
 
 permissions:
