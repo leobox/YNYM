@@ -2972,6 +2972,45 @@
           "note": "29일 예약 실행 미생성 확인, 수동 Actions 36573260130 성공으로 29일 일봉·시장 폭 78.0% 반영, 20:17 KST 재시도 예약 추가"
         }
       ]
+    },
+    {
+      "id": "T-081",
+      "title": "메인 README 일봉 후보 연속 포착 거래일 표시",
+      "summary": "",
+      "doc": "docs/tasks/T-081.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "0. 공통 인프라 & 대시보드",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "모드 2·상승 초입 연속 포착 거래일 표시 및 기록 결손·전략 분리 검증; 테스트 12개와 quant-guard 통과",
+      "done_at": "2026-09-29",
+      "updated_at": "2026-09-29",
+      "done_when": "모드 2·상승 초입 각 종목의 연속 포착 거래일을 날짜별 봉인 기록과 완료 일봉 거래 세션 기준으로 표시하고 자동 갱신 유지",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-09-29",
+      "log": [
+        {
+          "at": "2026-09-29",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-29",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-29",
+          "status": "done",
+          "note": "모드 2·상승 초입 연속 포착 거래일 표시 및 기록 결손·전략 분리 검증; 테스트 12개와 quant-guard 통과"
+        }
+      ]
     }
   ]
 }

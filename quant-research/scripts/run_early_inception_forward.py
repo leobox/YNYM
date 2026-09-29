@@ -286,6 +286,33 @@ def update_readme_panel(path: Path, panel: str) -> None:
     path.write_text(updated, encoding="utf-8")
 
 
+def consecutive_observation_days(record: dict, run_dir: Path,
+                                 universe: dict[str, pd.DataFrame]) -> dict[tuple[str, str], int]:
+    """Count consecutive completed market sessions in the same strategy's sealed top picks."""
+    as_of = pd.Timestamp(record["as_of"]).date()
+    sessions = sorted({stamp.date() for frame in universe.values()
+                       for stamp in frame.index if stamp.date() <= as_of}, reverse=True)
+    previous = [day for day in sessions if day < as_of]
+    cache: dict[str, dict | None] = {}
+    counts = {}
+    for strategy, block in record["strategies"].items():
+        for pick in block["candidates"]:
+            code = pick["code"]
+            days = 1
+            for day in previous:
+                key = day.isoformat()
+                if key not in cache:
+                    path = run_dir / f"{key}.json"
+                    cache[key] = json.loads(path.read_text(encoding="utf-8")) if path.is_file() else None
+                prior = cache[key]
+                if prior is None or not any(item["code"] == code for item in
+                                         prior.get("strategies", {}).get(strategy, {}).get("candidates", [])):
+                    break
+                days += 1
+            counts[(strategy, code)] = days
+    return counts
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data", type=Path, default=DEFAULT_DATA)
@@ -307,6 +334,7 @@ def main() -> int:
                         encoding="utf-8")
     record = result["record"]
     counts = {key: len(block["candidates"]) for key, block in record["strategies"].items()}
+    observed_days = consecutive_observation_days(record, args.runs, finding["universe"])
     breadth = record["market_breadth_pct"]
     lamp = "🟢 관찰 가능" if breadth >= 40.0 else "🔴 후보 선별 중단"
     fetched_kst = datetime.fromisoformat(record["fetched_at"]).astimezone(KST)
@@ -317,8 +345,8 @@ def main() -> int:
     for strategy, block in record["strategies"].items():
         lines.extend([f'### {"모드 2" if strategy == "mode2" else "상승 초입"}', "",
                       f'> 갱신: `{fetched_label}` · 기준 완료 일봉: `{record["as_of"]}`', "",
-                      "| 순위 | 종목 | 평가일 종가 | 상대점수 | 수치 근거 |",
-                      "|---:|:---|---:|---:|:---|"])
+                      "| 순위 | 종목 | 연속 포착 | 평가일 종가 | 상대점수 | 수치 근거 |",
+                      "|---:|:---|---:|---:|---:|:---|"])
         for rank, pick in enumerate(block["candidates"], 1):
             name = str(pick["name"]).replace("|", "/").replace("\n", " ")
             if strategy == "mode2":
@@ -329,10 +357,11 @@ def main() -> int:
                           else f'당일 {pick["vol_spike_1d"]:.2f}x (5일 {pick["vol_ratio"]:.2f}x)')
                 reason = (f'20일 변동폭 {pick["range_width_ratio"]:.1%} · '
                           f'{volume} · CMF20 {pick["cmf20"]:+.2f}')
-            lines.append(f'| {rank} | {name} (`{pick["code"]}`) | {pick["close"]:,.0f}원 | '
+            days = observed_days[(strategy, pick["code"])]
+            lines.append(f'| {rank} | {name} (`{pick["code"]}`) | {days}거래일째 | {pick["close"]:,.0f}원 | '
                          f'{pick[block["score_field"]]:.3f} | {reason} |')
         if not block["candidates"]:
-            lines.append("| - | 조건 충족 없음 | - | - | - |")
+            lines.append("| - | 조건 충족 없음 | - | - | - | - |")
     lines.append("")
     panel = "\n".join(lines)
     (args.runs.parent / "latest.md").write_text(panel, encoding="utf-8")

@@ -9,7 +9,10 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from scripts.run_early_inception_forward import build_record, capture, inspect, resolve, update_readme_panel
+from scripts.run_early_inception_forward import (
+    build_record, capture, consecutive_observation_days, inspect, resolve,
+    update_readme_panel,
+)
 import scripts.run_early_inception_forward as forward
 from scripts.fetch_daily_history import include_unresolved
 
@@ -185,6 +188,22 @@ def test_readme_update_keeps_other_dashboard_sections(tmp_path):
         update_readme_panel(path, "x")
 
 
+def test_consecutive_observation_days_uses_sealed_market_sessions(tmp_path):
+    sessions = pd.to_datetime(["2026-09-25", "2026-09-28", "2026-09-29"])
+    universe = {"A": pd.DataFrame(index=sessions)}
+    prior = lambda code: {"strategies": {"mode2": {"candidates": [{"code": code}]},
+                                            "early_inception": {"candidates": []}}}
+    (tmp_path / "2026-09-25.json").write_text(json.dumps(prior("A")))
+    (tmp_path / "2026-09-28.json").write_text(json.dumps(prior("A")))
+    current = {"as_of": "2026-09-29", "strategies": {
+        "mode2": {"candidates": [{"code": "A"}]},
+        "early_inception": {"candidates": [{"code": "A"}]}}}
+    counts = consecutive_observation_days(current, tmp_path, universe)
+    assert counts == {("mode2", "A"): 3, ("early_inception", "A"): 1}
+    (tmp_path / "2026-09-28.json").unlink()
+    assert consecutive_observation_days(current, tmp_path, universe)[("mode2", "A")] == 1
+
+
 def test_main_renders_stock_details_for_both_strategies(tmp_path, monkeypatch):
     runs = tmp_path / "runs"
     runs.mkdir()
@@ -215,6 +234,6 @@ def test_main_renders_stock_details_for_both_strategies(tmp_path, monkeypatch):
     assert panel.index("### 🌐 시장 상황") < panel.index("### 모드 2") < panel.index("### 상승 초입")
     assert "🟢 관찰 가능 · 시장 폭(SMA60) **55.0%** · 기준 완료 일봉 `2026-09-25`" in panel
     assert panel.count("갱신: `2026-09-25 18:00 KST`") == 2
-    assert "모드종목 (`000001`) | 10,000원 | 0.800 |" in panel
-    assert "초입종목 (`000002`) | 20,000원 | 0.700 |" in panel
+    assert "모드종목 (`000001`) | 1거래일째 | 10,000원 | 0.800 |" in panel
+    assert "초입종목 (`000002`) | 1거래일째 | 20,000원 | 0.700 |" in panel
     assert "20일 변동폭 18.0% · 5일 1.50x · CMF20 +0.20" in panel
