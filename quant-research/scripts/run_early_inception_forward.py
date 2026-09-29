@@ -309,12 +309,14 @@ def main() -> int:
     counts = {key: len(block["candidates"]) for key, block in record["strategies"].items()}
     breadth = record["market_breadth_pct"]
     lamp = "🟢 관찰 가능" if breadth >= 40.0 else "🔴 후보 선별 중단"
+    fetched_kst = datetime.fromisoformat(record["fetched_at"]).astimezone(KST)
+    fetched_label = fetched_kst.strftime("%Y-%m-%d %H:%M KST")
     lines = ["### 🌐 시장 상황", "",
              f'> {lamp} · 시장 폭(SMA60) **{breadth:.1f}%** · 기준 완료 일봉 `{record["as_of"]}`',
              ""]
     for strategy, block in record["strategies"].items():
         lines.extend([f'### {"모드 2" if strategy == "mode2" else "상승 초입"}', "",
-                      f'> 갱신: `{record["fetched_at"]}` · 기준 완료 일봉: `{record["as_of"]}`', "",
+                      f'> 갱신: `{fetched_label}` · 기준 완료 일봉: `{record["as_of"]}`', "",
                       "| 순위 | 종목 | 평가일 종가 | 상대점수 | 수치 근거 |",
                       "|---:|:---|---:|---:|:---|"])
         for rank, pick in enumerate(block["candidates"], 1):

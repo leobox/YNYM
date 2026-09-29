@@ -2927,7 +2927,7 @@
       "deps": [],
       "where": null,
       "refs": [],
-      "note": "원격 최신 스냅샷 보존 및 루트 README 시장 램프/표 순서·자동 생성기 수정; 관련 테스트 18개와 quant-guard 통과",
+      "note": "일봉 두 표의 수신 시각을 Asia/Seoul로 변환해 KST 표기; 11개 테스트 및 quant-guard 통과",
       "done_at": "2026-09-29",
       "updated_at": "2026-09-29",
       "done_when": "원격 main의 최신 데이터 보존, 상단 레짐 및 네 표 배치, 자동 갱신 유지 확인",
@@ -2950,6 +2950,16 @@
           "at": "2026-09-29",
           "status": "done",
           "note": "원격 최신 스냅샷 보존 및 루트 README 시장 램프/표 순서·자동 생성기 수정; 관련 테스트 18개와 quant-guard 통과"
+        },
+        {
+          "at": "2026-09-29",
+          "status": "in_progress",
+          "note": "사용자 교정: 일봉 두 표의 갱신 시각을 KST 표기로 통일"
+        },
+        {
+          "at": "2026-09-29",
+          "status": "done",
+          "note": "일봉 두 표의 수신 시각을 Asia/Seoul로 변환해 KST 표기; 11개 테스트 및 quant-guard 통과"
         }
       ]
     }
