@@ -307,15 +307,14 @@ def main() -> int:
                         encoding="utf-8")
     record = result["record"]
     counts = {key: len(block["candidates"]) for key, block in record["strategies"].items()}
-    lines = ["### 모드 2 · 상승 초입 병렬 전진 관찰", "",
-             f'- 완료 일봉: {record["as_of"]}',
-             f'- 데이터 수신: {record["fetched_at"]}',
-             f'- 자격 평가: {record["fresh_count"]}/{record["universe_count"]}종목',
-             f'- 시장 폭: {record["market_breadth_pct"]:.1f}% (40% 미만이면 두 전략 모두 후보 없음)',
-             f'- 모드 2 {counts["mode2"]}종목 · 상승 초입 {counts["early_inception"]}종목',
-             f'- 후속 평가 완료: {len(outcomes["resolved"])}건 · 대기: {outcomes["pending_count"]}건']
+    breadth = record["market_breadth_pct"]
+    lamp = "🟢 관찰 가능" if breadth >= 40.0 else "🔴 후보 선별 중단"
+    lines = ["### 🌐 시장 상황", "",
+             f'> {lamp} · 시장 폭(SMA60) **{breadth:.1f}%** · 기준 완료 일봉 `{record["as_of"]}`',
+             ""]
     for strategy, block in record["strategies"].items():
-        lines.extend(["", f'#### {"모드 2" if strategy == "mode2" else "상승 초입"} · {record["as_of"]} 종가', "",
+        lines.extend([f'### {"모드 2" if strategy == "mode2" else "상승 초입"}', "",
+                      f'> 갱신: `{record["fetched_at"]}` · 기준 완료 일봉: `{record["as_of"]}`', "",
                       "| 순위 | 종목 | 평가일 종가 | 상대점수 | 수치 근거 |",
                       "|---:|:---|---:|---:|:---|"])
         for rank, pick in enumerate(block["candidates"], 1):
@@ -332,8 +331,7 @@ def main() -> int:
                          f'{pick[block["score_field"]]:.3f} | {reason} |')
         if not block["candidates"]:
             lines.append("| - | 조건 충족 없음 | - | - | - |")
-    lines.extend(["", "완료 일봉을 이용한 연구 관찰입니다. 실제 주문·매수 추천이나 체결 가격이 아닙니다.",
-                  "후속 성과는 다음 관측 봉 시가 가상 진입 후 20거래일이 채워진 신호만 집계합니다.", ""])
+    lines.append("")
     panel = "\n".join(lines)
     (args.runs.parent / "latest.md").write_text(panel, encoding="utf-8")
     if args.readme:

@@ -2,7 +2,7 @@ import copy
 
 import pandas as pd
 
-from collector import parse_multiframe_bars, render_lrm60_panel
+from collector import parse_multiframe_bars, render_lrm60_panel, render_markdown_dashboard
 from lrm60 import LRM60PaperBook, inspect_signal, regime_at
 
 
@@ -122,9 +122,19 @@ def test_dashboard_keeps_official_and_experiment_separate():
                   "positions": {}, "equity": 1_005_000}
     panel = "\n".join(render_lrm60_panel(official, "##", experiment))
     assert "4대 게이트 통과:** `1건`" in panel
+    assert "| 통과 없음 | - |" in panel
     assert "KOSPI 통과" in panel and "KOSDAQ 데이터 없음" in panel
     assert "1,005,000원" in panel and "공식 v2.0과 성과를 합산하지 않습니다" in panel
     panel = "\n".join(render_lrm60_panel(
         {**official, "last_bar_ts": "2026-09-21T14:00:00+09:00"}, "##", experiment,
         "2026-09-21 15:52"))
     assert "15:00~15:30 완료봉이 공급되지 않아" in panel
+
+
+def test_embedded_dashboard_keeps_tables_before_details():
+    stats = {"total_resolved": 0, "win_rate": None, "target_first": 0,
+             "stop_first": 0, "timeout": 0}
+    output = render_markdown_dashboard(pd.DataFrame(), pd.DataFrame(), [], stats, [],
+                                       "2026-09-29 20:35", 350, embed=True)
+    assert output.index("스마트 랭킹") < output.index("LRM-60") < output.index("상세 정보")
+    assert "갱신: `2026-09-29 20:35 KST`" in output

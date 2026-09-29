@@ -2,7 +2,7 @@
   "$schema_version": "1.0",
   "meta": {
     "project": "Leobox Multi-root Workspace",
-    "updated": "2026-09-25",
+    "updated": "2026-09-29",
     "context_doc": "README.md",
     "doc_dir": "docs/tasks",
     "stack": "Multi-agent (Gemini + Claude + Codex) / Python(Quant) / GitHub Actions / Android",
@@ -2911,6 +2911,45 @@
           "at": "2026-09-25",
           "status": "done",
           "note": "e015e65 main 반영, 모드2·수집 Actions 수동 실행 성공, GitHub README 근거 표 갱신 확인"
+        }
+      ]
+    },
+    {
+      "id": "T-080",
+      "title": "루트 README 시장 램프와 네 표 우선 배치 및 갱신 시각 정리",
+      "summary": "",
+      "doc": "docs/tasks/T-080.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "0. 공통 인프라 & 대시보드",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "원격 최신 스냅샷 보존 및 루트 README 시장 램프/표 순서·자동 생성기 수정; 관련 테스트 18개와 quant-guard 통과",
+      "done_at": "2026-09-29",
+      "updated_at": "2026-09-29",
+      "done_when": "원격 main의 최신 데이터 보존, 상단 레짐 및 네 표 배치, 자동 갱신 유지 확인",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-09-29",
+      "log": [
+        {
+          "at": "2026-09-29",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-29",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-29",
+          "status": "done",
+          "note": "원격 최신 스냅샷 보존 및 루트 README 시장 램프/표 순서·자동 생성기 수정; 관련 테스트 18개와 quant-guard 통과"
         }
       ]
     }

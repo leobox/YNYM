@@ -212,6 +212,9 @@ def test_main_renders_stock_details_for_both_strategies(tmp_path, monkeypatch):
                                            "--runs", str(runs), "--readme", str(readme)])
     assert forward.main() == 0
     panel = readme.read_text(encoding="utf-8")
+    assert panel.index("### 🌐 시장 상황") < panel.index("### 모드 2") < panel.index("### 상승 초입")
+    assert "🟢 관찰 가능 · 시장 폭(SMA60) **55.0%** · 기준 완료 일봉 `2026-09-25`" in panel
+    assert panel.count("갱신: `2026-09-25T18:00:00+09:00`") == 2
     assert "모드종목 (`000001`) | 10,000원 | 0.800 |" in panel
     assert "초입종목 (`000002`) | 20,000원 | 0.700 |" in panel
     assert "20일 변동폭 18.0% · 5일 1.50x · CMF20 +0.20" in panel

@@ -786,7 +786,12 @@ def render_lrm60_panel(state: Dict[str, Any], heading: str = "##",
         lines = [
             f"{heading} 🧭 LRM-60 v2.0 · 완료봉 신호",
             "",
-            "> 첫 완료 60분봉 수집을 기다리고 있습니다. 가상 계좌는 첫 실행부터 전진 기록합니다.",
+            f"> 갱신: `{now_str} KST`" if now_str else "> 갱신 시각 없음",
+            "",
+            "| 상태 | 기준 완료봉 | 다음 단계 |",
+            "|:---|:---|:---|",
+            "| 평가 대기 | - | 첫 완료 60분봉 수집 대기 |",
+            "",
             "", "---", "",
         ]
         if experiment:
@@ -804,6 +809,8 @@ def render_lrm60_panel(state: Dict[str, Any], heading: str = "##",
     equity_text = f"{equity:,.0f}원" if equity is not None else "평가 보류(보유 종목 봉 결측/무거래)"
     lines = [
         f"{heading} 🧭 LRM-60 v2.0 · 4대 게이트 / 3슬롯",
+        "",
+        f"> 갱신: `{now_str} KST`" if now_str else "> 갱신 시각 없음",
         "",
         f"> **기준 완료봉:** `{bar_time} KST` · **4대 게이트 통과:** `{coverage.get('passed', 0)}건` "
         f"· **다음 봉 시가 대기:** `{len(pending)}건` · **가상 보유:** `{len(positions)}/3` "
@@ -843,7 +850,11 @@ def render_lrm60_panel(state: Dict[str, Any], heading: str = "##",
                 f"{item['r_vol']:.2f}배 | {item['d_base_pct']:+.2f}% | {next_step} |"
             )
     else:
-        lines.append("> 이번 기준봉에서 4대 게이트를 모두 통과한 종목이 없습니다.")
+        lines.extend([
+            "| 상태 | 종목 | 신호봉 종가 | 거래대금 | 상대 대금 | D_base | 다음 단계 |",
+            "|:---:|:---|---:|---:|---:|---:|:---|",
+            "| 통과 없음 | - | - | - | - | - | 다음 완료봉 대기 |",
+        ])
     lines.append("")
 
     if positions:
@@ -926,12 +937,7 @@ def render_markdown_dashboard(
     if not embed:
         lines.extend(["# ⏱️ Quant Collector · LRM-60 v2.0", ""])
 
-    summary = (
-        f"> ⏱️ **수집 시각**: `{now_str} KST (15분 예약 주기)` | 📊 **감시 유니버스**: `{scan_count}종목`"
-    )
-    if not embed:
-        summary += f" | ⚡ **기존 패턴 포착**: `{len(top)}건` | 🎯 **기존 활성 추적**: `{len(main_list)}건`"
-    lines.append(summary)
+    lines.append(f"> ⏱️ 수집 실행: `{now_str} KST`")
     lines.append("")
 
     if not embed:
@@ -942,7 +948,7 @@ def render_markdown_dashboard(
             "",
         ])
 
-    lines.extend(render_lrm60_panel(lrm_state or {}, H2, lrm_experiment_state, now_str))
+    header_lines, lines = lines, []
 
     # 병렬 실험 전략들을 최상단에 노출한다 (운영 신호와는 표·통계 모두 분리 유지)
     if experiments and not embed:
@@ -986,12 +992,14 @@ def render_markdown_dashboard(
             lines.append(f"| **{tag}** | **{a['name']}** ({a['code']}) | {a['current_price']:,.0f}원 ({pnl_color}{a['pnl_pct']:+.2f}%) | {rsn} |")
         lines.extend(["", "---", ""])
 
+    detail_lines, lines = lines, header_lines
+
     # 1. 신규 조건 충족 후보 (스마트 랭킹 우선순위 Top 5)
     # A. 실시간 스캔에서 신규 조건 충족(top)이 발생했을 때
     if not top.empty:
-        lines.append(f"{H2} 🎯 금일 조건 충족 신규 진입 후보 (스마트 랭킹 우선순위)")
+        lines.append(f"{H2} 🎯 스마트 랭킹 · 금일 신규 포착")
         lines.append("")
-        lines.append("> 돌파 건전도(이격 +1.2~+4.0% 안착 🟢), 오전 골든타임(09~10시), 거래대금 및 수급을 종합 평가한 진입 추천 순위입니다.")
+        lines.append(f"> 갱신: `{now_str} KST` · 신규 신호 기준봉은 표의 신호시각 참조")
         lines.append("")
         lines.append("| 순위 | 종목(코드) | 돌파모드 | 현재가 | 돌파이격 (판정) | 거래대금 · VR | 신호시각 | 스마트점수 |")
         lines.append("|:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|")
@@ -1042,9 +1050,9 @@ def render_markdown_dashboard(
             ranked_today.sort(key=lambda x: (x["smart_score"], x["pnl"]), reverse=True)
             rank_badges = ["🥇 1위", "🥈 2위", "🥉 3위", "4위", "5위"]
 
-            lines.append(f"{H2} 🎯 최근 신규 포착 종목 ({latest_date} 스마트 랭킹 순위)")
+            lines.append(f"{H2} 🎯 스마트 랭킹 · 최근 신규 포착 종목")
             lines.append("")
-            lines.append(f"> 가장 최근 거래일(`{latest_date}`)에 신규 포착된 종목들을 스마트 랭킹 점수순으로 정렬한 진입 추천 순위입니다. 장 시작 전/장 마감 후에도 1~2위를 쉽게 판단할 수 있습니다.")
+            lines.append(f"> 갱신: `{now_str} KST` · 신호 기준일: `{latest_date}`")
             lines.append("")
             lines.append("| 순위 | 종목(코드) | 현재가(수익률) | 돌파이격 (판정) | 거래대금 · VR | 신호시각 | 스마트점수 |")
             lines.append("|:---:|:---|:---:|:---:|:---:|:---:|:---:|")
@@ -1056,6 +1064,17 @@ def render_markdown_dashboard(
                 amt_vr = f"{r['amount_e8']:.1f}억 ({r['vr']:.1f}x)"
                 lines.append(f"| {badge} | **{r['name']}** ({r['code']}) | {p_str} | {gap_str} | {amt_vr} | {r['sig_time']} | **{r['smart_score']:.1f}점** |")
             lines.extend(["", "---", ""])
+        else:
+            lines.extend([f"{H2} 🎯 스마트 랭킹", "",
+                          f"> 갱신: `{now_str} KST` · 신규 신호 없음", "",
+                          "| 순위 | 종목 | 상태 |", "|---:|:---|:---|",
+                          "| - | - | 최근 신규 포착 없음 |", "", "---", ""])
+
+    lines.extend(render_lrm60_panel(lrm_state or {}, H2, lrm_experiment_state, now_str))
+    lines.extend([f"{H2} 📌 상세 정보", "",
+                  f"> 감시 유니버스 `{scan_count}종목` · 기존 패턴 포착 `{len(top)}건` "
+                  f"· 기존 활성 추적 `{len(main_list)}건`", ""])
+    lines.extend(detail_lines)
 
     # 기존 전략의 전체 추적표는 루트 README에서는 숨기고,
     # quant-collector/README.md(상세 이력)에서만 제공한다.
