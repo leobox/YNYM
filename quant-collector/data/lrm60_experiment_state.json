@@ -1,7 +1,7 @@
 {
   "version": "lrm60_v2_experiment_20260924",
   "cash": 660271.0170580104,
-  "equity": 966271.0170580104,
+  "equity": null,
   "positions": {
     "083450": {
       "code": "083450",
@@ -13,8 +13,8 @@
       "qty": 6,
       "cost": 308616.200955,
       "peak_price": 53400.0,
-      "last_close": 51000.0,
-      "bars_held": 7,
+      "last_close": 50900.0,
+      "bars_held": 8,
       "target_1_done": false
     }
   },
@@ -76,20 +76,20 @@
       "reason": "TRAILING_STOP"
     }
   ],
-  "last_bar_ts": "2026-09-30T13:00:00+09:00",
+  "last_bar_ts": "2026-09-30T14:40:00+09:00",
   "last_candidates": [],
   "gate_counts": {
-    "trend": 95,
-    "breakout": 6,
-    "liquidity": 20,
-    "candle": 26
+    "trend": 0,
+    "breakout": 0,
+    "liquidity": 0,
+    "candle": 0
   },
   "coverage": {
     "scanned": 350,
-    "evaluated": 349,
+    "evaluated": 0,
     "passed": 0,
-    "missing_bar": 1,
-    "insufficient": 0
+    "missing_bar": 349,
+    "insufficient": 1
   },
   "data_gaps": [
     {
@@ -126,6 +126,18 @@
     },
     {
       "bar_ts": "2026-09-30T12:40:00+09:00",
+      "codes": [
+        "083450"
+      ]
+    },
+    {
+      "bar_ts": "2026-09-30T13:40:00+09:00",
+      "codes": [
+        "083450"
+      ]
+    },
+    {
+      "bar_ts": "2026-09-30T14:40:00+09:00",
       "codes": [
         "083450"
       ]
