@@ -1,22 +1,8 @@
 {
   "version": "lrm60_v2_experiment_20260924",
-  "cash": 340205.06168126035,
-  "equity": 977005.0616812604,
+  "cash": 660271.0170580104,
+  "equity": 966271.0170580104,
   "positions": {
-    "252990": {
-      "code": "252990",
-      "name": "샘씨엔에스",
-      "market": "KOSDAQ",
-      "entry_ts": "2026-09-29T10:00:00+09:00",
-      "entry_price": 19278.875,
-      "breakout_level": 19000.0,
-      "qty": 16,
-      "cost": 308816.7313,
-      "peak_price": 20150.0,
-      "last_close": 19850.0,
-      "bars_held": 5,
-      "target_1_done": false
-    },
     "083450": {
       "code": "083450",
       "name": "GST",
@@ -26,9 +12,9 @@
       "breakout_level": 50500.0,
       "qty": 6,
       "cost": 308616.200955,
-      "peak_price": 53200.0,
-      "last_close": 53200.0,
-      "bars_held": 2,
+      "peak_price": 53400.0,
+      "last_close": 51000.0,
+      "bars_held": 7,
       "target_1_done": false
     }
   },
@@ -66,21 +52,43 @@
       "qty": 10,
       "pnl": -14090.04,
       "reason": "STOP_TOUCH"
+    },
+    {
+      "code": "252990",
+      "name": "샘씨엔에스",
+      "entry_ts": "2026-09-29T10:00:00+09:00",
+      "exit_ts": "2026-09-30T09:00:00+09:00",
+      "entry_price": 19278.875,
+      "exit_price": 20242.8188,
+      "qty": 8,
+      "pnl": 7347.95,
+      "reason": "PARTIAL_TOUCH"
+    },
+    {
+      "code": "252990",
+      "name": "샘씨엔에스",
+      "entry_ts": "2026-09-29T10:00:00+09:00",
+      "exit_ts": "2026-09-30T10:00:00+09:00",
+      "entry_price": 19278.875,
+      "exit_price": 19811.4881,
+      "qty": 8,
+      "pnl": 3901.27,
+      "reason": "TRAILING_STOP"
     }
   ],
-  "last_bar_ts": "2026-09-29T14:00:00+09:00",
+  "last_bar_ts": "2026-09-30T13:00:00+09:00",
   "last_candidates": [],
   "gate_counts": {
-    "trend": 88,
-    "breakout": 14,
-    "liquidity": 26,
-    "candle": 48
+    "trend": 95,
+    "breakout": 6,
+    "liquidity": 20,
+    "candle": 26
   },
   "coverage": {
     "scanned": 350,
-    "evaluated": 350,
+    "evaluated": 349,
     "passed": 0,
-    "missing_bar": 0,
+    "missing_bar": 1,
     "insufficient": 0
   },
   "data_gaps": [
@@ -95,6 +103,31 @@
       "bar_ts": "2026-09-28T14:05:00+09:00",
       "codes": [
         "065350"
+      ]
+    },
+    {
+      "bar_ts": "2026-09-30T09:40:00+09:00",
+      "codes": [
+        "083450",
+        "252990"
+      ]
+    },
+    {
+      "bar_ts": "2026-09-30T10:40:00+09:00",
+      "codes": [
+        "083450"
+      ]
+    },
+    {
+      "bar_ts": "2026-09-30T11:40:00+09:00",
+      "codes": [
+        "083450"
+      ]
+    },
+    {
+      "bar_ts": "2026-09-30T12:40:00+09:00",
+      "codes": [
+        "083450"
       ]
     }
   ],
