@@ -1,7 +1,7 @@
 {
   "version": "lrm60_v2",
-  "cash": 666371.5934119023,
-  "equity": null,
+  "cash": 388098.28082020226,
+  "equity": 1025148.2808202023,
   "positions": {
     "083450": {
       "code": "083450",
@@ -12,9 +12,23 @@
       "breakout_level": 50500.0,
       "qty": 6,
       "cost": 308616.200955,
-      "peak_price": 53400.0,
-      "last_close": 50900.0,
-      "bars_held": 8,
+      "peak_price": 55000.0,
+      "last_close": 54800.0,
+      "bars_held": 13,
+      "target_1_done": false
+    },
+    "036810": {
+      "code": "036810",
+      "name": "에프에스티",
+      "market": "KOSDAQ",
+      "entry_ts": "2026-10-01T10:00:00+09:00",
+      "entry_price": 33349.950000000004,
+      "breakout_level": 32550.0,
+      "qty": 9,
+      "cost": 300494.72198250005,
+      "peak_price": 34400.0,
+      "last_close": 34250.0,
+      "bars_held": 4,
       "target_1_done": false
     }
   },
@@ -63,22 +77,33 @@
       "qty": 16,
       "pnl": 7802.55,
       "reason": "TRAILING_STOP"
+    },
+    {
+      "code": "101490",
+      "name": "에스앤에스텍",
+      "entry_ts": "2026-10-01T10:00:00+09:00",
+      "exit_ts": "2026-10-01T13:00:00+09:00",
+      "entry_price": 47721.475000000006,
+      "exit_price": 51539.193,
+      "qty": 6,
+      "pnl": 22221.41,
+      "reason": "TARGET_TOUCH"
     }
   ],
-  "last_bar_ts": "2026-09-30T14:40:00+09:00",
+  "last_bar_ts": "2026-10-01T13:00:00+09:00",
   "last_candidates": [],
   "gate_counts": {
-    "trend": 0,
-    "breakout": 0,
-    "liquidity": 0,
-    "candle": 0
+    "trend": 154,
+    "breakout": 35,
+    "liquidity": 45,
+    "candle": 61
   },
   "coverage": {
     "scanned": 350,
-    "evaluated": 0,
+    "evaluated": 350,
     "passed": 0,
-    "missing_bar": 349,
-    "insufficient": 1
+    "missing_bar": 0,
+    "insufficient": 0
   },
   "data_gaps": [
     {
