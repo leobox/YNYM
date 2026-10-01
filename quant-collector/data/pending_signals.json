@@ -380,7 +380,7 @@
       "2026-09-30",
       "2026-10-01"
     ],
-    "highest_seen": 56500.0,
+    "highest_seen": 56700.0,
     "lowest_seen": 49950.0,
     "evaluations": {
       "h3_t3_s3": {
@@ -715,7 +715,7 @@
     "observed_dates": [
       "2026-10-01"
     ],
-    "highest_seen": 87300.0,
+    "highest_seen": 87700.0,
     "lowest_seen": 84100.0,
     "evaluations": {
       "h3_t3_s3": {
@@ -882,7 +882,7 @@
     "observed_dates": [
       "2026-10-01"
     ],
-    "highest_seen": 80700.0,
+    "highest_seen": 81400.0,
     "lowest_seen": 76850.0,
     "evaluations": {
       "h3_t3_s3": {
@@ -1049,7 +1049,7 @@
     "observed_dates": [
       "2026-10-01"
     ],
-    "highest_seen": 122300.0,
+    "highest_seen": 122800.0,
     "lowest_seen": 119500.0,
     "evaluations": {
       "h3_t3_s3": {
@@ -1216,8 +1216,175 @@
     "observed_dates": [
       "2026-10-01"
     ],
-    "highest_seen": 149900.0,
+    "highest_seen": 151700.0,
     "lowest_seen": 145000.0,
+    "evaluations": {
+      "h3_t3_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t3_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t5_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t5_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t535_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t535_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t7_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t7_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t10_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t10_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t3_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t3_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t5_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t5_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t535_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t535_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t7_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t7_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t10_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t10_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      }
+    },
+    "is_fully_resolved": false
+  },
+  "algorithm260917_v1_060370_2026-10-01_1400": {
+    "signal_id": "algorithm260917_v1_060370_2026-10-01_1400",
+    "strategy_version": "algorithm260917_v1",
+    "code": "060370",
+    "name": "LS마린솔루션",
+    "market": "KOSDAQ",
+    "signal_time_kst": "2026-10-01 14:00",
+    "registered_at_kst": "2026-10-01 21:00:42",
+    "entry_reference_price": 32500.0,
+    "targets": {
+      "tgt_3": 33475.0,
+      "tgt_5": 34125.0,
+      "tgt_7": 34775.0,
+      "tgt_10": 35750.0,
+      "tgt_5_35": 34238.75
+    },
+    "stops": {
+      "stop_3": 31525.0,
+      "stop_5": 30875.0
+    },
+    "features": {
+      "score": 71.07231081566549,
+      "pattern_type": "base_breakout",
+      "volume_ratio": 1.500325051584273,
+      "above60": false,
+      "extension_atr": 0.47,
+      "trigger_amount_e8": 8.921473,
+      "trigger_ratio": 2.389140684699826,
+      "breakout_level": 32200.0,
+      "trigger_close": 31900.0,
+      "current_close": 32600.0,
+      "atr_14": 548.7421899523713,
+      "sma12": 31987.5,
+      "sma26": 32340.384615384617,
+      "early_trigger": true,
+      "early_tf": "10m"
+    },
+    "trading_days_observed": 1,
+    "observed_dates": [
+      "2026-10-01"
+    ],
+    "highest_seen": 32650.0,
+    "lowest_seen": 31850.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "PENDING",
