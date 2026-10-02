@@ -1,7 +1,7 @@
 {
   "version": "lrm60_v2",
   "cash": 66033.72102892096,
-  "equity": 1021133.721028921,
+  "equity": 1021283.721028921,
   "positions": {
     "020150": {
       "code": "020150",
@@ -13,8 +13,8 @@
       "qty": 6,
       "cost": 299291.5399125,
       "peak_price": 51800.0,
-      "last_close": 50400.0,
-      "bars_held": 4,
+      "last_close": 51000.0,
+      "bars_held": 5,
       "target_1_done": false
     },
     "005070": {
@@ -26,9 +26,9 @@
       "breakout_level": 44800.0,
       "qty": 7,
       "cost": 328468.70511000004,
-      "peak_price": 47150.0,
-      "last_close": 47000.0,
-      "bars_held": 4,
+      "peak_price": 47250.0,
+      "last_close": 47250.0,
+      "bars_held": 5,
       "target_1_done": false
     },
     "347700": {
@@ -41,8 +41,8 @@
       "qty": 13,
       "cost": 321951.4688975,
       "peak_price": 25100.0,
-      "last_close": 24900.0,
-      "bars_held": 4,
+      "last_close": 24500.0,
+      "bars_held": 5,
       "target_1_done": false
     }
   },
@@ -126,18 +126,38 @@
       "reason": "TRAILING_STOP"
     }
   ],
-  "last_bar_ts": "2026-10-02T13:00:00+09:00",
-  "last_candidates": [],
+  "last_bar_ts": "2026-10-02T14:00:00+09:00",
+  "last_candidates": [
+    {
+      "code": "003380",
+      "name": "하림지주",
+      "market": "KOSDAQ",
+      "bar_ts": "2026-10-02T14:00:00+09:00",
+      "signal_close": 11300.0,
+      "breakout_level": 11250.0,
+      "amount_e8": 17.61,
+      "r_vol": 2.9180024437650225,
+      "d_base_pct": 2.805,
+      "cli": 0.8889,
+      "gates": {
+        "trend": true,
+        "breakout": true,
+        "liquidity": true,
+        "candle": true
+      },
+      "passed": true
+    }
+  ],
   "gate_counts": {
-    "trend": 171,
-    "breakout": 8,
-    "liquidity": 28,
-    "candle": 66
+    "trend": 162,
+    "breakout": 19,
+    "liquidity": 35,
+    "candle": 83
   },
   "coverage": {
     "scanned": 350,
     "evaluated": 350,
-    "passed": 0,
+    "passed": 1,
     "missing_bar": 0,
     "insufficient": 0
   },

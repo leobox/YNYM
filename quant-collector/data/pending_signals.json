@@ -884,7 +884,7 @@
       "2026-10-01",
       "2026-10-02"
     ],
-    "highest_seen": 33950.0,
+    "highest_seen": 34300.0,
     "lowest_seen": 31850.0,
     "evaluations": {
       "h3_t3_s3": {
@@ -898,6 +898,173 @@
         "exit_price": 33475.0,
         "exit_time": "2026-10-02 14:05",
         "return_pct": 3.0
+      },
+      "h3_t5_s3": {
+        "status": "TARGET_FIRST",
+        "exit_price": 34125.0,
+        "exit_time": "2026-10-02 14:45",
+        "return_pct": 5.0
+      },
+      "h3_t5_s5": {
+        "status": "TARGET_FIRST",
+        "exit_price": 34125.0,
+        "exit_time": "2026-10-02 14:45",
+        "return_pct": 5.0
+      },
+      "h3_t535_s3": {
+        "status": "TARGET_FIRST",
+        "exit_price": 34238.75,
+        "exit_time": "2026-10-02 14:45",
+        "return_pct": 5.35
+      },
+      "h3_t535_s5": {
+        "status": "TARGET_FIRST",
+        "exit_price": 34238.75,
+        "exit_time": "2026-10-02 14:45",
+        "return_pct": 5.35
+      },
+      "h3_t7_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t7_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t10_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t10_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t3_s3": {
+        "status": "TARGET_FIRST",
+        "exit_price": 33475.0,
+        "exit_time": "2026-10-02 14:05",
+        "return_pct": 3.0
+      },
+      "h5_t3_s5": {
+        "status": "TARGET_FIRST",
+        "exit_price": 33475.0,
+        "exit_time": "2026-10-02 14:05",
+        "return_pct": 3.0
+      },
+      "h5_t5_s3": {
+        "status": "TARGET_FIRST",
+        "exit_price": 34125.0,
+        "exit_time": "2026-10-02 14:45",
+        "return_pct": 5.0
+      },
+      "h5_t5_s5": {
+        "status": "TARGET_FIRST",
+        "exit_price": 34125.0,
+        "exit_time": "2026-10-02 14:45",
+        "return_pct": 5.0
+      },
+      "h5_t535_s3": {
+        "status": "TARGET_FIRST",
+        "exit_price": 34238.75,
+        "exit_time": "2026-10-02 14:45",
+        "return_pct": 5.35
+      },
+      "h5_t535_s5": {
+        "status": "TARGET_FIRST",
+        "exit_price": 34238.75,
+        "exit_time": "2026-10-02 14:45",
+        "return_pct": 5.35
+      },
+      "h5_t7_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t7_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t10_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t10_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      }
+    },
+    "is_fully_resolved": false
+  },
+  "algorithm260917_v1_272210_2026-10-02_1400": {
+    "signal_id": "algorithm260917_v1_272210_2026-10-02_1400",
+    "strategy_version": "algorithm260917_v1",
+    "code": "272210",
+    "name": "한화시스템",
+    "market": "KOSPI",
+    "signal_time_kst": "2026-10-02 14:00",
+    "registered_at_kst": "2026-10-02 20:23:52",
+    "entry_reference_price": 82000.0,
+    "targets": {
+      "tgt_3": 84460.0,
+      "tgt_5": 86100.0,
+      "tgt_7": 87740.0,
+      "tgt_10": 90200.0,
+      "tgt_5_35": 86387.0
+    },
+    "stops": {
+      "stop_3": 79540.0,
+      "stop_5": 77900.0
+    },
+    "features": {
+      "score": 62.12625410711382,
+      "pattern_type": "base_breakout",
+      "volume_ratio": 1.5481189226883227,
+      "above60": true,
+      "extension_atr": 3.68,
+      "trigger_amount_e8": 90.801,
+      "trigger_ratio": 2.8951103814039545,
+      "breakout_level": 81700.0,
+      "trigger_close": 81000.0,
+      "current_close": 82400.0,
+      "atr_14": 1746.1591204835063,
+      "sma12": 79400.0,
+      "sma26": 75973.07692307692,
+      "early_trigger": true,
+      "early_tf": "10m"
+    },
+    "trading_days_observed": 1,
+    "observed_dates": [
+      "2026-10-02"
+    ],
+    "highest_seen": 83000.0,
+    "lowest_seen": 80800.0,
+    "evaluations": {
+      "h3_t3_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t3_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
       },
       "h3_t5_s3": {
         "status": "PENDING",
@@ -948,16 +1115,183 @@
         "return_pct": null
       },
       "h5_t3_s3": {
-        "status": "TARGET_FIRST",
-        "exit_price": 33475.0,
-        "exit_time": "2026-10-02 14:05",
-        "return_pct": 3.0
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
       },
       "h5_t3_s5": {
-        "status": "TARGET_FIRST",
-        "exit_price": 33475.0,
-        "exit_time": "2026-10-02 14:05",
-        "return_pct": 3.0
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t5_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t5_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t535_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t535_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t7_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t7_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t10_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t10_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      }
+    },
+    "is_fully_resolved": false
+  },
+  "algorithm260917_v1_003380_2026-10-02_1400": {
+    "signal_id": "algorithm260917_v1_003380_2026-10-02_1400",
+    "strategy_version": "algorithm260917_v1",
+    "code": "003380",
+    "name": "하림지주",
+    "market": "KOSDAQ",
+    "signal_time_kst": "2026-10-02 14:00",
+    "registered_at_kst": "2026-10-02 20:23:52",
+    "entry_reference_price": 11310.0,
+    "targets": {
+      "tgt_3": 11649.3,
+      "tgt_5": 11875.5,
+      "tgt_7": 12101.7,
+      "tgt_10": 12441.0,
+      "tgt_5_35": 11915.09
+    },
+    "stops": {
+      "stop_3": 10970.7,
+      "stop_5": 10744.5
+    },
+    "features": {
+      "score": 71.10654449049807,
+      "pattern_type": "base_breakout",
+      "volume_ratio": 2.1715505342757933,
+      "above60": true,
+      "extension_atr": 2.89,
+      "trigger_amount_e8": 3.9823875,
+      "trigger_ratio": 0.9389888522074914,
+      "breakout_level": 11180.0,
+      "trigger_close": 11250.0,
+      "current_close": 11300.0,
+      "atr_14": 121.30839598646362,
+      "sma12": 11041.666666666666,
+      "sma26": 10948.846153846154,
+      "early_trigger": true,
+      "early_tf": "10m"
+    },
+    "trading_days_observed": 1,
+    "observed_dates": [
+      "2026-10-02"
+    ],
+    "highest_seen": 11310.0,
+    "lowest_seen": 11220.0,
+    "evaluations": {
+      "h3_t3_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t3_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t5_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t5_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t535_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t535_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t7_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t7_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t10_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t10_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t3_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t3_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
       },
       "h5_t5_s3": {
         "status": "PENDING",

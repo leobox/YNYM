@@ -1,0 +1,2 @@
+﻿code,name,market,bar_ts,signal_close,breakout_level,amount_e8,r_vol,d_base_pct,cli,gates,passed
+003380,하림지주,KOSDAQ,2026-10-02T14:00:00+09:00,11300.0,11250.0,17.61,2.9180024437650225,2.805,0.8889,"{'trend': True, 'breakout': True, 'liquidity': True, 'candle': True}",True
