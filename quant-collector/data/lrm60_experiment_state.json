@@ -1,34 +1,48 @@
 {
   "version": "lrm60_v2_experiment_20260924",
-  "cash": 539358.9903875979,
-  "equity": 1017558.9903875979,
+  "cash": 61041.82921987912,
+  "equity": 1016141.8292198791,
   "positions": {
-    "083450": {
-      "code": "083450",
-      "name": "GST",
-      "market": "KOSDAQ",
-      "entry_ts": "2026-09-29T13:00:00+09:00",
-      "entry_price": 51376.950000000004,
-      "breakout_level": 50500.0,
-      "qty": 3,
-      "cost": 154308.1004775,
-      "peak_price": 55300.0,
-      "last_close": 55000.0,
-      "bars_held": 14,
-      "target_1_done": true
+    "020150": {
+      "code": "020150",
+      "name": "롯데에너지머티리얼즈",
+      "market": "KOSPI",
+      "entry_ts": "2026-10-02T10:00:00+09:00",
+      "entry_price": 49824.625,
+      "breakout_level": 43500.0,
+      "qty": 6,
+      "cost": 299291.5399125,
+      "peak_price": 51800.0,
+      "last_close": 50400.0,
+      "bars_held": 4,
+      "target_1_done": false
     },
-    "036810": {
-      "code": "036810",
-      "name": "에프에스티",
+    "005070": {
+      "code": "005070",
+      "name": "코스모신소재",
+      "market": "KOSPI",
+      "entry_ts": "2026-10-02T10:00:00+09:00",
+      "entry_price": 46870.200000000004,
+      "breakout_level": 44800.0,
+      "qty": 7,
+      "cost": 328468.70511000004,
+      "peak_price": 47150.0,
+      "last_close": 47000.0,
+      "bars_held": 4,
+      "target_1_done": false
+    },
+    "347700": {
+      "code": "347700",
+      "name": "스피어",
       "market": "KOSDAQ",
-      "entry_ts": "2026-10-01T10:00:00+09:00",
-      "entry_price": 33349.950000000004,
-      "breakout_level": 32550.0,
-      "qty": 9,
-      "cost": 300494.72198250005,
-      "peak_price": 34850.0,
-      "last_close": 34800.0,
-      "bars_held": 5,
+      "entry_ts": "2026-10-02T10:00:00+09:00",
+      "entry_price": 24737.050000000003,
+      "breakout_level": 23450.0,
+      "qty": 13,
+      "cost": 321951.4688975,
+      "peak_price": 25100.0,
+      "last_close": 24900.0,
+      "bars_held": 4,
       "target_1_done": false
     }
   },
@@ -121,15 +135,48 @@
       "qty": 3,
       "pnl": 11110.7,
       "reason": "TARGET_TOUCH"
+    },
+    {
+      "code": "036810",
+      "name": "에프에스티",
+      "entry_ts": "2026-10-01T10:00:00+09:00",
+      "exit_ts": "2026-10-02T09:00:00+09:00",
+      "entry_price": 33349.950000000004,
+      "exit_price": 35197.125,
+      "qty": 4,
+      "pnl": 7073.38,
+      "reason": "PARTIAL_GAP"
+    },
+    {
+      "code": "083450",
+      "name": "GST",
+      "entry_ts": "2026-09-29T13:00:00+09:00",
+      "exit_ts": "2026-10-02T09:00:00+09:00",
+      "entry_price": 51376.950000000004,
+      "exit_price": 53836.6238,
+      "qty": 3,
+      "pnl": 7016.03,
+      "reason": "TRAILING_STOP"
+    },
+    {
+      "code": "036810",
+      "name": "에프에스티",
+      "entry_ts": "2026-10-01T10:00:00+09:00",
+      "exit_ts": "2026-10-02T09:00:00+09:00",
+      "entry_price": 33349.950000000004,
+      "exit_price": 33927.7819,
+      "qty": 5,
+      "pnl": 2502.31,
+      "reason": "TRAILING_STOP"
     }
   ],
-  "last_bar_ts": "2026-10-01T14:00:00+09:00",
+  "last_bar_ts": "2026-10-02T13:00:00+09:00",
   "last_candidates": [],
   "gate_counts": {
-    "trend": 163,
-    "breakout": 64,
-    "liquidity": 51,
-    "candle": 62
+    "trend": 171,
+    "breakout": 8,
+    "liquidity": 28,
+    "candle": 66
   },
   "coverage": {
     "scanned": 350,
@@ -191,7 +238,7 @@
     }
   ],
   "regime": {
-    "KOSPI": false,
+    "KOSPI": true,
     "KOSDAQ": true
   }
 }
