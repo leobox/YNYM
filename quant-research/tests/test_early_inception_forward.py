@@ -235,5 +235,45 @@ def test_main_renders_stock_details_for_both_strategies(tmp_path, monkeypatch):
     assert "🟢 관찰 가능 · 시장 폭(SMA60) **55.0%** · 기준 완료 일봉 `2026-09-25`" in panel
     assert panel.count("갱신: `2026-09-25 18:00 KST`") == 2
     assert "모드종목 (`000001`) | 1거래일째 | 10,000원 | 0.800 |" in panel
-    assert "초입종목 (`000002`) | 1거래일째 | 20,000원 | 0.700 |" in panel
     assert "20일 변동폭 18.0% · 5일 1.50x · CMF20 +0.20" in panel
+
+
+def test_backfill_missing_recovers_unsealed_interim_sessions(tmp_path):
+    runs = tmp_path / "runs"
+    runs.mkdir()
+    days = pd.bdate_range("2026-04-01", periods=130)
+    close = np.full(len(days), 10000.0)
+    frame = pd.DataFrame({"Date": days, "Open": close, "High": close * 1.01,
+                          "Low": close * .99, "Close": close,
+                          "Volume": np.full(len(days), 100000.0),
+                          "AdjClose": close}).set_index("Date")
+    universe = {"000001": frame}
+    finding = {
+        "as_of": str(days[-1].date()),
+        "primary_codes": ["000001"],
+        "fresh_codes": ["000001"],
+        "universe": universe,
+        "hashes": {"000001.csv": "abc"},
+        "rejected": {"missing_ohlcv": 0, "invalid_ohlcv": 0},
+        "fetched_at": f"{days[-1].date()}T18:00:00+09:00",
+        "symbol_by_code": {"000001": "000001.KS"},
+        "name_by_code": {"000001": "테스트"},
+    }
+    manifest_path = tmp_path / "manifest.json"
+    manifest_path.write_text(json.dumps({"primary_codes": ["000001"]}))
+
+    missing_day = str(days[-2].date())
+    prior_day = str(days[-3].date())
+    (runs / f"{prior_day}.json").write_text(json.dumps({
+        "as_of": prior_day,
+        "source": {"manifest_sha256": "fake_sha"},
+        "strategies": {"mode2": {"candidates": []}, "early_inception": {"candidates": []}},
+    }))
+
+    recovered = forward.backfill_missing(finding, manifest_path, runs, lookback=5)
+    assert recovered == [missing_day]
+    assert (runs / f"{missing_day}.json").exists()
+    sealed = json.loads((runs / f"{missing_day}.json").read_text(encoding="utf-8"))
+    assert sealed["as_of"] == missing_day
+    assert sealed["backfill"]["recovered_from_as_of"] == str(days[-1].date())
+

@@ -28,6 +28,11 @@ jobs:
         id: gate
         shell: bash
         run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "Manual dispatch: running without gate check."
+            echo "done=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           # Target session = KST date 16h ago (20:00 -> today, 01:00 after a late queue -> yesterday).
           target=$(TZ=Asia/Seoul date -d '16 hours ago' +%F)
           echo "target=$target"
