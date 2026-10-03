@@ -42,7 +42,7 @@ def source(tmp_path):
 def test_capture_reuses_frozen_signal_on_same_prices_and_new_fetch_time(source):
     data, manifest_path, now, runs = source
     first = capture(data, manifest_path, runs, now=now)
-    assert set(first["record"]["strategies"]) == {"mode2", "early_inception"}
+    assert set(first["record"]["strategies"]) == {"early_inception_3d", "early_inception"}
     assert all(not block["candidates"] for block in first["record"]["strategies"].values())
     original = (runs / f'{first["record"]["as_of"]}.json').read_bytes()
     manifest = json.loads(manifest_path.read_text())
@@ -90,7 +90,7 @@ def test_outcomes_stay_pending_until_full_horizon(source):
     data, manifest_path, now, runs = source
     first = capture(data, manifest_path, runs, now=now)
     record = first["record"]
-    record["strategies"]["mode2"]["candidates"] = [
+    record["strategies"]["early_inception_3d"]["candidates"] = [
         {"code": "000001", "market": "KOSPI", "close": 10000.0}]
     path = runs / f'{record["as_of"]}.json'
     path.write_text(json.dumps(record), encoding="utf-8")
@@ -107,17 +107,17 @@ def test_two_rankings_are_sealed_separately(source, monkeypatch):
     day = pd.Timestamp(finding["as_of"])
     monkeypatch.setattr(forward, "calculate_market_breadth",
                         lambda universe: pd.Series({day: 60.0}))
-    monkeypatch.setattr(forward, "compute_factor_rankings",
+    monkeypatch.setattr(forward, "compute_early_inception_3d_rankings",
                         lambda universe, as_of: pd.DataFrame([{"code": "000001", "close": 10000,
-                            "composite_score": .9, "cmf20": .1}]))
+                            "inception_3d_score": .9, "cmf20": .1}]))
     monkeypatch.setattr(forward, "compute_early_inception_rankings",
                         lambda universe, as_of: pd.DataFrame([{"code": "000001", "close": 10000,
                             "inception_score": .7, "cmf20": .1}]))
     record = build_record(finding, manifest_path)
-    assert record["strategies"]["mode2"]["candidates"][0]["composite_score"] == .9
+    assert record["strategies"]["early_inception_3d"]["candidates"][0]["inception_3d_score"] == .9
     assert record["strategies"]["early_inception"]["candidates"][0]["inception_score"] == .7
-    assert record["strategies"]["mode2"]["candidates"][0]["market"] == "KOSPI"
-    assert record["strategies"]["mode2"]["candidates"][0]["name"] == "테스트종목"
+    assert record["strategies"]["early_inception_3d"]["candidates"][0]["market"] == "KOSPI"
+    assert record["strategies"]["early_inception_3d"]["candidates"][0]["name"] == "테스트종목"
 
 
 def test_source_universe_names_are_read_only_from_hashed_snapshot(source, monkeypatch, tmp_path):

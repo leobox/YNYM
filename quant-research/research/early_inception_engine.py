@@ -332,3 +332,127 @@ def simulate_trade_with_weakening_exit(
         "hit_5pct": hit_5pct,
         "win": net_return_pct > 0,
     }
+
+
+def compute_early_inception_3d_rankings(
+    universe: Dict[str, pd.DataFrame],
+    eval_date: pd.Timestamp,
+    max_contraction_ratio: float = 0.40,
+    max_upper_wick_ratio: float = 0.30,
+    min_med_amt: float = 500_000_000.0,
+) -> pd.DataFrame:
+    """
+    Computes Early Inception 3-Day Focus rankings on eval_date strictly using
+    data available up to eval_date close (zero lookahead). Replaces legacy Mode 2.
+    1. Volatility contraction: 20d range / 60d range <= 0.40 (max_contraction_ratio)
+    2. Strict 20d breakout: Close >= prior 20d High, Close > SMA20, Close > SMA60
+    3. Solid body candle: Upper wick <= 30% of day's range (max_upper_wick_ratio)
+    4. Non-overextended: mom60_5 <= 25%, price <= 1.18x SMA60
+    5. Volume ignition: 5d vol >= 1.2x or 1d spike >= 1.35x
+    6. CMF20 >= -0.05
+    """
+    rows = []
+    for code, df in universe.items():
+        if eval_date not in df.index:
+            continue
+        hist = df.loc[:eval_date]
+        if len(hist) < 125:
+            continue
+
+        c = hist["Close"]
+        h = hist["High"]
+        l = hist["Low"]
+        v = hist["Volume"]
+        amt = c * v
+
+        current_c = float(c.iloc[-1])
+        current_h = float(h.iloc[-1])
+        current_l = float(l.iloc[-1])
+        current_o = float(hist["Open"].iloc[-1])
+        current_v = float(v.iloc[-1])
+
+        if current_c <= 0 or current_h <= current_l:
+            continue
+
+        sma20 = float(c.rolling(20).mean().iloc[-1])
+        sma60 = float(c.rolling(60).mean().iloc[-1])
+        if current_c < sma20 or current_c < sma60:
+            continue
+
+        med_amt = float(amt.rolling(20).median().iloc[-1])
+        if not np.isfinite(med_amt) or med_amt < min_med_amt:
+            continue
+
+        c_t5 = float(c.iloc[-5])
+        c_t60 = float(c.iloc[-60])
+        if c_t60 <= 0:
+            continue
+        mom60_5 = (c_t5 - c_t60) / c_t60
+        ratio_to_sma60 = current_c / sma60 if sma60 > 0 else 999.0
+
+        if mom60_5 > 0.25 or ratio_to_sma60 > 1.18:
+            continue
+
+        prior_h20 = float(h.iloc[-21:-1].max()) if len(h) >= 21 else float(h.iloc[:-1].max())
+        prior_l20 = float(l.iloc[-21:-1].min()) if len(l) >= 21 else float(l.iloc[:-1].min())
+        prior_h60 = float(h.iloc[-61:-1].max()) if len(h) >= 61 else float(h.iloc[:-1].max())
+        prior_l60 = float(l.iloc[-61:-1].min()) if len(l) >= 61 else float(l.iloc[:-1].min())
+        if prior_h20 <= 0 or prior_l20 <= 0 or prior_h60 <= 0 or prior_l60 <= 0:
+            continue
+
+        range_20 = prior_h20 - prior_l20
+        range_60 = prior_h60 - prior_l60
+        contraction_ratio = range_20 / range_60 if range_60 > 0 else 1.0
+        range_width_ratio = range_20 / current_c
+
+        if contraction_ratio > max_contraction_ratio:
+            continue
+        if current_c < prior_h20:
+            continue
+
+        candle_range = current_h - current_l
+        upper_wick_ratio = (current_h - max(current_c, current_o)) / candle_range if candle_range > 0 else 1.0
+        if upper_wick_ratio > max_upper_wick_ratio:
+            continue
+
+        prior_vol = float(v.iloc[-25:-5].median()) if len(v) >= 25 else float(v.iloc[:-5].median())
+        vol_ratio = float(v.iloc[-5:].median()) / prior_vol if prior_vol > 0 else 0.0
+        vol_spike_1d = current_v / prior_vol if prior_vol > 0 else 0.0
+        if vol_ratio < 1.20 and vol_spike_1d < 1.35:
+            continue
+
+        hl = (h.iloc[-20:] - l.iloc[-20:]).replace(0, np.nan)
+        mf_mult = ((c.iloc[-20:] - l.iloc[-20:]) - (h.iloc[-20:] - c.iloc[-20:])) / hl
+        mf_vol = mf_mult * v.iloc[-20:]
+        sum_vol = float(v.iloc[-20:].sum())
+        cmf20 = float(mf_vol.sum() / sum_vol) if sum_vol > 0 else -1.0
+        if cmf20 < -0.05:
+            continue
+
+        score = (
+            (1.0 - contraction_ratio / max_contraction_ratio) * 0.40
+            + (1.0 - range_width_ratio / 0.25) * 0.30
+            + (1.0 - upper_wick_ratio / max_upper_wick_ratio) * 0.30
+        )
+
+        rows.append({
+            "code": code,
+            "close": current_c,
+            "mom60_5": mom60_5,
+            "ratio_to_sma60": ratio_to_sma60,
+            "range_width_ratio": range_width_ratio,
+            "contraction_ratio": contraction_ratio,
+            "upper_wick_ratio": upper_wick_ratio,
+            "vol_ratio": vol_ratio,
+            "vol_spike_1d": vol_spike_1d,
+            "cmf20": cmf20,
+            "med_amt": med_amt,
+            "inception_3d_score": float(score),
+        })
+
+    if not rows:
+        return pd.DataFrame()
+
+    res = pd.DataFrame(rows)
+    return res.sort_values(["inception_3d_score", "code"], ascending=[False, True]).reset_index(drop=True)
+

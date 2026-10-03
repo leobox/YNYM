@@ -23,6 +23,7 @@ sys.path.insert(0, str(ROOT / "quant-research"))
 
 from research.early_inception_engine import (  # noqa: E402
     compute_early_inception_rankings,
+    compute_early_inception_3d_rankings,
     simulate_trade_with_weakening_exit,
 )
 from scripts.pure_quant_portfolio_manager import (  # noqa: E402
@@ -32,7 +33,7 @@ from scripts.pure_quant_portfolio_manager import (  # noqa: E402
 KST = ZoneInfo("Asia/Seoul")
 DEFAULT_DATA = ROOT / "quant-research/data/daily_3y"
 DEFAULT_RUNS = ROOT / "quant-research/data/research/T-110/runs"
-STRATEGIES = ("mode2", "early_inception")
+STRATEGIES = ("early_inception_3d", "early_inception")
 TOP_N = 5
 PANEL_START = "<!-- DUAL_FORWARD:START -->"
 PANEL_END = "<!-- DUAL_FORWARD:END -->"
@@ -140,7 +141,7 @@ def build_record(finding: dict, manifest_path: Path) -> dict:
         raise ValueError("MARKET_BREADTH_UNAVAILABLE")
     strategies = {}
     for key, ranker, score_name in (
-        ("mode2", compute_factor_rankings, "composite_score"),
+        ("early_inception_3d", compute_early_inception_3d_rankings, "inception_3d_score"),
         ("early_inception", compute_early_inception_rankings, "inception_score"),
     ):
         ranks = ranker(universe, as_of) if breadth >= 40.0 else pd.DataFrame()
@@ -313,7 +314,7 @@ def resolve(run_dir: Path, universe: dict[str, pd.DataFrame], as_of: str) -> dic
     pending = 0
     for path in sorted(run_dir.glob("????-??-??.json")):
         saved = json.loads(path.read_text(encoding="utf-8"))
-        if set(saved.get("strategies", {})) != set(STRATEGIES):
+        if set(saved.get("strategies", {})) not in (set(STRATEGIES), {"mode2", "early_inception"}):
             raise ValueError(f"WRONG_STRATEGIES:{path.name}")
         signal_day = pd.Timestamp(saved["as_of"])
         for strategy, block in saved["strategies"].items():
@@ -419,23 +420,28 @@ def main() -> int:
              f'> {lamp} · 시장 폭(SMA60) **{breadth:.1f}%** · 기준 완료 일봉 `{record["as_of"]}`',
              ""]
     for strategy, block in record["strategies"].items():
-        lines.extend([f'### {"상승초입 3일 이내" if strategy in ("mode2", "early_inception2") else "상승 초입"}', "",
+        title = "상승초입 3일 이내" if strategy in ("early_inception_3d", "mode2") else "상승 초입"
+        lines.extend([f'### {title}', "",
                       f'> 갱신: `{fetched_label}` · 기준 완료 일봉: `{record["as_of"]}`', "",
                       "| 순위 | 종목 | 연속 포착 | 평가일 종가 | 상대점수 | 수치 근거 |",
                       "|---:|:---|---:|---:|---:|:---|"])
         for rank, pick in enumerate(block["candidates"], 1):
             name = str(pick["name"]).replace("|", "/").replace("\n", " ")
-            if strategy == "mode2":
-                reason = (f'60→5거래일 {pick["mom60_5"]:+.1%} · 위험조정 '
-                          f'{pick["risk_adj_mom"]:.2f} · CMF20 {pick["cmf20"]:+.2f}')
+            if strategy in ("early_inception_3d", "mode2"):
+                volume = (f'5일 {pick.get("vol_ratio", 0):.2f}x' if pick.get("vol_ratio", 0) >= 1.2
+                          else f'당일 {pick.get("vol_spike_1d", 0):.2f}x')
+                reason = (f'수축비 {pick.get("contraction_ratio", 0):.2f} · '
+                          f'윗꼬리 {pick.get("upper_wick_ratio", 0):.1%} · {volume} · CMF20 {pick.get("cmf20", 0):+.2f}')
+                score_val = pick.get(block["score_field"], 0.0)
             else:
                 volume = (f'5일 {pick["vol_ratio"]:.2f}x' if pick["vol_ratio"] >= 1.2
                           else f'당일 {pick["vol_spike_1d"]:.2f}x (5일 {pick["vol_ratio"]:.2f}x)')
                 reason = (f'20일 변동폭 {pick["range_width_ratio"]:.1%} · '
                           f'{volume} · CMF20 {pick["cmf20"]:+.2f}')
-            days = observed_days[(strategy, pick["code"])]
+                score_val = pick[block["score_field"]]
+            days = observed_days.get((strategy, pick["code"]), 1)
             lines.append(f'| {rank} | {name} (`{pick["code"]}`) | {days}거래일째 | {pick["close"]:,.0f}원 | '
-                         f'{pick[block["score_field"]]:.3f} | {reason} |')
+                         f'{score_val:.3f} | {reason} |')
         if not block["candidates"]:
             lines.append("| - | 조건 충족 없음 | - | - | - | - |")
     lines.append("")
