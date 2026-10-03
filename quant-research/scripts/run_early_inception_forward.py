@@ -419,7 +419,7 @@ def main() -> int:
              f'> {lamp} · 시장 폭(SMA60) **{breadth:.1f}%** · 기준 완료 일봉 `{record["as_of"]}`',
              ""]
     for strategy, block in record["strategies"].items():
-        lines.extend([f'### {"모드 2" if strategy == "mode2" else "상승 초입"}', "",
+        lines.extend([f'### {"상승초입 3일 이내" if strategy in ("mode2", "early_inception2") else "상승 초입"}', "",
                       f'> 갱신: `{fetched_label}` · 기준 완료 일봉: `{record["as_of"]}`', "",
                       "| 순위 | 종목 | 연속 포착 | 평가일 종가 | 상대점수 | 수치 근거 |",
                       "|---:|:---|---:|---:|---:|:---|"])
