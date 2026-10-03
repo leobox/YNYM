@@ -3017,7 +3017,7 @@
       "title": "quant-research: Mode2/상승초입 전진관찰 Action 안정화",
       "summary": "",
       "doc": "docs/tasks/T-082.md",
-      "status": "in_progress",
+      "status": "review",
       "priority": "P1",
       "category": "quant_research",
       "phase": "1. 퀀트 알고리즘 연구",
@@ -3025,7 +3025,7 @@
       "deps": [],
       "where": null,
       "refs": [],
-      "note": null,
+      "note": "push 7134f136, 실 스케줄 실행 확인 필요",
       "done_at": null,
       "updated_at": "2026-10-03",
       "done_when": "20~00시 KST 다중 스케줄, 당일 봉인 시 조기 종료, 자정 이후 실행·KRX 장애에도 봉인 성공",
@@ -3043,6 +3043,11 @@
           "at": "2026-10-03",
           "status": "in_progress",
           "note": ""
+        },
+        {
+          "at": "2026-10-03",
+          "status": "review",
+          "note": "push 7134f136, 실 스케줄 실행 확인 필요"
         }
       ]
     }
