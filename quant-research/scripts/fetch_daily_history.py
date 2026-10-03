@@ -77,6 +77,20 @@ def include_unresolved(universe: pd.DataFrame, runs_dir: Path | None) -> tuple[p
                 key = (record["as_of"], strategy, pick["code"])
                 if key not in resolved and pick["code"] not in primary:
                     carryover[pick["code"]] = pick["market"]
+    runs = sorted(runs_dir.glob("????-??-??.json"))
+    shas = {json.loads(p.read_text(encoding="utf-8")).get("source", {}).get("manifest_sha256")
+            for p in runs[-6:]} - {None}
+    for path in sorted(OUT_DIR.glob("fetch_manifest_3y_*.json"), reverse=True):
+        if not shas:
+            break
+        raw = path.read_bytes()
+        hit = shas & {hashlib.sha256(raw).hexdigest(), hashlib.sha256(raw.replace(b"\r\n", b"\n")).hexdigest()}
+        if hit:
+            shas -= hit
+            ref = json.loads(path.read_text(encoding="utf-8"))
+            for item in ref.get("files", []):
+                if item["code"] in ref.get("primary_codes", []) and item["code"] not in primary:
+                    carryover[item["code"]] = "KOSDAQ" if item["symbol"].endswith(".KQ") else "KOSPI"
     codes = sorted(carryover)
     if codes:
         extra = pd.DataFrame({"code": codes, "market": [carryover[code] for code in codes]})

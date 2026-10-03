@@ -59,6 +59,7 @@ jobs:
                 echo "$result"
                 status=$(printf '%s' "$result" | python -c 'import json,sys; print(json.load(sys.stdin).get("status", "CAPTURED"))')
                 echo "status=$status" >> "$GITHUB_OUTPUT"
+                echo "as_of=$(printf '%s' "$result" | python -c 'import json,sys; print(json.load(sys.stdin).get("as_of", ""))')" >> "$GITHUB_OUTPUT"
                 echo "::endgroup::"
                 exit 0
               fi
@@ -69,14 +70,18 @@ jobs:
           echo "3회 시도 모두 실패"
           exit 1
       - name: Preserve exact inputs for the observation
-        if: steps.observe.outputs.status == 'CAPTURED'
+        if: steps.observe.outputs.status == 'CAPTURED' || steps.observe.outputs.status == 'BACKFILLED'
         shell: bash
         run: |
-          asof=$(python -c 'import json,glob; p=sorted(glob.glob("quant-research/data/research/T-110/runs/*.json"))[-1]; print(json.load(open(p))["as_of"])')
+          asof="${{ steps.observe.outputs.as_of }}"
+          name="$asof"
+          if [ "${{ steps.observe.outputs.status }}" = "BACKFILLED" ]; then
+            name="backfill_from_${asof}_$(TZ=Asia/Seoul date +%Y%m%d%H%M)"
+          fi
           mkdir -p quant-research/data/research/T-110/raw
-          tar -czf "quant-research/data/research/T-110/raw/$asof.tar.gz" -C quant-research/data daily_3y
+          tar -czf "quant-research/data/research/T-110/raw/$name.tar.gz" -C quant-research/data daily_3y
       - name: Commit immutable research records
-        if: steps.observe.outputs.status == 'CAPTURED'
+        if: steps.observe.outputs.status == 'CAPTURED' || steps.observe.outputs.status == 'BACKFILLED'
         shell: bash
         run: |
           git config user.name "github-actions[bot]"

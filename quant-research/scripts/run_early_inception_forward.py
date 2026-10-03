@@ -209,6 +209,76 @@ def capture(data_dir: Path, manifest_path: Path, run_dir: Path,
     return {"path": str(target), "reused": False, "record": record, "finding": finding}
 
 
+BACKFILL_LOOKBACK_SESSIONS = 5
+MANIFEST_DIR = ROOT / "quant-research/data/research/T-063"
+
+
+def manifest_by_sha(sha: str) -> dict | None:
+    for path in sorted(MANIFEST_DIR.glob("fetch_manifest_3y_*.json"), reverse=True):
+        raw = path.read_bytes()
+        if sha in {hashlib.sha256(raw).hexdigest(), hashlib.sha256(raw.replace(b"\r\n", b"\n")).hexdigest()}:
+            return json.loads(path.read_text(encoding="utf-8"))
+    return None
+
+
+def backfill_missing(finding: dict, manifest_path: Path, run_dir: Path,
+                     lookback: int = BACKFILL_LOOKBACK_SESSIONS) -> list[str]:
+    """Seal recent sessions that the schedule missed, using only bars up to that session.
+
+    Every frame is truncated at the missed session before ranking, so no later bar can
+    influence the decision. The record is flagged with ``backfill`` so it is never mistaken
+    for a same-evening observation. Existing records are never overwritten.
+    """
+    existing = {path.stem for path in run_dir.glob("????-??-??.json")}
+    if not existing:
+        return []
+    first, as_of = min(existing), finding["as_of"]
+    full = finding["universe"]
+    counts: dict[str, int] = {}
+    for code in finding["primary_codes"]:
+        if code in full:
+            for stamp in full[code].index:
+                key = stamp.date().isoformat()
+                counts[key] = counts.get(key, 0) + 1
+    sessions = sorted(day for day, n in counts.items()
+                      if first < day < as_of and n / len(finding["primary_codes"]) >= 0.90)[-lookback:]
+    sealed = []
+    for day in sessions:
+        if day in existing:
+            continue
+        # Rankings are cross-sectional: reuse the universe of the last sealed day before the gap.
+        reference = max(d for d in existing if d < day)
+        ref_record = json.loads((run_dir / f"{reference}.json").read_text(encoding="utf-8"))
+        ref_manifest = manifest_by_sha(ref_record["source"]["manifest_sha256"])
+        primary = (ref_manifest or {}).get("primary_codes") or finding["primary_codes"]
+        cut = pd.Timestamp(day)
+        universe = {code: frame.loc[:cut] for code, frame in full.items()}
+        universe = {code: frame for code, frame in universe.items() if len(frame) >= 125}
+        fresh = [code for code in primary
+                 if code in universe and universe[code].index[-1] == cut]
+        if len(fresh) / len(primary) < 0.90:
+            continue
+        past = dict(finding, as_of=day, universe=universe, fresh_codes=fresh, primary_codes=primary)
+        record = build_record(past, manifest_path)
+        record.pop("run_id")
+        record["backfill"] = {
+            "recovered_from_as_of": as_of,
+            "universe_reference_date": reference,
+            "universe_reference_found": ref_manifest is not None,
+            "note": "스케줄 누락 복구. 해당 거래일까지의 봉만 잘라 계산. 종목군은 직전 봉인일 기준, 수신 시각은 사후(수정주가 소급 반영 가능).",
+        }
+        record["run_id"] = hashlib.sha256(_canonical(record)).hexdigest()[:20]
+        target = run_dir / f"{day}.json"
+        try:
+            with target.open("x", encoding="utf-8") as stream:
+                json.dump(record, stream, ensure_ascii=False, indent=2, allow_nan=False)
+                stream.write("\n")
+        except FileExistsError:
+            continue
+        sealed.append(day)
+    return sealed
+
+
 def _simulate_mode2(frame: pd.DataFrame, signal_day: pd.Timestamp) -> dict:
     """Independent 20-session Mode 2 virtual trade with a -15% airbag."""
     index = frame.index.get_loc(signal_day)
@@ -326,8 +396,14 @@ def main() -> int:
         if str(exc) in {"PRICE_SNAPSHOT_STALE_OR_FUTURE", "SAME_DAY_CLOSE_UNVERIFIED"}:
             print(json.dumps({"status": "SKIPPED", "reason": str(exc)}, ensure_ascii=False))
             return 0
-        raise
+        if str(exc) != "SIGNAL_DATE_ALREADY_SEALED_WITH_DIFFERENT_INPUT":
+            raise
+        # The sealed record stays untouched; the fresh snapshot is used only for gap recovery.
+        finding = inspect(args.data, args.manifest)
+        prior = json.loads((args.runs / f'{finding["as_of"]}.json').read_text(encoding="utf-8"))
+        result = {"reused": True, "record": prior, "finding": finding}
     finding = result["finding"]
+    backfilled = backfill_missing(finding, args.manifest, args.runs)
     outcomes = resolve(args.runs, finding["universe"], finding["as_of"])
     out_path = args.runs.parent / "outcomes.json"
     out_path.write_text(json.dumps(outcomes, ensure_ascii=False, indent=2, allow_nan=False) + "\n",
@@ -367,8 +443,9 @@ def main() -> int:
     (args.runs.parent / "latest.md").write_text(panel, encoding="utf-8")
     if args.readme:
         update_readme_panel(args.readme, panel)
+    status = "CAPTURED" if not result["reused"] else ("BACKFILLED" if backfilled else "REUSED")
     print(json.dumps({"as_of": finding["as_of"], "signal_count": counts,
-                      "status": "REUSED" if result["reused"] else "CAPTURED",
+                      "status": status, "backfilled": backfilled,
                       "reused": result["reused"], "resolved": len(outcomes["resolved"]),
                       "pending": outcomes["pending_count"]}, ensure_ascii=False))
     return 0
