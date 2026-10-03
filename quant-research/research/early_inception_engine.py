@@ -337,19 +337,25 @@ def simulate_trade_with_weakening_exit(
 def compute_early_inception_3d_rankings(
     universe: Dict[str, pd.DataFrame],
     eval_date: pd.Timestamp,
-    max_contraction_ratio: float = 0.40,
-    max_upper_wick_ratio: float = 0.30,
+    max_contraction_ratio: float = 0.45,
+    max_upper_wick_ratio: float = 0.40,
     min_med_amt: float = 500_000_000.0,
+    max_volume_contraction: float = 0.70,
+    min_volume_spike_ignition: float = 5.0,
 ) -> pd.DataFrame:
     """
     Computes Early Inception 3-Day Focus rankings on eval_date strictly using
     data available up to eval_date close (zero lookahead). Replaces legacy Mode 2.
-    1. Volatility contraction: 20d range / 60d range <= 0.40 (max_contraction_ratio)
-    2. Strict 20d breakout: Close >= prior 20d High, Close > SMA20, Close > SMA60
-    3. Solid body candle: Upper wick <= 30% of day's range (max_upper_wick_ratio)
-    4. Non-overextended: mom60_5 <= 25%, price <= 1.18x SMA60
-    5. Volume ignition: 5d vol >= 1.2x or 1d spike >= 1.35x
-    6. CMF20 >= -0.05
+    Hybrid dual-path gate (Option A):
+      [Path 1] Quiet Compression Breakout (삼천당제약·고영·뉴로메카):
+               contraction_ratio <= 0.45 and (vol_ratio >= 1.2 or vol_spike_1d >= 1.35)
+      [Path 2] Leader Volume Ignition (카페24):
+               vol_spike_1d >= 5.0 and contraction_ratio <= 0.70
+    Common Safety Invariants:
+      1. 20d breakout: Close >= prior 20d High, Close > SMA20, Close > SMA60
+      2. Solid body candle: Upper wick <= 40% of day's range (max_upper_wick_ratio)
+      3. Non-overextended: mom60_5 <= 25%, price <= 1.18x SMA60
+      4. CMF20 >= -0.05
     """
     rows = []
     for code, df in universe.items():
@@ -400,15 +406,13 @@ def compute_early_inception_3d_rankings(
         if prior_h20 <= 0 or prior_l20 <= 0 or prior_h60 <= 0 or prior_l60 <= 0:
             continue
 
+        if current_c < prior_h20:
+            continue
+
         range_20 = prior_h20 - prior_l20
         range_60 = prior_h60 - prior_l60
         contraction_ratio = range_20 / range_60 if range_60 > 0 else 1.0
         range_width_ratio = range_20 / current_c
-
-        if contraction_ratio > max_contraction_ratio:
-            continue
-        if current_c < prior_h20:
-            continue
 
         candle_range = current_h - current_l
         upper_wick_ratio = (current_h - max(current_c, current_o)) / candle_range if candle_range > 0 else 1.0
@@ -418,8 +422,6 @@ def compute_early_inception_3d_rankings(
         prior_vol = float(v.iloc[-25:-5].median()) if len(v) >= 25 else float(v.iloc[:-5].median())
         vol_ratio = float(v.iloc[-5:].median()) / prior_vol if prior_vol > 0 else 0.0
         vol_spike_1d = current_v / prior_vol if prior_vol > 0 else 0.0
-        if vol_ratio < 1.20 and vol_spike_1d < 1.35:
-            continue
 
         hl = (h.iloc[-20:] - l.iloc[-20:]).replace(0, np.nan)
         mf_mult = ((c.iloc[-20:] - l.iloc[-20:]) - (h.iloc[-20:] - c.iloc[-20:])) / hl
@@ -429,15 +431,37 @@ def compute_early_inception_3d_rankings(
         if cmf20 < -0.05:
             continue
 
+        # Hybrid Dual-Path Gate:
+        path_compression = (
+            contraction_ratio <= max_contraction_ratio
+            and (vol_ratio >= 1.20 or vol_spike_1d >= 1.35)
+        )
+        path_ignition = (
+            vol_spike_1d >= min_volume_spike_ignition
+            and contraction_ratio <= max_volume_contraction
+        )
+
+        if not (path_compression or path_ignition):
+            continue
+
+        if path_compression and path_ignition:
+            setup_type = "압축+폭발"
+        elif path_compression:
+            setup_type = "압축돌파"
+        else:
+            setup_type = "거래량폭발"
+
+        # Balanced ranking score (Contraction 35% + Volume Ignition 35% + Candle Body 30%)
         score = (
-            (1.0 - contraction_ratio / max_contraction_ratio) * 0.40
-            + (1.0 - range_width_ratio / 0.25) * 0.30
+            max(0.0, 1.0 - contraction_ratio / max_volume_contraction) * 0.35
+            + min(1.0, vol_spike_1d / 10.0) * 0.35
             + (1.0 - upper_wick_ratio / max_upper_wick_ratio) * 0.30
         )
 
         rows.append({
             "code": code,
             "close": current_c,
+            "setup_type": setup_type,
             "mom60_5": mom60_5,
             "ratio_to_sma60": ratio_to_sma60,
             "range_width_ratio": range_width_ratio,
@@ -455,4 +479,5 @@ def compute_early_inception_3d_rankings(
 
     res = pd.DataFrame(rows)
     return res.sort_values(["inception_3d_score", "code"], ascending=[False, True]).reset_index(drop=True)
+
 

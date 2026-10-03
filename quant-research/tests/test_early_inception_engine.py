@@ -228,3 +228,87 @@ def test_comparative_backtest_runner():
 
     latest_picks = scan_latest_early_inception(universe, s1.index[-1], top_n=5)
     assert isinstance(latest_picks, pd.DataFrame)
+
+
+def test_compute_early_inception_3d_hybrid_gate():
+    from research.early_inception_engine import compute_early_inception_3d_rankings
+
+    dates = pd.date_range("2024-01-01", periods=130, freq="B")
+    eval_date = dates[-1]
+
+    # Helper to generate stock with specific metrics
+    def make_stock(close_series, high_series, low_series, open_series, vol_series):
+        return pd.DataFrame({
+            "Open": open_series,
+            "High": high_series,
+            "Low": low_series,
+            "Close": close_series,
+            "Volume": vol_series,
+        }, index=dates)
+
+    base = np.full(130, 10000.0)
+    # 20d breakout setup: 20d high prior was 10500, 60d high was 12000, 60d low was 9000
+    # Range 60 = 3000
+
+    # Stock 1: Quiet Compression (삼천당제약/고영 모델)
+    # Range 20 = 1000 (cont = 1000/3000 = 0.33 <= 0.45), vol_spike = 2.0x, upper_wick = 10%
+    c1 = base.copy()
+    c1[-1] = 11000.0  # Breaks out above 10500
+    h1 = c1.copy()
+    h1[-1] = 11100.0  # Upper wick = (11100 - 11000) / (11100 - 10000) = 100 / 1100 = 9%
+    l1 = c1.copy()
+    l1[-1] = 10000.0
+    o1 = c1.copy()
+    o1[-1] = 10200.0
+    v1 = np.full(130, 100000.0)
+    v1[-1] = 200000.0  # 2.0x vol
+    # Set 60d base first, then tighten 20d window
+    h1[-61:-1] = 12000.0
+    l1[-61:-1] = 9000.0
+    h1[-21:-1] = 10500.0
+    l1[-21:-1] = 9500.0
+    stock_quiet = make_stock(c1, h1, l1, o1, v1)
+
+    # Stock 2: Leader Volume Ignition (카페24 모델)
+    # Range 20 = 1650 (cont = 1650/3000 = 0.55 > 0.45 but <= 0.70), vol_spike = 15.0x, upper_wick = 15%
+    c2 = base.copy()
+    c2[-1] = 11200.0
+    h2 = c2.copy()
+    h2[-1] = 11400.0  # Upper wick = 200 / 1500 = 13.3%
+    l2 = c2.copy()
+    l2[-1] = 9900.0
+    o2 = c2.copy()
+    o2[-1] = 10100.0
+    v2 = np.full(130, 100000.0)
+    v2[-1] = 1500000.0  # 15.0x vol ignition!
+    h2[-61:-1] = 12000.0
+    l2[-61:-1] = 9000.0
+    h2[-21:-1] = 10800.0
+    l2[-21:-1] = 9150.0  # Range 20 = 1650 (0.55)
+    stock_leader = make_stock(c2, h2, l2, o2, v2)
+
+    # Stock 3: High contraction without volume (Should be excluded!)
+    # Cont = 0.55, but vol_spike = 1.5x (< 5.0x)
+    stock_failed = stock_leader.copy()
+    stock_failed_vol = np.full(130, 100000.0)
+    stock_failed_vol[-1] = 150000.0
+    stock_failed["Volume"] = stock_failed_vol
+
+    universe = {
+        "QUIET": stock_quiet,
+        "LEADER": stock_leader,
+        "FAILED": stock_failed,
+    }
+
+    ranks = compute_early_inception_3d_rankings(universe, eval_date)
+    assert not ranks.empty
+    codes = ranks["code"].tolist()
+    assert "QUIET" in codes
+    assert "LEADER" in codes
+    assert "FAILED" not in codes
+
+    quiet_row = ranks[ranks["code"] == "QUIET"].iloc[0]
+    leader_row = ranks[ranks["code"] == "LEADER"].iloc[0]
+    assert quiet_row["setup_type"] == "압축돌파"
+    assert leader_row["setup_type"] == "거래량폭발"
+

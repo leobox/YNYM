@@ -428,9 +428,10 @@ def main() -> int:
         for rank, pick in enumerate(block["candidates"], 1):
             name = str(pick["name"]).replace("|", "/").replace("\n", " ")
             if strategy in ("early_inception_3d", "mode2"):
+                setup_tag = f'[{pick.get("setup_type", "초입")}] ' if pick.get("setup_type") else ''
                 volume = (f'5일 {pick.get("vol_ratio", 0):.2f}x' if pick.get("vol_ratio", 0) >= 1.2
                           else f'당일 {pick.get("vol_spike_1d", 0):.2f}x')
-                reason = (f'수축비 {pick.get("contraction_ratio", 0):.2f} · '
+                reason = (f'{setup_tag}수축비 {pick.get("contraction_ratio", 0):.2f} · '
                           f'윗꼬리 {pick.get("upper_wick_ratio", 0):.1%} · {volume} · CMF20 {pick.get("cmf20", 0):+.2f}')
                 score_val = pick.get(block["score_field"], 0.0)
             else:
