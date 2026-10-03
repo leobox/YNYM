@@ -2,10 +2,13 @@ name: Mode 2 and Early Inception daily forward observation
 
 on:
   schedule:
-    # Weekdays 17:40 KST, with a 20:17 KST retry for delayed or dropped schedules/data.
-    # A completed decision is sealed once; a repeated run reuses it.
-    - cron: '40 8 * * 1-5'
-    - cron: '17 11 * * 1-5'
+    # Weekdays 20:07 / 21:07 / 22:07 / 23:07 KST. GitHub cron is frequently delayed by
+    # hours or dropped, so several attempts are queued; the first success seals the day
+    # and later runs exit at the gate step without fetching anything.
+    - cron: '7 11 * * 1-5'
+    - cron: '7 12 * * 1-5'
+    - cron: '7 13 * * 1-5'
+    - cron: '7 14 * * 1-5'
   workflow_dispatch:
 
 permissions:
@@ -18,27 +21,53 @@ concurrency:
 jobs:
   observe:
     runs-on: ubuntu-24.04
-    timeout-minutes: 25
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v5
+      - name: Skip when today's completed bar is already sealed
+        id: gate
+        shell: bash
+        run: |
+          # Target session = KST date 16h ago (20:00 -> today, 01:00 after a late queue -> yesterday).
+          target=$(TZ=Asia/Seoul date -d '16 hours ago' +%F)
+          echo "target=$target"
+          if [ -f "quant-research/data/research/T-110/runs/$target.json" ]; then
+            echo "$target already sealed; nothing to do."
+            echo "done=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "done=false" >> "$GITHUB_OUTPUT"
+          fi
       - uses: actions/setup-python@v6
+        if: steps.gate.outputs.done != 'true'
         with:
           python-version: '3.11'
           cache: pip
           cache-dependency-path: quant-research/requirements.txt
       - name: Install data and research dependencies
+        if: steps.gate.outputs.done != 'true'
         run: python -m pip install -r quant-research/requirements.txt
-      - name: Refresh the scan universe and carry forward older signals
-        run: python -B quant-research/scripts/fetch_daily_history.py --range 3y --refresh-universe --carryover-runs quant-research/data/research/T-110/runs
-      - name: Seal one completed-bar decision
+      - name: Fetch and seal one completed-bar decision (with retries)
+        if: steps.gate.outputs.done != 'true'
         id: observe
         shell: bash
         run: |
-          manifest=$(find quant-research/data/research/T-063 -name 'fetch_manifest_3y_*.json' -printf '%T@ %p\n' | sort -nr | head -1 | cut -d' ' -f2-)
-          result=$(python -B quant-research/scripts/run_early_inception_forward.py --manifest "$manifest" --readme README.md)
-          echo "$result"
-          status=$(printf '%s' "$result" | python -c 'import json,sys; print(json.load(sys.stdin).get("status", "CAPTURED"))')
-          echo "status=$status" >> "$GITHUB_OUTPUT"
+          for attempt in 1 2 3; do
+            echo "::group::attempt $attempt"
+            if python -B quant-research/scripts/fetch_daily_history.py --range 3y --refresh-universe --carryover-runs quant-research/data/research/T-110/runs; then
+              manifest=$(find quant-research/data/research/T-063 -name 'fetch_manifest_3y_*.json' -printf '%T@ %p\n' | sort -nr | head -1 | cut -d' ' -f2-)
+              if result=$(python -B quant-research/scripts/run_early_inception_forward.py --manifest "$manifest" --readme README.md); then
+                echo "$result"
+                status=$(printf '%s' "$result" | python -c 'import json,sys; print(json.load(sys.stdin).get("status", "CAPTURED"))')
+                echo "status=$status" >> "$GITHUB_OUTPUT"
+                echo "::endgroup::"
+                exit 0
+              fi
+            fi
+            echo "::endgroup::"
+            if [ "$attempt" -lt 3 ]; then sleep $((attempt * 120)); fi
+          done
+          echo "3회 시도 모두 실패"
+          exit 1
       - name: Preserve exact inputs for the observation
         if: steps.observe.outputs.status == 'CAPTURED'
         shell: bash

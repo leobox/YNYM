@@ -2,7 +2,7 @@
   "$schema_version": "1.0",
   "meta": {
     "project": "Leobox Multi-root Workspace",
-    "updated": "2026-09-29",
+    "updated": "2026-10-03",
     "context_doc": "README.md",
     "doc_dir": "docs/tasks",
     "stack": "Multi-agent (Gemini + Claude + Codex) / Python(Quant) / GitHub Actions / Android",
@@ -3009,6 +3009,40 @@
           "at": "2026-09-29",
           "status": "done",
           "note": "모드 2·상승 초입 연속 포착 거래일 표시 및 기록 결손·전략 분리 검증; 테스트 12개와 quant-guard 통과"
+        }
+      ]
+    },
+    {
+      "id": "T-082",
+      "title": "quant-research: Mode2/상승초입 전진관찰 Action 안정화",
+      "summary": "",
+      "doc": "docs/tasks/T-082.md",
+      "status": "in_progress",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": null,
+      "done_at": null,
+      "updated_at": "2026-10-03",
+      "done_when": "20~00시 KST 다중 스케줄, 당일 봉인 시 조기 종료, 자정 이후 실행·KRX 장애에도 봉인 성공",
+      "gate": null,
+      "parent": null,
+      "owner": "gemini",
+      "claimed_at": "2026-10-03",
+      "log": [
+        {
+          "at": "2026-10-03",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-10-03",
+          "status": "in_progress",
+          "note": ""
         }
       ]
     }

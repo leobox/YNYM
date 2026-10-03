@@ -50,6 +50,11 @@ def to_frame(item: dict) -> pd.DataFrame:
     df = pd.DataFrame({"Open": quote["open"], "High": quote["high"], "Low": quote["low"],
                        "Close": quote["close"], "AdjClose": adj, "Volume": quote["volume"]}, index=index)
     df.index.name = "Date"
+    # 자정(KST) 이후 야후는 아직 열리지 않은 새 거래일의 빈 봉(OHLC 전부 NaN)을 끝에 붙인다.
+    # 이 자리표시 봉은 체결 데이터가 아니므로 끝에서만 제거한다(중간 결측은 그대로 기록).
+    ohlc = df[["Open", "High", "Low", "Close"]]
+    while len(df) and ohlc.iloc[-1].isna().all():
+        df, ohlc = df.iloc[:-1], ohlc.iloc[:-1]
     return df
 
 
@@ -93,12 +98,19 @@ def main() -> int:
     RAW_DIR.mkdir(parents=True, exist_ok=True)
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     fetched_at = datetime.now(KST)
+    universe_fallback = None
     if args.refresh_universe:
         SNAP_DIR.mkdir(parents=True, exist_ok=True)
         stamp = fetched_at.strftime("%Y%m%d_%H%M%S")
-        universe_path = SNAP_DIR / f"universe_{stamp}.csv"
-        universe = pd.DataFrame(get_universe())
-        universe.to_csv(universe_path, index=False, encoding="utf-8-sig")
+        try:
+            universe = pd.DataFrame(get_universe())
+            universe_path = SNAP_DIR / f"universe_{stamp}.csv"
+            universe.to_csv(universe_path, index=False, encoding="utf-8-sig")
+        except Exception as e:
+            # KRX 종목군 API가 간헐적으로 비JSON을 돌려준다. 직전 커밋된 스냅샷으로 대체하고 기록한다.
+            universe_path, universe = latest_universe()
+            universe_fallback = {"reason": str(e)[:200], "used": universe_path.name}
+            print(f"경고: 종목군 갱신 실패 → 직전 스냅샷 {universe_path.name} 사용 ({e})", flush=True)
     elif args.universe:
         universe_path = args.universe.resolve()
         universe = pd.read_csv(universe_path, dtype={"code": str}, encoding="utf-8-sig")
@@ -135,6 +147,7 @@ def main() -> int:
         "source": f"Yahoo Finance chart API (비공식, range={period} interval=1d)",
         "universe_file": universe_path.name,
         "universe_sha256": hashlib.sha256(universe_path.read_bytes()).hexdigest(),
+        "universe_fallback": universe_fallback,
         "primary_codes": primary_codes,
         "carryover_codes": carryover_codes,
         "universe_note": "실행 시점 상위 150 — 생존편향, 상폐 종목 누락",
