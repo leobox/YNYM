@@ -1,22 +1,8 @@
 {
   "version": "lrm60_v2_experiment_20260924",
-  "cash": 61041.82921987912,
-  "equity": 1016291.8292198791,
+  "cash": 154595.9263966792,
+  "equity": 1053245.9263966791,
   "positions": {
-    "020150": {
-      "code": "020150",
-      "name": "롯데에너지머티리얼즈",
-      "market": "KOSPI",
-      "entry_ts": "2026-10-02T10:00:00+09:00",
-      "entry_price": 49824.625,
-      "breakout_level": 43500.0,
-      "qty": 6,
-      "cost": 299291.5399125,
-      "peak_price": 51800.0,
-      "last_close": 51000.0,
-      "bars_held": 5,
-      "target_1_done": false
-    },
     "005070": {
       "code": "005070",
       "name": "코스모신소재",
@@ -26,23 +12,37 @@
       "breakout_level": 44800.0,
       "qty": 7,
       "cost": 328468.70511000004,
-      "peak_price": 47250.0,
-      "last_close": 47250.0,
+      "peak_price": 47950.0,
+      "last_close": 47650.0,
+      "bars_held": 11,
+      "target_1_done": false
+    },
+    "018670": {
+      "code": "018670",
+      "name": "SK가스",
+      "market": "KOSPI",
+      "entry_ts": "2026-10-06T10:00:00+09:00",
+      "entry_price": 257886.25000000003,
+      "breakout_level": 244500.0,
+      "qty": 1,
+      "cost": 258182.81918750002,
+      "peak_price": 262000.0,
+      "last_close": 255500.0,
       "bars_held": 5,
       "target_1_done": false
     },
-    "347700": {
-      "code": "347700",
-      "name": "스피어",
+    "437730": {
+      "code": "437730",
+      "name": "삼현",
       "market": "KOSDAQ",
-      "entry_ts": "2026-10-02T10:00:00+09:00",
-      "entry_price": 24737.050000000003,
-      "breakout_level": 23450.0,
-      "qty": 13,
-      "cost": 321951.4688975,
-      "peak_price": 25100.0,
-      "last_close": 24500.0,
-      "bars_held": 5,
+      "entry_ts": "2026-10-06T12:00:00+09:00",
+      "entry_price": 52478.600000000006,
+      "breakout_level": 52300.0,
+      "qty": 6,
+      "cost": 315233.70234,
+      "peak_price": 53300.0,
+      "last_close": 51600.0,
+      "bars_held": 3,
       "target_1_done": false
     }
   },
@@ -168,40 +168,53 @@
       "qty": 5,
       "pnl": 2502.31,
       "reason": "TRAILING_STOP"
-    }
-  ],
-  "last_bar_ts": "2026-10-02T14:00:00+09:00",
-  "last_candidates": [
+    },
     {
-      "code": "003380",
-      "name": "하림지주",
-      "market": "KOSDAQ",
-      "bar_ts": "2026-10-02T14:00:00+09:00",
-      "signal_close": 11300.0,
-      "breakout_level": 11250.0,
-      "amount_e8": 17.61,
-      "r_vol": 2.9180024437650225,
-      "d_base_pct": 2.805,
-      "cli": 0.8889,
-      "gates": {
-        "trend": true,
-        "breakout": true,
-        "liquidity": true,
-        "candle": true
-      },
-      "passed": true
+      "code": "347700",
+      "name": "스피어",
+      "entry_ts": "2026-10-02T10:00:00+09:00",
+      "exit_ts": "2026-10-06T09:00:00+09:00",
+      "entry_price": 24737.050000000003,
+      "exit_price": 26310.475,
+      "qty": 6,
+      "pnl": 9088.32,
+      "reason": "PARTIAL_GAP"
+    },
+    {
+      "code": "020150",
+      "name": "롯데에너지머티리얼즈",
+      "entry_ts": "2026-10-02T10:00:00+09:00",
+      "exit_ts": "2026-10-06T09:00:00+09:00",
+      "entry_price": 49824.625,
+      "exit_price": 53810.595,
+      "qty": 6,
+      "pnl": 23200.74,
+      "reason": "TARGET_TOUCH"
+    },
+    {
+      "code": "347700",
+      "name": "스피어",
+      "entry_ts": "2026-10-02T10:00:00+09:00",
+      "exit_ts": "2026-10-06T09:00:00+09:00",
+      "entry_price": 24737.050000000003,
+      "exit_price": 26716.014,
+      "qty": 7,
+      "pnl": 13438.55,
+      "reason": "TARGET_TOUCH"
     }
   ],
+  "last_bar_ts": "2026-10-06T14:00:00+09:00",
+  "last_candidates": [],
   "gate_counts": {
-    "trend": 162,
-    "breakout": 19,
-    "liquidity": 35,
-    "candle": 83
+    "trend": 187,
+    "breakout": 12,
+    "liquidity": 27,
+    "candle": 45
   },
   "coverage": {
     "scanned": 350,
     "evaluated": 350,
-    "passed": 1,
+    "passed": 0,
     "missing_bar": 0,
     "insufficient": 0
   },
