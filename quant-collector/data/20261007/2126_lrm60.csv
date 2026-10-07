@@ -1,0 +1,2 @@
+﻿code,name,market,bar_ts,signal_close,breakout_level,amount_e8,r_vol,d_base_pct,cli,gates,passed
+048410,현대바이오,KOSDAQ,2026-10-07T14:00:00+09:00,7390.0,7380.0,27.43,4.574675946811723,2.28,0.8571,"{'trend': True, 'breakout': True, 'liquidity': True, 'candle': True}",True

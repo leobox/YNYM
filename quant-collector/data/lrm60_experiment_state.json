@@ -1,7 +1,7 @@
 {
   "version": "lrm60_v2_experiment_20260924",
   "cash": 154595.9263966792,
-  "equity": 1062195.9263966791,
+  "equity": 1060595.9263966791,
   "positions": {
     "005070": {
       "code": "005070",
@@ -13,8 +13,8 @@
       "qty": 7,
       "cost": 328468.70511000004,
       "peak_price": 47950.0,
-      "last_close": 46500.0,
-      "bars_held": 16,
+      "last_close": 46600.0,
+      "bars_held": 17,
       "target_1_done": false
     },
     "018670": {
@@ -27,8 +27,8 @@
       "qty": 1,
       "cost": 258182.81918750002,
       "peak_price": 275000.0,
-      "last_close": 272500.0,
-      "bars_held": 10,
+      "last_close": 272000.0,
+      "bars_held": 11,
       "target_1_done": false
     },
     "437730": {
@@ -41,8 +41,8 @@
       "qty": 6,
       "cost": 315233.70234,
       "peak_price": 54200.0,
-      "last_close": 51600.0,
-      "bars_held": 8,
+      "last_close": 51300.0,
+      "bars_held": 9,
       "target_1_done": false
     }
   },
@@ -203,19 +203,19 @@
       "reason": "TARGET_TOUCH"
     }
   ],
-  "last_bar_ts": "2026-10-07T13:00:00+09:00",
+  "last_bar_ts": "2026-10-07T14:00:00+09:00",
   "last_candidates": [
     {
-      "code": "097950",
-      "name": "CJ제일제당",
-      "market": "KOSPI",
-      "bar_ts": "2026-10-07T13:00:00+09:00",
-      "signal_close": 183300.0,
-      "breakout_level": 182700.0,
-      "amount_e8": 21.32,
-      "r_vol": 2.7495330984207893,
-      "d_base_pct": 1.882,
-      "cli": 0.9231,
+      "code": "048410",
+      "name": "현대바이오",
+      "market": "KOSDAQ",
+      "bar_ts": "2026-10-07T14:00:00+09:00",
+      "signal_close": 7390.0,
+      "breakout_level": 7380.0,
+      "amount_e8": 27.43,
+      "r_vol": 4.574675946811723,
+      "d_base_pct": 2.28,
+      "cli": 0.8571,
       "gates": {
         "trend": true,
         "breakout": true,
@@ -226,10 +226,10 @@
     }
   ],
   "gate_counts": {
-    "trend": 107,
-    "breakout": 5,
-    "liquidity": 37,
-    "candle": 25
+    "trend": 102,
+    "breakout": 2,
+    "liquidity": 28,
+    "candle": 16
   },
   "coverage": {
     "scanned": 350,
