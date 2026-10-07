@@ -1,7 +1,7 @@
 {
   "version": "lrm60_v2",
-  "cash": 471857.535578571,
-  "equity": 1060907.535578571,
+  "cash": 288973.86093857104,
+  "equity": 1070273.860938571,
   "positions": {
     "005070": {
       "code": "005070",
@@ -13,8 +13,8 @@
       "qty": 7,
       "cost": 328468.70511000004,
       "peak_price": 47950.0,
-      "last_close": 47650.0,
-      "bars_held": 11,
+      "last_close": 46500.0,
+      "bars_held": 16,
       "target_1_done": false
     },
     "018670": {
@@ -26,9 +26,23 @@
       "breakout_level": 244500.0,
       "qty": 1,
       "cost": 258182.81918750002,
-      "peak_price": 262000.0,
-      "last_close": 255500.0,
-      "bars_held": 5,
+      "peak_price": 275000.0,
+      "last_close": 272500.0,
+      "bars_held": 10,
+      "target_1_done": false
+    },
+    "097950": {
+      "code": "097950",
+      "name": "CJ제일제당",
+      "market": "KOSPI",
+      "entry_ts": "2026-10-07T12:00:00+09:00",
+      "entry_price": 182673.6,
+      "breakout_level": 180600.0,
+      "qty": 1,
+      "cost": 182883.67464,
+      "peak_price": 183400.0,
+      "last_close": 183300.0,
+      "bars_held": 2,
       "target_1_done": false
     }
   },
@@ -145,18 +159,38 @@
       "reason": "STOP_TOUCH"
     }
   ],
-  "last_bar_ts": "2026-10-06T14:00:00+09:00",
-  "last_candidates": [],
+  "last_bar_ts": "2026-10-07T13:00:00+09:00",
+  "last_candidates": [
+    {
+      "code": "097950",
+      "name": "CJ제일제당",
+      "market": "KOSPI",
+      "bar_ts": "2026-10-07T13:00:00+09:00",
+      "signal_close": 183300.0,
+      "breakout_level": 182700.0,
+      "amount_e8": 21.32,
+      "r_vol": 2.7495330984207893,
+      "d_base_pct": 1.882,
+      "cli": 0.9231,
+      "gates": {
+        "trend": true,
+        "breakout": true,
+        "liquidity": true,
+        "candle": true
+      },
+      "passed": true
+    }
+  ],
   "gate_counts": {
-    "trend": 187,
-    "breakout": 12,
-    "liquidity": 27,
-    "candle": 45
+    "trend": 107,
+    "breakout": 5,
+    "liquidity": 37,
+    "candle": 25
   },
   "coverage": {
     "scanned": 350,
     "evaluated": 350,
-    "passed": 0,
+    "passed": 1,
     "missing_bar": 0,
     "insufficient": 0
   },

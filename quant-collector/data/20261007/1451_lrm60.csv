@@ -1,0 +1,2 @@
+﻿code,name,market,bar_ts,signal_close,breakout_level,amount_e8,r_vol,d_base_pct,cli,gates,passed
+097950,CJ제일제당,KOSPI,2026-10-07T13:00:00+09:00,183300.0,182700.0,21.32,2.7495330984207893,1.882,0.9231,"{'trend': True, 'breakout': True, 'liquidity': True, 'candle': True}",True
