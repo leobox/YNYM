@@ -1,7 +1,7 @@
 {
   "version": "lrm60_v2_experiment_20260924",
-  "cash": 377746.4726325291,
-  "equity": 1055196.4726325292,
+  "cash": 61911.17925752909,
+  "equity": 1047611.1792575291,
   "positions": {
     "005070": {
       "code": "005070",
@@ -13,8 +13,8 @@
       "qty": 7,
       "cost": 328468.70511000004,
       "peak_price": 47950.0,
-      "last_close": 47150.0,
-      "bars_held": 22,
+      "last_close": 47000.0,
+      "bars_held": 23,
       "target_1_done": false
     },
     "083450": {
@@ -27,32 +27,26 @@
       "qty": 6,
       "cost": 347719.61823,
       "peak_price": 58900.0,
-      "last_close": 57900.0,
-      "bars_held": 4,
+      "last_close": 57700.0,
+      "bars_held": 5,
       "target_1_done": false
-    }
-  },
-  "pending": [
-    {
+    },
+    "323280": {
       "code": "323280",
       "name": "태성",
       "market": "KOSDAQ",
-      "bar_ts": "2026-10-08T13:00:00+09:00",
-      "signal_close": 63000.0,
+      "entry_ts": "2026-10-08T14:00:00+09:00",
+      "entry_price": 63094.5,
       "breakout_level": 62900.0,
-      "amount_e8": 68.42,
-      "r_vol": 5.4269292739287485,
-      "d_base_pct": -0.663,
-      "cli": 0.7778,
-      "gates": {
-        "trend": true,
-        "breakout": true,
-        "liquidity": true,
-        "candle": true
-      },
-      "passed": true
+      "qty": 5,
+      "cost": 315835.293375,
+      "peak_price": 63400.0,
+      "last_close": 62100.0,
+      "bars_held": 1,
+      "target_1_done": false
     }
-  ],
+  },
+  "pending": [],
   "trades": [
     {
       "code": "005070",
@@ -231,38 +225,18 @@
       "reason": "STOP_TOUCH"
     }
   ],
-  "last_bar_ts": "2026-10-08T13:00:00+09:00",
-  "last_candidates": [
-    {
-      "code": "323280",
-      "name": "태성",
-      "market": "KOSDAQ",
-      "bar_ts": "2026-10-08T13:00:00+09:00",
-      "signal_close": 63000.0,
-      "breakout_level": 62900.0,
-      "amount_e8": 68.42,
-      "r_vol": 5.4269292739287485,
-      "d_base_pct": -0.663,
-      "cli": 0.7778,
-      "gates": {
-        "trend": true,
-        "breakout": true,
-        "liquidity": true,
-        "candle": true
-      },
-      "passed": true
-    }
-  ],
+  "last_bar_ts": "2026-10-08T14:00:00+09:00",
+  "last_candidates": [],
   "gate_counts": {
-    "trend": 64,
-    "breakout": 5,
-    "liquidity": 44,
-    "candle": 52
+    "trend": 60,
+    "breakout": 2,
+    "liquidity": 37,
+    "candle": 8
   },
   "coverage": {
     "scanned": 350,
     "evaluated": 349,
-    "passed": 1,
+    "passed": 0,
     "missing_bar": 0,
     "insufficient": 1
   },

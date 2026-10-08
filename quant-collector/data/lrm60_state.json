@@ -1,7 +1,7 @@
 {
   "version": "lrm60_v2",
   "cash": 208544.50500857097,
-  "equity": 1070494.5050085708,
+  "equity": 1067844.5050085708,
   "positions": {
     "005070": {
       "code": "005070",
@@ -13,8 +13,8 @@
       "qty": 7,
       "cost": 328468.70511000004,
       "peak_price": 47950.0,
-      "last_close": 47150.0,
-      "bars_held": 22,
+      "last_close": 47000.0,
+      "bars_held": 23,
       "target_1_done": false
     },
     "097950": {
@@ -27,8 +27,8 @@
       "qty": 1,
       "cost": 182883.67464,
       "peak_price": 185700.0,
-      "last_close": 184500.0,
-      "bars_held": 8,
+      "last_close": 184100.0,
+      "bars_held": 9,
       "target_1_done": false
     },
     "083450": {
@@ -41,8 +41,8 @@
       "qty": 6,
       "cost": 347719.61823,
       "peak_price": 58900.0,
-      "last_close": 57900.0,
-      "bars_held": 4,
+      "last_close": 57700.0,
+      "bars_held": 5,
       "target_1_done": false
     }
   },
@@ -170,38 +170,18 @@
       "reason": "TRAILING_GAP"
     }
   ],
-  "last_bar_ts": "2026-10-08T13:00:00+09:00",
-  "last_candidates": [
-    {
-      "code": "323280",
-      "name": "태성",
-      "market": "KOSDAQ",
-      "bar_ts": "2026-10-08T13:00:00+09:00",
-      "signal_close": 63000.0,
-      "breakout_level": 62900.0,
-      "amount_e8": 68.42,
-      "r_vol": 5.4269292739287485,
-      "d_base_pct": -0.663,
-      "cli": 0.7778,
-      "gates": {
-        "trend": true,
-        "breakout": true,
-        "liquidity": true,
-        "candle": true
-      },
-      "passed": true
-    }
-  ],
+  "last_bar_ts": "2026-10-08T14:00:00+09:00",
+  "last_candidates": [],
   "gate_counts": {
-    "trend": 64,
-    "breakout": 5,
-    "liquidity": 44,
-    "candle": 52
+    "trend": 60,
+    "breakout": 2,
+    "liquidity": 37,
+    "candle": 8
   },
   "coverage": {
     "scanned": 350,
     "evaluated": 349,
-    "passed": 1,
+    "passed": 0,
     "missing_bar": 0,
     "insufficient": 1
   },
