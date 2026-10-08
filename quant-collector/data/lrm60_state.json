@@ -1,7 +1,7 @@
 {
   "version": "lrm60_v2",
-  "cash": 288973.86093857104,
-  "equity": 1069973.860938571,
+  "cash": 208544.50500857097,
+  "equity": 1070494.5050085708,
   "positions": {
     "005070": {
       "code": "005070",
@@ -13,22 +13,8 @@
       "qty": 7,
       "cost": 328468.70511000004,
       "peak_price": 47950.0,
-      "last_close": 46600.0,
-      "bars_held": 17,
-      "target_1_done": false
-    },
-    "018670": {
-      "code": "018670",
-      "name": "SK가스",
-      "market": "KOSPI",
-      "entry_ts": "2026-10-06T10:00:00+09:00",
-      "entry_price": 257886.25000000003,
-      "breakout_level": 244500.0,
-      "qty": 1,
-      "cost": 258182.81918750002,
-      "peak_price": 275000.0,
-      "last_close": 272000.0,
-      "bars_held": 11,
+      "last_close": 47150.0,
+      "bars_held": 22,
       "target_1_done": false
     },
     "097950": {
@@ -40,9 +26,23 @@
       "breakout_level": 180600.0,
       "qty": 1,
       "cost": 182883.67464,
-      "peak_price": 183400.0,
-      "last_close": 182800.0,
-      "bars_held": 3,
+      "peak_price": 185700.0,
+      "last_close": 184500.0,
+      "bars_held": 8,
+      "target_1_done": false
+    },
+    "083450": {
+      "code": "083450",
+      "name": "GST",
+      "market": "KOSDAQ",
+      "entry_ts": "2026-10-08T10:00:00+09:00",
+      "entry_price": 57886.700000000004,
+      "breakout_level": 56900.0,
+      "qty": 6,
+      "cost": 347719.61823,
+      "peak_price": 58900.0,
+      "last_close": 57900.0,
+      "bars_held": 4,
       "target_1_done": false
     }
   },
@@ -157,21 +157,32 @@
       "qty": 6,
       "pnl": -5394.42,
       "reason": "STOP_TOUCH"
+    },
+    {
+      "code": "018670",
+      "name": "SK가스",
+      "entry_ts": "2026-10-06T10:00:00+09:00",
+      "exit_ts": "2026-10-08T09:00:00+09:00",
+      "entry_price": 257886.25000000003,
+      "exit_price": 267598.0,
+      "qty": 1,
+      "pnl": 9107.44,
+      "reason": "TRAILING_GAP"
     }
   ],
-  "last_bar_ts": "2026-10-07T14:00:00+09:00",
+  "last_bar_ts": "2026-10-08T13:00:00+09:00",
   "last_candidates": [
     {
-      "code": "048410",
-      "name": "현대바이오",
+      "code": "323280",
+      "name": "태성",
       "market": "KOSDAQ",
-      "bar_ts": "2026-10-07T14:00:00+09:00",
-      "signal_close": 7390.0,
-      "breakout_level": 7380.0,
-      "amount_e8": 27.43,
-      "r_vol": 4.574675946811723,
-      "d_base_pct": 2.28,
-      "cli": 0.8571,
+      "bar_ts": "2026-10-08T13:00:00+09:00",
+      "signal_close": 63000.0,
+      "breakout_level": 62900.0,
+      "amount_e8": 68.42,
+      "r_vol": 5.4269292739287485,
+      "d_base_pct": -0.663,
+      "cli": 0.7778,
       "gates": {
         "trend": true,
         "breakout": true,
@@ -182,17 +193,17 @@
     }
   ],
   "gate_counts": {
-    "trend": 102,
-    "breakout": 2,
-    "liquidity": 28,
-    "candle": 16
+    "trend": 64,
+    "breakout": 5,
+    "liquidity": 44,
+    "candle": 52
   },
   "coverage": {
     "scanned": 350,
-    "evaluated": 350,
+    "evaluated": 349,
     "passed": 1,
     "missing_bar": 0,
-    "insufficient": 0
+    "insufficient": 1
   },
   "data_gaps": [
     {
