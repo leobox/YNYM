@@ -101,13 +101,14 @@ jobs:
           else
             # Re-render from the immutable record without replacing its source archive.
             git add quant-research/data/research/T-110/latest.md
-            git add quant-research/data/research/T-110/outcomes.json
           fi
           git add README.md
           if ! git diff --cached --quiet; then
             git commit -m "data: seal dual-strategy forward observation [skip ci]"
             if [ "${{ steps.observe.outputs.status }}" = "REUSED" ]; then
-              git stash push --include-untracked -m reused-fetch-inputs -- quant-research/data/research/T-063/ quant-research/data/vcp_snapshots/
+              # Fresh prices may revise old outcomes. Publish those only alongside
+              # preserved inputs on CAPTURED/BACKFILLED, never on a panel refresh.
+              git stash push --include-untracked -m reused-fetch-inputs -- quant-research/data/research/T-063/ quant-research/data/vcp_snapshots/ quant-research/data/research/T-110/outcomes.json
             fi
             for attempt in 1 2 3 4 5; do
               if git pull --rebase origin main && git push origin HEAD:main; then
