@@ -1,4 +1,4 @@
-name: Mode 2 and Early Inception daily forward observation
+name: Early Inception daily forward observation
 
 on:
   schedule:
@@ -50,7 +50,10 @@ jobs:
           cache-dependency-path: quant-research/requirements.txt
       - name: Install data and research dependencies
         if: steps.gate.outputs.done != 'true'
-        run: python -m pip install -r quant-research/requirements.txt
+        run: python -m pip install -r quant-research/requirements.txt pytest
+      - name: Validate forward observer and panel
+        if: steps.gate.outputs.done != 'true'
+        run: python -m pytest quant-research/tests/test_early_inception_forward.py quant-research/tests/test_early_inception_engine.py -q
       - name: Fetch and seal one completed-bar decision (with retries)
         if: steps.gate.outputs.done != 'true'
         id: observe
@@ -85,18 +88,27 @@ jobs:
           fi
           mkdir -p quant-research/data/research/T-110/raw
           tar -czf "quant-research/data/research/T-110/raw/$name.tar.gz" -C quant-research/data daily_3y
-      - name: Commit immutable research records
-        if: steps.observe.outputs.status == 'CAPTURED' || steps.observe.outputs.status == 'BACKFILLED'
+      - name: Commit research records and refreshed panel
+        if: steps.observe.outputs.status == 'CAPTURED' || steps.observe.outputs.status == 'BACKFILLED' || steps.observe.outputs.status == 'REUSED'
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add quant-research/data/research/T-063/fetch_manifest_3y_*.json
-          git add quant-research/data/vcp_snapshots/universe_*.csv
-          git add quant-research/data/research/T-110/
+          if [ "${{ steps.observe.outputs.status }}" != "REUSED" ]; then
+            git add quant-research/data/research/T-063/fetch_manifest_3y_*.json
+            git add quant-research/data/vcp_snapshots/universe_*.csv
+            git add quant-research/data/research/T-110/
+          else
+            # Re-render from the immutable record without replacing its source archive.
+            git add quant-research/data/research/T-110/latest.md
+            git add quant-research/data/research/T-110/outcomes.json
+          fi
           git add README.md
           if ! git diff --cached --quiet; then
             git commit -m "data: seal dual-strategy forward observation [skip ci]"
+            if [ "${{ steps.observe.outputs.status }}" = "REUSED" ]; then
+              git stash push --include-untracked -m reused-fetch-inputs -- quant-research/data/research/T-063/ quant-research/data/vcp_snapshots/
+            fi
             for attempt in 1 2 3 4 5; do
               if git pull --rebase origin main && git push origin HEAD:main; then
                 exit 0

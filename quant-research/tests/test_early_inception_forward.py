@@ -231,7 +231,7 @@ def test_main_renders_stock_details_for_both_strategies(tmp_path, monkeypatch):
                                            "--runs", str(runs), "--readme", str(readme)])
     assert forward.main() == 0
     panel = readme.read_text(encoding="utf-8")
-    assert panel.index("### 🌐 시장 상황") < panel.index("### 상승초입 3일 이내") < panel.index("### 상승 초입")
+    assert panel.index("### 🌐 시장 상황") < panel.index("### 모드 2 · 과거 봉인 기록") < panel.index("### 상승 초입")
     assert "🟢 관찰 가능 · 시장 폭(SMA60) **55.0%** · 기준 완료 일봉 `2026-09-25`" in panel
     assert panel.count("갱신: `2026-09-25 18:00 KST`") == 2
     assert "모드종목 (`000001`) | 1거래일째 | 10,000원 | 0.800 |" in panel
@@ -277,3 +277,98 @@ def test_backfill_missing_recovers_unsealed_interim_sessions(tmp_path):
     assert sealed["as_of"] == missing_day
     assert sealed["backfill"]["recovered_from_as_of"] == str(days[-1].date())
 
+
+
+@pytest.fixture
+def panel_record():
+    basic = {"code": "000001", "name": "겹친종목", "close": 10000,
+             "inception_score": .7, "range_width_ratio": .18, "vol_ratio": 1.5,
+             "vol_spike_1d": 2.0, "cmf20": .2}
+    focus = {**basic, "inception_3d_score": .8, "setup_type": "압축돌파",
+             "contraction_ratio": .4, "upper_wick_ratio": .2}
+    return {"as_of": "2026-10-08", "fetched_at": "2026-10-08T18:00:00+09:00",
+            "market_breadth_pct": 55.0, "strategies": {
+                "early_inception_3d": {"score_field": "inception_3d_score", "candidates": [focus]},
+                "early_inception": {"score_field": "inception_score", "candidates": [
+                    basic, {**basic, "code": "000002", "name": "기본종목"}]}}}
+
+
+def test_panel_badges_use_same_record_membership_and_preserve_counts(panel_record):
+    before = json.dumps(panel_record, ensure_ascii=False)
+    panel = forward.render_panel(panel_record, {("early_inception", "000001"): 3})
+    rows = [line for line in panel.splitlines() if line.startswith("| 1 |") or line.startswith("| 2 |")]
+    assert "3거래일째" in rows[1] and "🎯 3일 목록 포함" in rows[1]
+    assert "🟢 기본 목록만" in rows[2]
+    assert panel.index("### 🧭 관찰 단계 안내") < panel.index("### 상승 초입")
+    assert "포함 관계가 보장되지 않습니다" in panel
+    assert "[압축돌파] 수축비 0.40 · 윗꼬리 20.0%" in rows[0]
+    assert all(line.count("|") == 8 for line in rows)
+    assert json.dumps(panel_record, ensure_ascii=False) == before
+    # A prior rendering must never leak membership into a subsequent decision.
+    panel_record["strategies"]["early_inception_3d"]["candidates"] = []
+    panel = forward.render_panel(panel_record, {})
+    assert "🎯 3일 목록 포함" not in panel
+    assert panel.count("🟢 기본 목록만") == 2
+
+
+def test_panel_empty_candidates_and_market_gate(panel_record):
+    panel_record["market_breadth_pct"] = 30
+    for block in panel_record["strategies"].values():
+        block["candidates"] = []
+    panel = forward.render_panel(panel_record, {})
+    assert "🔴 후보 선별 중단" in panel
+    assert panel.count("| - | 조건 충족 없음 | - | - | - | - | - |") == 2
+    assert "### 🧭 관찰 단계 안내" in panel
+    assert "🎯 3일 목록 포함" not in panel
+
+
+def test_panel_legacy_mode2_does_not_become_three_day_selection(panel_record):
+    strategies = panel_record["strategies"]
+    strategies.pop("early_inception_3d")
+    strategies["mode2"] = {"score_field": "composite_score", "candidates": [{
+        "code": "000001", "name": "과거종목", "close": 10000,
+        "composite_score": .8, "mom60_5": .2, "risk_adj_mom": .7, "cmf20": .1}]}
+    panel = forward.render_panel(panel_record, {})
+    assert "### 모드 2 · 과거 봉인 기록" in panel
+    assert "60일 모멘텀 +20.0%" in panel
+    assert "### 상승초입 3일 이내" not in panel
+    assert "🎯 3일 목록 포함" not in panel
+    assert panel.count("⚪ 3일 판정 기록 없음") == 2
+    assert "수축비 0.00" not in panel
+
+
+def test_panel_mode2_slot_with_three_day_score_uses_three_day_fields(panel_record):
+    strategies = panel_record["strategies"]
+    strategies["mode2"] = strategies.pop("early_inception_3d")
+    # No mom60_5 or risk_adj_mom in this record: a legacy renderer would crash.
+    panel = forward.render_panel(panel_record, {})
+    assert "### 상승초입 3일 이내" in panel
+    assert panel.count("🎯 3일 목록 포함") == 2
+    assert "수축비 0.40" in panel
+
+
+def test_main_reused_record_refreshes_panel_without_rewriting_seal(tmp_path, monkeypatch, panel_record, capsys):
+    runs = tmp_path / "runs"
+    runs.mkdir()
+    seal = runs / "2026-10-08.json"
+    seal.write_text(json.dumps(panel_record), encoding="utf-8")
+    sealed_bytes = seal.read_bytes()
+    readme = tmp_path / "README.md"
+    prefix = "header\n<!-- DUAL_FORWARD:START -->"
+    suffix = "<!-- DUAL_FORWARD:END -->\n<!-- QUANT_DASHBOARD:START -->collector content"
+    readme.write_text(prefix + "\nold\n" + suffix, encoding="utf-8")
+    def changed_capture(*args):
+        raise ValueError("SIGNAL_DATE_ALREADY_SEALED_WITH_DIFFERENT_INPUT")
+    monkeypatch.setattr(forward, "capture", changed_capture)
+    monkeypatch.setattr(forward, "inspect", lambda *args: {"as_of": "2026-10-08", "universe": {}})
+    monkeypatch.setattr(forward, "backfill_missing", lambda *args: [])
+    monkeypatch.setattr(forward, "resolve", lambda *args: {"resolved": [], "pending_count": 3})
+    monkeypatch.setattr(forward.sys, "argv", ["forward", "--manifest", str(tmp_path / "manifest"),
+                                           "--runs", str(runs), "--readme", str(readme)])
+    assert forward.main() == 0
+    assert json.loads(capsys.readouterr().out)["status"] == "REUSED"
+    panel = readme.read_text(encoding="utf-8")
+    assert panel.startswith(prefix) and panel.endswith(suffix)
+    assert "🧭 관찰 단계 안내" in panel and "🎯 3일 목록 포함" in panel
+    assert seal.read_bytes() == sealed_bytes
+    assert (runs.parent / "latest.md").read_text(encoding="utf-8") in panel

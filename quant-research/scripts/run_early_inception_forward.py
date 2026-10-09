@@ -384,6 +384,68 @@ def consecutive_observation_days(record: dict, run_dir: Path,
     return counts
 
 
+def render_panel(record: dict, observed_days: dict[tuple[str, str], int]) -> str:
+    """Render a sealed decision without recomputing or relabelling its strategy."""
+    strategies = record["strategies"]
+    focus_blocks = [block for key, block in strategies.items()
+                    if key == "early_inception_3d" or
+                    (key == "mode2" and block["score_field"] == "inception_3d_score")]
+    focus_codes = {pick["code"] for block in focus_blocks for pick in block["candidates"]}
+    breadth = record["market_breadth_pct"]
+    lamp = "🟢 관찰 가능" if breadth >= 40.0 else "🔴 후보 선별 중단"
+    fetched_kst = datetime.fromisoformat(record["fetched_at"]).astimezone(KST)
+    fetched_label = fetched_kst.strftime("%Y-%m-%d %H:%M KST")
+    lines = ["### 🌐 시장 상황", "",
+             f'> {lamp} · 시장 폭(SMA60) **{breadth:.1f}%** · 기준 완료 일봉 `{record["as_of"]}`',
+             ""]
+    for strategy, block in strategies.items():
+        is_focus = strategy == "early_inception_3d" or (
+            strategy == "mode2" and block["score_field"] == "inception_3d_score")
+        is_basic = strategy == "early_inception"
+        title = "상승초입 3일 이내" if is_focus else ("상승 초입" if is_basic else "모드 2 · 과거 봉인 기록")
+        if is_basic:
+            lines.extend([
+                "### 🧭 관찰 단계 안내", "",
+                "- **기본 관찰 — 상승 초입:** 완만한 수축·거래량 조건으로 후보를 탐색합니다.",
+                "- **집중 관찰 — 상승초입 3일 이내:** 별도 엔진의 압축돌파·거래량폭발 조건으로 선별합니다.",
+                "- 두 엔진은 각각 최대 5개를 고릅니다. 기본 표의 **3일 목록 포함** 딱지는 같은 평가일의 집중 관찰 목록에도 있는 종목입니다.",
+                "- **기본 목록만**은 집중 목록에 없다는 뜻이며 조건 탈락을 뜻하지 않습니다. 두 목록은 순위와 조건이 달라 포함 관계가 보장되지 않습니다.",
+                "- 관찰 후보는 매수 확정이 아닙니다. 다음 날 갭·장중 흐름은 별도 확인 대상이며 이 딱지에 반영되지 않습니다.", "",
+            ])
+        lines.extend([f'### {title}', "",
+                      f'> 갱신: `{fetched_label}` · 기준 완료 일봉: `{record["as_of"]}`', "",
+                      "| 순위 | 종목 | 연속 포착 | 평가일 종가 | 상대점수 | 관찰 구분 | 수치 근거 |",
+                      "|---:|:---|---:|---:|---:|:---|:---|"])
+        for rank, pick in enumerate(block["candidates"], 1):
+            name = str(pick["name"]).replace("|", "/").replace("\n", " ")
+            if is_focus:
+                setup_tag = f'[{pick["setup_type"]}] ' if pick.get("setup_type") else ''
+                volume = (f'5일 {pick["vol_ratio"]:.2f}x' if pick["vol_ratio"] >= 1.2
+                          else f'당일 {pick["vol_spike_1d"]:.2f}x')
+                reason = (f'{setup_tag}수축비 {pick["contraction_ratio"]:.2f} · '
+                          f'윗꼬리 {pick["upper_wick_ratio"]:.1%} · {volume} · CMF20 {pick["cmf20"]:+.2f}')
+                badge = "🎯 3일 목록 포함"
+            elif is_basic:
+                volume = (f'5일 {pick["vol_ratio"]:.2f}x' if pick["vol_ratio"] >= 1.2
+                          else f'당일 {pick["vol_spike_1d"]:.2f}x (5일 {pick["vol_ratio"]:.2f}x)')
+                reason = (f'20일 변동폭 {pick["range_width_ratio"]:.1%} · '
+                          f'{volume} · CMF20 {pick["cmf20"]:+.2f}')
+                badge = ("🎯 3일 목록 포함" if pick["code"] in focus_codes else
+                         "🟢 기본 목록만" if focus_blocks else "⚪ 3일 판정 기록 없음")
+            else:
+                reason = (f'60일 모멘텀 {pick["mom60_5"]:+.1%} · '
+                          f'위험조정 모멘텀 {pick["risk_adj_mom"]:.2f} · CMF20 {pick["cmf20"]:+.2f}')
+                badge = "과거 모드 2"
+            score_val = pick[block["score_field"]]
+            days = observed_days.get((strategy, pick["code"]), 1)
+            lines.append(f'| {rank} | {name} (`{pick["code"]}`) | {days}거래일째 | {pick["close"]:,.0f}원 | '
+                         f'{score_val:.3f} | {badge} | {reason} |')
+        if not block["candidates"]:
+            lines.append("| - | 조건 충족 없음 | - | - | - | - | - |")
+        lines.append("")
+    return "\n".join(lines)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data", type=Path, default=DEFAULT_DATA)
@@ -412,41 +474,7 @@ def main() -> int:
     record = result["record"]
     counts = {key: len(block["candidates"]) for key, block in record["strategies"].items()}
     observed_days = consecutive_observation_days(record, args.runs, finding["universe"])
-    breadth = record["market_breadth_pct"]
-    lamp = "🟢 관찰 가능" if breadth >= 40.0 else "🔴 후보 선별 중단"
-    fetched_kst = datetime.fromisoformat(record["fetched_at"]).astimezone(KST)
-    fetched_label = fetched_kst.strftime("%Y-%m-%d %H:%M KST")
-    lines = ["### 🌐 시장 상황", "",
-             f'> {lamp} · 시장 폭(SMA60) **{breadth:.1f}%** · 기준 완료 일봉 `{record["as_of"]}`',
-             ""]
-    for strategy, block in record["strategies"].items():
-        title = "상승초입 3일 이내" if strategy in ("early_inception_3d", "mode2") else "상승 초입"
-        lines.extend([f'### {title}', "",
-                      f'> 갱신: `{fetched_label}` · 기준 완료 일봉: `{record["as_of"]}`', "",
-                      "| 순위 | 종목 | 연속 포착 | 평가일 종가 | 상대점수 | 수치 근거 |",
-                      "|---:|:---|---:|---:|---:|:---|"])
-        for rank, pick in enumerate(block["candidates"], 1):
-            name = str(pick["name"]).replace("|", "/").replace("\n", " ")
-            if strategy in ("early_inception_3d", "mode2"):
-                setup_tag = f'[{pick.get("setup_type", "초입")}] ' if pick.get("setup_type") else ''
-                volume = (f'5일 {pick.get("vol_ratio", 0):.2f}x' if pick.get("vol_ratio", 0) >= 1.2
-                          else f'당일 {pick.get("vol_spike_1d", 0):.2f}x')
-                reason = (f'{setup_tag}수축비 {pick.get("contraction_ratio", 0):.2f} · '
-                          f'윗꼬리 {pick.get("upper_wick_ratio", 0):.1%} · {volume} · CMF20 {pick.get("cmf20", 0):+.2f}')
-                score_val = pick.get(block["score_field"], 0.0)
-            else:
-                volume = (f'5일 {pick["vol_ratio"]:.2f}x' if pick["vol_ratio"] >= 1.2
-                          else f'당일 {pick["vol_spike_1d"]:.2f}x (5일 {pick["vol_ratio"]:.2f}x)')
-                reason = (f'20일 변동폭 {pick["range_width_ratio"]:.1%} · '
-                          f'{volume} · CMF20 {pick["cmf20"]:+.2f}')
-                score_val = pick[block["score_field"]]
-            days = observed_days.get((strategy, pick["code"]), 1)
-            lines.append(f'| {rank} | {name} (`{pick["code"]}`) | {days}거래일째 | {pick["close"]:,.0f}원 | '
-                         f'{score_val:.3f} | {reason} |')
-        if not block["candidates"]:
-            lines.append("| - | 조건 충족 없음 | - | - | - | - |")
-    lines.append("")
-    panel = "\n".join(lines)
+    panel = render_panel(record, observed_days)
     (args.runs.parent / "latest.md").write_text(panel, encoding="utf-8")
     if args.readme:
         update_readme_panel(args.readme, panel)
