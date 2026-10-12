@@ -1,7 +1,7 @@
 {
   "version": "lrm60_v2_experiment_20260924",
-  "cash": 368890.78219873883,
-  "equity": 1022190.7821987388,
+  "cash": 54860.26192873879,
+  "equity": 1010660.2619287388,
   "positions": {
     "323280": {
       "code": "323280",
@@ -13,8 +13,8 @@
       "qty": 5,
       "cost": 315835.293375,
       "peak_price": 64700.0,
-      "last_close": 62900.0,
-      "bars_held": 6,
+      "last_close": 62500.0,
+      "bars_held": 7,
       "target_1_done": false
     },
     "086450": {
@@ -27,32 +27,26 @@
       "qty": 14,
       "cost": 339698.40443000005,
       "peak_price": 24300.0,
-      "last_close": 24200.0,
-      "bars_held": 3,
+      "last_close": 23750.0,
+      "bars_held": 4,
       "target_1_done": false
-    }
-  },
-  "pending": [
-    {
+    },
+    "171090": {
       "code": "171090",
       "name": "선익시스템",
       "market": "KOSDAQ",
-      "bar_ts": "2026-10-12T13:00:00+09:00",
-      "signal_close": 78300.0,
+      "entry_ts": "2026-10-12T14:00:00+09:00",
+      "entry_price": 78417.45000000001,
       "breakout_level": 78200.0,
-      "amount_e8": 16.67,
-      "r_vol": 7.54437627959969,
-      "d_base_pct": 1.397,
-      "cli": 1.0,
-      "gates": {
-        "trend": true,
-        "breakout": true,
-        "liquidity": true,
-        "candle": true
-      },
-      "passed": true
+      "qty": 4,
+      "cost": 314030.52027000004,
+      "peak_price": 78417.45000000001,
+      "last_close": 77700.0,
+      "bars_held": 1,
+      "target_1_done": false
     }
-  ],
+  },
+  "pending": [],
   "trades": [
     {
       "code": "005070",
@@ -253,57 +247,18 @@
       "reason": "STOP_TOUCH"
     }
   ],
-  "last_bar_ts": "2026-10-12T13:00:00+09:00",
-  "last_candidates": [
-    {
-      "code": "171090",
-      "name": "선익시스템",
-      "market": "KOSDAQ",
-      "bar_ts": "2026-10-12T13:00:00+09:00",
-      "signal_close": 78300.0,
-      "breakout_level": 78200.0,
-      "amount_e8": 16.67,
-      "r_vol": 7.54437627959969,
-      "d_base_pct": 1.397,
-      "cli": 1.0,
-      "gates": {
-        "trend": true,
-        "breakout": true,
-        "liquidity": true,
-        "candle": true
-      },
-      "passed": true
-    },
-    {
-      "code": "030000",
-      "name": "제일기획",
-      "market": "KOSPI",
-      "bar_ts": "2026-10-12T13:00:00+09:00",
-      "signal_close": 19270.0,
-      "breakout_level": 19250.0,
-      "amount_e8": 24.98,
-      "r_vol": 4.164063164854969,
-      "d_base_pct": 1.683,
-      "cli": 0.7059,
-      "gates": {
-        "trend": true,
-        "breakout": true,
-        "liquidity": true,
-        "candle": true
-      },
-      "passed": true
-    }
-  ],
+  "last_bar_ts": "2026-10-12T14:00:00+09:00",
+  "last_candidates": [],
   "gate_counts": {
-    "trend": 44,
-    "breakout": 7,
-    "liquidity": 27,
-    "candle": 44
+    "trend": 38,
+    "breakout": 1,
+    "liquidity": 25,
+    "candle": 12
   },
   "coverage": {
     "scanned": 350,
     "evaluated": 350,
-    "passed": 2,
+    "passed": 0,
     "missing_bar": 0,
     "insufficient": 0
   },

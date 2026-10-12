@@ -1,7 +1,7 @@
 {
   "version": "lrm60_v2",
-  "cash": 520070.64350217936,
-  "equity": 1041370.6435021793,
+  "cash": 514892.0266163793,
+  "equity": 1029792.0266163794,
   "positions": {
     "097950": {
       "code": "097950",
@@ -13,8 +13,8 @@
       "qty": 1,
       "cost": 182883.67464,
       "peak_price": 185700.0,
-      "last_close": 182500.0,
-      "bars_held": 14,
+      "last_close": 182400.0,
+      "bars_held": 15,
       "target_1_done": false
     },
     "086450": {
@@ -27,32 +27,12 @@
       "qty": 14,
       "cost": 339698.40443000005,
       "peak_price": 24300.0,
-      "last_close": 24200.0,
-      "bars_held": 3,
+      "last_close": 23750.0,
+      "bars_held": 4,
       "target_1_done": false
     }
   },
-  "pending": [
-    {
-      "code": "171090",
-      "name": "선익시스템",
-      "market": "KOSDAQ",
-      "bar_ts": "2026-10-12T13:00:00+09:00",
-      "signal_close": 78300.0,
-      "breakout_level": 78200.0,
-      "amount_e8": 16.67,
-      "r_vol": 7.54437627959969,
-      "d_base_pct": 1.397,
-      "cli": 1.0,
-      "gates": {
-        "trend": true,
-        "breakout": true,
-        "liquidity": true,
-        "candle": true
-      },
-      "passed": true
-    }
-  ],
+  "pending": [],
   "trades": [
     {
       "code": "005070",
@@ -196,59 +176,31 @@
       "qty": 6,
       "pnl": -10628.7,
       "reason": "STOP_TOUCH"
-    }
-  ],
-  "last_bar_ts": "2026-10-12T13:00:00+09:00",
-  "last_candidates": [
+    },
     {
       "code": "171090",
       "name": "선익시스템",
-      "market": "KOSDAQ",
-      "bar_ts": "2026-10-12T13:00:00+09:00",
-      "signal_close": 78300.0,
-      "breakout_level": 78200.0,
-      "amount_e8": 16.67,
-      "r_vol": 7.54437627959969,
-      "d_base_pct": 1.397,
-      "cli": 1.0,
-      "gates": {
-        "trend": true,
-        "breakout": true,
-        "liquidity": true,
-        "candle": true
-      },
-      "passed": true
-    },
-    {
-      "code": "030000",
-      "name": "제일기획",
-      "market": "KOSPI",
-      "bar_ts": "2026-10-12T13:00:00+09:00",
-      "signal_close": 19270.0,
-      "breakout_level": 19250.0,
-      "amount_e8": 24.98,
-      "r_vol": 4.164063164854969,
-      "d_base_pct": 1.683,
-      "cli": 0.7059,
-      "gates": {
-        "trend": true,
-        "breakout": true,
-        "liquidity": true,
-        "candle": true
-      },
-      "passed": true
+      "entry_ts": "2026-10-12T14:00:00+09:00",
+      "exit_ts": "2026-10-12T14:00:00+09:00",
+      "entry_price": 78417.45000000001,
+      "exit_price": 77301.873,
+      "qty": 4,
+      "pnl": -5178.62,
+      "reason": "STOP_TOUCH"
     }
   ],
+  "last_bar_ts": "2026-10-12T14:00:00+09:00",
+  "last_candidates": [],
   "gate_counts": {
-    "trend": 44,
-    "breakout": 7,
-    "liquidity": 27,
-    "candle": 44
+    "trend": 38,
+    "breakout": 1,
+    "liquidity": 25,
+    "candle": 12
   },
   "coverage": {
     "scanned": 350,
     "evaluated": 350,
-    "passed": 2,
+    "passed": 0,
     "missing_bar": 0,
     "insufficient": 0
   },
