@@ -136,6 +136,13 @@ def inspect(data_dir: Path, manifest_path: Path, now: datetime | None = None) ->
 def build_record(finding: dict, manifest_path: Path) -> dict:
     as_of = pd.Timestamp(finding["as_of"])
     universe = {code: finding["universe"][code] for code in finding["fresh_codes"]}
+    # Match calculate_market_breadth's aligned 60-row window. One symbol with a
+    # stray session must not leave almost the entire universe out of its denominator.
+    closes = pd.DataFrame({code: frame["Close"] for code, frame in universe.items()}).sort_index()
+    eligible = closes.rolling(60, min_periods=60).mean().notna() & closes.notna()
+    breadth_count = int(eligible.loc[as_of].sum())
+    if breadth_count / len(universe) < 0.90:
+        raise ValueError("MARKET_BREADTH_COVERAGE_INSUFFICIENT")
     breadth = float(calculate_market_breadth(universe).loc[as_of])
     if not np.isfinite(breadth):
         raise ValueError("MARKET_BREADTH_UNAVAILABLE")
@@ -456,7 +463,8 @@ def main() -> int:
     try:
         result = capture(args.data, args.manifest, args.runs)
     except ValueError as exc:
-        if str(exc) in {"PRICE_SNAPSHOT_STALE_OR_FUTURE", "SAME_DAY_CLOSE_UNVERIFIED"}:
+        if str(exc) in {"PRICE_SNAPSHOT_STALE_OR_FUTURE", "SAME_DAY_CLOSE_UNVERIFIED",
+                        "MARKET_BREADTH_COVERAGE_INSUFFICIENT"}:
             print(json.dumps({"status": "SKIPPED", "reason": str(exc)}, ensure_ascii=False))
             return 0
         if str(exc) != "SIGNAL_DATE_ALREADY_SEALED_WITH_DIFFERENT_INPUT":

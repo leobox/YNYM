@@ -45,6 +45,7 @@ def test_empty_decisions_refresh_both_timestamps_without_advancing_bar(dashboard
 @pytest.mark.parametrize("status,reason", [
     ("SKIPPED", "PRICE_SNAPSHOT_STALE_OR_FUTURE"),
     ("SKIPPED", "SAME_DAY_CLOSE_UNVERIFIED"), ("ERROR", ""),
+    ("SKIPPED", "MARKET_BREADTH_COVERAGE_INSUFFICIENT"),
 ])
 def test_failed_execution_is_never_reported_as_a_new_empty_decision(dashboard, status, reason):
     readme, latest = dashboard
@@ -52,6 +53,8 @@ def test_failed_execution_is_never_reported_as_a_new_empty_decision(dashboard, s
     content = readme.read_text(encoding="utf-8")
     assert "이번 실행의 무후보 판정이 아닙니다" in content
     assert "기준 완료 일봉: `2026-10-08`" in content
+    refresh(readme, latest, "SEALED")
+    assert "이번 실행의 무후보 판정이 아닙니다" in readme.read_text(encoding="utf-8")
     refresh(readme, latest, "REUSED")
     assert "이번 실행의 무후보 판정이 아닙니다" not in readme.read_text(encoding="utf-8")
     assert readme.read_text(encoding="utf-8").count("> 실행 상태:") == 1

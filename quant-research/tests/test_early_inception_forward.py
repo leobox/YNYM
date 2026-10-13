@@ -86,6 +86,18 @@ def test_partial_market_universe_does_not_look_like_a_complete_scan(source):
         inspect(data, manifest_path, now=now)
 
 
+def test_sparse_breadth_denominator_cannot_seal_an_empty_decision(source):
+    data, manifest_path, now, _ = source
+    finding = inspect(data, manifest_path, now=now)
+    complete = finding["universe"]["000001"]
+    # Ten valid latest closes, but nine lack one recent session after alignment.
+    finding["universe"] = {str(i): (complete.copy() if i == 0 else
+                                  complete.drop(complete.index[-2])) for i in range(10)}
+    finding["fresh_codes"] = list(finding["universe"])
+    with pytest.raises(ValueError, match="MARKET_BREADTH_COVERAGE_INSUFFICIENT"):
+        build_record(finding, manifest_path)
+
+
 def test_outcomes_stay_pending_until_full_horizon(source):
     data, manifest_path, now, runs = source
     first = capture(data, manifest_path, runs, now=now)
