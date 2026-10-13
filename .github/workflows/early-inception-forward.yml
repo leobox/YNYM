@@ -4,7 +4,7 @@ on:
   schedule:
     # Weekdays 20:07 / 21:07 / 22:07 / 23:07 KST. GitHub cron is frequently delayed by
     # hours or dropped, so several attempts are queued; the first success seals the day
-    # and later runs exit at the gate step without fetching anything.
+    # and later runs refresh the heartbeat without fetching anything.
     - cron: '7 11 * * 1-5'
     - cron: '7 12 * * 1-5'
     - cron: '7 13 * * 1-5'
@@ -37,7 +37,7 @@ jobs:
           target=$(TZ=Asia/Seoul date -d '16 hours ago' +%F)
           echo "target=$target"
           if [ -f "quant-research/data/research/T-110/runs/$target.json" ]; then
-            echo "$target already sealed; nothing to do."
+            echo "$target already sealed; refresh execution heartbeat only."
             echo "done=true" >> "$GITHUB_OUTPUT"
           else
             echo "done=false" >> "$GITHUB_OUTPUT"
@@ -53,31 +53,39 @@ jobs:
         run: python -m pip install -r quant-research/requirements.txt pytest
       - name: Validate forward observer and panel
         if: steps.gate.outputs.done != 'true'
-        run: python -m pytest quant-research/tests/test_early_inception_forward.py quant-research/tests/test_early_inception_engine.py -q
+        run: python -m pytest quant-research/tests/test_early_inception_forward.py quant-research/tests/test_early_inception_engine.py quant-research/tests/test_forward_status.py -q
       - name: Fetch and seal one completed-bar decision (with retries)
         if: steps.gate.outputs.done != 'true'
         id: observe
         shell: bash
         run: |
           for attempt in 1 2 3; do
+            status=ERROR
+            reason=
             echo "::group::attempt $attempt"
             if python -B quant-research/scripts/fetch_daily_history.py --range 3y --refresh-universe --carryover-runs quant-research/data/research/T-110/runs; then
               manifest=$(find quant-research/data/research/T-063 -name 'fetch_manifest_3y_*.json' -printf '%T@ %p\n' | sort -nr | head -1 | cut -d' ' -f2-)
               if result=$(python -B quant-research/scripts/run_early_inception_forward.py --manifest "$manifest" --readme README.md); then
                 echo "$result"
-                status=$(printf '%s' "$result" | python -c 'import json,sys; print(json.load(sys.stdin).get("status", "CAPTURED"))')
-                echo "status=$status" >> "$GITHUB_OUTPUT"
-                echo "as_of=$(printf '%s' "$result" | python -c 'import json,sys; print(json.load(sys.stdin).get("as_of", ""))')" >> "$GITHUB_OUTPUT"
-                echo "::endgroup::"
-                exit 0
+                status=$(printf '%s' "$result" | python -c 'import json,sys; print(json.load(sys.stdin).get("status", "ERROR"))')
+                reason=$(printf '%s' "$result" | python -c 'import json,sys; print(json.load(sys.stdin).get("reason", ""))')
+                if [[ "$status" == CAPTURED || "$status" == BACKFILLED || "$status" == REUSED ]]; then
+                  echo "status=$status" >> "$GITHUB_OUTPUT"
+                  echo "as_of=$(printf '%s' "$result" | python -c 'import json,sys; print(json.load(sys.stdin).get("as_of", ""))')" >> "$GITHUB_OUTPUT"
+                  echo "::endgroup::"
+                  exit 0
+                fi
               fi
             fi
             echo "::endgroup::"
             if [ "$attempt" -lt 3 ]; then sleep $((attempt * 120)); fi
           done
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          echo "reason=$reason" >> "$GITHUB_OUTPUT"
           echo "3회 시도 모두 실패"
           exit 1
       - name: Preserve exact inputs for the observation
+        id: archive
         if: steps.observe.outputs.status == 'CAPTURED' || steps.observe.outputs.status == 'BACKFILLED'
         shell: bash
         run: |
@@ -88,13 +96,27 @@ jobs:
           fi
           mkdir -p quant-research/data/research/T-110/raw
           tar -czf "quant-research/data/research/T-110/raw/$name.tar.gz" -C quant-research/data daily_3y
+      - name: Refresh execution status even with no candidates or failed data
+        if: always() && !cancelled()
+        id: heartbeat
+        env:
+          OBSERVATION_STATUS: ${{ steps.observe.outputs.status }}
+          OBSERVATION_REASON: ${{ steps.observe.outputs.reason }}
+          ALREADY_SEALED: ${{ steps.gate.outputs.done }}
+          JOB_STATUS: ${{ job.status }}
+        shell: bash
+        run: |
+          status="${OBSERVATION_STATUS:-ERROR}"
+          if [ "$ALREADY_SEALED" = true ]; then status=SEALED; fi
+          if [ "$JOB_STATUS" = failure ] && [ "$status" != SKIPPED ]; then status=ERROR; fi
+          python3 quant-research/scripts/refresh_forward_status.py --status "$status" --reason "$OBSERVATION_REASON"
       - name: Commit research records and refreshed panel
-        if: steps.observe.outputs.status == 'CAPTURED' || steps.observe.outputs.status == 'BACKFILLED' || steps.observe.outputs.status == 'REUSED'
+        if: always() && steps.heartbeat.outcome == 'success' && !cancelled()
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          if [ "${{ steps.observe.outputs.status }}" != "REUSED" ]; then
+          if [ "${{ steps.archive.outcome }}" = success ]; then
             git add quant-research/data/research/T-063/fetch_manifest_3y_*.json
             git add quant-research/data/vcp_snapshots/universe_*.csv
             git add quant-research/data/research/T-110/
@@ -105,10 +127,10 @@ jobs:
           git add README.md
           if ! git diff --cached --quiet; then
             git commit -m "data: seal dual-strategy forward observation [skip ci]"
-            if [ "${{ steps.observe.outputs.status }}" = "REUSED" ]; then
+            if [ "${{ steps.archive.outcome }}" != success ]; then
               # Fresh prices may revise old outcomes. Publish those only alongside
               # preserved inputs on CAPTURED/BACKFILLED, never on a panel refresh.
-              git stash push --include-untracked -m reused-fetch-inputs -- quant-research/data/research/T-063/ quant-research/data/vcp_snapshots/ quant-research/data/research/T-110/outcomes.json
+              git stash push --include-untracked -m unpublished-fetch-inputs -- quant-research/data/research/T-063/ quant-research/data/vcp_snapshots/ quant-research/data/research/T-110/
             fi
             for attempt in 1 2 3 4 5; do
               if git pull --rebase origin main && git push origin HEAD:main; then
