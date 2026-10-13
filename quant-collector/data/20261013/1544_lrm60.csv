@@ -1,0 +1,2 @@
+﻿code,name,market,bar_ts,signal_close,breakout_level,amount_e8,r_vol,d_base_pct,cli,gates,passed
+171090,선익시스템,KOSDAQ,2026-10-13T14:00:00+09:00,79700.0,78300.0,27.96,7.923872661001865,2.5,0.9355,"{'trend': True, 'breakout': True, 'liquidity': True, 'candle': True}",True

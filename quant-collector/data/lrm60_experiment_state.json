@@ -1,51 +1,8 @@
 {
   "version": "lrm60_v2_experiment_20260924",
-  "cash": 54860.26192873879,
-  "equity": 1010660.2619287388,
-  "positions": {
-    "323280": {
-      "code": "323280",
-      "name": "태성",
-      "market": "KOSDAQ",
-      "entry_ts": "2026-10-08T14:00:00+09:00",
-      "entry_price": 63094.5,
-      "breakout_level": 62900.0,
-      "qty": 5,
-      "cost": 315835.293375,
-      "peak_price": 64700.0,
-      "last_close": 62500.0,
-      "bars_held": 7,
-      "target_1_done": false
-    },
-    "086450": {
-      "code": "086450",
-      "name": "동국제약",
-      "market": "KOSDAQ",
-      "entry_ts": "2026-10-12T11:00:00+09:00",
-      "entry_price": 24236.300000000003,
-      "breakout_level": 23650.0,
-      "qty": 14,
-      "cost": 339698.40443000005,
-      "peak_price": 24300.0,
-      "last_close": 23750.0,
-      "bars_held": 4,
-      "target_1_done": false
-    },
-    "171090": {
-      "code": "171090",
-      "name": "선익시스템",
-      "market": "KOSDAQ",
-      "entry_ts": "2026-10-12T14:00:00+09:00",
-      "entry_price": 78417.45000000001,
-      "breakout_level": 78200.0,
-      "qty": 4,
-      "cost": 314030.52027000004,
-      "peak_price": 78417.45000000001,
-      "last_close": 77700.0,
-      "bars_held": 1,
-      "target_1_done": false
-    }
-  },
+  "cash": 970030.2047887389,
+  "equity": 970030.2047887389,
+  "positions": {},
   "pending": [],
   "trades": [
     {
@@ -245,20 +202,73 @@
       "qty": 6,
       "pnl": -15175.23,
       "reason": "STOP_TOUCH"
+    },
+    {
+      "code": "323280",
+      "name": "태성",
+      "entry_ts": "2026-10-08T14:00:00+09:00",
+      "exit_ts": "2026-10-13T09:00:00+09:00",
+      "entry_price": 63094.5,
+      "exit_price": 59510.6,
+      "qty": 5,
+      "pnl": -18624.48,
+      "reason": "STOP_GAP"
+    },
+    {
+      "code": "171090",
+      "name": "선익시스템",
+      "entry_ts": "2026-10-12T14:00:00+09:00",
+      "exit_ts": "2026-10-13T09:00:00+09:00",
+      "entry_price": 78417.45000000001,
+      "exit_price": 74987.35,
+      "qty": 4,
+      "pnl": -14426.06,
+      "reason": "STOP_GAP"
+    },
+    {
+      "code": "086450",
+      "name": "동국제약",
+      "entry_ts": "2026-10-12T11:00:00+09:00",
+      "exit_ts": "2026-10-13T09:00:00+09:00",
+      "entry_price": 24236.300000000003,
+      "exit_price": 22765.8,
+      "qty": 14,
+      "pnl": -21343.73,
+      "reason": "STOP_GAP"
     }
   ],
-  "last_bar_ts": "2026-10-12T14:00:00+09:00",
-  "last_candidates": [],
+  "last_bar_ts": "2026-10-13T14:00:00+09:00",
+  "last_candidates": [
+    {
+      "code": "171090",
+      "name": "선익시스템",
+      "market": "KOSDAQ",
+      "bar_ts": "2026-10-13T14:00:00+09:00",
+      "signal_close": 79700.0,
+      "breakout_level": 78300.0,
+      "amount_e8": 27.96,
+      "r_vol": 7.923872661001865,
+      "d_base_pct": 2.5,
+      "cli": 0.9355,
+      "gates": {
+        "trend": true,
+        "breakout": true,
+        "liquidity": true,
+        "candle": true
+      },
+      "passed": true
+    }
+  ],
   "gate_counts": {
-    "trend": 38,
-    "breakout": 1,
-    "liquidity": 25,
-    "candle": 12
+    "trend": 35,
+    "breakout": 4,
+    "liquidity": 55,
+    "candle": 27
   },
   "coverage": {
     "scanned": 350,
     "evaluated": 350,
-    "passed": 0,
+    "passed": 1,
     "missing_bar": 0,
     "insufficient": 0
   },
@@ -316,6 +326,6 @@
   ],
   "regime": {
     "KOSPI": false,
-    "KOSDAQ": true
+    "KOSDAQ": false
   }
 }
