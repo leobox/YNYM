@@ -237,13 +237,13 @@
       "reason": "STOP_GAP"
     }
   ],
-  "last_bar_ts": "2026-10-14T14:00:00+09:00",
+  "last_bar_ts": "2026-10-15T12:00:00+09:00",
   "last_candidates": [],
   "gate_counts": {
-    "trend": 23,
-    "breakout": 1,
-    "liquidity": 37,
-    "candle": 0
+    "trend": 17,
+    "breakout": 0,
+    "liquidity": 6,
+    "candle": 6
   },
   "coverage": {
     "scanned": 350,

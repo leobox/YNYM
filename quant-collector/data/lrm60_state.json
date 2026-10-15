@@ -1,8 +1,23 @@
 {
   "version": "lrm60_v2",
-  "cash": 985181.3386948297,
-  "equity": 985181.3386948297,
-  "positions": {},
+  "cash": 678329.9809701296,
+  "equity": 978729.9809701296,
+  "positions": {
+    "000100": {
+      "code": "000100",
+      "name": "유한양행",
+      "market": "KOSPI",
+      "entry_ts": "2026-10-15T12:00:00+09:00",
+      "entry_price": 75112.5,
+      "breakout_level": 74300.0,
+      "qty": 4,
+      "cost": 300795.5175,
+      "peak_price": 75300.0,
+      "last_close": 75100.0,
+      "bars_held": 1,
+      "target_1_done": false
+    }
+  },
   "pending": [],
   "trades": [
     {
@@ -202,15 +217,26 @@
       "qty": 4,
       "pnl": -13607.0,
       "reason": "STOP_TOUCH"
+    },
+    {
+      "code": "282330",
+      "name": "BGF리테일",
+      "entry_ts": "2026-10-15T11:00:00+09:00",
+      "exit_ts": "2026-10-15T11:00:00+09:00",
+      "entry_price": 133800.4,
+      "exit_price": 131077.089,
+      "qty": 2,
+      "pnl": -6055.84,
+      "reason": "STOP_TOUCH"
     }
   ],
-  "last_bar_ts": "2026-10-14T14:00:00+09:00",
+  "last_bar_ts": "2026-10-15T12:00:00+09:00",
   "last_candidates": [],
   "gate_counts": {
-    "trend": 23,
-    "breakout": 1,
-    "liquidity": 37,
-    "candle": 0
+    "trend": 17,
+    "breakout": 0,
+    "liquidity": 6,
+    "candle": 6
   },
   "coverage": {
     "scanned": 350,
