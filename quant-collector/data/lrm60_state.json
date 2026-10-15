@@ -1,7 +1,7 @@
 {
   "version": "lrm60_v2",
   "cash": 678329.9809701296,
-  "equity": 978729.9809701296,
+  "equity": 979529.9809701296,
   "positions": {
     "000100": {
       "code": "000100",
@@ -12,9 +12,9 @@
       "breakout_level": 74300.0,
       "qty": 4,
       "cost": 300795.5175,
-      "peak_price": 75300.0,
-      "last_close": 75100.0,
-      "bars_held": 1,
+      "peak_price": 76500.0,
+      "last_close": 75300.0,
+      "bars_held": 3,
       "target_1_done": false
     }
   },
@@ -230,13 +230,13 @@
       "reason": "STOP_TOUCH"
     }
   ],
-  "last_bar_ts": "2026-10-15T12:00:00+09:00",
+  "last_bar_ts": "2026-10-15T14:00:00+09:00",
   "last_candidates": [],
   "gate_counts": {
-    "trend": 17,
+    "trend": 16,
     "breakout": 0,
-    "liquidity": 6,
-    "candle": 6
+    "liquidity": 36,
+    "candle": 0
   },
   "coverage": {
     "scanned": 350,
