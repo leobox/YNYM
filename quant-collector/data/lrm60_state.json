@@ -1,19 +1,19 @@
 {
   "version": "lrm60_v2",
-  "cash": 678329.9809701296,
-  "equity": 979529.9809701296,
+  "cash": 679098.8517321043,
+  "equity": 988498.8517321043,
   "positions": {
-    "000100": {
-      "code": "000100",
-      "name": "유한양행",
-      "market": "KOSPI",
-      "entry_ts": "2026-10-15T12:00:00+09:00",
-      "entry_price": 75112.5,
-      "breakout_level": 74300.0,
-      "qty": 4,
-      "cost": 300795.5175,
-      "peak_price": 76500.0,
-      "last_close": 75300.0,
+    "253450": {
+      "code": "253450",
+      "name": "스튜디오드래곤",
+      "market": "KOSDAQ",
+      "entry_ts": "2026-10-16T10:00:00+09:00",
+      "entry_price": 23735.550000000003,
+      "breakout_level": 22200.0,
+      "qty": 13,
+      "cost": 308916.99647250003,
+      "peak_price": 24350.0,
+      "last_close": 23800.0,
       "bars_held": 3,
       "target_1_done": false
     }
@@ -228,15 +228,37 @@
       "qty": 2,
       "pnl": -6055.84,
       "reason": "STOP_TOUCH"
+    },
+    {
+      "code": "293490",
+      "name": "카카오게임즈",
+      "entry_ts": "2026-10-16T10:00:00+09:00",
+      "exit_ts": "2026-10-16T10:00:00+09:00",
+      "entry_price": 11006.485,
+      "exit_price": 10550.3763,
+      "qty": 30,
+      "pnl": -14426.97,
+      "reason": "STOP_TOUCH"
+    },
+    {
+      "code": "000100",
+      "name": "유한양행",
+      "entry_ts": "2026-10-15T12:00:00+09:00",
+      "exit_ts": "2026-10-16T11:00:00+09:00",
+      "entry_price": 75112.5,
+      "exit_price": 81121.5,
+      "qty": 4,
+      "pnl": 23317.32,
+      "reason": "TARGET_TOUCH"
     }
   ],
-  "last_bar_ts": "2026-10-15T14:00:00+09:00",
+  "last_bar_ts": "2026-10-16T12:00:00+09:00",
   "last_candidates": [],
   "gate_counts": {
-    "trend": 16,
-    "breakout": 0,
-    "liquidity": 36,
-    "candle": 0
+    "trend": 73,
+    "breakout": 27,
+    "liquidity": 40,
+    "candle": 57
   },
   "coverage": {
     "scanned": 350,
