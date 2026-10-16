@@ -20,6 +20,7 @@ REASONS = {
     "PRICE_SNAPSHOT_STALE_OR_FUTURE": "수신 일봉 날짜가 허용 범위를 벗어남 (오래된 날짜 또는 미래 날짜)",
     "SAME_DAY_CLOSE_UNVERIFIED": "당일 일봉 마감 확인 전",
     "MARKET_BREADTH_COVERAGE_INSUFFICIENT": "일봉 결측으로 시장 폭 계산 가능 종목 부족 · 표시된 시장 폭과 무후보 결과는 판단에 사용하지 마세요",
+    "INSUFFICIENT_SAME_DAY_COVERAGE": "동일 기준일 일봉 수신 종목 비율 부족 · 표시된 마지막 저장 결과는 이번 실행 판정이 아닙니다",
 }
 
 

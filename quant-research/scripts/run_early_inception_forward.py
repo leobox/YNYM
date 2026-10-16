@@ -48,6 +48,17 @@ def _canonical(value: dict) -> bytes:
                       separators=(",", ":"), allow_nan=False).encode("utf-8")
 
 
+def load_effective_record(run_dir: Path, day: str) -> dict | None:
+    """Load non-destructive correction if present, otherwise the sealed record."""
+    corr_path = run_dir / "corrections" / f"{day}.json"
+    if corr_path.is_file():
+        return json.loads(corr_path.read_text(encoding="utf-8"))
+    sealed_path = run_dir / f"{day}.json"
+    if sealed_path.is_file():
+        return json.loads(sealed_path.read_text(encoding="utf-8"))
+    return None
+
+
 def load_data(directory: Path) -> tuple[dict[str, pd.DataFrame], dict[str, str], dict[str, int]]:
     universe, hashes = {}, {}
     rejected = {"missing_ohlcv": 0, "invalid_ohlcv": 0}
@@ -100,6 +111,11 @@ def inspect(data_dir: Path, manifest_path: Path, now: datetime | None = None) ->
         raise ValueError("PRIMARY_UNIVERSE_INCOMPLETE")
     if manifest.get("task") == "T-063" and len(primary_codes) < 140:
         raise ValueError("PRIMARY_UNIVERSE_TOO_SMALL")
+    eligible_primary = [code for code in primary_codes if code in universe]
+    if not eligible_primary:
+        raise ValueError("NO_VALID_STOCKS")
+    if manifest.get("task") == "T-063" and len(eligible_primary) < 100:
+        raise ValueError("PRIMARY_UNIVERSE_TOO_SMALL")
     symbol_by_code = {item["code"]: item["symbol"] for item in files}
     name_by_code = {}
     if manifest.get("universe_file"):
@@ -107,16 +123,20 @@ def inspect(data_dir: Path, manifest_path: Path, now: datetime | None = None) ->
         if not universe_path.is_file():
             raise ValueError("UNIVERSE_SNAPSHOT_MISSING")
         expected_hash = manifest.get("universe_sha256")
-        if expected_hash and _sha(universe_path) != expected_hash:
+        raw_univ = universe_path.read_bytes()
+        univ_shas = {hashlib.sha256(raw_univ).hexdigest(),
+                     hashlib.sha256(raw_univ.replace(b"\r\n", b"\n")).hexdigest()}
+        if expected_hash and expected_hash not in univ_shas:
             raise ValueError("UNIVERSE_HASH_MISMATCH")
         names = pd.read_csv(universe_path, dtype={"code": str}, encoding="utf-8-sig")
         name_by_code = dict(zip(names["code"], names["name"]))
     last_dates = {code: frame.index[-1].date() for code, frame in universe.items()}
     if not last_dates:
         raise ValueError("NO_VALID_STOCKS")
-    as_of = max(last_dates.values())
-    fresh_codes = [code for code in primary_codes if last_dates.get(code) == as_of]
-    if len(fresh_codes) / len(primary_codes) < 0.90:
+    primary_dates = [last_dates[code] for code in eligible_primary if code in last_dates]
+    as_of = max(set(primary_dates), key=lambda d: (primary_dates.count(d), d))
+    fresh_codes = [code for code in eligible_primary if last_dates.get(code) == as_of]
+    if len(fresh_codes) / len(eligible_primary) < 0.90:
         raise ValueError("INSUFFICIENT_SAME_DAY_COVERAGE")
     today = now.astimezone(KST).date()
     if as_of > today or (today - as_of).days > 3:
@@ -124,7 +144,9 @@ def inspect(data_dir: Path, manifest_path: Path, now: datetime | None = None) ->
     fetched_kst = fetched_at.astimezone(KST)
     if fetched_kst.date() == as_of and fetched_kst.hour < 16:
         raise ValueError("SAME_DAY_CLOSE_UNVERIFIED")
-    manifest_last = max(pd.Timestamp(item["last"]).date() for item in files)
+    manifest_dates = [pd.Timestamp(item["last"]).date() for item in files if item["code"] in eligible_primary]
+    manifest_last = (max(set(manifest_dates), key=lambda d: (manifest_dates.count(d), d))
+                     if manifest_dates else max(pd.Timestamp(item["last"]).date() for item in files))
     if manifest_last != as_of:
         raise ValueError("MANIFEST_DATE_MISMATCH")
     return {"as_of": as_of.isoformat(), "fresh_codes": fresh_codes,
@@ -242,29 +264,36 @@ def backfill_missing(finding: dict, manifest_path: Path, run_dir: Path,
         return []
     first, as_of = min(existing), finding["as_of"]
     full = finding["universe"]
+    eligible_primary = [code for code in finding["primary_codes"] if code in full]
+    if not eligible_primary:
+        return []
     counts: dict[str, int] = {}
-    for code in finding["primary_codes"]:
-        if code in full:
-            for stamp in full[code].index:
-                key = stamp.date().isoformat()
-                counts[key] = counts.get(key, 0) + 1
+    for code in eligible_primary:
+        for stamp in full[code].index:
+            key = stamp.date().isoformat()
+            counts[key] = counts.get(key, 0) + 1
     sessions = sorted(day for day, n in counts.items()
-                      if first < day < as_of and n / len(finding["primary_codes"]) >= 0.90)[-lookback:]
+                      if first < day < as_of and n / len(eligible_primary) >= 0.90)[-lookback:]
     sealed = []
     for day in sessions:
         if day in existing:
             continue
         # Rankings are cross-sectional: reuse the universe of the last sealed day before the gap.
         reference = max(d for d in existing if d < day)
-        ref_record = json.loads((run_dir / f"{reference}.json").read_text(encoding="utf-8"))
+        ref_record = load_effective_record(run_dir, reference)
+        if ref_record is None:
+            continue
         ref_manifest = manifest_by_sha(ref_record["source"]["manifest_sha256"])
         primary = (ref_manifest or {}).get("primary_codes") or finding["primary_codes"]
         cut = pd.Timestamp(day)
         universe = {code: frame.loc[:cut] for code, frame in full.items()}
         universe = {code: frame for code, frame in universe.items() if len(frame) >= 125}
-        fresh = [code for code in primary
-                 if code in universe and universe[code].index[-1] == cut]
-        if len(fresh) / len(primary) < 0.90:
+        eligible_ref = [code for code in primary if code in universe]
+        if not eligible_ref:
+            continue
+        fresh = [code for code in eligible_ref
+                 if universe[code].index[-1] == cut]
+        if len(fresh) / len(eligible_ref) < 0.90:
             continue
         past = dict(finding, as_of=day, universe=universe, fresh_codes=fresh, primary_codes=primary)
         record = build_record(past, manifest_path)
@@ -320,7 +349,9 @@ def resolve(run_dir: Path, universe: dict[str, pd.DataFrame], as_of: str) -> dic
     outcomes = []
     pending = 0
     for path in sorted(run_dir.glob("????-??-??.json")):
-        saved = json.loads(path.read_text(encoding="utf-8"))
+        saved = load_effective_record(run_dir, path.stem)
+        if saved is None:
+            continue
         if set(saved.get("strategies", {})) not in (set(STRATEGIES), {"mode2", "early_inception"}):
             raise ValueError(f"WRONG_STRATEGIES:{path.name}")
         signal_day = pd.Timestamp(saved["as_of"])
@@ -380,8 +411,7 @@ def consecutive_observation_days(record: dict, run_dir: Path,
             for day in previous:
                 key = day.isoformat()
                 if key not in cache:
-                    path = run_dir / f"{key}.json"
-                    cache[key] = json.loads(path.read_text(encoding="utf-8")) if path.is_file() else None
+                    cache[key] = load_effective_record(run_dir, key)
                 prior = cache[key]
                 if prior is None or not any(item["code"] == code for item in
                                          prior.get("strategies", {}).get(strategy, {}).get("candidates", [])):
@@ -464,14 +494,14 @@ def main() -> int:
         result = capture(args.data, args.manifest, args.runs)
     except ValueError as exc:
         if str(exc) in {"PRICE_SNAPSHOT_STALE_OR_FUTURE", "SAME_DAY_CLOSE_UNVERIFIED",
-                        "MARKET_BREADTH_COVERAGE_INSUFFICIENT"}:
+                        "MARKET_BREADTH_COVERAGE_INSUFFICIENT", "INSUFFICIENT_SAME_DAY_COVERAGE"}:
             print(json.dumps({"status": "SKIPPED", "reason": str(exc)}, ensure_ascii=False))
             return 0
         if str(exc) != "SIGNAL_DATE_ALREADY_SEALED_WITH_DIFFERENT_INPUT":
             raise
         # The sealed record stays untouched; the fresh snapshot is used only for gap recovery.
         finding = inspect(args.data, args.manifest)
-        prior = json.loads((args.runs / f'{finding["as_of"]}.json').read_text(encoding="utf-8"))
+        prior = load_effective_record(args.runs, finding["as_of"])
         result = {"reused": True, "record": prior, "finding": finding}
     finding = result["finding"]
     backfilled = backfill_missing(finding, args.manifest, args.runs)
@@ -479,7 +509,7 @@ def main() -> int:
     out_path = args.runs.parent / "outcomes.json"
     out_path.write_text(json.dumps(outcomes, ensure_ascii=False, indent=2, allow_nan=False) + "\n",
                         encoding="utf-8")
-    record = result["record"]
+    record = (load_effective_record(args.runs, finding["as_of"]) or result["record"]) if result["reused"] else result["record"]
     counts = {key: len(block["candidates"]) for key, block in record["strategies"].items()}
     observed_days = consecutive_observation_days(record, args.runs, finding["universe"])
     panel = render_panel(record, observed_days)

@@ -75,6 +75,7 @@ class SignalTracker:
         bar_time_kst: str,
         features: Dict[str, Any],
         entry_reference_price: float,
+        registered_at_kst: Optional[str] = None,
     ) -> Optional[str]:
         """신규 신호 등록 (중복 방지 멱등성 보장, 종목당 활성 신호 1건 제한)"""
         sig_id = f"{strategy_version}_{code}_{bar_time_kst.replace(' ', '_').replace(':', '')}"
@@ -88,6 +89,7 @@ class SignalTracker:
                 return None
 
         now_dt = datetime.now(KST)
+        reg_time_str = registered_at_kst or now_dt.strftime("%Y-%m-%d %H:%M:%S")
 
         # 목표/손절 매트릭스 사전 계산
         targets = {f"tgt_{int(p)}": round(entry_reference_price * (1 + p / 100.0), 2) for p in TARGET_PCTS if p != 5.35}
@@ -114,7 +116,7 @@ class SignalTracker:
             "name": name,
             "market": market,
             "signal_time_kst": bar_time_kst,
-            "registered_at_kst": now_dt.strftime("%Y-%m-%d %H:%M:%S"),
+            "registered_at_kst": reg_time_str,
             "entry_reference_price": entry_reference_price,
             "targets": targets,
             "stops": stops,
@@ -150,9 +152,26 @@ class SignalTracker:
             sig_time = sig["signal_time_kst"]
             if len(sig_time) <= 11:
                 sig_time = f"{now_dt.year}-{sig_time}"
+            sig_time_norm = sig_time[:16]
 
-            # 신호 발생 시각 이후의 완료봉들만 필터링 (미래봉)
-            future_bars = [c for c in candles if c["time_kst"] > sig_time]
+            cutoff_time = sig_time_norm
+            reg_raw = sig.get("registered_at_kst")
+            if isinstance(reg_raw, str) and len(reg_raw) >= 16:
+                reg_hm = reg_raw[:16]
+                try:
+                    sig_dt = datetime.strptime(sig_time_norm[:10], "%Y-%m-%d").date()
+                    reg_dt = datetime.strptime(reg_hm[:10], "%Y-%m-%d").date()
+                    day_gap = (reg_dt - sig_dt).days
+                    last_candle_time = max(c["time_kst"][:16] for c in candles)
+                    if day_gap == 0 or (0 < day_gap <= 7 and reg_hm <= last_candle_time):
+                        cutoff_time = max(sig_time_norm, reg_hm)
+                except ValueError:
+                    pass
+
+            sig["effective_eval_start_kst"] = cutoff_time
+
+            # 신호 발생 시각 및 등록 시각 이후의 완료봉들만 필터링 (등록 이전 봉 선행평가 방지)
+            future_bars = [c for c in candles if c["time_kst"] > cutoff_time]
             if not future_bars:
                 still_pending[sig_id] = sig
                 continue

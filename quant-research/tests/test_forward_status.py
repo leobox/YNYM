@@ -46,6 +46,7 @@ def test_empty_decisions_refresh_both_timestamps_without_advancing_bar(dashboard
     ("SKIPPED", "PRICE_SNAPSHOT_STALE_OR_FUTURE"),
     ("SKIPPED", "SAME_DAY_CLOSE_UNVERIFIED"), ("ERROR", ""),
     ("SKIPPED", "MARKET_BREADTH_COVERAGE_INSUFFICIENT"),
+    ("SKIPPED", "INSUFFICIENT_SAME_DAY_COVERAGE"),
 ])
 def test_failed_execution_is_never_reported_as_a_new_empty_decision(dashboard, status, reason):
     readme, latest = dashboard

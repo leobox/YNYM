@@ -40,7 +40,7 @@ def latest_universe() -> tuple[Path, pd.DataFrame]:
     return path, df
 
 
-def to_frame(item: dict) -> pd.DataFrame:
+def to_frame(item: dict, fetched_at: datetime | None = None) -> pd.DataFrame:
     quote = item["indicators"]["quote"][0]
     adj = item["indicators"].get("adjclose", [{}])[0].get("adjclose")
     if adj is None:
@@ -50,6 +50,12 @@ def to_frame(item: dict) -> pd.DataFrame:
     df = pd.DataFrame({"Open": quote["open"], "High": quote["high"], "Low": quote["low"],
                        "Close": quote["close"], "AdjClose": adj, "Volume": quote["volume"]}, index=index)
     df.index.name = "Date"
+    # 장 마감(16:00 KST) 전이거나 자정 직후 야후가 붙이는 미확정·미래 날짜 봉을 먼저 제거한다.
+    if fetched_at is not None and len(df):
+        fetched_kst = fetched_at.astimezone(KST)
+        cutoff_date = (fetched_kst.date() if fetched_kst.hour >= 16
+                       else (fetched_kst - timedelta(days=1)).date())
+        df = df.loc[df.index.date <= cutoff_date]
     # 자정(KST) 이후 야후는 아직 열리지 않은 새 거래일의 빈 봉(OHLC 전부 NaN)을 끝에 붙인다.
     # 이 자리표시 봉은 체결 데이터가 아니므로 끝에서만 제거한다(중간 결측은 그대로 기록).
     ohlc = df[["Open", "High", "Low", "Close"]]
@@ -70,7 +76,11 @@ def include_unresolved(universe: pd.DataFrame, runs_dir: Path | None) -> tuple[p
         resolved = {(row["signal_date"], row["strategy"], row["code"])
                     for row in outcome_data.get("resolved", [])}
     carryover = {}
-    for path in sorted(runs_dir.glob("????-??-??.json")):
+    run_paths = sorted(runs_dir.glob("????-??-??.json"))
+    corr_dir = runs_dir / "corrections"
+    if corr_dir.is_dir():
+        run_paths.extend(sorted(corr_dir.glob("????-??-??.json")))
+    for path in run_paths:
         record = json.loads(path.read_text(encoding="utf-8"))
         for strategy, block in record.get("strategies", {}).items():
             for pick in block.get("candidates", []):
@@ -142,7 +152,7 @@ def main() -> int:
                                {"range": period, "interval": "1d"}, timeout=10)["chart"]
             if not payload.get("result"):
                 raise ValueError("result 없음")
-            df = to_frame(payload["result"][0])
+            df = to_frame(payload["result"][0], fetched_at=fetched_at)
             path = RAW_DIR / f"{code}.csv"
             df.to_csv(path)
             files.append({"code": code, "symbol": symbol, "rows": int(len(df)),

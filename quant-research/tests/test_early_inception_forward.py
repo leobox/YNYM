@@ -384,3 +384,88 @@ def test_main_reused_record_refreshes_panel_without_rewriting_seal(tmp_path, mon
     assert "🧭 관찰 단계 안내" in panel and "🎯 3일 목록 포함" in panel
     assert seal.read_bytes() == sealed_bytes
     assert (runs.parent / "latest.md").read_text(encoding="utf-8") in panel
+
+
+def test_to_frame_strips_unclosed_same_day_bar_before_16_kst():
+    from scripts.fetch_daily_history import to_frame
+    ts_prev = int(datetime(2026, 10, 15, 0, 0, tzinfo=ZoneInfo("Asia/Seoul")).timestamp())
+    ts_curr = int(datetime(2026, 10, 16, 0, 0, tzinfo=ZoneInfo("Asia/Seoul")).timestamp())
+    item = {
+        "timestamp": [ts_prev, ts_curr],
+        "indicators": {
+            "quote": [{
+                "open": [10000.0, 10100.0],
+                "high": [10200.0, 10100.0],
+                "low": [9900.0, 10100.0],
+                "close": [10050.0, 10100.0],
+                "volume": [100000, 0],
+            }],
+            "adjclose": [{"adjclose": [10050.0, 10100.0]}],
+        },
+    }
+    fetched_early = datetime(2026, 10, 16, 3, 20, tzinfo=ZoneInfo("Asia/Seoul"))
+    df_early = to_frame(item, fetched_at=fetched_early)
+    assert len(df_early) == 1
+    assert str(df_early.index[-1].date()) == "2026-10-15"
+
+    fetched_after_close = datetime(2026, 10, 16, 18, 0, tzinfo=ZoneInfo("Asia/Seoul"))
+    df_after = to_frame(item, fetched_at=fetched_after_close)
+    assert len(df_after) == 2
+    assert str(df_after.index[-1].date()) == "2026-10-16"
+
+
+def test_inspect_allows_short_history_ipos_in_primary_codes(source):
+    data, manifest_path, now, _ = source
+    short_days = pd.bdate_range("2026-08-01", periods=30)
+    short_close = np.full(len(short_days), 5000.0)
+    short_df = pd.DataFrame({
+        "Date": short_days, "Open": short_close, "High": short_close * 1.01,
+        "Low": short_close * 0.99, "Close": short_close, "Volume": np.full(len(short_days), 50000.0)
+    })
+    short_path = data / "000002.csv"
+    short_df.to_csv(short_path, index=False)
+
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["succeeded"] = 2
+    manifest["primary_codes"] = ["000001", "000002"]
+    manifest["files"].append({
+        "code": "000002", "symbol": "000002.KQ",
+        "last": str(short_days[-1].date()),
+        "sha256": hashlib.sha256(short_path.read_bytes()).hexdigest(),
+    })
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    # Even though 000002 has <125 rows (50% of primary_codes), 000001 (100% of eligible_primary) is fresh.
+    finding = inspect(data, manifest_path, now=now)
+    assert finding["fresh_codes"] == ["000001"]
+
+
+def test_non_destructive_correction_overlay_is_used_without_modifying_seal(source):
+    data, manifest_path, now, runs = source
+    first = capture(data, manifest_path, runs, now=now)
+    as_of = first["record"]["as_of"]
+    seal_path = runs / f"{as_of}.json"
+    orig_bytes = seal_path.read_bytes()
+
+    corr_dir = runs / "corrections"
+    corr_dir.mkdir(parents=True, exist_ok=True)
+    corrected = json.loads(orig_bytes.decode("utf-8"))
+    corrected["market_breadth_pct"] = 65.97
+    corrected["strategies"]["early_inception"]["candidates"] = [
+        {"code": "000001", "name": "보정종목", "market": "KOSPI", "close": 10000.0}
+    ]
+    (corr_dir / f"{as_of}.json").write_text(json.dumps(corrected), encoding="utf-8")
+
+    eff = forward.load_effective_record(runs, as_of)
+    assert eff["market_breadth_pct"] == 65.97
+    assert len(eff["strategies"]["early_inception"]["candidates"]) == 1
+    assert seal_path.read_bytes() == orig_bytes
+
+    finding = inspect(data, manifest_path, now=now)
+    res = resolve(runs, finding["universe"], finding["as_of"])
+    assert res["pending_count"] == 1
+
+    today_univ = pd.DataFrame([{"code": "999999", "market": "KOSPI"}])
+    _, carried = include_unresolved(today_univ, runs)
+    assert carried == ["000001"]
+

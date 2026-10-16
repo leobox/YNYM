@@ -150,3 +150,119 @@ def test_render_signal_rows_format():
     assert "피에스케이" in table_text
     assert "안착🟢" in table_text
     assert "25.0억 (2.0x)" in table_text
+
+
+def test_build_results_watch_vs_top5_feature_alignment():
+    rows = [
+        {
+            "종목": "확정돌파종목",
+            "코드": "100001",
+            "시장": "KOSPI",
+            "구분": "일치",
+            "점수": 78.0,
+            "돌파봉종가": 10250.0,
+            "돌파선": 10000.0,
+            "기준봉(KST)": "09-21 10:00",
+            "_bar_time_full": "2026-09-21 10:00",
+            "_base": True,
+            "_match": True,
+            "_early_trigger": False,
+            "_waiting": False,
+            "_current_amount": 18.0,
+            "_current_ratio": 1.6,
+            "_current_level": 10300.0,
+            "_current_close": 10280.0,
+            "_features": {
+                "score": 78.0,
+                "breakout_level": 10000.0,
+                "trigger_amount_e8": 35.0,
+                "trigger_ratio": 3.2,
+                "trigger_close": 10250.0,
+                "current_close": 10280.0,
+                "volume_ratio": 2.4,
+                "pattern_type": "base_breakout",
+            },
+        },
+        {
+            "종목": "조기돌파종목",
+            "코드": "100002",
+            "시장": "KOSDAQ",
+            "구분": "일치",
+            "점수": 74.0,
+            "돌파봉종가": 20400.0,
+            "돌파선": 20000.0,
+            "기준봉(KST)": "09-21 09:00",
+            "_bar_time_full": "2026-09-21 09:00",
+            "_base": True,
+            "_match": True,
+            "_early_trigger": True,
+            "_waiting": False,
+            "_current_amount": 15.0,
+            "_current_ratio": 1.9,
+            "_current_level": 20000.0,
+            "_current_close": 20400.0,
+            "_features": {
+                "score": 74.0,
+                "breakout_level": 20000.0,
+                "trigger_amount_e8": 22.0,
+                "trigger_ratio": 2.1,
+                "trigger_close": 20400.0,
+                "current_close": 20400.0,
+                "volume_ratio": 2.1,
+                "pattern_type": "base_breakout",
+                "early_trigger": True,
+            },
+        },
+        {
+            "종목": "관찰대기종목",
+            "코드": "100003",
+            "시장": "KOSDAQ",
+            "구분": "제외",
+            "점수": 81.2,
+            "돌파봉종가": 9480.0,
+            "돌파선": 9500.0,
+            "기준봉(KST)": "09-21 09:00",
+            "_bar_time_full": "2026-09-21 09:00",
+            "_base": True,
+            "_match": False,
+            "_early_trigger": False,
+            "_waiting": True,
+            "_current_amount": 48.5,
+            "_current_ratio": 4.1,
+            "_current_level": 9800.0,
+            "_current_close": 10100.0,
+            "_features": {
+                "score": 81.2,
+                "breakout_level": 9500.0,
+                "trigger_amount_e8": 1.2,
+                "trigger_ratio": 0.4,
+                "trigger_close": 9480.0,
+                "current_close": 10100.0,
+                "volume_ratio": 3.1,
+                "pattern_type": "base_breakout",
+            },
+        },
+    ]
+
+    top, watch = build_results(rows)
+    assert len(top) == 2
+    assert len(watch) == 1
+
+    by_code_top = {r["코드"]: r["_features"] for _, r in top.iterrows()}
+    assert by_code_top["100001"]["signal_stage"] == "top5_hold"
+    assert by_code_top["100001"]["trigger_amount_e8"] == 35.0
+    assert by_code_top["100002"]["signal_stage"] == "top5_early"
+
+    w_row = watch.iloc[0]
+    w_feat = w_row["_features"]
+    assert w_feat["signal_stage"] == "watch"
+    assert w_feat["trigger_amount_e8"] == 48.5
+    assert w_feat["trigger_ratio"] == 4.1
+    assert w_feat["breakout_level"] == 9800.0
+    assert w_feat["trigger_close"] == 10100.0
+    assert w_feat["current_close"] == 10100.0
+    assert w_row["돌파봉대금_억"] == round(w_feat["trigger_amount_e8"], 1)
+    assert w_row["동시간배수"] == round(w_feat["trigger_ratio"], 2)
+    assert w_row["돌파선"] == round(w_feat["breakout_level"], 2)
+    assert w_row["돌파봉종가"] == w_feat["trigger_close"]
+

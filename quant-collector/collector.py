@@ -498,6 +498,13 @@ def score_stock(rec: Dict[str, Any], now: pd.Timestamp) -> Tuple[Optional[Dict[s
             "_bar_time": df.index[-1].isoformat(),
         }
 
+        is_waiting = bool(s.eligible and conf.waiting)
+        is_watch_only = bool(is_waiting and not matched)
+        signal_stage = (
+            "top5_early" if (matched and early_trigger)
+            else ("top5_hold" if matched else ("watch" if is_waiting else "excluded"))
+        )
+
         # 2차 판독기용 세부 특징값 딕셔너리
         features = {
             "score": float(s.score),
@@ -505,16 +512,17 @@ def score_stock(rec: Dict[str, Any], now: pd.Timestamp) -> Tuple[Optional[Dict[s
             "volume_ratio": float(s.volume_ratio),
             "above60": bool(s.above60),
             "extension_atr": float(row["이격ATR"]),
-            "trigger_amount_e8": float(conf.trigger_amount),
-            "trigger_ratio": float(conf.trigger_ratio),
-            "breakout_level": float(conf.breakout_level),
-            "trigger_close": float(c.iloc[-2]),
+            "trigger_amount_e8": float(conf.current_amount if is_watch_only else conf.trigger_amount),
+            "trigger_ratio": float(conf.current_ratio if is_watch_only else conf.trigger_ratio),
+            "breakout_level": float(conf.current_level if is_watch_only else conf.breakout_level),
+            "trigger_close": float(c.iloc[-1] if is_watch_only else c.iloc[-2]),
             "current_close": float(c.iloc[-1]),
             "atr_14": float(atr_val) if pd.notna(atr_val) else 0.0,
             "sma12": float(fast.iloc[-1]),
             "sma26": float(medium.iloc[-1]),
             "early_trigger": early_trigger,
             "early_tf": early_tf,
+            "signal_stage": signal_stage,
         }
         row["_features"] = features
 
@@ -652,13 +660,18 @@ def build_results(rows: List[Dict[str, Any]]) -> Tuple[pd.DataFrame, pd.DataFram
     df_matched = df_rows[df_rows["_match"]].copy() if not df_rows.empty else pd.DataFrame()
     if not df_matched.empty:
         smart_ranks = []
+        matched_features = []
         for _, r in df_matched.iterrows():
-            feat = r.get("_features", {})
+            feat = dict(r.get("_features") or {})
+            early_flag = bool(r.get("_early_trigger", feat.get("early_trigger", False)))
+            feat["signal_stage"] = "top5_early" if early_flag else "top5_hold"
+            matched_features.append(feat)
             sig_time = r.get("_bar_time_full", r.get("기준봉(KST)", ""))
             p = float(r.get("현재가", r.get("돌파봉종가", 0.0)))
             sr = calculate_smart_rank(feat, sig_time, p)
             smart_ranks.append(sr)
 
+        df_matched["_features"] = matched_features
         df_matched["스마트점수"] = [sr["smart_score"] for sr in smart_ranks]
         df_matched["돌파이격"] = [sr["gap_pct"] for sr in smart_ranks]
         df_matched["건전도"] = [sr["health"] for sr in smart_ranks]
@@ -682,6 +695,15 @@ def build_results(rows: List[Dict[str, Any]]) -> Tuple[pd.DataFrame, pd.DataFram
         if r["_match"] or not r["_base"]:
             continue
         if r["_waiting"]:
+            watch_feat = dict(r.get("_features") or {})
+            watch_feat.update({
+                "signal_stage": "watch",
+                "trigger_amount_e8": float(r["_current_amount"]),
+                "trigger_ratio": float(r["_current_ratio"]),
+                "breakout_level": float(r["_current_level"]),
+                "trigger_close": float(r["_current_close"]),
+                "current_close": float(r["_current_close"]),
+            })
             watch_rows.append({
                 "종목": r["종목"],
                 "코드": r["코드"],
@@ -695,7 +717,7 @@ def build_results(rows: List[Dict[str, Any]]) -> Tuple[pd.DataFrame, pd.DataFram
                 "기준봉(KST)": r["기준봉(KST)"],
                 "시장": r.get("시장", "KOSPI"),
                 "_bar_time_full": r.get("_bar_time_full", f"2026-{r['기준봉(KST)']}"),
-                "_features": r.get("_features", {}),
+                "_features": watch_feat,
             })
     watch = pd.DataFrame(watch_rows)
 

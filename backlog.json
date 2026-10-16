@@ -2,7 +2,7 @@
   "$schema_version": "1.0",
   "meta": {
     "project": "Leobox Multi-root Workspace",
-    "updated": "2026-10-03",
+    "updated": "2026-10-16",
     "context_doc": "README.md",
     "doc_dir": "docs/tasks",
     "stack": "Multi-agent (Gemini + Claude + Codex) / Python(Quant) / GitHub Actions / Android",
@@ -2651,7 +2651,7 @@
       "title": "quant-research: 완료봉 기반 스마트 스코어 조기 감지와 +5.35% 선접촉 재검증",
       "summary": "",
       "doc": "docs/tasks/T-072.md",
-      "status": "in_progress",
+      "status": "done",
       "priority": "P1",
       "category": "quant_research",
       "phase": "1. 퀀트 알고리즘 연구",
@@ -2659,8 +2659,8 @@
       "deps": [],
       "where": null,
       "refs": [],
-      "note": null,
-      "done_at": null,
+      "note": "완료봉 기반 350종목 인과 재생, 스마트 점수별 조기 선행 시간과 +5.35% 선접촉 검증; 연구 테스트 147개 및 정적/백로그 검사 통과",
+      "done_at": "2026-09-22",
       "updated_at": "2026-09-22",
       "done_when": "5·10·30분 조기 알림의 완료봉 시각과 60분 확정 신호를 같은 원본·종목일로 비교하고 스마트 점수별 +5.35% 선접촉 및 검열 한계를 기록",
       "gate": null,
@@ -2677,6 +2677,11 @@
           "at": "2026-09-22",
           "status": "in_progress",
           "note": ""
+        },
+        {
+          "at": "2026-09-22",
+          "status": "done",
+          "note": "완료봉 기반 350종목 인과 재생, 스마트 점수별 조기 선행 시간과 +5.35% 선접촉 검증; 연구 테스트 147개 및 정적/백로그 검사 통과"
         }
       ]
     },
@@ -2721,24 +2726,24 @@
     },
     {
       "id": "T-074",
-      "title": "quant-collector: GitHub Actions 15분 운영 주기 전환",
+      "title": "quant-research: LRM-60 v2.0 적대적 리뷰 반영 및 레퍼런스 코드 정합화",
       "summary": "",
       "doc": "docs/tasks/T-074.md",
       "status": "done",
       "priority": "P1",
-      "category": "quant_ops",
-      "phase": "2. 퀀트 데이터 자동 수집",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
       "estimate_min": 30,
       "deps": [],
       "where": null,
       "refs": [],
-      "note": "알고리즘 변경 없이 KST 평일 09:07~16:52 15분 주기로 전환; pytest 35개와 정적검사 통과, GitHub Actions 수동 검증 실행 #42의 수집·push 전 단계 성공",
+      "note": "LRM-60 v2.0의 파라미터 채택 기준·KRX 15시 코호트·체결/청산/회계 순서를 정합화; 레퍼런스 컴파일, 합성 시나리오 4건, quant_guard 및 백로그 검사 통과",
       "done_at": "2026-09-24",
       "updated_at": "2026-09-24",
-      "done_when": "알고리즘 변경 없이 평일 장중 15분 주기로 실행되고 workflow_dispatch 및 단일 실행 잠금을 유지하며 실제 Actions 검증을 통과한다",
+      "done_when": null,
       "gate": null,
       "parent": null,
-      "owner": "Codex",
+      "owner": null,
       "claimed_at": "2026-09-24",
       "log": [
         {
@@ -2754,7 +2759,7 @@
         {
           "at": "2026-09-24",
           "status": "done",
-          "note": "알고리즘 변경 없이 KST 평일 09:07~16:52 15분 주기로 전환; pytest 35개와 정적검사 통과, GitHub Actions 수동 검증 실행 #42의 수집·push 전 단계 성공"
+          "note": "LRM-60 v2.0의 파라미터 채택 기준·KRX 15시 코호트·체결/청산/회계 순서를 정합화; 레퍼런스 컴파일, 합성 시나리오 4건, quant_guard 및 백로그 검사 통과"
         }
       ]
     },
@@ -2794,6 +2799,45 @@
           "at": "2026-09-24",
           "status": "done",
           "note": "사용자 승인에 따라 LRM-60 v2.0 공식 연구 사양 확정; 트레일링 갭 과대 체결, 무거래 봉, 기간 말 청산 보정; 연구 테스트 153건 및 정적/백로그 검사 통과"
+        }
+      ]
+    },
+    {
+      "id": "T-076",
+      "title": "quant-research: LRM-60 v2.0 실데이터 백테스트 검증 및 성과 보고",
+      "summary": "",
+      "doc": "docs/tasks/T-076.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "LRM-60 v2.0 349개 종목 60거래일 실데이터 백테스트 완료; 70회 거래 성과 분석 및 STOP_TOUCH 48건 패인 규명, quant_guard 통과",
+      "done_at": "2026-09-24",
+      "updated_at": "2026-09-24",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-24",
+      "log": [
+        {
+          "at": "2026-09-24",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-24",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-24",
+          "status": "done",
+          "note": "LRM-60 v2.0 349개 종목 60거래일 실데이터 백테스트 완료; 70회 거래 성과 분석 및 STOP_TOUCH 48건 패인 규명, quant_guard 통과"
         }
       ]
     },
@@ -2838,46 +2882,46 @@
     },
     {
       "id": "T-078",
-      "title": "모드 2 일봉 팩터 운영 패널을 GitHub Actions에 통합",
-      "summary": "일봉 소스·시점·결측 검증 후 장마감 팩터/브레드스/에어백/월간 리밸런싱 가상 계획을 모바일 README에 표시",
+      "title": "quant-research: 손익비 3:1(+15%/-5%) 달성을 위한 LRM-60 파라미터 그리드 파인튜닝",
+      "summary": "",
       "doc": "docs/tasks/T-078.md",
       "status": "done",
       "priority": "P1",
-      "category": "quant_ops",
-      "phase": "0. 공통 인프라 & 대시보드",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
       "estimate_min": 30,
       "deps": [],
       "where": null,
       "refs": [],
-      "note": "180개 테스트 및 quant_guard 통과; 공개 일봉 138/150 실수신·README 패널 확인; Actions 최초 예약 실행은 배포 후 확인",
-      "done_at": "2026-09-25",
-      "updated_at": "2026-09-25",
+      "note": "349종목 81개 파라미터 그리드 탐색 완료; 승률 35.4% 달성 및 10슬롯 MDD -8.5%~-9.6% 방어 실증, quant_guard 통과",
+      "done_at": "2026-09-24",
+      "updated_at": "2026-09-24",
       "done_when": null,
       "gate": null,
       "parent": null,
       "owner": null,
-      "claimed_at": "2026-09-25",
+      "claimed_at": "2026-09-24",
       "log": [
         {
-          "at": "2026-09-25",
+          "at": "2026-09-24",
           "status": "todo",
           "note": "add로 생성"
         },
         {
-          "at": "2026-09-25",
+          "at": "2026-09-24",
           "status": "in_progress",
-          "note": "Codex: 원격 main 기준 격리 worktree에서 모드 2 장마감 운영 패널 구현"
+          "note": ""
         },
         {
-          "at": "2026-09-25",
+          "at": "2026-09-24",
           "status": "done",
-          "note": "180개 테스트 및 quant_guard 통과; 공개 일봉 138/150 실수신·README 패널 확인; Actions 최초 예약 실행은 배포 후 확인"
+          "note": "349종목 81개 파라미터 그리드 탐색 완료; 승률 35.4% 달성 및 10슬롯 MDD -8.5%~-9.6% 방어 실증, quant_guard 통과"
         }
       ]
     },
     {
       "id": "T-079",
-      "title": "모드 2 팩터 근거 표시 및 GitHub 15분 갱신 검증",
+      "title": "quant-research: 1년치(YTD) 60분봉 실데이터 기반 LRM-60 및 시장국면(Regime) 백테스트 검증",
       "summary": "",
       "doc": "docs/tasks/T-079.md",
       "status": "done",
@@ -2888,7 +2932,388 @@
       "deps": [],
       "where": null,
       "refs": [],
-      "note": "e015e65 main 반영, 모드2·수집 Actions 수동 실행 성공, GitHub README 근거 표 갱신 확인",
+      "note": "1년치 151종목 1276봉 백테스트 완료; 승률 50.8%, PF 1.61, 수익률 +40.1%, MDD -6.3% 실증, quant_guard 통과",
+      "done_at": "2026-09-24",
+      "updated_at": "2026-09-24",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-24",
+      "log": [
+        {
+          "at": "2026-09-24",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-24",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-24",
+          "status": "done",
+          "note": "1년치 151종목 1276봉 백테스트 완료; 승률 50.8%, PF 1.61, 수익률 +40.1%, MDD -6.3% 실증, quant_guard 통과"
+        }
+      ]
+    },
+    {
+      "id": "T-080",
+      "title": "quant-research: 3개년 일봉 기반 순수 팩터 퀀트 백테스트 (캔들 배제, 10분산, +15%/-5% 리스크 관리)",
+      "summary": "",
+      "doc": "docs/tasks/T-080.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "145개 종목 3개년 일봉 대상 순수 팩터 퀀트 백테스트 완료. 승률 30% 기준 1000만원 달성 거래수(4026회) 검증 및 월간 리밸런싱+15% 스톱(수익률 +106%, 승률 45.5%, MDD -22.8%, 430회) 최적 모델 도출",
+      "done_at": "2026-09-24",
+      "updated_at": "2026-09-24",
+      "done_when": "150개 종목 3개년 일봉 데이터로 캔들 배제 횡단면 팩터 랭킹 및 10종목 10% 분산 포트폴리오 백테스트 수행 후 승률, 손익비, MDD, 목표 도달 거래수 산출",
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-09-24",
+      "log": [
+        {
+          "at": "2026-09-24",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-24",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-24",
+          "status": "done",
+          "note": "145개 종목 3개년 일봉 대상 순수 팩터 퀀트 백테스트 완료. 승률 30% 기준 1000만원 달성 거래수(4026회) 검증 및 월간 리밸런싱+15% 스톱(수익률 +106%, 승률 45.5%, MDD -22.8%, 430회) 최적 모델 도출"
+        }
+      ]
+    },
+    {
+      "id": "T-081",
+      "title": "LRM-60 운영 봉 정합성·지연 손절·가상 체결 안전성 보완",
+      "summary": "",
+      "doc": "docs/tasks/T-081.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "09시 고정 완료봉·지연 손절 보류/복구·14시 신호 만기·10% 슬롯/3만5만원 평가손실 진입 중단·이력 시각 표시; 오프라인 47 테스트와 quant_guard 통과",
+      "done_at": "2026-09-24",
+      "updated_at": "2026-09-24",
+      "done_when": "완료봉 격자/결측 검증, 지연 보유봉 안전 처리, 가상 체결 시각 구분, 5만원 재검토 표시, 오프라인 회귀 테스트 및 안전 검사 통과",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-09-24",
+      "log": [
+        {
+          "at": "2026-09-24",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-24",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-24",
+          "status": "done",
+          "note": "09시 고정 완료봉·지연 손절 보류/복구·14시 신호 만기·10% 슬롯/3만5만원 평가손실 진입 중단·이력 시각 표시; 오프라인 47 테스트와 quant_guard 통과"
+        }
+      ]
+    },
+    {
+      "id": "T-082",
+      "title": "quant-research: 모드 2 기반 실전 팩터 포트폴리오 운영 엔진 구현 (월간 리밸런싱, -15% 스톱 에어백, 마켓 브레드스 레짐, 주문표 생성)",
+      "summary": "",
+      "doc": "docs/tasks/T-082.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": "quant-research/scripts/pure_quant_portfolio_manager.py",
+      "refs": [],
+      "note": "Codex cross-check: missing-date regime fallback and same-date apply idempotency fixed; 167 quant tests pass.",
+      "done_at": "2026-09-25",
+      "updated_at": "2026-09-25",
+      "done_when": "스톱 없이 20영업일 주기 마켓 브레드스 및 팩터 랭킹으로 현재 포트폴리오를 진단하고 리밸런싱 매수/매도 주문표 및 포트폴리오 추적을 생성하는 운영용 엔진 구현",
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-09-24",
+      "log": [
+        {
+          "at": "2026-09-24",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-24",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-24",
+          "status": "review",
+          "note": "모드 2 실전 운영 엔진 구현 및 5개 단위테스트+158개 전체테스트 통과. Codex 크로스체크 대기"
+        },
+        {
+          "at": "2026-09-25",
+          "status": "in_progress",
+          "note": "Codex adversarial cross-check 시작: 팩터·회계·에어백·테스트 검토"
+        },
+        {
+          "at": "2026-09-25",
+          "status": "done",
+          "note": "Codex cross-check: missing-date regime fallback and same-date apply idempotency fixed; 167 quant tests pass."
+        }
+      ]
+    },
+    {
+      "id": "T-083",
+      "title": "LRM-60 YTD 백테스트 미래정보·체결 오류 정정 및 성과 재산출",
+      "summary": "",
+      "doc": "docs/tasks/T-083.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "YTD 인과성 정정 및 60일 공식 러너 재실행, 165+47 테스트 통과. 실전 수익성은 미검증.",
+      "done_at": "2026-09-24",
+      "updated_at": "2026-09-24",
+      "done_when": "전일 시장국면만 사용, 트레일링 갭·동봉 재진입·기간 말 회계 보정, 원본 데이터 재산출, 회귀 테스트와 불변식 확인",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-09-24",
+      "log": [
+        {
+          "at": "2026-09-24",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-24",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-24",
+          "status": "done",
+          "note": "YTD 인과성 정정 및 60일 공식 러너 재실행, 165+47 테스트 통과. 실전 수익성은 미검증."
+        }
+      ]
+    },
+    {
+      "id": "T-084",
+      "title": "GitHub Actions 15분 수집 스케줄 실행 상태 복구",
+      "summary": "collector workflow schedule/permissions/실행 로그 점검 및 수동 dispatch 검증",
+      "doc": "docs/tasks/T-084.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "0. 공통 인프라 & 대시보드",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "원격 실행 0건 원인 보정: 7/15 cron을 명시적 7,22,37,52로 교체하여 커밋 6982dea로 main 반영. 워크플로 active 확인.",
+      "done_at": "2026-09-25",
+      "updated_at": "2026-09-25",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-25",
+      "log": [
+        {
+          "at": "2026-09-25",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-25",
+          "status": "in_progress",
+          "note": "사용자 보고: 2026-09-24 23:02 이후 collector Actions 갱신 없음. 워크플로 실행 조건과 스케줄을 점검."
+        },
+        {
+          "at": "2026-09-25",
+          "status": "done",
+          "note": "15분 cron 단일 step 표현으로 정리, YAML/테스트 검증. 원격 다음 실행 확인 필요."
+        },
+        {
+          "at": "2026-09-25",
+          "status": "review",
+          "note": "로컬 워크플로 수정과 검증은 완료. 원격 main에 자동 커밋이 누적되어 재기반화 add/add 충돌로 푸시 보류; 원격 반영 후 완료 필요."
+        },
+        {
+          "at": "2026-09-25",
+          "status": "in_progress",
+          "note": "사용자 요청: 기존 GitHub Actions 전체 제거 후 신규 단일 15분 워크플로 재등록 및 메인 README를 LRM-60 신규 운영 중심으로 정리"
+        },
+        {
+          "at": "2026-09-25",
+          "status": "done",
+          "note": "원격 main에 기존 collector.yml 삭제 및 신규 lrm60_15m.yml 단일 15분 워크플로(커밋 871e046) 반영. README/렌더러에서 기존 긴급·추적 표 제거."
+        },
+        {
+          "at": "2026-09-25",
+          "status": "in_progress",
+          "note": "신규 워크플로 등록 후 원격 실행 0건 확인. GitHub cron 7/15 표현을 명시적 7,22,37,52로 보정."
+        },
+        {
+          "at": "2026-09-25",
+          "status": "done",
+          "note": "원격 실행 0건 원인 보정: 7/15 cron을 명시적 7,22,37,52로 교체하여 커밋 6982dea로 main 반영. 워크플로 active 확인."
+        }
+      ]
+    },
+    {
+      "id": "T-085",
+      "title": "LRM-60 4대 게이트 교집합 성과 검증",
+      "summary": "동일 완료봉 원본에서 게이트 조합별 표본·성과·희소성 비교",
+      "doc": "docs/tasks/T-085.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "0. 공통 인프라 & 대시보드",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "4단계 ablation 완료: 공식 4게이트 70거래/PF 0.32/-30.87%로 완화 조합보다 손실은 작지만 여전히 수익성 미달. 게이트 유지, OOS 추가 필요.",
+      "done_at": "2026-09-25",
+      "updated_at": "2026-09-25",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-09-25",
+      "log": [
+        {
+          "at": "2026-09-25",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-25",
+          "status": "in_progress",
+          "note": "동일 완료봉 원본에서 LRM-60 4대 게이트 조합별 성과·희소성 검증 시작"
+        },
+        {
+          "at": "2026-09-25",
+          "status": "done",
+          "note": "4단계 ablation 완료: 공식 4게이트 70거래/PF 0.32/-30.87%로 완화 조합보다 손실은 작지만 여전히 수익성 미달. 게이트 유지, OOS 추가 필요."
+        }
+      ]
+    },
+    {
+      "id": "T-086",
+      "title": "모드 2 일봉 팩터 운영 패널을 GitHub Actions에 통합",
+      "summary": "일봉 소스·시점·결측 검증 후 장마감 팩터/브레드스/에어백/월간 리밸런싱 가상 계획을 모바일 README에 표시",
+      "doc": "docs/tasks/T-086.md",
+      "status": "cancelled",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "0. 공통 인프라 & 대시보드",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "원격 main 기준 독립 작업 T-078에 동일 범위 구현·검증·배포 완료(57affd4); 로컬 중복 작업 취소",
+      "done_at": "2026-09-25",
+      "updated_at": "2026-09-25",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": null,
+      "log": [
+        {
+          "at": "2026-09-25",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-25",
+          "status": "cancelled",
+          "note": "원격 main 기준 독립 작업 T-078에 동일 범위 구현·검증·배포 완료(57affd4); 로컬 중복 작업 취소"
+        }
+      ]
+    },
+    {
+      "id": "T-087",
+      "title": "quant-research: 모드 2 포트폴리오 RAG 판정이유 엔진 및 3대 핵심지표(3개월수익·기관매집·안정도) 대시보드 구현",
+      "summary": "",
+      "doc": "docs/tasks/T-087.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "473개 종목 RAG 지식베이스 구축, 3대 팩터(3개월모멘텀,샤프,CMF) 진단기 및 마크다운 표 렌더러 구현, 172개 전체테스트 통과",
+      "done_at": "2026-09-25",
+      "updated_at": "2026-09-25",
+      "done_when": "종목별 지식베이스(RAG)와 3대 실시간 팩터(3개월 수익률, 기관매집 CMF, 변동성 대비 안정도 샤프)를 결합하여 모바일 직관 판정이유를 자동 생성하는 엔진 및 대시보드 구현",
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-09-25",
+      "log": [
+        {
+          "at": "2026-09-25",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-25",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-25",
+          "status": "done",
+          "note": "473개 종목 RAG 지식베이스 구축, 3대 팩터(3개월모멘텀,샤프,CMF) 진단기 및 마크다운 표 렌더러 구현, 172개 전체테스트 통과"
+        }
+      ]
+    },
+    {
+      "id": "T-088",
+      "title": "모드 2 일봉 팩터 가상 관찰 문구 검증 및 시험 출력",
+      "summary": "",
+      "doc": "docs/tasks/T-088.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "팩터 문구를 계산식과 일치시켜 로컬 관찰표 재생성; 관련 12개 테스트 및 quant-guard 통과",
       "done_at": "2026-09-25",
       "updated_at": "2026-09-25",
       "done_when": null,
@@ -2910,113 +3335,68 @@
         {
           "at": "2026-09-25",
           "status": "done",
-          "note": "e015e65 main 반영, 모드2·수집 Actions 수동 실행 성공, GitHub README 근거 표 갱신 확인"
+          "note": "T-087 일봉 팩터 관찰 문구 검증, 2026-09-18 로컬 시험표 생성, 관련 테스트 12개 및 quant-guard 통과"
+        },
+        {
+          "at": "2026-09-25",
+          "status": "in_progress",
+          "note": "관찰표 기간 표기의 인덱스 경계 재확인"
+        },
+        {
+          "at": "2026-09-25",
+          "status": "done",
+          "note": "팩터 문구를 계산식과 일치시켜 로컬 관찰표 재생성; 관련 12개 테스트 및 quant-guard 통과"
         }
       ]
     },
     {
-      "id": "T-080",
-      "title": "루트 README 시장 램프와 네 표 우선 배치 및 갱신 시각 정리",
-      "summary": "",
-      "doc": "docs/tasks/T-080.md",
+      "id": "T-089",
+      "title": "모드 2 일봉 팩터 관찰 12개월 가상 운영 백테스트",
+      "summary": "저장된 3년 일봉의 마지막 12개월을 T-088 팩터 순위로 순차 재생",
+      "doc": "docs/tasks/T-089.md",
       "status": "done",
       "priority": "P1",
-      "category": "quant_ops",
-      "phase": "0. 공통 인프라 & 대시보드",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
       "estimate_min": 30,
       "deps": [],
-      "where": null,
-      "refs": [],
-      "note": "29일 예약 실행 미생성 확인, 수동 Actions 36573260130 성공으로 29일 일봉·시장 폭 78.0% 반영, 20:17 KST 재시도 예약 추가",
-      "done_at": "2026-09-29",
-      "updated_at": "2026-09-29",
-      "done_when": "원격 main의 최신 데이터 보존, 상단 레짐 및 네 표 배치, 자동 갱신 유지 확인",
+      "where": "quant-research/scripts/run_mode2_12m_observation.py; quant-research/data/research/T-089/",
+      "refs": [
+        "T-088",
+        "T-063",
+        "T-080"
+      ],
+      "note": "12개월 가상 재생 및 원본 해시·회계·접두 불변성 검증; 15개 테스트, quant-guard, 보고서 완료",
+      "done_at": "2026-09-25",
+      "updated_at": "2026-09-25",
+      "done_when": "저장 일봉으로 마지막 12개월을 시점 순서대로 재생하고 비용·체결·성과·편향을 검증한 재현 보고서 작성",
       "gate": null,
-      "parent": null,
+      "parent": "T-088",
       "owner": "Codex",
-      "claimed_at": "2026-09-29",
+      "claimed_at": "2026-09-25",
       "log": [
         {
-          "at": "2026-09-29",
+          "at": "2026-09-25",
           "status": "todo",
           "note": "add로 생성"
         },
         {
-          "at": "2026-09-29",
+          "at": "2026-09-25",
           "status": "in_progress",
           "note": ""
         },
         {
-          "at": "2026-09-29",
+          "at": "2026-09-25",
           "status": "done",
-          "note": "원격 최신 스냅샷 보존 및 루트 README 시장 램프/표 순서·자동 생성기 수정; 관련 테스트 18개와 quant-guard 통과"
-        },
-        {
-          "at": "2026-09-29",
-          "status": "in_progress",
-          "note": "사용자 교정: 일봉 두 표의 갱신 시각을 KST 표기로 통일"
-        },
-        {
-          "at": "2026-09-29",
-          "status": "done",
-          "note": "일봉 두 표의 수신 시각을 Asia/Seoul로 변환해 KST 표기; 11개 테스트 및 quant-guard 통과"
-        },
-        {
-          "at": "2026-09-29",
-          "status": "in_progress",
-          "note": "29일 완료 일봉 미갱신: GitHub 17:40 예약 실행 미생성; 야간 재시도 추가 및 수동 실행 확인"
-        },
-        {
-          "at": "2026-09-29",
-          "status": "done",
-          "note": "29일 예약 실행 미생성 확인, 수동 Actions 36573260130 성공으로 29일 일봉·시장 폭 78.0% 반영, 20:17 KST 재시도 예약 추가"
+          "note": "12개월 가상 재생 및 원본 해시·회계·접두 불변성 검증; 15개 테스트, quant-guard, 보고서 완료"
         }
       ]
     },
     {
-      "id": "T-081",
-      "title": "메인 README 일봉 후보 연속 포착 거래일 표시",
+      "id": "T-090",
+      "title": "quant-research: 모드 2 일봉 팩터 가상 관찰 기반 12개월 포트폴리오 운영 백테스트 및 성과 분석",
       "summary": "",
-      "doc": "docs/tasks/T-081.md",
-      "status": "done",
-      "priority": "P1",
-      "category": "quant_ops",
-      "phase": "0. 공통 인프라 & 대시보드",
-      "estimate_min": 30,
-      "deps": [],
-      "where": null,
-      "refs": [],
-      "note": "모드 2·상승 초입 연속 포착 거래일 표시 및 기록 결손·전략 분리 검증; 테스트 12개와 quant-guard 통과",
-      "done_at": "2026-09-29",
-      "updated_at": "2026-09-29",
-      "done_when": "모드 2·상승 초입 각 종목의 연속 포착 거래일을 날짜별 봉인 기록과 완료 일봉 거래 세션 기준으로 표시하고 자동 갱신 유지",
-      "gate": null,
-      "parent": null,
-      "owner": "Codex",
-      "claimed_at": "2026-09-29",
-      "log": [
-        {
-          "at": "2026-09-29",
-          "status": "todo",
-          "note": "add로 생성"
-        },
-        {
-          "at": "2026-09-29",
-          "status": "in_progress",
-          "note": ""
-        },
-        {
-          "at": "2026-09-29",
-          "status": "done",
-          "note": "모드 2·상승 초입 연속 포착 거래일 표시 및 기록 결손·전략 분리 검증; 테스트 12개와 quant-guard 통과"
-        }
-      ]
-    },
-    {
-      "id": "T-082",
-      "title": "quant-research: Mode2/상승초입 전진관찰 Action 안정화",
-      "summary": "",
-      "doc": "docs/tasks/T-082.md",
+      "doc": "docs/tasks/T-090.md",
       "status": "done",
       "priority": "P1",
       "category": "quant_research",
@@ -3025,13 +3405,991 @@
       "deps": [],
       "where": null,
       "refs": [],
-      "note": "9/30 복구 봉인 및 연속감지 정상 복원, 20~00시 4회 스케줄 및 당일 봉인 시 조기 종료 gate, 향후 결측 자동 복구(point-in-time backfill) 및 테스트 173건 통과 완료",
-      "done_at": "2026-10-03",
-      "updated_at": "2026-10-03",
-      "done_when": "20~00시 KST 다중 스케줄, 당일 봉인 시 조기 종료, 자정 이후 실행·KRX 장애에도 봉인 성공",
+      "note": "12개월 운영 백테스트 스크립트 구현, 성과 및 스트레스 분석 완수, 단위테스트 3개 및 178개 전체테스트 통과",
+      "done_at": "2026-09-25",
+      "updated_at": "2026-09-25",
+      "done_when": "최근 12개월 일봉 데이터 기반 모드 2 포트폴리오 운영 백테스트 시뮬레이터 구현, 월별 리밸런싱 및 에어백 성과 산출, 상세 보고서 작성",
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-09-25",
+      "log": [
+        {
+          "at": "2026-09-25",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-25",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-25",
+          "status": "done",
+          "note": "12개월 운영 백테스트 스크립트 구현, 성과 및 스트레스 분석 완수, 단위테스트 3개 및 178개 전체테스트 통과"
+        }
+      ]
+    },
+    {
+      "id": "T-091",
+      "title": "quant-research: 모드 2 시계열 체결 순서 정합화 및 3대 고도화 규칙(일일 조기퇴출·점수격차 교체·레짐 히스테리시스) 통합 검증",
+      "summary": "",
+      "doc": "docs/tasks/T-091.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "시계열 체결 순서 정합화, HOLD vs 전량교체 재비교, 3대 고도화 규칙 실측 매트릭스 및 보고서 작성 완료",
+      "done_at": "2026-09-25",
+      "updated_at": "2026-09-25",
+      "done_when": "체결 타임라인 정합화(T일 시가 리밸런싱 -> 장중 스톱 -> 종가 평가), HOLD vs 전량교체 정밀 재비교, 3대 고도화 규칙 시뮬레이션 및 보고서 작성",
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-09-25",
+      "log": [
+        {
+          "at": "2026-09-25",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-25",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-25",
+          "status": "done",
+          "note": "시계열 체결 순서 정합화, HOLD vs 전량교체 재비교, 3대 고도화 규칙 실측 매트릭스 및 보고서 작성 완료"
+        }
+      ]
+    },
+    {
+      "id": "T-092",
+      "title": "모드 2 합의 규칙을 가상 운영 포트폴리오 엔진에 반영",
+      "summary": "합의 규칙을 일일 가상 운영 계획과 관측봉 기반 상태 갱신에 적용",
+      "doc": "docs/tasks/T-092.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": "quant-research/scripts/pure_quant_portfolio_manager.py; quant-research/tests/test_portfolio_manager.py; quant-research/data/research/T-092/",
+      "refs": [
+        "T-088",
+        "T-089",
+        "T-090",
+        "T-091"
+      ],
+      "note": "일일 계획·다음 완료봉 가상 체결, 25% 캡·조기퇴출·브레드스 방어 구현; 184개 전체 테스트 및 quant-guard 통과",
+      "done_at": "2026-09-25",
+      "updated_at": "2026-09-25",
+      "done_when": "일일 조기퇴출·브레드스 방어·25% 캡·20일 HOLD를 가상 운영 엔진에 일관되게 적용하고 체결 시점·회계·테스트 검증",
+      "gate": null,
+      "parent": "T-091",
+      "owner": "Codex",
+      "claimed_at": "2026-09-25",
+      "log": [
+        {
+          "at": "2026-09-25",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-25",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-25",
+          "status": "done",
+          "note": "일일 계획·다음 완료봉 가상 체결, 25% 캡·조기퇴출·브레드스 방어 구현; 184개 전체 테스트 및 quant-guard 통과"
+        }
+      ]
+    },
+    {
+      "id": "T-093",
+      "title": "quant-research: 시계열 SUE 공시 데이터 구축 및 사건 경과일별 추가 설명력 검증",
+      "summary": "인증키 없이 공개 재무정보 다운로드와 공시 원문을 검토해 SUE의 시점 보존·커버리지 가능성을 먼저 판단",
+      "doc": "docs/tasks/T-093.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 60,
+      "deps": [
+        "T-091",
+        "T-092"
+      ],
+      "where": "docs/tasks/T-093.md",
+      "refs": [
+        "docs/tasks/T-093.md"
+      ],
+      "note": "횡단면 강건 표준화(Robust Z-Score/백분위수), 1825건 공시 확장 수집, KRX 거래일 D+1/D+2 일치화, 동적 서프라이즈 핫스왑/쇼크 조기퇴출 규칙 실측 및 200개 테스트 통과 완료",
+      "done_at": "2026-09-26",
+      "updated_at": "2026-09-26",
+      "done_when": "시점 보존이 검증된 공시 원본과 분기 EPS 데이터셋, 전년 동기 SUE 및 무결성 검사, 사건 경과일별 독립 연구 보고서, quant-guard 통과",
+      "gate": "공개 자료만으로 당시 실적과 최초 공개일을 확인할 수 있는 사건 수·한계를 먼저 보고하고, 성과 백테스트 진행 여부를 확인",
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-09-26",
+      "log": [
+        {
+          "at": "2026-09-26",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-26",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-26",
+          "status": "needs_decision",
+          "note": "1단계 공시 원본·EPS·SUE 스키마 설계 완료. 현재 환경에서 OpenDART 인증키가 확인되지 않아 145종목 실제 응답·커버리지와 과거 원본 시점 보존 가능성 실측 대기. 인증키를 로컬 환경에 제공한 뒤 진행 필요."
+        },
+        {
+          "at": "2026-09-26",
+          "status": "in_progress",
+          "note": "사용자 선호에 따라 인증키 없이 공개 재무정보 일괄다운로드와 공시 원문으로 축소 검증. 자료의 시점 보존 여부 확인 후 가능한 범위 보고."
+        },
+        {
+          "at": "2026-09-26",
+          "status": "blocked",
+          "note": "인증키 없는 공개 자료 145종목 실측: 확정 EPS 종목당 5분기, 전년동기 오차 1개, 과거 오차 2개 이상 0종목. OpenDART 현재 일괄 파일은 2025 자료도 2026 생성본이어서 PIT 백테스트 불가. 진단 보고서·원본 해시·검증 완료."
+        },
+        {
+          "at": "2026-09-26",
+          "status": "in_progress",
+          "note": "사용자 요청으로 T-093G 결과를 벤치마킹하여 원본 데이터와 신호 계산을 독립 재검증"
+        },
+        {
+          "at": "2026-09-26",
+          "status": "blocked",
+          "note": "T-094 수치 재현 완료(7행 -9.539%, 독립 6사건). 그러나 제미나이 자료도 과거 오차 2개 이상 0건, 151사건 중 공시일 추정 90건, 양의 7행 사건 D+2 체결 불일치 7건으로 표준화 PIT SUE DoD 불충족. 상세: data/research/T-093/gemini_replay_report.md"
+        },
+        {
+          "at": "2026-09-26",
+          "status": "in_progress",
+          "note": "Codex 지적 사항(표준화 부재, 공시일 추정, D+2 체결일, 83회 동일 거래)을 해결하기 위한 SUE 엔진 정교화 및 동적 연동 고도화 착수"
+        },
+        {
+          "at": "2026-09-26",
+          "status": "done",
+          "note": "횡단면 강건 표준화(Robust Z-Score/백분위수), 1825건 공시 확장 수집, KRX 거래일 D+1/D+2 일치화, 동적 서프라이즈 핫스왑/쇼크 조기퇴출 규칙 실측 및 200개 테스트 통과 완료"
+        }
+      ]
+    },
+    {
+      "id": "T-094",
+      "title": "quant-research: [Gemini/T-093G] 시계열 SUE 데이터 파이프라인 및 모드 2 독립 설명력 실측",
+      "summary": "코덱스 T-093 데이터 계약을 기반으로 재무 시계열 수집 방안을 수립하고 시계열 SUE의 사건 경과일별 추가 설명력을 독립 실측",
+      "doc": "docs/tasks/T-094.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [
+        "T-091",
+        "T-092"
+      ],
+      "where": null,
+      "refs": [],
+      "note": "동적 갈아타기(조기퇴출+핫스왑) 엔진으로 SUE 재실험 완료: +170.8%, MDD -22.5%, PF 2.25 실측 및 20일 고정 보유 대비 동적 리밸런싱의 압도적 우월성 증명",
+      "done_at": "2026-09-26",
+      "updated_at": "2026-09-26",
+      "done_when": "145개 종목 과거 분기 EPS 및 공시일 확보, SUE 산출 모듈 및 단위테스트, 모드 2 대상 경과일별 실측 보고서 작성",
+      "gate": "공시 시점 보존 및 유효 종목 커버리지 확인 후 백테스트 진행",
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-09-26",
+      "log": [
+        {
+          "at": "2026-09-26",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-26",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-26",
+          "status": "done",
+          "note": "인증키 없는 분기 SUE 수집 파이프라인 구축, 단위 테스트 통과, 모드 2 대상 경과일별 실측 및 Sell-on-News 급락 현상 규명 완료"
+        },
+        {
+          "at": "2026-09-26",
+          "status": "in_progress",
+          "note": "인증키 없는 분기 SUE 수집 파이프라인 구축, 단위 테스트 통과, 모드 2 대상 경과일별 실측 및 Sell-on-News 급락 현상 규명 완료"
+        },
+        {
+          "at": "2026-09-26",
+          "status": "done",
+          "note": "동적 갈아타기(조기퇴출+핫스왑) 엔진으로 SUE 재실험 완료: +170.8%, MDD -22.5%, PF 2.25 실측 및 20일 고정 보유 대비 동적 리밸런싱의 압도적 우월성 증명"
+        }
+      ]
+    },
+    {
+      "id": "T-095",
+      "title": "quant-research: 모드 2 운영용 동적 EPS/RAG 판정 탐색기",
+      "summary": "",
+      "doc": "docs/tasks/T-095.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [
+        "T-094"
+      ],
+      "where": null,
+      "refs": [],
+      "note": "운영 CLI explore, 동적 daily-plan+3팩터 RAG+시점 차단 EPS 참고값 구현. 현 데이터 SUE 표준화 불가로 가산점 0. 클린 GitHub 브랜치 7a69cdb 푸시, 전체 149 tests 및 quant-guard 통과",
+      "done_at": "2026-09-26",
+      "updated_at": "2026-09-26",
+      "done_when": "운영 모드 2의 일일 판정 탐색기 구현, 무인증 EPS 신호의 시점/표준화 한계 표시, RAG 근거 연결, 오프라인 테스트 및 quant-guard 통과",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-09-26",
+      "log": [
+        {
+          "at": "2026-09-26",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-26",
+          "status": "in_progress",
+          "note": "사용자 요청: T-094 참고 운영용 동적 EPS/RAG 탐색기 구현. 검증되지 않은 SUE 가산점은 적용하지 않고 시점·자료 품질을 표시"
+        },
+        {
+          "at": "2026-09-26",
+          "status": "done",
+          "note": "운영 CLI explore, 동적 daily-plan+3팩터 RAG+시점 차단 EPS 참고값 구현. 현 데이터 SUE 표준화 불가로 가산점 0. 클린 GitHub 브랜치 7a69cdb 푸시, 전체 149 tests 및 quant-guard 통과"
+        }
+      ]
+    },
+    {
+      "id": "T-096",
+      "title": "quant-research: 동적 EPS·RAG 탐색 결과의 선행 시점 봉인 저널",
+      "summary": "",
+      "doc": "docs/tasks/T-096.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [
+        "T-092"
+      ],
+      "where": null,
+      "refs": [],
+      "note": "T-095와 독립된 선행 시점 봉인 저널 구현. 실제 자료 점검은 가격 8일 지연으로 봉인 0건, 테스트 154개·quant-guard 통과, ba1c9e2 GitHub main 반영",
+      "done_at": "2026-09-26",
+      "updated_at": "2026-09-26",
+      "done_when": "최신 완료 일봉과 현재 EPS 원본의 시점·해시를 함께 봉인하고 재실행 멱등성·오래된 가격 차단·상태 불변성을 테스트",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-09-26",
+      "log": [
+        {
+          "at": "2026-09-26",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-26",
+          "status": "in_progress",
+          "note": "Gemini T-095와 파일 충돌 없이 미래 관측용 시점 봉인·재현 저널 독립 구현"
+        },
+        {
+          "at": "2026-09-26",
+          "status": "done",
+          "note": "T-095와 독립된 선행 시점 봉인 저널 구현. 실제 자료 점검은 가격 8일 지연으로 봉인 0건, 테스트 154개·quant-guard 통과, ba1c9e2 GitHub main 반영"
+        }
+      ]
+    },
+    {
+      "id": "T-097",
+      "title": "루트 README: T-095 동적 탐색기와 T-096 봉인 저널 안내",
+      "summary": "",
+      "doc": "docs/tasks/T-097.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [
+        "T-095",
+        "T-096"
+      ],
+      "where": null,
+      "refs": [],
+      "note": "루트 README 자동 갱신 블록 밖 T-095/T-096 안내 반영, 링크/마커 확인, eb393e0 GitHub main 반영. Gemini T-095 후속 변경은 완료 시 재검토 필요",
+      "done_at": "2026-09-26",
+      "updated_at": "2026-09-26",
+      "done_when": "동적 생성 블록 밖 루트 README에 두 작업의 명령·데이터 한계·링크를 추가하고 GitHub main 반영",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-09-26",
+      "log": [
+        {
+          "at": "2026-09-26",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-26",
+          "status": "in_progress",
+          "note": "사용자 지적: 루트 README 누락 보완. Gemini T-095 결과는 현재 확인 가능한 코드 기준으로만 기록"
+        },
+        {
+          "at": "2026-09-26",
+          "status": "done",
+          "note": "루트 README 자동 갱신 블록 밖 T-095/T-096 안내 반영, 링크/마커 확인, eb393e0 GitHub main 반영. Gemini T-095 후속 변경은 완료 시 재검토 필요"
+        }
+      ]
+    },
+    {
+      "id": "T-098",
+      "title": "quant-research: T-093 동적 SUE 결과 독립 재현 및 운영 적합성 감사",
+      "summary": "",
+      "doc": "docs/tasks/T-098.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [
+        "T-093",
+        "T-095",
+        "T-096"
+      ],
+      "where": null,
+      "refs": [],
+      "note": "독립 감사 완료: 8월 브레드스 13.103448% 및 83회 동률 재현. 제시된 91/92회·3184원 미재현. PIT 횡단면 누수·공시원천 미검증·D+1 및 당일 브레드스 시가 체결 누수 확인. 운영 승격 보류, Gemini 피드백 docs/tasks/T-098.md 기록.",
+      "done_at": "2026-09-26",
+      "updated_at": "2026-09-26",
+      "done_when": "거시 방어 및 무방어 시나리오 재현, SUE 시점 불변성·체결 시계 검증, Gemini 피드백과 운영 게이트 기록",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-09-26",
+      "log": [
+        {
+          "at": "2026-09-26",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-26",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-26",
+          "status": "done",
+          "note": "독립 감사 완료: 8월 브레드스 13.103448% 및 83회 동률 재현. 제시된 91/92회·3184원 미재현. PIT 횡단면 누수·공시원천 미검증·D+1 및 당일 브레드스 시가 체결 누수 확인. 운영 승격 보류, Gemini 피드백 docs/tasks/T-098.md 기록."
+        }
+      ]
+    },
+    {
+      "id": "T-099",
+      "title": "quant-research: 동적 SUE PIT·체결 교정 후 운영 승격 재검증",
+      "summary": "",
+      "doc": "docs/tasks/T-099.md",
+      "status": "todo",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [
+        "T-098"
+      ],
+      "where": null,
+      "refs": [],
+      "note": null,
+      "done_at": null,
+      "updated_at": "2026-09-26",
+      "done_when": "공시 당시 EPS 원본 증빙, prefix 불변성, D+1 종가·D+2 시가, 다음 거래일 브레드스 방어, 거래/자산 원장 일치, 동일 설정 재현 및 미사용 시즌 검증",
+      "gate": "검증된 독립 성과와 운영 규칙 변경안을 사용자에게 보고 후 채택 판단",
+      "parent": null,
+      "owner": null,
+      "claimed_at": null,
+      "log": [
+        {
+          "at": "2026-09-26",
+          "status": "todo",
+          "note": "add로 생성"
+        }
+      ]
+    },
+    {
+      "id": "T-100",
+      "title": "quant-research: SUE 제외 모드 2 운영 Actions 분리 및 메인 README 갱신",
+      "summary": "",
+      "doc": "docs/tasks/T-100.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [
+        "T-098"
+      ],
+      "where": null,
+      "refs": [],
+      "note": "5e29e32 origin/main 반영, 전용 mode2-daily.yml GitHub API active 확인. SUE 제외 3팩터 패널 및 README 갱신. 전체 201 테스트·quant-guard 82 파일·워크플로 구조 검사 통과. 실제 예약 실행은 아직 미관측.",
+      "done_at": "2026-09-26",
+      "updated_at": "2026-09-26",
+      "done_when": "모드 2 무주문 일봉 Actions 독립 등록, 중복 예약 제거, README 운영 안내 갱신, 정적/기능 검사와 GitHub main 반영",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-09-26",
+      "log": [
+        {
+          "at": "2026-09-26",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-26",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-26",
+          "status": "done",
+          "note": "5e29e32 origin/main 반영, 전용 mode2-daily.yml GitHub API active 확인. SUE 제외 3팩터 패널 및 README 갱신. 전체 201 테스트·quant-guard 82 파일·워크플로 구조 검사 통과. 실제 예약 실행은 아직 미관측."
+        }
+      ]
+    },
+    {
+      "id": "T-101",
+      "title": "quant-collector: 최신 유효 일봉의 과거 기준 모드 2 판단표 유지",
+      "summary": "",
+      "doc": "docs/tasks/T-101.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [
+        "T-100"
+      ],
+      "where": null,
+      "refs": [],
+      "note": "마지막 9/23 완료 일봉 판단 및 상위 10 관찰표를 메인 README에 표시. 5130841 코드, d66ce49 Actions 자동 갱신, 실행 36228332698 success. 202 tests/quant-guard 82 파일 통과.",
+      "done_at": "2026-09-26",
+      "updated_at": "2026-09-26",
+      "done_when": "휴장·공급 지연에도 기준일 브레드스·상위 순위와 10종목 관찰표 표시, 새 리밸런싱 상태는 생성하지 않음, 테스트·Actions 재실행·메인 README 확인",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-09-26",
+      "log": [
+        {
+          "at": "2026-09-26",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-26",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-26",
+          "status": "done",
+          "note": "마지막 9/23 완료 일봉 판단 및 상위 10 관찰표를 메인 README에 표시. 5130841 코드, d66ce49 Actions 자동 갱신, 실행 36228332698 success. 202 tests/quant-guard 82 파일 통과."
+        }
+      ]
+    },
+    {
+      "id": "T-102",
+      "title": "quant-collector: 모드 2 상위 10개 단일 근거표로 README 중복 제거",
+      "summary": "",
+      "doc": "docs/tasks/T-102.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [
+        "T-101"
+      ],
+      "where": null,
+      "refs": [],
+      "note": "상위 10종목 단일 근거표를 메인 README 상단 반영. 6810195 코드, f74cf23 Actions 패널, 실행 36229207151 success. 중복표 0·근거 10·202 tests/quant-guard 82 파일 통과.",
+      "done_at": "2026-09-26",
+      "updated_at": "2026-09-26",
+      "done_when": "최신 완료 일봉 기준 상위 10개 순위·종가·점수·팩터 근거를 패널 상단 단일 표로 표시, 중복 관찰표 제거, 브레드스 및 가상 계획 분리 유지, 테스트와 GitHub Actions 재확인",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-09-26",
+      "log": [
+        {
+          "at": "2026-09-26",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-26",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-26",
+          "status": "done",
+          "note": "상위 10종목 단일 근거표를 메인 README 상단 반영. 6810195 코드, f74cf23 Actions 패널, 실행 36229207151 success. 중복표 0·근거 10·202 tests/quant-guard 82 파일 통과."
+        }
+      ]
+    },
+    {
+      "id": "T-103",
+      "title": "루트 README: 15분 수집 및 모드 2 탐색기 배치 순서 조정",
+      "summary": "",
+      "doc": "docs/tasks/T-103.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "0. 공통 인프라 & 대시보드",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "루트 README 상단 15분 수집 운영 센터 최상단 배치 및 모드 2 동적 탐색기 2순위 재배치 완료, 마커/테스트/원격 반영 검증 완료",
+      "done_at": "2026-09-26",
+      "updated_at": "2026-09-26",
+      "done_when": "루트 README 상단에 15분 수집 센터를 우선 배치하고 모드 2 동적 탐색기/저널을 후속 배치하여 마커 및 링크 무결성 검증 완료",
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-09-26",
+      "log": [
+        {
+          "at": "2026-09-26",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-26",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-26",
+          "status": "done",
+          "note": "루트 README 상단 15분 수집 운영 센터 최상단 배치 및 모드 2 동적 탐색기 2순위 재배치 완료, 마커/테스트/원격 반영 검증 완료"
+        }
+      ]
+    },
+    {
+      "id": "T-104",
+      "title": "루트 README 최상단 시장 레짐(Market Regime) 지표 추가",
+      "summary": "",
+      "doc": "docs/tasks/T-104.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "0. 공통 인프라 & 대시보드",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "루트 README 최상단에 마켓 브레드스 및 지수 레짐 지표 추가 완료, 테스트 및 원격 배포(ee26894) 완료",
+      "done_at": "2026-09-26",
+      "updated_at": "2026-09-26",
+      "done_when": "루트 README 최상단에 마켓 브레드스 및 지수 20일선 국면 판정을 배치하고 테스트/원격 검증 완료",
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-09-26",
+      "log": [
+        {
+          "at": "2026-09-26",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-26",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-26",
+          "status": "done",
+          "note": "루트 README 최상단에 마켓 브레드스 및 지수 레짐 지표 추가 완료, 테스트 및 원격 배포(ee26894) 완료"
+        }
+      ]
+    },
+    {
+      "id": "T-105",
+      "title": "모드 2 거래대금·거래량 활성 조건 비교 및 관찰 순위 근거 보강",
+      "summary": "",
+      "doc": "docs/tasks/T-105.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "거래대금·거래량 각 1.2배 조건 과거 비교, 현재 순위 한계 고지, 18개 테스트·quant_guard 통과; 새 후속구간 엣지 미검증으로 운영 기본값 유지",
+      "done_at": "2026-09-27",
+      "updated_at": "2026-09-27",
+      "done_when": "기존 모드 2와 사전 고정 거래 활성 조건을 동일 데이터에서 비교하고, 시점 누출·데이터 한계를 검증하며 관찰표의 거래 근거를 명확히 표시",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-09-27",
+      "log": [
+        {
+          "at": "2026-09-27",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-27",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-27",
+          "status": "done",
+          "note": "거래대금·거래량 각 1.2배 조건 과거 비교, 현재 순위 한계 고지, 18개 테스트·quant_guard 통과; 새 후속구간 엣지 미검증으로 운영 기본값 유지"
+        }
+      ]
+    },
+    {
+      "id": "T-106",
+      "title": "모드 2 절대 거래대금 우선 순위 비교 및 관찰 기준 정정",
+      "summary": "",
+      "doc": "docs/tasks/T-106.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "절대 거래대금 순위와 20억 하한을 기존/상대 활성 조건과 동일 데이터로 비교; 거래대금순 두 구간 악화, 운영 승격 보류, 19 tests·quant_guard 통과",
+      "done_at": "2026-09-27",
+      "updated_at": "2026-09-27",
+      "done_when": "기존·비율 조건·절대 거래대금 순위를 같은 완료 일봉과 가상 체결 규칙에서 비교하고, 자격·순위 기준과 한계를 문서에 반영",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-09-27",
+      "log": [
+        {
+          "at": "2026-09-27",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-27",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-27",
+          "status": "done",
+          "note": "절대 거래대금 순위와 20억 하한을 기존/상대 활성 조건과 동일 데이터로 비교; 거래대금순 두 구간 악화, 운영 승격 보류, 19 tests·quant_guard 통과"
+        }
+      ]
+    },
+    {
+      "id": "T-107",
+      "title": "모드 2 상위 10종목의 20거래일 +5% 도달 빈도 검증",
+      "summary": "",
+      "doc": "docs/tasks/T-107.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "현재 2026-09-23 10개 후속 원본 부재 확인, 과거 완전 관측 월말 15묶음의 20거래일 비용 후 +5% 목표 선도달 평균 7.3개·범위 4~10개 재현; 22 tests·quant_guard 통과",
+      "done_at": "2026-09-27",
+      "updated_at": "2026-09-27",
+      "done_when": "현재 표의 후속 일봉 유무를 확인하고 과거 상위 10종목의 다음 거래일 시가 대비 20거래일 +5% 도달 개수·미도달·미체결을 시점 누출 없이 재현하여 보고",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-09-27",
+      "log": [
+        {
+          "at": "2026-09-27",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-27",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-27",
+          "status": "done",
+          "note": "현재 2026-09-23 10개 후속 원본 부재 확인, 과거 완전 관측 월말 15묶음의 20거래일 비용 후 +5% 목표 선도달 평균 7.3개·범위 4~10개 재현; 22 tests·quant_guard 통과"
+        }
+      ]
+    },
+    {
+      "id": "T-108",
+      "title": "quant-research: 상승 초입(Early Inception) 진입 팩터 모델 및 추세 약화(Trend Weakening) 청산 엔진 구축",
+      "summary": "60일 급등주 배제, 수렴 돌파 및 수급 점화 기반 상승 초입 진입 정의와 단기 이평선/트레일링 기반 추세 약화 청산 엔진 구현",
+      "doc": "docs/tasks/T-108.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "상승 초입 진입 팩터 모델 및 추세 약화(SMA10/트레일링/손절) 청산 엔진 구축 완료, 테스트 5개 통과, quant_guard 111개 소스 검사 통과",
+      "done_at": "2026-09-27",
+      "updated_at": "2026-09-27",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-09-27",
+      "log": [
+        {
+          "at": "2026-09-27",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-27",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-27",
+          "status": "done",
+          "note": "상승 초입 진입 팩터 모델 및 추세 약화(SMA10/트레일링/손절) 청산 엔진 구축 완료, 테스트 5개 통과, quant_guard 111개 소스 검사 통과"
+        }
+      ]
+    },
+    {
+      "id": "T-109",
+      "title": "quant-research: 상승 초입 전략 vs 기존 모드 2 성과 실증 비교 및 2026-09-23 최신 초입 랭킹 보고",
+      "summary": "상승 초입+추세약화 청산 전략과 기존 모드 2의 다각적 성과(승률·손익비·MDD·도달률) 비교 실증 및 최신(2026-09-23) 기준 초입 유망 종목 랭킹 산출 보고",
+      "doc": "docs/tasks/T-109.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [
+        "T-108"
+      ],
+      "where": null,
+      "refs": [],
+      "note": "상승 초입 전략 vs 기존 모드 2 전수 비교 실증 완료 (승률 53.85%, 손익비 4.96), 최신 유망 종목 랭킹 및 보고서 발행, 테스트 및 가드 통과",
+      "done_at": "2026-09-27",
+      "updated_at": "2026-09-27",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-09-27",
+      "log": [
+        {
+          "at": "2026-09-27",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-27",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-27",
+          "status": "done",
+          "note": "상승 초입 전략 vs 기존 모드 2 전수 비교 실증 완료 (승률 53.85%, 손익비 4.96), 최신 유망 종목 랭킹 및 보고서 발행, 테스트 및 가드 통과"
+        }
+      ]
+    },
+    {
+      "id": "T-110",
+      "title": "quant-research: 모드 2·상승 초입 상위 5개 병렬 전진 관찰",
+      "summary": "원격 main에서 기존 모드2 일봉 Action을 병렬 전진 관찰 Action으로 교체하고 README 패널 연결; 첫 신규 완료 일봉 실행 검증 대기",
+      "doc": "docs/tasks/T-110.md",
+      "status": "in_progress",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [
+        "T-109"
+      ],
+      "where": null,
+      "refs": [],
+      "note": "원격 main 418b7f3: README에 날짜별 기존 상위 5개씩 표시, 이후 신규 전진 기록은 종목명·종가·점수·수치 근거 자동 표시. 17 tests pass, quant_guard 89 files. 첫 신규 완료 일봉 예약 실행 확인 대기.",
+      "done_at": null,
+      "updated_at": "2026-09-27",
+      "done_when": "두 전략의 완료 일봉 후보와 독립 후속 결과를 별도 불변 기록으로 저장하고 자동 실행 검증",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-09-27",
+      "log": [
+        {
+          "at": "2026-09-27",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-27",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-27",
+          "status": "review",
+          "note": "모드 2·상승 초입 병렬 전진 관찰 구현 및 14개 테스트 통과. 원격 main에 T-108/T-109 및 엔진이 아직 없어 워크플로 배포 전 선행 변경 통합 검토 필요"
+        },
+        {
+          "at": "2026-09-27",
+          "status": "in_progress",
+          "note": "사용자 요청에 따라 기존 GitHub Actions 교체 및 메인 README 통합 진행"
+        }
+      ]
+    },
+    {
+      "id": "T-111",
+      "title": "루트 README 시장 램프와 네 표 우선 배치 및 갱신 시각 정리",
+      "summary": "",
+      "doc": "docs/tasks/T-111.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "0. 공통 인프라 & 대시보드",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "GitHub origin/main 772e7e30 푸시 및 공개 README 시장 램프·최신 스냅샷 확인; 테스트 18개·quant-guard 통과",
+      "done_at": "2026-09-29",
+      "updated_at": "2026-09-29",
+      "done_when": "루트 README 첫 화면에 완료 일봉 기준 시장 램프, 모드 2, 상승 초입, 스마트 랭킹, LRM-60 순서와 표별 시각을 표시하고 자동 갱신 후에도 유지",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-09-29",
+      "log": [
+        {
+          "at": "2026-09-29",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-29",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-29",
+          "status": "done",
+          "note": "루트·수집기 README 표 우선 배치와 두 자동 생성기 시각/순서 정리; 관련 테스트 23개 및 quant-guard·백로그 검사 통과"
+        },
+        {
+          "at": "2026-09-29",
+          "status": "in_progress",
+          "note": "사용자 확인: GitHub 원격 main 미반영 및 상단 레짐 누락; 원격 최신 스냅샷 기준 반영 재작업"
+        },
+        {
+          "at": "2026-09-29",
+          "status": "done",
+          "note": "GitHub origin/main 772e7e30 푸시 및 공개 README 시장 램프·최신 스냅샷 확인; 테스트 18개·quant-guard 통과"
+        }
+      ]
+    },
+    {
+      "id": "T-112",
+      "title": "adsp-study: 태블릿 최적화 ADsP 30일 단기완성 학습 웹앱 구축",
+      "summary": "ADsP 10/31 시험 대비 하루 30분 태블릿 맞춤형 웹앱(핵심 키워드, 빈출 50제 퀴즈, 실시간 과락 감시, 오답노트) 구축",
+      "doc": "docs/tasks/T-112.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "mobile",
+      "phase": "0. 공통 인프라 & 대시보드",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "adsp-study 프로젝트 구성 완료, 태블릿 반응형 UI, 과목별 퀴즈/해설, 실시간 과락 감시, 혼동행렬 계산기, 오답노트, 운전용 TTS 플레이어 구현 및 빌드 검증 완료",
+      "done_at": "2026-09-29",
+      "updated_at": "2026-09-29",
+      "done_when": "adsp-study 프로젝트 구성 완료, 태블릿 반응형 UI 작동, 과목별 퀴즈 및 오답/과락 로직 검증 완료",
       "gate": null,
       "parent": null,
       "owner": "gemini",
+      "claimed_at": "2026-09-29",
+      "log": [
+        {
+          "at": "2026-09-29",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-09-29",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-09-29",
+          "status": "done",
+          "note": "adsp-study 프로젝트 구성 완료, 태블릿 반응형 UI, 과목별 퀴즈/해설, 실시간 과락 감시, 혼동행렬 계산기, 오답노트, 운전용 TTS 플레이어 구현 및 빌드 검증 완료"
+        }
+      ]
+    },
+    {
+      "id": "T-113",
+      "title": "모드2·상승초입 누적 신호 익절 특징 분석",
+      "summary": "",
+      "doc": "docs/tasks/T-113.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "45건 원격 이력 분석, 첫 신호 2일 비교 및 보고서 저장. 경계·표본 assert와 quant_guard 통과; 공식 성과 미완료·사후복구·결측 한계 명시",
+      "done_at": "2026-10-03",
+      "updated_at": "2026-10-03",
+      "done_when": "누적 이력 출처·중복·관찰기간과 익절 지표 비교 보고",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
       "claimed_at": "2026-10-03",
       "log": [
         {
@@ -3046,13 +4404,524 @@
         },
         {
           "at": "2026-10-03",
-          "status": "review",
-          "note": "push 7134f136, 실 스케줄 실행 확인 필요"
+          "status": "done",
+          "note": "45건 원격 이력 분석, 첫 신호 2일 비교 및 보고서 저장. 경계·표본 assert와 quant_guard 통과; 공식 성과 미완료·사후복구·결측 한계 명시"
+        }
+      ]
+    },
+    {
+      "id": "T-114",
+      "title": "모드2 대체 상승초입2 연구 전략 구현 및 비교 검증",
+      "summary": "",
+      "doc": "docs/tasks/T-114.md",
+      "status": "cancelled",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "사용자 폐기 요청. 신규 파일·결과 삭제, 기존 파일 변경 복원. 원격 반영 없음",
+      "done_at": "2026-10-03",
+      "updated_at": "2026-10-03",
+      "done_when": "버전 분리 신호·동일 청산 비교·prefix 경계 테스트·후속 관찰 준비",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-10-03",
+      "log": [
+        {
+          "at": "2026-10-03",
+          "status": "todo",
+          "note": "add로 생성"
         },
         {
           "at": "2026-10-03",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-10-03",
+          "status": "cancelled",
+          "note": "사용자 폐기 요청. 신규 파일·결과 삭제, 기존 파일 변경 복원. 원격 반영 없음"
+        }
+      ]
+    },
+    {
+      "id": "T-115",
+      "title": "quant-research: quant-collector 전진 신호 기반 위험 필터 및 손익비 매트릭스 연구",
+      "summary": "quant-collector의 resolved_signals.jsonl 실전 전진 신호 데이터를 활용하여 목표/손절 매트릭스별 기대값 및 가짜 돌파 차단을 위한 2차 위험 필터 분석",
+      "doc": "docs/tasks/T-115.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "수집기 실전 전진 신호 로더 및 16개 손익비 매트릭스 분석기, 2차 위험 필터(CompositeFilter: 승률 33.3%->50.0% 향상) 구현, 리포트 생성, 9개 신규 테스트 및 232개 전체 테스트/quant_guard 통과",
+      "done_at": "2026-10-09",
+      "updated_at": "2026-10-09",
+      "done_when": "수집기 신호 데이터 파싱 및 통계 분석 스크립트, 손익비별 EV 비교 매트릭스 도출, 2차 필터링 규칙 검증 리포트 생성, quant_guard 통과",
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-10-09",
+      "log": [
+        {
+          "at": "2026-10-09",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-10-09",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-10-09",
           "status": "done",
-          "note": "9/30 복구 봉인 및 연속감지 정상 복원, 20~00시 4회 스케줄 및 당일 봉인 시 조기 종료 gate, 향후 결측 자동 복구(point-in-time backfill) 및 테스트 173건 통과 완료"
+          "note": "수집기 실전 전진 신호 로더 및 16개 손익비 매트릭스 분석기, 2차 위험 필터(CompositeFilter: 승률 33.3%->50.0% 향상) 구현, 리포트 생성, 9개 신규 테스트 및 232개 전체 테스트/quant_guard 통과"
+        }
+      ]
+    },
+    {
+      "id": "T-116",
+      "title": "quant-research: 돌파 성적표용 GitHub 수집 원본 동결과 출처 검증",
+      "summary": "Codex 전담. Gemini T-115 위험 필터·익절손절 매트릭스와 독립 파일 사용. 고정 GitHub 커밋에서 관련 원본만 동결하여 후속 성적표 분석의 재현 기반 마련.",
+      "doc": "docs/tasks/T-116.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": "quant-research/research/collector_breakout_scorecard.py; quant-research/scripts/run_collector_breakout_scorecard.py; quant-research/tests/test_collector_breakout_scorecard.py; quant-research/data/research/T-116",
+      "refs": [],
+      "note": "Codex: GitHub 9bea042 동결, 고유49개 이벤트/43개5분봉 원본 저장, 결측2코드 표시, 전체 SHA256 검증, 오프라인8테스트·quant_guard·자체감사 통과. 원본 source receipt 및 공식 거래달력은 미검증.",
+      "done_at": "2026-10-09",
+      "updated_at": "2026-10-09",
+      "done_when": "원격 커밋 고정, pending/resolved 중복 및 충돌 검사, 관련 5분봉 원본·해시·데이터 한계 manifest 저장, 네트워크 없는 테스트 통과",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-10-09",
+      "log": [
+        {
+          "at": "2026-10-09",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-10-09",
+          "status": "in_progress",
+          "note": "사용자 요청. T-115 Gemini 위험필터/손익비 연구와 파일 분리: collector_breakout_scorecard.py, run_collector_breakout_scorecard.py, test_collector_breakout_scorecard.py, data/research/T-116~118 및 해당 작업 문서만 담당."
+        },
+        {
+          "at": "2026-10-09",
+          "status": "done",
+          "note": "Codex: GitHub 9bea042 동결, 고유49개 이벤트/43개5분봉 원본 저장, 결측2코드 표시, 전체 SHA256 검증, 오프라인8테스트·quant_guard·자체감사 통과. 원본 source receipt 및 공식 거래달력은 미검증."
+        }
+      ]
+    },
+    {
+      "id": "T-117",
+      "title": "quant-research: 등록 시점 이후 돌파 신호 1·3·5일 성적표 구현",
+      "summary": "Codex 전담. 등록·기준60분봉 종료 이후 첫 예정5분봉 시가 및 관측세션 종료 가격 비교. 거래량0·결측·미성숙 제외, 운영 전략 변경 없음.",
+      "doc": "docs/tasks/T-117.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [
+        "T-116"
+      ],
+      "where": "quant-research/research/collector_breakout_scorecard.py; quant-research/scripts/run_collector_breakout_scorecard.py; quant-research/tests/test_collector_breakout_scorecard.py",
+      "refs": [],
+      "note": "Codex: 시간순 진입·1/3/5관측세션 성적표/비용/품질분리/불변출력 구현, 오프라인32테스트·quant_guard·자체감사 통과. 원격47신호 메모리검증, 보고서 실행은 T-118.",
+      "done_at": "2026-10-09",
+      "updated_at": "2026-10-09",
+      "done_when": "신호 등록·완료 시점 이후 다음 관측 5분봉 시가 기준 수익률/MFE/MAE, 수수료 가정, 15시 누락·중간 결측·미성숙 표본 분리, 재현 및 경계 테스트 통과",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-10-09",
+      "log": [
+        {
+          "at": "2026-10-09",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-10-09",
+          "status": "in_progress",
+          "note": "T-116 동결 원본 기반. Codex 전담 기존3개 새 파일만 확장. Gemini T-115 파일/위험필터/청산매트릭스 편집하지 않음."
+        },
+        {
+          "at": "2026-10-09",
+          "status": "done",
+          "note": "Codex: 시간순 진입·1/3/5관측세션 성적표/비용/품질분리/불변출력 구현, 오프라인32테스트·quant_guard·자체감사 통과. 원격47신호 메모리검증, 보고서 실행은 T-118."
+        }
+      ]
+    },
+    {
+      "id": "T-118",
+      "title": "quant-research: 돌파 성적표 실데이터 실행과 고정 구간별 탐색 보고서",
+      "summary": "Codex: 고정 GitHub 9bea042의 기존전략47신호 성적표. 1/3/5관측세션 완료40/34/33, 기본점수·추정대금·상대대금·이격 고정구간, 첫등록 민감도·등록지연·결측/미체결 보고. 운영 필터 변경 없음.",
+      "doc": "docs/tasks/T-118.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [
+        "T-117"
+      ],
+      "where": "quant-research/research/collector_breakout_scorecard.py; quant-research/scripts/run_collector_breakout_scorecard.py; quant-research/tests/test_collector_breakout_scorecard.py; quant-research/data/research/T-118/github-9bea0421321c-v1",
+      "refs": [],
+      "note": "Codex: 141행 성적표·114행 구간집계·한글보고서/manifest 생성. 오프라인36테스트, 실원본107완료창 수익/MFE/MAE 독립대조, 모든코드/출력SHA256 및 분모집계, quant_guard/syntax/backlog/자체감사 통과. 기간별완료표본상이·15시30분누락·비OOS 한계 기록.",
+      "done_at": "2026-10-09",
+      "updated_at": "2026-10-09",
+      "done_when": "GitHub 동결 원본으로 실행, 신호별 CSV/고정 점수·대금·이격 구간 요약/한글 보고서·manifest 저장, 품질·등록 지연·겹침 편향 및 비OOS 표시, 감사와 인수인계 완료",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-10-09",
+      "log": [
+        {
+          "at": "2026-10-09",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-10-09",
+          "status": "in_progress",
+          "note": "Codex: 고정 원격9bea042 스냅샷 실행 및 사전 고정 구간별 기술통계 보고서. T-115 Gemini 작업/운영 코드/README 편집 없음."
+        },
+        {
+          "at": "2026-10-09",
+          "status": "done",
+          "note": "Codex: 141행 성적표·114행 구간집계·한글보고서/manifest 생성. 오프라인36테스트, 실원본107완료창 수익/MFE/MAE 독립대조, 모든코드/출력SHA256 및 분모집계, quant_guard/syntax/backlog/자체감사 통과. 기간별완료표본상이·15시30분누락·비OOS 한계 기록."
+        }
+      ]
+    },
+    {
+      "id": "T-119",
+      "title": "quant-research: 메인 README에 상승초입 기본 및 3일 이내 2차 필터 관찰 패널 연동",
+      "summary": "메인 README.md에 상승초입(기본)과 상승초입 3일 이내(2차 필터 통과 정예)의 계층 구조와 위험 차단 딱지를 직관적으로 표시하고 패널 생성 로직 연동",
+      "doc": "docs/tasks/T-119.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "메인 README.md 상단 상승 초입 패널 및 하단 가이드에 상승초입 기본 vs 3일이내 정예 2단계 계층 구조와 상태 딱지 범례 표기 반영, run_early_inception_forward.py 패널 생성 로직 연동, 테스트 11개 및 quant_guard 통과",
+      "done_at": "2026-10-09",
+      "updated_at": "2026-10-09",
+      "done_when": "README.md에 상승초입 기본 및 3일이내 2차 필터 표와 딱지 반영, 렌더링 스크립트 정합성, quant_guard 통과",
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-10-09",
+      "log": [
+        {
+          "at": "2026-10-09",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-10-09",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-10-09",
+          "status": "done",
+          "note": "메인 README.md 상단 상승 초입 패널 및 하단 가이드에 상승초입 기본 vs 3일이내 정예 2단계 계층 구조와 상태 딱지 범례 표기 반영, run_early_inception_forward.py 패널 생성 로직 연동, 테스트 11개 및 quant_guard 통과"
+        }
+      ]
+    },
+    {
+      "id": "T-120",
+      "title": "quant-research: Gemini T-115/T-119 위험 필터와 README 연동 리뷰",
+      "summary": "T-115/T-119 리뷰 완료. P1 4건/P2 3건: 미구현2차판정, 등록전청산 라벨, 하드코딩 결론, 표본/전략 외삽, 상태/결측/로더 결함. 코드 수정 없이 증거 기록.",
+      "doc": "docs/tasks/T-120.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": "docs/tasks/T-120.md; quant-research/data/research/T-120/review_evidence.json",
+      "refs": [],
+      "note": "리뷰 수행 완료, T-115/T-119 변경 승인 불가. 기존20테스트 통과하나 P1 4건/P2 3건 재현. 원본18/45/추가27 라벨 민감도·등록전청산·합성경계·패널실행 증거와 SHA256 저장. 원 구현 수정 없음.",
+      "done_at": "2026-10-09",
+      "updated_at": "2026-10-09",
+      "done_when": "분석·연동 코드 및 원본 라벨을 검토하고 재현 가능한 결함·영향·위치·테스트 결과를 리뷰 문서에 기록",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-10-09",
+      "log": [
+        {
+          "at": "2026-10-09",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-10-09",
+          "status": "in_progress",
+          "note": "사용자 리뷰 요청. T-115/T-119 코드는 읽기 전용으로 검토하고 docs/tasks/T-120.md에 결과 기록. 수정·운영 승격과 별개."
+        },
+        {
+          "at": "2026-10-09",
+          "status": "done",
+          "note": "리뷰 수행 완료, T-115/T-119 변경 승인 불가. 기존20테스트 통과하나 P1 4건/P2 3건 재현. 원본18/45/추가27 라벨 민감도·등록전청산·합성경계·패널실행 증거와 SHA256 저장. 원 구현 수정 없음."
+        }
+      ]
+    },
+    {
+      "id": "T-121",
+      "title": "quant-research: 최신 원격 3일 엔진 기반 관찰 패널 수정 및 Actions 실검증",
+      "summary": "",
+      "doc": "docs/tasks/T-121.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "Codex: 최신 원격 기반 d4e1e96f/c3934b5d main 반영. 최종 Actions 37936512907 success: 25 tests passed, 251/251 수신, REUSED, 원격 README 확인. Gemini 전체179테스트 통과 보고 및 교차검토 수신. 독립 리뷰 P2 보완 확인. 기존 로컬 파일 보존. docs/tasks/T-121.md에 증거 기록.",
+      "done_at": "2026-10-09",
+      "updated_at": "2026-10-09",
+      "done_when": "origin/main 자동보충·연속포착·3일엔진 보존, 실제 후보별 계층/딱지 렌더링과 회귀 테스트, GitHub 반영 및 workflow_dispatch 실행 결과 확인",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-10-09",
+      "log": [
+        {
+          "at": "2026-10-09",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-10-09",
+          "status": "in_progress",
+          "note": "사용자 GitHub Actions 반영 및 수동실행까지 승인. 최신 origin/main 별도 worktree에서 필요한 변경만 커밋/푸시. 기존 D:/leobox 로컬 미추적·수정 파일 보존."
+        },
+        {
+          "at": "2026-10-09",
+          "status": "in_progress",
+          "note": "Codex: 최신 원격 별도 worktree에서 수정 커밋 d4e1e96f main 반영 완료. 테스트 25개, 기존 기록 8개 렌더, REUSED 게시 경로 로컬 Git 실검증 통과. 수동 Actions 37935855625 실행 중. Gemini 읽기전용 검토 요청 docs/tasks/T-121.md. 기존 로컬 파일 보존."
+        },
+        {
+          "at": "2026-10-09",
+          "status": "done",
+          "note": "Codex: 최신 원격 기반 d4e1e96f/c3934b5d main 반영. 최종 Actions 37936512907 success: 25 tests passed, 251/251 수신, REUSED, 원격 README 확인. Gemini 전체179테스트 통과 보고 및 교차검토 수신. 독립 리뷰 P2 보완 확인. 기존 로컬 파일 보존. docs/tasks/T-121.md에 증거 기록."
+        }
+      ]
+    },
+    {
+      "id": "T-122",
+      "title": "quant-collector: 상승 초입 두 패널 Actions 실행 및 무후보 갱신 복구",
+      "summary": "",
+      "doc": "docs/tasks/T-122.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "원격 Actions 38406724431 갱신 성공, 최종 원격 22:47 KST 두 패널 및 데이터 보류 경고 확인. 35 tests/guard/YAML/bash/6상태 git 게시 검증 통과. 원본 결측·기존 봉인 정정은 T-123에 분리 기록.",
+      "done_at": "2026-10-13",
+      "updated_at": "2026-10-13",
+      "done_when": "원격 Actions 실행 원인 확인, 무후보 및 재실행 시각 갱신 회귀 검증, 원격 반영 후 실제 README 갱신 확인",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-10-13",
+      "log": [
+        {
+          "at": "2026-10-13",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-10-13",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-10-13",
+          "status": "done",
+          "note": "원격 Actions 38406724431 갱신 성공, 최종 원격 22:47 KST 두 패널 및 데이터 보류 경고 확인. 35 tests/guard/YAML/bash/6상태 git 게시 검증 통과. 원본 결측·기존 봉인 정정은 T-123에 분리 기록."
+        }
+      ]
+    },
+    {
+      "id": "T-123",
+      "title": "quant-research: 10월 12일 일봉 결측과 시장 폭 유효 표본 및 10월 13일 봉인 검증",
+      "summary": "",
+      "doc": "docs/tasks/T-123.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "2026-10-13 비파괴 보정 기록(runs/corrections/2026-10-13.json) 생성 및 early-inception-forward.yml 야간 INSUFFICIENT_SAME_DAY_COVERAGE/미확정 당일봉 이슈 해결, 테스트 32건 통과",
+      "done_at": "2026-10-16",
+      "updated_at": "2026-10-16",
+      "done_when": "원본 결측 원인 확인, 시장 폭 유효 분모와 원본 기반 재평가 검증, 기존 봉인을 덮어쓰지 않는 정정 이력",
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-10-16",
+      "log": [
+        {
+          "at": "2026-10-13",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-10-16",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-10-16",
+          "status": "done",
+          "note": "2026-10-13 비파괴 보정 기록(runs/corrections/2026-10-13.json) 생성 및 early-inception-forward.yml 야간 INSUFFICIENT_SAME_DAY_COVERAGE/미확정 당일봉 이슈 해결, 테스트 32건 통과"
+        }
+      ]
+    },
+    {
+      "id": "T-124",
+      "title": "infra: 종료 훅 Node 구문 검사의 중첩 worktree 중복 탐색 제거",
+      "summary": "",
+      "doc": "docs/tasks/T-124.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "infra",
+      "phase": "0. 공통 인프라 & 대시보드",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "중첩 worktree 120개 중복 탐색 제외. 현재 19개 구문 검사 및 범위 회귀 통과, 실제 Codex stop {} 반환 확인. 시간 제한과 현재 소스 오류 차단 유지.",
+      "done_at": "2026-10-13",
+      "updated_at": "2026-10-13",
+      "done_when": "현재 작업 트리 구문 검사를 유지하면서 중첩 worktree 제외, 회귀 및 stop hook 통과",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-10-13",
+      "log": [
+        {
+          "at": "2026-10-13",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-10-13",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-10-13",
+          "status": "done",
+          "note": "중첩 worktree 120개 중복 탐색 제외. 현재 19개 구문 검사 및 범위 회귀 통과, 실제 Codex stop {} 반환 확인. 시간 제한과 현재 소스 오류 차단 유지."
+        }
+      ]
+    },
+    {
+      "id": "T-125",
+      "title": "quant-collector: 신호 등록 피처 정합성(Top5/Watch) 및 등록 이후 시점 라벨링(tracker.py) 교정",
+      "summary": "",
+      "doc": "docs/tasks/T-125.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "collector.py Watch/Top5 피처 shift(1) 정합성 및 signal_stage 태깅, tracker.py 등록 시점(registered_at_kst) 이후 평가 컷오프 적용, 테스트 52건 통과",
+      "done_at": "2026-10-16",
+      "updated_at": "2026-10-16",
+      "done_when": "Top5/Watch 피처 분리, tracker.py 시점 누수 교정, 단위 테스트 및 Actions 검증",
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-10-16",
+      "log": [
+        {
+          "at": "2026-10-16",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-10-16",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-10-16",
+          "status": "done",
+          "note": "collector.py Watch/Top5 피처 shift(1) 정합성 및 signal_stage 태깅, tracker.py 등록 시점(registered_at_kst) 이후 평가 컷오프 적용, 테스트 52건 통과"
+        }
+      ]
+    },
+    {
+      "id": "T-126",
+      "title": "quant-research: T-120 분석기 결함(R2~R7) 수정 및 콜렉터 다중분봉 기반 돌파·LRM-60 고도화 검증",
+      "summary": "",
+      "doc": "docs/tasks/T-126.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "collector_signal_analyzer.py T-120 결함(R2~R7) 전수 교정 및 51건 신호·다중분봉·LRM-60 스톱 버퍼 백테스트 리포트 생성, 테스트 14건 통과",
+      "done_at": "2026-10-16",
+      "updated_at": "2026-10-16",
+      "done_when": "collector_signal_analyzer R2~R7 결함 해결, 74일 다중분봉 기반 돌파·LRM-60 고도화 백테스트 리포트 및 테스트 통과",
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-10-16",
+      "log": [
+        {
+          "at": "2026-10-16",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-10-16",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-10-16",
+          "status": "done",
+          "note": "collector_signal_analyzer.py T-120 결함(R2~R7) 전수 교정 및 51건 신호·다중분봉·LRM-60 스톱 버퍼 백테스트 리포트 생성, 테스트 14건 통과"
         }
       ]
     }
