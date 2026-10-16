@@ -36,9 +36,8 @@
       "early_trigger": false,
       "early_tf": ""
     },
-    "trading_days_observed": 4,
+    "trading_days_observed": 3,
     "observed_dates": [
-      "2026-10-13",
       "2026-10-14",
       "2026-10-15",
       "2026-10-16"
@@ -167,7 +166,8 @@
         "return_pct": null
       }
     },
-    "is_fully_resolved": false
+    "is_fully_resolved": false,
+    "effective_eval_start_kst": "2026-10-13 15:46"
   },
   "algorithm260917_v1_290650_2026-10-16_1200": {
     "signal_id": "algorithm260917_v1_290650_2026-10-16_1200",
@@ -334,7 +334,8 @@
         "return_pct": null
       }
     },
-    "is_fully_resolved": false
+    "is_fully_resolved": false,
+    "effective_eval_start_kst": "2026-10-16 13:27"
   },
   "algorithm260917_v1_425420_2026-10-16_1400": {
     "signal_id": "algorithm260917_v1_425420_2026-10-16_1400",
@@ -501,6 +502,7 @@
         "return_pct": null
       }
     },
-    "is_fully_resolved": false
+    "is_fully_resolved": false,
+    "effective_eval_start_kst": "2026-10-16 18:21"
   }
 }
