@@ -42,7 +42,7 @@ def source(tmp_path):
 def test_capture_reuses_frozen_signal_on_same_prices_and_new_fetch_time(source):
     data, manifest_path, now, runs = source
     first = capture(data, manifest_path, runs, now=now)
-    assert set(first["record"]["strategies"]) == {"early_inception_3d", "early_inception"}
+    assert set(first["record"]["strategies"]) == {"early_inception", "early_contraction"}
     assert all(not block["candidates"] for block in first["record"]["strategies"].values())
     original = (runs / f'{first["record"]["as_of"]}.json').read_bytes()
     manifest = json.loads(manifest_path.read_text())
@@ -102,7 +102,7 @@ def test_outcomes_stay_pending_until_full_horizon(source):
     data, manifest_path, now, runs = source
     first = capture(data, manifest_path, runs, now=now)
     record = first["record"]
-    record["strategies"]["early_inception_3d"]["candidates"] = [
+    record["strategies"]["early_contraction"]["candidates"] = [
         {"code": "000001", "market": "KOSPI", "close": 10000.0}]
     path = runs / f'{record["as_of"]}.json'
     path.write_text(json.dumps(record), encoding="utf-8")
@@ -119,17 +119,17 @@ def test_two_rankings_are_sealed_separately(source, monkeypatch):
     day = pd.Timestamp(finding["as_of"])
     monkeypatch.setattr(forward, "calculate_market_breadth",
                         lambda universe: pd.Series({day: 60.0}))
-    monkeypatch.setattr(forward, "compute_early_inception_3d_rankings",
+    monkeypatch.setattr(forward, "compute_early_contraction_rankings",
                         lambda universe, as_of: pd.DataFrame([{"code": "000001", "close": 10000,
-                            "inception_3d_score": .9, "cmf20": .1}]))
+                            "contraction_score": .9, "cmf20": .1}]))
     monkeypatch.setattr(forward, "compute_early_inception_rankings",
                         lambda universe, as_of: pd.DataFrame([{"code": "000001", "close": 10000,
                             "inception_score": .7, "cmf20": .1}]))
     record = build_record(finding, manifest_path)
-    assert record["strategies"]["early_inception_3d"]["candidates"][0]["inception_3d_score"] == .9
+    assert record["strategies"]["early_contraction"]["candidates"][0]["contraction_score"] == .9
     assert record["strategies"]["early_inception"]["candidates"][0]["inception_score"] == .7
-    assert record["strategies"]["early_inception_3d"]["candidates"][0]["market"] == "KOSPI"
-    assert record["strategies"]["early_inception_3d"]["candidates"][0]["name"] == "테스트종목"
+    assert record["strategies"]["early_contraction"]["candidates"][0]["market"] == "KOSPI"
+    assert record["strategies"]["early_contraction"]["candidates"][0]["name"] == "테스트종목"
 
 
 def test_source_universe_names_are_read_only_from_hashed_snapshot(source, monkeypatch, tmp_path):
@@ -231,8 +231,9 @@ def test_main_renders_stock_details_for_both_strategies(tmp_path, monkeypatch):
                 "composite_score": .8, "mom60_5": .2, "risk_adj_mom": .7, "cmf20": .1}]},
             "early_inception": {"score_field": "inception_score", "candidates": [{
                 "code": "000002", "name": "초입종목", "close": 20000,
-                "inception_score": .7, "range_width_ratio": .18, "vol_ratio": 1.5,
-                "vol_spike_1d": 2.0, "cmf20": .2}]},
+                "prior_h20": 19800, "breakout_ext_pct": 1.0, "stop_price_5pct": 19000, "sma10": 19500,
+                "inception_score": .7, "contraction_ratio": .52, "range_width_ratio": .18,
+                "vol_ratio": 1.5, "vol_spike_1d": 2.0, "cmf20": .2}]},
         },
     }
     monkeypatch.setattr(forward, "capture", lambda *args: {
@@ -243,11 +244,12 @@ def test_main_renders_stock_details_for_both_strategies(tmp_path, monkeypatch):
                                            "--runs", str(runs), "--readme", str(readme)])
     assert forward.main() == 0
     panel = readme.read_text(encoding="utf-8")
-    assert panel.index("### 🌐 시장 상황") < panel.index("### 모드 2 · 과거 봉인 기록") < panel.index("### 상승 초입")
+    assert panel.index("### 🌐 시장 상황") < panel.index("### 모드 2 · 과거 봉인 기록") < panel.index("### 상승 초입 · 20일 돌파 확정")
     assert "🟢 관찰 가능 · 시장 폭(SMA60) **55.0%** · 기준 완료 일봉 `2026-09-25`" in panel
     assert panel.count("갱신: `2026-09-25 18:00 KST`") == 2
-    assert "모드종목 (`000001`) | 1거래일째 | 10,000원 | 0.800 |" in panel
-    assert "20일 변동폭 18.0% · 5일 1.50x · CMF20 +0.20" in panel
+    assert "모드종목 (`000001`) | 1거래일째 | 10,000원 | - | -5% 9,500원 | 0.800 |" in panel
+    assert "19,800원 (+1.0%) | -5% 19,000원 · SMA10 19,500원 | 0.700 |" in panel
+    assert "수축비 0.52 (변동폭 18.0%) · 5일 1.50x (당일 2.00x) · CMF20 +0.20" in panel
 
 
 def test_backfill_missing_recovers_unsealed_interim_sessions(tmp_path):
@@ -290,37 +292,39 @@ def test_backfill_missing_recovers_unsealed_interim_sessions(tmp_path):
     assert sealed["backfill"]["recovered_from_as_of"] == str(days[-1].date())
 
 
-
 @pytest.fixture
 def panel_record():
-    basic = {"code": "000001", "name": "겹친종목", "close": 10000,
-             "inception_score": .7, "range_width_ratio": .18, "vol_ratio": 1.5,
-             "vol_spike_1d": 2.0, "cmf20": .2}
-    focus = {**basic, "inception_3d_score": .8, "setup_type": "압축돌파",
-             "contraction_ratio": .4, "upper_wick_ratio": .2}
+    basic = {"code": "000001", "name": "돌파종목", "close": 10000,
+             "prior_h20": 9900, "breakout_ext_pct": 1.01, "stop_price_5pct": 9500, "sma10": 9750,
+             "inception_score": .7, "contraction_ratio": .55, "range_width_ratio": .18,
+             "vol_ratio": 1.5, "vol_spike_1d": 2.0, "cmf20": .2}
+    contraction = {"code": "000003", "name": "수축종목", "close": 410000,
+                   "prior_h20": 419000, "breakout_ext_pct": -2.15, "stop_price_5pct": 389500, "sma10": 404950,
+                   "contraction_score": .48, "contraction_ratio": .26, "range_width_ratio": .062,
+                   "vol_ratio": 1.49, "vol_spike_1d": 2.06, "cmf20": .01}
     return {"as_of": "2026-10-08", "fetched_at": "2026-10-08T18:00:00+09:00",
             "market_breadth_pct": 55.0, "strategies": {
-                "early_inception_3d": {"score_field": "inception_3d_score", "candidates": [focus]},
                 "early_inception": {"score_field": "inception_score", "candidates": [
-                    basic, {**basic, "code": "000002", "name": "기본종목"}]}}}
+                    basic, {**basic, "code": "000002", "name": "기본종목"}]},
+                "early_contraction": {"score_field": "contraction_score", "candidates": [contraction]}}}
 
 
-def test_panel_badges_use_same_record_membership_and_preserve_counts(panel_record):
+def test_panel_renders_final_early_inception_and_retires_3d(panel_record):
     before = json.dumps(panel_record, ensure_ascii=False)
     panel = forward.render_panel(panel_record, {("early_inception", "000001"): 3})
     rows = [line for line in panel.splitlines() if line.startswith("| 1 |") or line.startswith("| 2 |")]
-    assert "3거래일째" in rows[1] and "🎯 3일 목록 포함" in rows[1]
-    assert "🟢 기본 목록만" in rows[2]
-    assert panel.index("### 🧭 관찰 단계 안내") < panel.index("### 상승 초입")
-    assert "포함 관계가 보장되지 않습니다" in panel
-    assert "[압축돌파] 수축비 0.40 · 윗꼬리 20.0%" in rows[0]
-    assert all(line.count("|") == 8 for line in rows)
-    assert json.dumps(panel_record, ensure_ascii=False) == before
-    # A prior rendering must never leak membership into a subsequent decision.
-    panel_record["strategies"]["early_inception_3d"]["candidates"] = []
-    panel = forward.render_panel(panel_record, {})
+    assert "3거래일째" in rows[0]
+    assert "9,900원 (+1.0%)" in rows[0]
+    assert "-5% 9,500원 · SMA10 9,750원" in rows[0]
+    assert "수축종목 (`000003`)" in rows[2]
+    assert "419,000원 (-2.1%)" in rows[2]
+    assert "-5% 389,500원 · SMA10 404,950원" in rows[2]
+    assert panel.index("### 🧭 최종 상승 초입 관찰 안내") < panel.index("### 상승 초입 · 20일 돌파 확정")
+    assert panel.index("### 상승 초입 · 20일 돌파 확정") < panel.index("### 상승 초입 · 20일 수축 돌파임박")
+    assert "### 상승초입 3일 이내" not in panel
     assert "🎯 3일 목록 포함" not in panel
-    assert panel.count("🟢 기본 목록만") == 2
+    assert all(line.count("|") == 9 for line in rows)
+    assert json.dumps(panel_record, ensure_ascii=False) == before
 
 
 def test_panel_empty_candidates_and_market_gate(panel_record):
@@ -329,13 +333,21 @@ def test_panel_empty_candidates_and_market_gate(panel_record):
         block["candidates"] = []
     panel = forward.render_panel(panel_record, {})
     assert "🔴 후보 선별 중단" in panel
-    assert panel.count("| - | 조건 충족 없음 | - | - | - | - | - |") == 2
-    assert "### 🧭 관찰 단계 안내" in panel
-    assert "🎯 3일 목록 포함" not in panel
+    assert panel.count("| - | 조건 충족 없음 | - | - | - | - | - | - |") == 2
+    assert "### 🧭 최종 상승 초입 관찰 안내" in panel
+    assert "### 상승초입 3일 이내" not in panel
 
 
-def test_panel_legacy_mode2_does_not_become_three_day_selection(panel_record):
+def test_panel_legacy_mode2_and_retired_3d_records_render_cleanly(panel_record):
     strategies = panel_record["strategies"]
+    strategies.pop("early_contraction")
+    strategies["early_inception_3d"] = {"score_field": "inception_3d_score", "candidates": [{
+        "code": "000099", "name": "폐기된3일종목", "close": 10000, "inception_3d_score": .9}]}
+    panel_3d = forward.render_panel(panel_record, {})
+    assert "### 상승초입 3일 이내" not in panel_3d
+    assert "폐기된3일종목" not in panel_3d
+    assert "### 상승 초입 · 20일 수축 돌파임박" in panel_3d
+
     strategies.pop("early_inception_3d")
     strategies["mode2"] = {"score_field": "composite_score", "candidates": [{
         "code": "000001", "name": "과거종목", "close": 10000,
@@ -344,19 +356,6 @@ def test_panel_legacy_mode2_does_not_become_three_day_selection(panel_record):
     assert "### 모드 2 · 과거 봉인 기록" in panel
     assert "60일 모멘텀 +20.0%" in panel
     assert "### 상승초입 3일 이내" not in panel
-    assert "🎯 3일 목록 포함" not in panel
-    assert panel.count("⚪ 3일 판정 기록 없음") == 2
-    assert "수축비 0.00" not in panel
-
-
-def test_panel_mode2_slot_with_three_day_score_uses_three_day_fields(panel_record):
-    strategies = panel_record["strategies"]
-    strategies["mode2"] = strategies.pop("early_inception_3d")
-    # No mom60_5 or risk_adj_mom in this record: a legacy renderer would crash.
-    panel = forward.render_panel(panel_record, {})
-    assert "### 상승초입 3일 이내" in panel
-    assert panel.count("🎯 3일 목록 포함") == 2
-    assert "수축비 0.40" in panel
 
 
 def test_main_reused_record_refreshes_panel_without_rewriting_seal(tmp_path, monkeypatch, panel_record, capsys):
@@ -381,7 +380,7 @@ def test_main_reused_record_refreshes_panel_without_rewriting_seal(tmp_path, mon
     assert json.loads(capsys.readouterr().out)["status"] == "REUSED"
     panel = readme.read_text(encoding="utf-8")
     assert panel.startswith(prefix) and panel.endswith(suffix)
-    assert "🧭 관찰 단계 안내" in panel and "🎯 3일 목록 포함" in panel
+    assert "🧭 최종 상승 초입 관찰 안내" in panel and "수축종목 (`000003`)" in panel
     assert seal.read_bytes() == sealed_bytes
     assert (runs.parent / "latest.md").read_text(encoding="utf-8") in panel
 
@@ -512,13 +511,13 @@ def test_regime_context_detects_weakening_and_ignores_future_records(tmp_path):
 
 def test_gate_funnel_monotonicity_and_prefix_invariance():
     from research.early_inception_engine import (
+        compute_early_contraction_rankings,
         compute_early_inception_rankings,
-        compute_early_inception_3d_rankings,
     )
     days = pd.bdate_range("2026-03-01", periods=140)
     eval_date = days[-5]
 
-    # Stock 1: passes all basic & 3d gates on eval_date, then crashes in future bars
+    # Stock 1: passes all basic breakout gates on eval_date, then crashes in future bars
     c1 = np.full(len(days), 10000.0)
     h1 = np.full(len(days), 10200.0)
     l1 = np.full(len(days), 9900.0)
@@ -537,11 +536,14 @@ def test_gate_funnel_monotonicity_and_prefix_invariance():
     # Future crash after eval_date (must be ignored by prefix slice)
     c1[idx + 1 :] = 5000.0
 
-    # Stock 2: uptrend but does not break 20d high
-    c2 = np.full(len(days), 10000.0)
-    h2 = np.full(len(days), 10300.0)
-    l2 = np.full(len(days), 9900.0)
-    v2 = np.full(len(days), 100000.0)
+    # Stock 2: tight contraction within -3% of 20d high (10100) with volume ignition and Close >= SMA20
+    c2 = c1.copy()
+    h2 = h1.copy()
+    l2 = l1.copy()
+    v2 = v1.copy()
+    c2[idx] = 10080.0
+    h2[idx] = 10090.0
+    l2[idx] = 9950.0
 
     # Stock 3: below SMA20/SMA60 (downtrend)
     c3 = np.linspace(15000.0, 8000.0, len(days))
@@ -576,11 +578,12 @@ def test_gate_funnel_monotonicity_and_prefix_invariance():
         >= 1
     )
     assert f_full["final_basic"] == len(compute_early_inception_rankings(prefix_univ, eval_date))
-    assert f_full["final_3d"] == len(compute_early_inception_3d_rankings(prefix_univ, eval_date))
+    assert f_full["final_contraction"] == len(compute_early_contraction_rankings(prefix_univ, eval_date))
+    assert f_full["final_contraction"] == 1
 
     f_halted = forward.compute_gate_funnel(prefix_univ, eval_date, market_breadth_pct=30.0)
     assert f_halted["breakout_20d"] == f_prefix["breakout_20d"]
-    assert f_halted["final_basic"] == 0 and f_halted["final_3d"] == 0
+    assert f_halted["final_basic"] == 0 and f_halted["final_contraction"] == 0
 
 
 def test_render_panel_includes_regime_and_gate_funnel_and_survives_heartbeat(panel_record, tmp_path):
@@ -604,11 +607,11 @@ def test_render_panel_includes_regime_and_gate_funnel_and_survives_heartbeat(pan
         "contraction": 4,
         "breakout_20d": 0,
         "final_basic": 0,
-        "final_3d": 0,
+        "final_contraction": 1,
     }
     panel = forward.render_panel(panel_record, {}, regime_context=regime_ctx, gate_funnel=funnel)
     assert "🟡 레짐 둔화 주의 · **최근 3거래일 추이:** 87.9% (`10-06`) → 85.9% (`10-07`) → 55.0% (`10-08`)" in panel
-    assert "**게이트별 생존 (`144`종목 평가):** 추세·대금 `53` → 비과열 `7` → 20일 수축 `4` → 20일 고점돌파 `0` → **최종 통과: 기본 `0`건 / 3일 집중 `0`건**" in panel
+    assert "**게이트별 생존 (`144`종목 평가):** 추세·대금 `53` → 비과열 `7` → 20일 수축 `4` → **최종 통과: 돌파 확정 `0`건 (고점돌파 `0`) / 수축 돌파임박 `1`건**" in panel
 
     readme = tmp_path / "README.md"
     latest = tmp_path / "latest.md"
@@ -617,5 +620,6 @@ def test_render_panel_includes_regime_and_gate_funnel_and_survives_heartbeat(pan
     refreshed = readme.read_text(encoding="utf-8")
     assert "🟡 레짐 둔화 주의" in refreshed
     assert "게이트별 생존 (`144`종목 평가)" in refreshed
+
 
 

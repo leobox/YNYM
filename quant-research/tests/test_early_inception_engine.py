@@ -230,85 +230,58 @@ def test_comparative_backtest_runner():
     assert isinstance(latest_picks, pd.DataFrame)
 
 
-def test_compute_early_inception_3d_hybrid_gate():
-    from research.early_inception_engine import compute_early_inception_3d_rankings
+def test_early_contraction_rankings_and_reference_levels():
+    from research.early_inception_engine import compute_early_contraction_rankings
 
-    dates = pd.date_range("2024-01-01", periods=130, freq="B")
-    eval_date = dates[-1]
+    days = pd.bdate_range("2026-03-01", periods=140)
+    eval_date = days[-5]
+    idx = list(days).index(eval_date)
 
-    # Helper to generate stock with specific metrics
-    def make_stock(close_series, high_series, low_series, open_series, vol_series):
-        return pd.DataFrame({
-            "Open": open_series,
-            "High": high_series,
-            "Low": low_series,
-            "Close": close_series,
-            "Volume": vol_series,
-        }, index=dates)
+    # Stock 1: Confirmed 20d breakout (Close >= prior_h20)
+    c1 = np.full(len(days), 10000.0)
+    h1 = np.full(len(days), 10200.0)
+    l1 = np.full(len(days), 9900.0)
+    v1 = np.full(len(days), 100000.0)
+    h1[idx - 55 : idx - 25] = 11000.0
+    l1[idx - 55 : idx - 25] = 9000.0
+    c1[idx - 20 : idx] = 10050.0
+    h1[idx - 20 : idx] = 10150.0
+    l1[idx - 20 : idx] = 9950.0
+    c1[idx] = 10200.0
+    h1[idx] = 10220.0
+    l1[idx] = 10050.0
+    v1[idx] = 250000.0
 
-    base = np.full(130, 10000.0)
-    # 20d breakout setup: 20d high prior was 10500, 60d high was 12000, 60d low was 9000
-    # Range 60 = 3000
+    # Stock 2: Tight 20d contraction within -3% of 20d high (Close = 10080 > SMA20, prior_h20 = 10150 -> -0.69%)
+    c2 = c1.copy()
+    h2 = h1.copy()
+    l2 = l1.copy()
+    v2 = v1.copy()
+    c2[idx] = 10080.0
+    h2[idx] = 10100.0
+    l2[idx] = 9950.0
+    # Future corruption after eval_date must not affect rankings
+    c2[idx + 1 :] = 50000.0
 
-    # Stock 1: Quiet Compression (삼천당제약/고영 모델)
-    # Range 20 = 1000 (cont = 1000/3000 = 0.33 <= 0.45), vol_spike = 2.0x, upper_wick = 10%
-    c1 = base.copy()
-    c1[-1] = 11000.0  # Breaks out above 10500
-    h1 = c1.copy()
-    h1[-1] = 11100.0  # Upper wick = (11100 - 11000) / (11100 - 10000) = 100 / 1100 = 9%
-    l1 = c1.copy()
-    l1[-1] = 10000.0
-    o1 = c1.copy()
-    o1[-1] = 10200.0
-    v1 = np.full(130, 100000.0)
-    v1[-1] = 200000.0  # 2.0x vol
-    # Set 60d base first, then tighten 20d window
-    h1[-61:-1] = 12000.0
-    l1[-61:-1] = 9000.0
-    h1[-21:-1] = 10500.0
-    l1[-21:-1] = 9500.0
-    stock_quiet = make_stock(c1, h1, l1, o1, v1)
+    def to_df(c, h, l, v):
+        return pd.DataFrame({"Open": c * 0.995, "High": h, "Low": l, "Close": c, "Volume": v}, index=days)
 
-    # Stock 2: Leader Volume Ignition (카페24 모델)
-    # Range 20 = 1650 (cont = 1650/3000 = 0.55 > 0.45 but <= 0.70), vol_spike = 15.0x, upper_wick = 15%
-    c2 = base.copy()
-    c2[-1] = 11200.0
-    h2 = c2.copy()
-    h2[-1] = 11400.0  # Upper wick = 200 / 1500 = 13.3%
-    l2 = c2.copy()
-    l2[-1] = 9900.0
-    o2 = c2.copy()
-    o2[-1] = 10100.0
-    v2 = np.full(130, 100000.0)
-    v2[-1] = 1500000.0  # 15.0x vol ignition!
-    h2[-61:-1] = 12000.0
-    l2[-61:-1] = 9000.0
-    h2[-21:-1] = 10800.0
-    l2[-21:-1] = 9150.0  # Range 20 = 1650 (0.55)
-    stock_leader = make_stock(c2, h2, l2, o2, v2)
+    universe = {"BRK": to_df(c1, h1, l1, v1), "CNTR": to_df(c2, h2, l2, v2)}
 
-    # Stock 3: High contraction without volume (Should be excluded!)
-    # Cont = 0.55, but vol_spike = 1.5x (< 5.0x)
-    stock_failed = stock_leader.copy()
-    stock_failed_vol = np.full(130, 100000.0)
-    stock_failed_vol[-1] = 150000.0
-    stock_failed["Volume"] = stock_failed_vol
+    brk_ranks = compute_early_inception_rankings(universe, eval_date)
+    cntr_ranks = compute_early_contraction_rankings(universe, eval_date)
 
-    universe = {
-        "QUIET": stock_quiet,
-        "LEADER": stock_leader,
-        "FAILED": stock_failed,
-    }
+    assert brk_ranks["code"].tolist() == ["BRK"]
+    assert cntr_ranks["code"].tolist() == ["CNTR"]
 
-    ranks = compute_early_inception_3d_rankings(universe, eval_date)
-    assert not ranks.empty
-    codes = ranks["code"].tolist()
-    assert "QUIET" in codes
-    assert "LEADER" in codes
-    assert "FAILED" not in codes
+    brk_row = brk_ranks.iloc[0]
+    assert brk_row["prior_h20"] == pytest.approx(10150.0)
+    assert brk_row["breakout_ext_pct"] == pytest.approx((10200.0 / 10150.0 - 1.0) * 100.0)
+    assert brk_row["stop_price_5pct"] == pytest.approx(round(10200.0 * 0.95, 2))
 
-    quiet_row = ranks[ranks["code"] == "QUIET"].iloc[0]
-    leader_row = ranks[ranks["code"] == "LEADER"].iloc[0]
-    assert quiet_row["setup_type"] == "압축돌파"
-    assert leader_row["setup_type"] == "거래량폭발"
+    cntr_row = cntr_ranks.iloc[0]
+    assert cntr_row["prior_h20"] == pytest.approx(10150.0)
+    assert -3.0 <= cntr_row["breakout_ext_pct"] < 0.0
+    assert cntr_row["stop_price_5pct"] == pytest.approx(round(10080.0 * 0.95, 2))
+    assert 0.0 < cntr_row["contraction_score"] <= 1.0
 

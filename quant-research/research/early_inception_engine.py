@@ -149,10 +149,15 @@ def compute_early_inception_rankings(
         ret_5 = (current_c - float(c.iloc[-6])) / float(c.iloc[-6]) if len(c) >= 6 else 0.0
         # Compression score: lower range_width is tighter compression (better)
         compression_score = max(0.0, 1.0 - (range_width_ratio / max_range_ratio))
+        breakout_ext_pct = (current_c / prior_h20 - 1.0) * 100.0 if prior_h20 > 0 else 0.0
+        stop_price_5pct = round(current_c * 0.95, 2)
 
         rows.append({
             "code": code,
             "close": current_c,
+            "prior_h20": prior_h20,
+            "breakout_ext_pct": breakout_ext_pct,
+            "stop_price_5pct": stop_price_5pct,
             "mom60_5": mom60_5,
             "ret_5": ret_5,
             "ratio_to_sma60": ratio_to_sma60,
@@ -190,6 +195,149 @@ def compute_early_inception_rankings(
     )
 
     return res.sort_values(by=["inception_score", "med_amt"], ascending=[False, False]).reset_index(drop=True)
+
+
+def compute_early_contraction_rankings(
+    universe: Dict[str, pd.DataFrame],
+    eval_date: pd.Timestamp,
+    min_med_amt: float = 500_000_000.0,
+    max_mom60_5: float = 0.25,
+    max_range_ratio: float = 0.25,
+    max_contraction_ratio: float = 0.65,
+    min_proximity_ratio: float = 0.97,
+    min_vol_ratio: float = 1.20,
+) -> pd.DataFrame:
+    """
+    Computes Early Inception Tight Contraction (20일 수축 돌파임박) rankings on eval_date
+    strictly using data available up to eval_date close (zero lookahead).
+
+    Replaces the retired `early_inception_3d` (which chased 5x volume spikes) with a
+    pre-breakout tight-compression + volume-ignition setup right below the 20-day high:
+      1. Trend & Liquidity: Close >= SMA20, (Close >= SMA60 or SMA20 >= SMA60), 20d med turnover >= 500M KRW.
+      2. Non-overextended: mom60_5 <= 25%, Close / SMA60 <= 1.18.
+      3. Tight 20d Contraction: range_width_ratio <= 25%, contraction_ratio (range20/range60) <= 0.65.
+      4. Near-Breakout Proximity: 0.97 * prior_h20 <= Close < prior_h20 (within -3% of 20d high, not yet broken).
+      5. Volume & Money Flow Ignition: (vol_ratio >= 1.20 or vol_spike_1d >= 1.35) and CMF20 >= -0.05.
+    """
+    rows = []
+    for code, df in universe.items():
+        if eval_date not in df.index:
+            continue
+        hist = df.loc[:eval_date]
+        if len(hist) < 125:
+            continue
+
+        c = hist["Close"]
+        h = hist["High"]
+        l = hist["Low"]
+        v = hist["Volume"]
+        amt = c * v
+
+        current_c = float(c.iloc[-1])
+        if current_c <= 0:
+            continue
+
+        sma10 = float(c.rolling(10).mean().iloc[-1])
+        sma20 = float(c.rolling(20).mean().iloc[-1])
+        sma60 = float(c.rolling(60).mean().iloc[-1])
+
+        if current_c < sma20 or (current_c < sma60 and sma20 < sma60):
+            continue
+
+        med_amt = float(amt.rolling(20).median().iloc[-1])
+        if not np.isfinite(med_amt) or med_amt < min_med_amt:
+            continue
+
+        c_t5 = float(c.iloc[-5])
+        c_t60 = float(c.iloc[-60])
+        if c_t60 <= 0:
+            continue
+        mom60_5 = (c_t5 - c_t60) / c_t60
+        ratio_to_sma60 = current_c / sma60 if sma60 > 0 else 999.0
+        if mom60_5 > max_mom60_5 or ratio_to_sma60 > 1.18:
+            continue
+
+        prior_h20 = float(h.iloc[-21:-1].max()) if len(h) >= 21 else float(h.iloc[:-1].max())
+        prior_l20 = float(l.iloc[-21:-1].min()) if len(l) >= 21 else float(l.iloc[:-1].min())
+        prior_h60 = float(h.iloc[-61:-1].max()) if len(h) >= 61 else float(h.iloc[:-1].max())
+        prior_l60 = float(l.iloc[-61:-1].min()) if len(l) >= 61 else float(l.iloc[:-1].min())
+        if prior_h20 <= 0 or prior_l20 <= 0 or prior_h60 <= 0 or prior_l60 <= 0:
+            continue
+
+        range_20 = prior_h20 - prior_l20
+        range_60 = prior_h60 - prior_l60
+        range_width_ratio = range_20 / current_c
+        contraction_ratio = range_20 / range_60 if range_60 > 0 else 1.0
+        range_pos_20 = (current_c - prior_l20) / range_20 if range_20 > 0 else 1.0
+
+        if range_width_ratio > max_range_ratio or contraction_ratio > max_contraction_ratio:
+            continue
+
+        # Must be tightly positioned right below prior 20-day high (within -3%, not yet broken)
+        if current_c >= prior_h20 or current_c < prior_h20 * min_proximity_ratio:
+            continue
+
+        prior_vol = float(v.iloc[-25:-5].median()) if len(v) >= 25 else float(v.iloc[:-5].median())
+        recent_vol = float(v.iloc[-5:].median())
+        vol_ratio = recent_vol / prior_vol if prior_vol > 0 else 0.0
+        vol_spike_1d = float(v.iloc[-1]) / prior_vol if prior_vol > 0 else 0.0
+
+        if vol_ratio < min_vol_ratio and vol_spike_1d < 1.35:
+            continue
+
+        hl = (h.iloc[-20:] - l.iloc[-20:]).replace(0, np.nan)
+        mf_mult = ((c.iloc[-20:] - l.iloc[-20:]) - (h.iloc[-20:] - c.iloc[-20:])) / hl
+        mf_vol = mf_mult * v.iloc[-20:]
+        sum_vol = float(v.iloc[-20:].sum())
+        cmf20 = float(mf_vol.sum() / sum_vol) if sum_vol > 0 else -1.0
+        if cmf20 < -0.05:
+            continue
+
+        ret_5 = (current_c - float(c.iloc[-6])) / float(c.iloc[-6]) if len(c) >= 6 else 0.0
+        breakout_ext_pct = (current_c / prior_h20 - 1.0) * 100.0
+        stop_price_5pct = round(current_c * 0.95, 2)
+
+        max_gap = max(1e-6, 1.0 - min_proximity_ratio)
+        tightness_score = max(0.0, 1.0 - (contraction_ratio / max_contraction_ratio))
+        proximity_score = max(0.0, 1.0 - ((prior_h20 - current_c) / (prior_h20 * max_gap)))
+        vol_score = min(1.0, max(vol_ratio, vol_spike_1d) / 3.0)
+        cmf_score = min(1.0, max(0.0, (cmf20 + 0.05) / 0.35))
+        contraction_score = (
+            0.35 * tightness_score
+            + 0.25 * proximity_score
+            + 0.25 * vol_score
+            + 0.15 * cmf_score
+        )
+
+        rows.append({
+            "code": code,
+            "close": current_c,
+            "prior_h20": prior_h20,
+            "breakout_ext_pct": breakout_ext_pct,
+            "stop_price_5pct": stop_price_5pct,
+            "mom60_5": mom60_5,
+            "ret_5": ret_5,
+            "ratio_to_sma60": ratio_to_sma60,
+            "range_width_ratio": range_width_ratio,
+            "contraction_ratio": contraction_ratio,
+            "range_pos_20": range_pos_20,
+            "vol_ratio": vol_ratio,
+            "vol_spike_1d": vol_spike_1d,
+            "cmf20": cmf20,
+            "med_amt": med_amt,
+            "sma10": sma10,
+            "sma20": sma20,
+            "sma60": sma60,
+            "contraction_score": float(contraction_score),
+        })
+
+    if not rows:
+        return pd.DataFrame()
+
+    res = pd.DataFrame(rows)
+    return res.sort_values(
+        by=["contraction_score", "med_amt", "code"], ascending=[False, False, True]
+    ).reset_index(drop=True)
 
 
 def simulate_trade_with_weakening_exit(
@@ -479,5 +627,4 @@ def compute_early_inception_3d_rankings(
 
     res = pd.DataFrame(rows)
     return res.sort_values(["inception_3d_score", "code"], ascending=[False, True]).reset_index(drop=True)
-
 
