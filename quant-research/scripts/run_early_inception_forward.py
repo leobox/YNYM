@@ -421,7 +421,195 @@ def consecutive_observation_days(record: dict, run_dir: Path,
     return counts
 
 
-def render_panel(record: dict, observed_days: dict[tuple[str, str], int]) -> str:
+def compute_regime_context(
+    record: dict,
+    run_dir: Path | None = None,
+    universe: dict[str, pd.DataFrame] | None = None,
+    window: int = 5,
+) -> dict | None:
+    """Summarize recent market breadth trajectory up to record['as_of'] (zero lookahead)."""
+    if "as_of" not in record or "market_breadth_pct" not in record:
+        return None
+    as_of_str = str(record["as_of"])
+    current_breadth = float(record["market_breadth_pct"])
+    if not np.isfinite(current_breadth):
+        return None
+
+    by_day: dict[str, float] = {as_of_str: current_breadth}
+    if run_dir is not None and run_dir.is_dir():
+        for path in sorted(run_dir.glob("????-??-??.json")):
+            day = path.stem
+            if day <= as_of_str:
+                eff = load_effective_record(run_dir, day)
+                if eff is not None and isinstance(eff.get("market_breadth_pct"), (int, float)):
+                    val = float(eff["market_breadth_pct"])
+                    if np.isfinite(val):
+                        by_day[day] = val
+
+    if len(by_day) < window and universe:
+        try:
+            series = calculate_market_breadth(universe).loc[:pd.Timestamp(as_of_str)].dropna()
+            for ts, val in series.tail(window).items():
+                day_key = pd.Timestamp(ts).date().isoformat()
+                if day_key <= as_of_str and day_key not in by_day and np.isfinite(float(val)):
+                    by_day[day_key] = float(val)
+        except Exception:
+            pass
+
+    by_day[as_of_str] = current_breadth
+    history = [(d, round(v, 1)) for d, v in sorted(by_day.items())[-window:]]
+    if len(history) < 2:
+        return None
+
+    cur_rounded = history[-1][1]
+    start_val = history[0][1]
+    peak_val = max(val for _, val in history)
+    delta_window = round(cur_rounded - start_val, 1)
+    drawdown_from_peak = round(cur_rounded - peak_val, 1)
+
+    consecutive_drops = 0
+    for idx in range(len(history) - 1, 0, -1):
+        if history[idx][1] < history[idx - 1][1]:
+            consecutive_drops += 1
+        else:
+            break
+
+    if current_breadth < 40.0:
+        status = "HALTED"
+        badge = "🔴 레짐 차단 (40% 미만)"
+    elif drawdown_from_peak <= -5.0 or delta_window <= -5.0 or consecutive_drops >= 3:
+        status = "WEAKENING"
+        badge = "🟡 레짐 둔화 주의"
+    else:
+        status = "STABLE"
+        badge = "🟢 레짐 안정/확장"
+
+    return {
+        "status": status,
+        "badge": badge,
+        "history": [{"date": d, "breadth_pct": v} for d, v in history],
+        "delta_pct": delta_window,
+        "drawdown_from_peak_pct": drawdown_from_peak,
+        "consecutive_drops": consecutive_drops,
+    }
+
+
+def compute_gate_funnel(
+    universe: dict[str, pd.DataFrame] | None,
+    eval_date: pd.Timestamp | str,
+    market_breadth_pct: float | None = None,
+    min_med_amt: float = 500_000_000.0,
+    max_mom60_5: float = 0.25,
+    max_range_ratio: float = 0.25,
+    max_contraction_ratio: float = 0.85,
+    min_vol_ratio: float = 1.20,
+) -> dict | None:
+    """Count stocks surviving each sequential Early Inception gate up to eval_date close."""
+    if not universe:
+        return None
+    eval_ts = pd.Timestamp(eval_date)
+    eligible = 0
+    trend_liquidity = 0
+    not_overextended = 0
+    contraction = 0
+    breakout_20d = 0
+    final_basic = 0
+
+    for df in universe.values():
+        if eval_ts not in df.index:
+            continue
+        hist = df.loc[:eval_ts]
+        if len(hist) < 125:
+            continue
+        c = hist["Close"]
+        h = hist["High"]
+        l = hist["Low"]
+        v = hist["Volume"]
+        amt = c * v
+
+        current_c = float(c.iloc[-1])
+        if current_c <= 0:
+            continue
+        eligible += 1
+
+        sma20 = float(c.rolling(20).mean().iloc[-1])
+        sma60 = float(c.rolling(60).mean().iloc[-1])
+        if current_c < sma20 or (current_c < sma60 and sma20 < sma60):
+            continue
+        med_amt = float(amt.rolling(20).median().iloc[-1])
+        if not np.isfinite(med_amt) or med_amt < min_med_amt:
+            continue
+        trend_liquidity += 1
+
+        c_t5 = float(c.iloc[-5])
+        c_t60 = float(c.iloc[-60])
+        if c_t60 <= 0:
+            continue
+        mom60_5 = (c_t5 - c_t60) / c_t60
+        ratio_to_sma60 = current_c / sma60 if sma60 > 0 else 999.0
+        if mom60_5 > max_mom60_5 or ratio_to_sma60 > 1.18:
+            continue
+        not_overextended += 1
+
+        prior_h20 = float(h.iloc[-21:-1].max()) if len(h) >= 21 else float(h.iloc[:-1].max())
+        prior_l20 = float(l.iloc[-21:-1].min()) if len(l) >= 21 else float(l.iloc[:-1].min())
+        prior_h60 = float(h.iloc[-61:-1].max()) if len(h) >= 61 else float(h.iloc[:-1].max())
+        prior_l60 = float(l.iloc[-61:-1].min()) if len(l) >= 61 else float(l.iloc[:-1].min())
+        if prior_h20 <= 0 or prior_l20 <= 0 or prior_h60 <= 0 or prior_l60 <= 0:
+            continue
+        range_20 = prior_h20 - prior_l20
+        range_60 = prior_h60 - prior_l60
+        range_width_ratio = range_20 / current_c
+        contraction_ratio = range_20 / range_60 if range_60 > 0 else 1.0
+        if range_width_ratio > max_range_ratio or contraction_ratio > max_contraction_ratio:
+            continue
+        contraction += 1
+
+        if current_c < prior_h20:
+            continue
+        breakout_20d += 1
+
+        prior_vol = float(v.iloc[-25:-5].median()) if len(v) >= 25 else float(v.iloc[:-5].median())
+        recent_vol = float(v.iloc[-5:].median())
+        vol_ratio = recent_vol / prior_vol if prior_vol > 0 else 0.0
+        vol_spike_1d = float(v.iloc[-1]) / prior_vol if prior_vol > 0 else 0.0
+        if vol_ratio < min_vol_ratio and vol_spike_1d < 1.35:
+            continue
+
+        hl = (h.iloc[-20:] - l.iloc[-20:]).replace(0, np.nan)
+        mf_mult = ((c.iloc[-20:] - l.iloc[-20:]) - (h.iloc[-20:] - c.iloc[-20:])) / hl
+        mf_vol = mf_mult * v.iloc[-20:]
+        sum_vol = float(v.iloc[-20:].sum())
+        cmf20 = float(mf_vol.sum() / sum_vol) if sum_vol > 0 else -1.0
+        if cmf20 < -0.05:
+            continue
+        final_basic += 1
+
+    if eligible == 0:
+        return None
+    if market_breadth_pct is not None and float(market_breadth_pct) < 40.0:
+        final_basic = 0
+        final_3d = 0
+    else:
+        ranks_3d = compute_early_inception_3d_rankings(universe, eval_ts)
+        final_3d = 0 if ranks_3d.empty else int(len(ranks_3d))
+    return {
+        "eligible": eligible,
+        "trend_liquidity": trend_liquidity,
+        "not_overextended": not_overextended,
+        "contraction": contraction,
+        "breakout_20d": breakout_20d,
+        "final_basic": final_basic,
+        "final_3d": final_3d,
+    }
+
+
+def render_panel(
+    record: dict,
+    observed_days: dict[tuple[str, str], int],
+    regime_context: dict | None = None,
+    gate_funnel: dict | None = None,
+) -> str:
     """Render a sealed decision without recomputing or relabelling its strategy."""
     strategies = record["strategies"]
     focus_blocks = [block for key, block in strategies.items()
@@ -433,8 +621,29 @@ def render_panel(record: dict, observed_days: dict[tuple[str, str], int]) -> str
     fetched_kst = datetime.fromisoformat(record["fetched_at"]).astimezone(KST)
     fetched_label = fetched_kst.strftime("%Y-%m-%d %H:%M KST")
     lines = ["### 🌐 시장 상황", "",
-             f'> {lamp} · 시장 폭(SMA60) **{breadth:.1f}%** · 기준 완료 일봉 `{record["as_of"]}`',
-             ""]
+             f'> {lamp} · 시장 폭(SMA60) **{breadth:.1f}%** · 기준 완료 일봉 `{record["as_of"]}`']
+    if regime_context and len(regime_context.get("history", [])) >= 2:
+        hist_items = regime_context["history"]
+        trail = " → ".join(f'{item["breadth_pct"]:.1f}% (`{item["date"][5:]}`)' for item in hist_items)
+        span = len(hist_items) - 1
+        delta = regime_context["delta_pct"]
+        dd = regime_context["drawdown_from_peak_pct"]
+        lines.extend([
+            "",
+            f'> {regime_context["badge"]} · **최근 {len(hist_items)}거래일 추이:** {trail} '
+            f'({span}일 변화 **{delta:+.1f}%p**, 고점 대비 **{dd:+.1f}%p**)',
+        ])
+    if gate_funnel and gate_funnel.get("eligible", 0) > 0:
+        lines.extend([
+            "",
+            f'> **게이트별 생존 (`{gate_funnel["eligible"]}`종목 평가):** '
+            f'추세·대금 `{gate_funnel["trend_liquidity"]}` → '
+            f'비과열 `{gate_funnel["not_overextended"]}` → '
+            f'20일 수축 `{gate_funnel["contraction"]}` → '
+            f'20일 고점돌파 `{gate_funnel["breakout_20d"]}` → '
+            f'**최종 통과: 기본 `{gate_funnel["final_basic"]}`건 / 3일 집중 `{gate_funnel["final_3d"]}`건**',
+        ])
+    lines.append("")
     for strategy, block in strategies.items():
         is_focus = strategy == "early_inception_3d" or (
             strategy == "mode2" and block["score_field"] == "inception_3d_score")
@@ -512,7 +721,13 @@ def main() -> int:
     record = (load_effective_record(args.runs, finding["as_of"]) or result["record"]) if result["reused"] else result["record"]
     counts = {key: len(block["candidates"]) for key, block in record["strategies"].items()}
     observed_days = consecutive_observation_days(record, args.runs, finding["universe"])
-    panel = render_panel(record, observed_days)
+    fresh_codes = finding.get("fresh_codes") or list(finding["universe"])
+    eval_universe = {code: finding["universe"][code] for code in fresh_codes if code in finding["universe"]}
+    regime_context = compute_regime_context(record, args.runs, eval_universe)
+    gate_funnel = compute_gate_funnel(
+        eval_universe, record["as_of"], market_breadth_pct=record.get("market_breadth_pct")
+    )
+    panel = render_panel(record, observed_days, regime_context=regime_context, gate_funnel=gate_funnel)
     (args.runs.parent / "latest.md").write_text(panel, encoding="utf-8")
     if args.readme:
         update_readme_panel(args.readme, panel)
@@ -526,3 +741,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

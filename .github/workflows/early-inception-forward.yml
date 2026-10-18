@@ -4,7 +4,7 @@ on:
   schedule:
     # Weekdays 20:07 / 21:07 / 22:07 / 23:07 KST. GitHub cron is frequently delayed by
     # hours or dropped, so several attempts are queued; the first success seals the day
-    # and later runs refresh the heartbeat without fetching anything.
+    # and subsequent runs exit early without redundant commits once sealed cleanly.
     - cron: '7 11 * * 1-5'
     - cron: '7 12 * * 1-5'
     - cron: '7 13 * * 1-5'
@@ -36,8 +36,8 @@ jobs:
           # Target session = KST date 16h ago (20:00 -> today, 01:00 after a late queue -> yesterday).
           target=$(TZ=Asia/Seoul date -d '16 hours ago' +%F)
           echo "target=$target"
-          if [ -f "quant-research/data/research/T-110/runs/$target.json" ]; then
-            echo "$target already sealed; refresh execution heartbeat only."
+          if [ -f "quant-research/data/research/T-110/runs/$target.json" ] && ! grep -q "실행 상태: ⚠️" README.md; then
+            echo "$target already sealed and README is clean; skipping redundant run and commit."
             echo "done=true" >> "$GITHUB_OUTPUT"
           else
             echo "done=false" >> "$GITHUB_OUTPUT"
@@ -84,7 +84,7 @@ jobs:
           echo "reason=$reason" >> "$GITHUB_OUTPUT"
           echo "3회 시도 모두 실패"
           exit 1
-      - name: Preserve exact inputs for the observation
+      - name: Package exact inputs for the observation
         id: archive
         if: steps.observe.outputs.status == 'CAPTURED' || steps.observe.outputs.status == 'BACKFILLED'
         shell: bash
@@ -94,10 +94,18 @@ jobs:
           if [ "${{ steps.observe.outputs.status }}" = "BACKFILLED" ]; then
             name="backfill_from_${asof}_$(TZ=Asia/Seoul date +%Y%m%d%H%M)"
           fi
-          mkdir -p quant-research/data/research/T-110/raw
-          tar -czf "quant-research/data/research/T-110/raw/$name.tar.gz" -C quant-research/data daily_3y
+          echo "archive_name=$name" >> "$GITHUB_OUTPUT"
+          tar -czf "${RUNNER_TEMP}/${name}.tar.gz" -C quant-research/data daily_3y
+      - name: Upload raw daily snapshot as Actions Artifact
+        if: steps.archive.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-3y-raw-${{ steps.archive.outputs.archive_name }}
+          path: ${{ runner.temp }}/${{ steps.archive.outputs.archive_name }}.tar.gz
+          retention-days: 30
+          if-no-files-found: error
       - name: Refresh execution status even with no candidates or failed data
-        if: always() && !cancelled()
+        if: always() && !cancelled() && steps.gate.outputs.done != 'true'
         id: heartbeat
         env:
           OBSERVATION_STATUS: ${{ steps.observe.outputs.status }}
@@ -111,7 +119,7 @@ jobs:
           if [ "$JOB_STATUS" = failure ] && [ "$status" != SKIPPED ]; then status=ERROR; fi
           python3 quant-research/scripts/refresh_forward_status.py --status "$status" --reason "$OBSERVATION_REASON"
       - name: Commit research records and refreshed panel
-        if: always() && steps.heartbeat.outcome == 'success' && !cancelled()
+        if: always() && steps.heartbeat.outcome == 'success' && !cancelled() && steps.gate.outputs.done != 'true'
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
@@ -119,7 +127,9 @@ jobs:
           if [ "${{ steps.archive.outcome }}" = success ]; then
             git add quant-research/data/research/T-063/fetch_manifest_3y_*.json
             git add quant-research/data/vcp_snapshots/universe_*.csv
-            git add quant-research/data/research/T-110/
+            git add quant-research/data/research/T-110/runs/
+            git add quant-research/data/research/T-110/latest.md
+            git add quant-research/data/research/T-110/outcomes.json
           else
             # Re-render from the immutable record without replacing its source archive.
             git add quant-research/data/research/T-110/latest.md

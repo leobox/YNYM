@@ -469,3 +469,153 @@ def test_non_destructive_correction_overlay_is_used_without_modifying_seal(sourc
     _, carried = include_unresolved(today_univ, runs)
     assert carried == ["000001"]
 
+
+def test_regime_context_detects_weakening_and_ignores_future_records(tmp_path):
+    runs = tmp_path / "runs"
+    runs.mkdir()
+    sessions = [
+        ("2026-10-01", 89.2),
+        ("2026-10-02", 88.7),
+        ("2026-10-06", 87.9),
+        ("2026-10-07", 85.9),
+        ("2026-10-08", 80.9),
+        ("2026-10-12", 95.0),  # Future relative to 10-07 / 10-08
+    ]
+    for day, b in sessions:
+        (runs / f"{day}.json").write_text(
+            json.dumps({"as_of": day, "market_breadth_pct": b}), encoding="utf-8"
+        )
+
+    # On 2026-10-07: 3 consecutive drops (89.2 -> 88.7 -> 87.9 -> 85.9) triggers WEAKENING
+    ctx_07 = forward.compute_regime_context({"as_of": "2026-10-07", "market_breadth_pct": 85.9}, runs)
+    assert ctx_07 is not None
+    assert ctx_07["status"] == "WEAKENING"
+    assert "🟡 레짐 둔화 주의" in ctx_07["badge"]
+    assert ctx_07["consecutive_drops"] == 3
+    assert [item["date"] for item in ctx_07["history"]] == [
+        "2026-10-01", "2026-10-02", "2026-10-06", "2026-10-07"
+    ]
+
+    # On 2026-10-08: drawdown from peak is -8.3%p, ignores 2026-10-12
+    ctx_08 = forward.compute_regime_context({"as_of": "2026-10-08", "market_breadth_pct": 80.9}, runs)
+    assert ctx_08["status"] == "WEAKENING"
+    assert ctx_08["drawdown_from_peak_pct"] == pytest.approx(-8.3)
+    assert all(item["date"] <= "2026-10-08" for item in ctx_08["history"])
+
+    # Stable/rising regime
+    (runs / "2026-10-07.json").write_text(json.dumps({"as_of": "2026-10-07", "market_breadth_pct": 88.5}))
+    (runs / "2026-10-08.json").write_text(json.dumps({"as_of": "2026-10-08", "market_breadth_pct": 89.5}))
+    ctx_stable = forward.compute_regime_context({"as_of": "2026-10-08", "market_breadth_pct": 89.5}, runs)
+    assert ctx_stable["status"] == "STABLE"
+    assert "🟢 레짐 안정/확장" in ctx_stable["badge"]
+
+
+def test_gate_funnel_monotonicity_and_prefix_invariance():
+    from research.early_inception_engine import (
+        compute_early_inception_rankings,
+        compute_early_inception_3d_rankings,
+    )
+    days = pd.bdate_range("2026-03-01", periods=140)
+    eval_date = days[-5]
+
+    # Stock 1: passes all basic & 3d gates on eval_date, then crashes in future bars
+    c1 = np.full(len(days), 10000.0)
+    h1 = np.full(len(days), 10200.0)
+    l1 = np.full(len(days), 9900.0)
+    v1 = np.full(len(days), 100000.0)
+    idx = list(days).index(eval_date)
+    # Tighten 20-day range relative to 60-day range
+    h1[idx - 55 : idx - 25] = 11000.0
+    l1[idx - 55 : idx - 25] = 9000.0
+    c1[idx - 20 : idx] = 10050.0
+    h1[idx - 20 : idx] = 10100.0
+    l1[idx - 20 : idx] = 9950.0
+    c1[idx] = 10150.0
+    h1[idx] = 10160.0
+    l1[idx] = 10000.0
+    v1[idx] = 250000.0
+    # Future crash after eval_date (must be ignored by prefix slice)
+    c1[idx + 1 :] = 5000.0
+
+    # Stock 2: uptrend but does not break 20d high
+    c2 = np.full(len(days), 10000.0)
+    h2 = np.full(len(days), 10300.0)
+    l2 = np.full(len(days), 9900.0)
+    v2 = np.full(len(days), 100000.0)
+
+    # Stock 3: below SMA20/SMA60 (downtrend)
+    c3 = np.linspace(15000.0, 8000.0, len(days))
+    h3 = c3 * 1.01
+    l3 = c3 * 0.99
+    v3 = np.full(len(days), 100000.0)
+
+    def make_df(c, h, l, v):
+        return pd.DataFrame(
+            {"Open": c * 0.995, "High": h, "Low": l, "Close": c, "Volume": v},
+            index=days,
+        )
+
+    full_univ = {
+        "000001": make_df(c1, h1, l1, v1),
+        "000002": make_df(c2, h2, l2, v2),
+        "000003": make_df(c3, h3, l3, v3),
+    }
+    prefix_univ = {k: df.loc[:eval_date].copy() for k, df in full_univ.items()}
+
+    f_full = forward.compute_gate_funnel(full_univ, eval_date)
+    f_prefix = forward.compute_gate_funnel(prefix_univ, eval_date)
+    assert f_full == f_prefix
+    assert f_full["eligible"] == 3
+    assert (
+        f_full["eligible"]
+        >= f_full["trend_liquidity"]
+        >= f_full["not_overextended"]
+        >= f_full["contraction"]
+        >= f_full["breakout_20d"]
+        >= f_full["final_basic"]
+        >= 1
+    )
+    assert f_full["final_basic"] == len(compute_early_inception_rankings(prefix_univ, eval_date))
+    assert f_full["final_3d"] == len(compute_early_inception_3d_rankings(prefix_univ, eval_date))
+
+    f_halted = forward.compute_gate_funnel(prefix_univ, eval_date, market_breadth_pct=30.0)
+    assert f_halted["breakout_20d"] == f_prefix["breakout_20d"]
+    assert f_halted["final_basic"] == 0 and f_halted["final_3d"] == 0
+
+
+def test_render_panel_includes_regime_and_gate_funnel_and_survives_heartbeat(panel_record, tmp_path):
+    from scripts.refresh_forward_status import refresh
+    regime_ctx = {
+        "status": "WEAKENING",
+        "badge": "🟡 레짐 둔화 주의",
+        "history": [
+            {"date": "2026-10-06", "breadth_pct": 87.9},
+            {"date": "2026-10-07", "breadth_pct": 85.9},
+            {"date": "2026-10-08", "breadth_pct": 55.0},
+        ],
+        "delta_pct": -32.9,
+        "drawdown_from_peak_pct": -32.9,
+        "consecutive_drops": 2,
+    }
+    funnel = {
+        "eligible": 144,
+        "trend_liquidity": 53,
+        "not_overextended": 7,
+        "contraction": 4,
+        "breakout_20d": 0,
+        "final_basic": 0,
+        "final_3d": 0,
+    }
+    panel = forward.render_panel(panel_record, {}, regime_context=regime_ctx, gate_funnel=funnel)
+    assert "🟡 레짐 둔화 주의 · **최근 3거래일 추이:** 87.9% (`10-06`) → 85.9% (`10-07`) → 55.0% (`10-08`)" in panel
+    assert "**게이트별 생존 (`144`종목 평가):** 추세·대금 `53` → 비과열 `7` → 20일 수축 `4` → 20일 고점돌파 `0` → **최종 통과: 기본 `0`건 / 3일 집중 `0`건**" in panel
+
+    readme = tmp_path / "README.md"
+    latest = tmp_path / "latest.md"
+    readme.write_text(f"<!-- DUAL_FORWARD:START -->\n{panel}\n<!-- DUAL_FORWARD:END -->\n", encoding="utf-8")
+    refresh(readme, latest, "CAPTURED", now=datetime(2026, 10, 8, 20, 10, tzinfo=ZoneInfo("Asia/Seoul")))
+    refreshed = readme.read_text(encoding="utf-8")
+    assert "🟡 레짐 둔화 주의" in refreshed
+    assert "게이트별 생존 (`144`종목 평가)" in refreshed
+
+
