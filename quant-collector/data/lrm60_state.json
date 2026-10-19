@@ -1,23 +1,8 @@
 {
   "version": "lrm60_v2",
-  "cash": 679098.8517321043,
-  "equity": 982648.8517321043,
-  "positions": {
-    "253450": {
-      "code": "253450",
-      "name": "스튜디오드래곤",
-      "market": "KOSDAQ",
-      "entry_ts": "2026-10-16T10:00:00+09:00",
-      "entry_price": 23735.550000000003,
-      "breakout_level": 22200.0,
-      "qty": 13,
-      "cost": 308916.99647250003,
-      "peak_price": 24350.0,
-      "last_close": 23350.0,
-      "bars_held": 5,
-      "target_1_done": false
-    }
-  },
+  "cash": 974534.0446014248,
+  "equity": 974534.0446014248,
+  "positions": {},
   "pending": [],
   "trades": [
     {
@@ -250,15 +235,26 @@
       "qty": 4,
       "pnl": 23317.32,
       "reason": "TARGET_TOUCH"
+    },
+    {
+      "code": "253450",
+      "name": "스튜디오드래곤",
+      "entry_ts": "2026-10-16T10:00:00+09:00",
+      "exit_ts": "2026-10-19T09:00:00+09:00",
+      "entry_price": 23735.550000000003,
+      "exit_price": 22751.9488,
+      "qty": 13,
+      "pnl": -13481.8,
+      "reason": "STOP_TOUCH"
     }
   ],
-  "last_bar_ts": "2026-10-16T14:00:00+09:00",
+  "last_bar_ts": "2026-10-19T12:00:00+09:00",
   "last_candidates": [],
   "gate_counts": {
-    "trend": 81,
-    "breakout": 2,
-    "liquidity": 27,
-    "candle": 6
+    "trend": 109,
+    "breakout": 8,
+    "liquidity": 21,
+    "candle": 69
   },
   "coverage": {
     "scanned": 350,
