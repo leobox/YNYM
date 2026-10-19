@@ -1,0 +1,2 @@
+﻿code,name,market,bar_ts,signal_close,breakout_level,amount_e8,r_vol,d_base_pct,cli,gates,passed
+000120,CJ대한통운,KOSPI,2026-10-19T14:00:00+09:00,71800.0,71400.0,13.27,3.584189582820124,2.185,0.8333,"{'trend': True, 'breakout': True, 'liquidity': True, 'candle': True}",True
