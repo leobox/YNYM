@@ -1,29 +1,9 @@
 {
   "version": "lrm60_v2",
-  "cash": 974534.0446014248,
-  "equity": 974534.0446014248,
+  "cash": 972177.2315248249,
+  "equity": 972177.2315248249,
   "positions": {},
-  "pending": [
-    {
-      "code": "000120",
-      "name": "CJ대한통운",
-      "market": "KOSPI",
-      "bar_ts": "2026-10-19T14:00:00+09:00",
-      "signal_close": 71800.0,
-      "breakout_level": 71400.0,
-      "amount_e8": 13.27,
-      "r_vol": 3.584189582820124,
-      "d_base_pct": 2.185,
-      "cli": 0.8333,
-      "gates": {
-        "trend": true,
-        "breakout": true,
-        "liquidity": true,
-        "candle": true
-      },
-      "passed": true
-    }
-  ],
+  "pending": [],
   "trades": [
     {
       "code": "005070",
@@ -266,42 +246,33 @@
       "qty": 13,
       "pnl": -13481.8,
       "reason": "STOP_TOUCH"
-    }
-  ],
-  "last_bar_ts": "2026-10-19T14:00:00+09:00",
-  "last_candidates": [
+    },
     {
       "code": "000120",
       "name": "CJ대한통운",
-      "market": "KOSPI",
-      "bar_ts": "2026-10-19T14:00:00+09:00",
-      "signal_close": 71800.0,
-      "breakout_level": 71400.0,
-      "amount_e8": 13.27,
-      "r_vol": 3.584189582820124,
-      "d_base_pct": 2.185,
-      "cli": 0.8333,
-      "gates": {
-        "trend": true,
-        "breakout": true,
-        "liquidity": true,
-        "candle": true
-      },
-      "passed": true
+      "entry_ts": "2026-10-20T09:00:00+09:00",
+      "exit_ts": "2026-10-20T09:00:00+09:00",
+      "entry_price": 71006.35,
+      "exit_price": 70579.971,
+      "qty": 4,
+      "pnl": -2356.81,
+      "reason": "STOP_TOUCH"
     }
   ],
+  "last_bar_ts": "2026-10-20T12:00:00+09:00",
+  "last_candidates": [],
   "gate_counts": {
-    "trend": 149,
-    "breakout": 29,
-    "liquidity": 29,
-    "candle": 84
+    "trend": 52,
+    "breakout": 0,
+    "liquidity": 16,
+    "candle": 11
   },
   "coverage": {
     "scanned": 350,
-    "evaluated": 350,
-    "passed": 1,
+    "evaluated": 349,
+    "passed": 0,
     "missing_bar": 0,
-    "insufficient": 0
+    "insufficient": 1
   },
   "data_gaps": [
     {
