@@ -1,174 +1,4 @@
 {
-  "algorithm260917_v1_000120_2026-10-19_1400": {
-    "signal_id": "algorithm260917_v1_000120_2026-10-19_1400",
-    "strategy_version": "algorithm260917_v1",
-    "code": "000120",
-    "name": "CJ대한통운",
-    "market": "KOSPI",
-    "signal_time_kst": "2026-10-19 14:00",
-    "registered_at_kst": "2026-10-19 19:43:20",
-    "entry_reference_price": 71100.0,
-    "targets": {
-      "tgt_3": 73233.0,
-      "tgt_5": 74655.0,
-      "tgt_7": 76077.0,
-      "tgt_10": 78210.0,
-      "tgt_5_35": 74903.85
-    },
-    "stops": {
-      "stop_3": 68967.0,
-      "stop_5": 67545.0
-    },
-    "features": {
-      "score": 71.45707442776242,
-      "pattern_type": "base_breakout",
-      "volume_ratio": 1.8232257167592443,
-      "above60": true,
-      "extension_atr": 2.37,
-      "trigger_amount_e8": 4.910178,
-      "trigger_ratio": 1.3288498680061493,
-      "breakout_level": 70700.0,
-      "trigger_close": 71400.0,
-      "current_close": 71800.0,
-      "atr_14": 762.5956201769084,
-      "sma12": 70466.66666666667,
-      "sma26": 69996.15384615384,
-      "early_trigger": true,
-      "early_tf": "10m",
-      "signal_stage": "top5_early"
-    },
-    "trading_days_observed": 2,
-    "observed_dates": [
-      "2026-10-20",
-      "2026-10-21"
-    ],
-    "highest_seen": 71700.0,
-    "lowest_seen": 67600.0,
-    "evaluations": {
-      "h3_t3_s3": {
-        "status": "STOP_FIRST",
-        "exit_price": 68967.0,
-        "exit_time": "2026-10-20 10:10",
-        "return_pct": -3.0
-      },
-      "h3_t3_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
-      },
-      "h3_t5_s3": {
-        "status": "STOP_FIRST",
-        "exit_price": 68967.0,
-        "exit_time": "2026-10-20 10:10",
-        "return_pct": -3.0
-      },
-      "h3_t5_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
-      },
-      "h3_t535_s3": {
-        "status": "STOP_FIRST",
-        "exit_price": 68967.0,
-        "exit_time": "2026-10-20 10:10",
-        "return_pct": -3.0
-      },
-      "h3_t535_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
-      },
-      "h3_t7_s3": {
-        "status": "STOP_FIRST",
-        "exit_price": 68967.0,
-        "exit_time": "2026-10-20 10:10",
-        "return_pct": -3.0
-      },
-      "h3_t7_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
-      },
-      "h3_t10_s3": {
-        "status": "STOP_FIRST",
-        "exit_price": 68967.0,
-        "exit_time": "2026-10-20 10:10",
-        "return_pct": -3.0
-      },
-      "h3_t10_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
-      },
-      "h5_t3_s3": {
-        "status": "STOP_FIRST",
-        "exit_price": 68967.0,
-        "exit_time": "2026-10-20 10:10",
-        "return_pct": -3.0
-      },
-      "h5_t3_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
-      },
-      "h5_t5_s3": {
-        "status": "STOP_FIRST",
-        "exit_price": 68967.0,
-        "exit_time": "2026-10-20 10:10",
-        "return_pct": -3.0
-      },
-      "h5_t5_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
-      },
-      "h5_t535_s3": {
-        "status": "STOP_FIRST",
-        "exit_price": 68967.0,
-        "exit_time": "2026-10-20 10:10",
-        "return_pct": -3.0
-      },
-      "h5_t535_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
-      },
-      "h5_t7_s3": {
-        "status": "STOP_FIRST",
-        "exit_price": 68967.0,
-        "exit_time": "2026-10-20 10:10",
-        "return_pct": -3.0
-      },
-      "h5_t7_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
-      },
-      "h5_t10_s3": {
-        "status": "STOP_FIRST",
-        "exit_price": 68967.0,
-        "exit_time": "2026-10-20 10:10",
-        "return_pct": -3.0
-      },
-      "h5_t10_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
-      }
-    },
-    "is_fully_resolved": false,
-    "effective_eval_start_kst": "2026-10-19 19:43"
-  },
   "algorithm260917_v1_028050_2026-10-21_1200": {
     "signal_id": "algorithm260917_v1_028050_2026-10-21_1200",
     "strategy_version": "algorithm260917_v1",
@@ -207,10 +37,12 @@
       "early_tf": "",
       "signal_stage": "top5_hold"
     },
-    "trading_days_observed": 0,
-    "observed_dates": [],
-    "highest_seen": 47500.0,
-    "lowest_seen": 47500.0,
+    "trading_days_observed": 1,
+    "observed_dates": [
+      "2026-10-21"
+    ],
+    "highest_seen": 47750.0,
+    "lowest_seen": 47100.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "PENDING",
@@ -374,10 +206,12 @@
       "early_tf": "",
       "signal_stage": "top5_hold"
     },
-    "trading_days_observed": 0,
-    "observed_dates": [],
-    "highest_seen": 72200.0,
-    "lowest_seen": 72200.0,
+    "trading_days_observed": 1,
+    "observed_dates": [
+      "2026-10-21"
+    ],
+    "highest_seen": 72500.0,
+    "lowest_seen": 71700.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "PENDING",
