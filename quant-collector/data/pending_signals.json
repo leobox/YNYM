@@ -37,13 +37,14 @@
       "early_tf": "",
       "signal_stage": "top5_hold"
     },
-    "trading_days_observed": 2,
+    "trading_days_observed": 3,
     "observed_dates": [
       "2026-10-21",
-      "2026-10-22"
+      "2026-10-22",
+      "2026-10-23"
     ],
     "highest_seen": 74800.0,
-    "lowest_seen": 71400.0,
+    "lowest_seen": 71200.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "TARGET_FIRST",
@@ -58,52 +59,52 @@
         "return_pct": 3.0
       },
       "h3_t5_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TIMEOUT",
+        "exit_price": 73100.0,
+        "exit_time": "2026-10-23 13:15",
+        "return_pct": 1.25
       },
       "h3_t5_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TIMEOUT",
+        "exit_price": 73100.0,
+        "exit_time": "2026-10-23 13:15",
+        "return_pct": 1.25
       },
       "h3_t535_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TIMEOUT",
+        "exit_price": 73100.0,
+        "exit_time": "2026-10-23 13:15",
+        "return_pct": 1.25
       },
       "h3_t535_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TIMEOUT",
+        "exit_price": 73100.0,
+        "exit_time": "2026-10-23 13:15",
+        "return_pct": 1.25
       },
       "h3_t7_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TIMEOUT",
+        "exit_price": 73100.0,
+        "exit_time": "2026-10-23 13:15",
+        "return_pct": 1.25
       },
       "h3_t7_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TIMEOUT",
+        "exit_price": 73100.0,
+        "exit_time": "2026-10-23 13:15",
+        "return_pct": 1.25
       },
       "h3_t10_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TIMEOUT",
+        "exit_price": 73100.0,
+        "exit_time": "2026-10-23 13:15",
+        "return_pct": 1.25
       },
       "h3_t10_s5": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "TIMEOUT",
+        "exit_price": 73100.0,
+        "exit_time": "2026-10-23 13:15",
+        "return_pct": 1.25
       },
       "h5_t3_s3": {
         "status": "TARGET_FIRST",
