@@ -2,8 +2,9 @@ name: LRM-60 v2.0 · 60분 완료봉 수집
 
 on:
   schedule:
-    # KST 평일 09:09~16:09, 매시 1회 (60분 완료봉 직후, UTC 00:09~07:09)
-    - cron: '9 0-7 * * 1-5'
+    # KST 평일 09:12~15:42 (30분 간격 오프피크 스케줄) 및 16:38 (장 마감 완료봉 최종 보충)
+    - cron: '12,42 0-6 * * 1-5'
+    - cron: '38 7 * * 1-5'
   workflow_dispatch:
 
 concurrency:
@@ -16,7 +17,7 @@ permissions:
 jobs:
   collect:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: 저장소 체크아웃
         uses: actions/checkout@v5
@@ -47,10 +48,13 @@ jobs:
             fi
             sleep $((attempt * 15))
           done
+
       - name: 데이터·운영 대시보드 기록
+        shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          cp README.md "${RUNNER_TEMP}/collector_root_readme.md"
           git add quant-collector/data/ quant-collector/README.md README.md
           if git diff --staged --quiet; then
             echo "기록할 변경사항 없음"
@@ -62,6 +66,29 @@ jobs:
               exit 0
             fi
             git rebase --abort 2>/dev/null || true
+            git fetch origin main
+            git reset --soft origin/main
+            git checkout origin/main -- README.md
+            python -c '
+          import pathlib
+          tmp_readme = pathlib.Path("'"${RUNNER_TEMP}"'/collector_root_readme.md").read_text(encoding="utf-8")
+          s, e = "<!-- QUANT_DASHBOARD:START -->", "<!-- QUANT_DASHBOARD:END -->"
+          if s in tmp_readme and e in tmp_readme:
+              block = tmp_readme[tmp_readme.index(s):tmp_readme.index(e)+len(e)]
+              cur = pathlib.Path("README.md").read_text(encoding="utf-8")
+              if s in cur and e in cur:
+                  new_cur = cur[:cur.index(s)] + block + cur[cur.index(e)+len(e):]
+                  pathlib.Path("README.md").write_text(new_cur, encoding="utf-8")
+          '
+            git add quant-collector/data/ quant-collector/README.md README.md
+            if git diff --staged --quiet; then
+              echo "원격 반영 후 추가 변경사항 없음"
+              exit 0
+            fi
+            git commit -m "chore(collector): refresh LRM-60 15m [skip ci]"
+            if git push origin HEAD:main; then
+              exit 0
+            fi
             if [ "$attempt" -eq 5 ]; then
               echo "5회 재시도 후 push 실패"
               exit 1

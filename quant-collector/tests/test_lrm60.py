@@ -138,3 +138,37 @@ def test_embedded_dashboard_keeps_tables_before_details():
                                        "2026-09-29 20:35", 350, embed=True)
     assert output.index("스마트 랭킹") < output.index("LRM-60") < output.index("상세 정보")
     assert "갱신: `2026-09-29 20:35 KST`" in output
+
+
+
+def test_off_grid_0905_bar_in_other_stock_does_not_wipe_pending_and_sub_breakout_open_blocked(tmp_path):
+    frame = signal_feed()
+    metadata = {
+        "000001": {"name": "삼성에스디에스", "market": "KOSPI"},
+        "415640": {"name": "KB발해인프라", "market": "KOSPI"},
+    }
+    book = LRM60PaperBook(tmp_path / "official.json")
+    assert book.advance({"000001": frame}, metadata, index_feeds())
+    assert len(book.state["pending"]) == 1
+
+    # 415640에 비정규 15:05 바가 섞여 들어와도 000001의 pending이 증발하지 않고 다음 정시(09:00)에 정상 체결되어야 함
+    odd_bar = pd.DataFrame(
+        [{"Open": 100.0, "High": 101.0, "Low": 99.0, "Close": 100.0, "Volume": 500.0}],
+        index=[frame.index[-1] + pd.Timedelta(minutes=5)],
+    )
+    next_bar = pd.DataFrame(
+        [{"Open": 110.0, "High": 113.0, "Low": 109.0, "Close": 112.0, "Volume": 100_000.0}],
+        index=[pd.Timestamp("2026-09-22 09:00")],
+    )
+    book.advance({"000001": pd.concat([frame, next_bar]), "415640": odd_bar}, metadata, index_feeds())
+    assert "000001" in book.state["positions"]
+
+    # 시초가가 돌파선(108.0) 아래(107.5)로 갭하락 출발하면 진입하지 않아야 함
+    book_gapdown = LRM60PaperBook(tmp_path / "gapdown.json")
+    book_gapdown.advance({"000001": frame}, metadata, index_feeds())
+    gapdown_bar = pd.DataFrame(
+        [{"Open": 107.5, "High": 108.5, "Low": 107.0, "Close": 108.0, "Volume": 100_000.0}],
+        index=[pd.Timestamp("2026-09-22 09:00")],
+    )
+    book_gapdown.advance({"000001": pd.concat([frame, gapdown_bar])}, metadata, index_feeds())
+    assert "000001" not in book_gapdown.state["positions"]

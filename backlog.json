@@ -2,7 +2,7 @@
   "$schema_version": "1.0",
   "meta": {
     "project": "Leobox Multi-root Workspace",
-    "updated": "2026-10-18",
+    "updated": "2026-10-24",
     "context_doc": "README.md",
     "doc_dir": "docs/tasks",
     "stack": "Multi-agent (Gemini + Claude + Codex) / Python(Quant) / GitHub Actions / Android",
@@ -5190,6 +5190,45 @@
           "at": "2026-10-18",
           "status": "done",
           "note": "연금계좌(연금저축·퇴직연금 DC/IRP) 매수 가능 ETF 상승초입 필터(레버리지·인버스, 선물·합성 파생형, 금리·채권 파킹형 제외) 보완 및 메인 README 2대 섹션(주식 상승초입 + 연금계좌 ETF 상승초입) 재구성 완료 (56 passed)"
+        }
+      ]
+    },
+    {
+      "id": "T-134",
+      "title": "quant-collector & quant-research: 약세 레짐 7대 알고리즘·파이프라인 보완 및 GitHub Actions 무중단 재정비",
+      "summary": "",
+      "doc": "docs/tasks/T-134.md",
+      "status": "done",
+      "priority": "P0",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "7대 알고리즘·파이프라인 보완(정시 리샘플링, 미관측 시간봉 보충 스캔, early_trigger 기준선·붕괴 방어, LRM60 시초가/레짐 게이트, 트래커 장마감 타임아웃, 야간 Close=NaN 방어, ETF 수축 -3% 근접도) 및 GitHub Actions 3대 워크플로 무중단 재정비 완료 (125 passed)",
+      "done_at": "2026-10-24",
+      "updated_at": "2026-10-24",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-10-24",
+      "log": [
+        {
+          "at": "2026-10-24",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-10-24",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-10-24",
+          "status": "done",
+          "note": "7대 알고리즘·파이프라인 보완(정시 리샘플링, 미관측 시간봉 보충 스캔, early_trigger 기준선·붕괴 방어, LRM60 시초가/레짐 게이트, 트래커 장마감 타임아웃, 야간 Close=NaN 방어, ETF 수축 -3% 근접도) 및 GitHub Actions 3대 워크플로 무중단 재정비 완료 (125 passed)"
         }
       ]
     }

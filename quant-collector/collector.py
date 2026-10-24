@@ -221,7 +221,8 @@ def parse_multiframe_bars(item: Dict[str, Any], now: pd.Timestamp) -> Dict[str, 
             return pd.DataFrame(columns=["Open", "High", "Low", "Close", "Volume"])
         res_list = []
         for _, g in df.groupby(df.index.date):
-            agg = g.resample(f"{rule_min}min", origin="start").agg({
+            # KRX 정규장 시계 그리드(09:00 기점)에 정렬하여 09:05 첫 체결 종목의 :05 타임스탬프 오염 방지
+            agg = g.resample(f"{rule_min}min", origin="start_day", offset="9h").agg({
                 "Open": "first", "High": "max", "Low": "min", "Close": "last", "Volume": "sum"
             }).dropna()
             # 60분봉의 경우 15:00은 30분짜리 장마감 봉
@@ -261,7 +262,7 @@ def fetch_all_bars(code: str, market: str, now: pd.Timestamp) -> Dict[str, pd.Da
         )["chart"]
         if payload.get("result"):
             return parse_multiframe_bars(payload["result"][0], now)
-    except Exception as e:
+    except Exception:
         # 5m 조회 실패 시 60m 원본 fallback
         pass
 
@@ -290,6 +291,10 @@ def save_bar_history(code: str, df_bars: pd.DataFrame, timeframe: str = "60m") -
     """
     if df_bars.empty:
         return
+    if timeframe == "60m":
+        df_bars = df_bars[(df_bars.index.minute == 0) & (df_bars.index.second == 0)]
+        if df_bars.empty:
+            return
     BARS_HISTORY_DIR.mkdir(parents=True, exist_ok=True)
     if timeframe == "60m":
         path = BARS_HISTORY_DIR / f"{code}.csv"
@@ -301,7 +306,15 @@ def save_bar_history(code: str, df_bars: pd.DataFrame, timeframe: str = "60m") -
         return
 
     try:
-        last_ts = pd.Timestamp(pd.read_csv(path, usecols=[0], index_col=0).index[-1])
+        existing_idx = pd.to_datetime(pd.read_csv(path, usecols=[0], index_col=0).index)
+        if timeframe == "60m" and (existing_idx.minute != 0).any():
+            full_old = pd.read_csv(path, index_col=0, parse_dates=True)
+            full_old = full_old[(full_old.index.minute == 0) & (full_old.index.second == 0)]
+            combined = pd.concat([full_old, df_bars])
+            combined = combined[~combined.index.duplicated(keep="last")].sort_index()
+            combined.to_csv(path)
+            return
+        last_ts = pd.Timestamp(existing_idx[-1])
     except Exception:
         df_bars.to_csv(path)  # 손상되었거나 빈 파일이면 통째로 다시 씀
         return
@@ -426,7 +439,11 @@ def valid_ohlcv(df: pd.DataFrame) -> bool:
     return not bool(bad.any())
 
 
-def score_stock(rec: Dict[str, Any], now: pd.Timestamp) -> Tuple[Optional[Dict[str, Any]], Optional[Dict[str, pd.DataFrame]], Optional[str]]:
+def score_stock(
+    rec: Dict[str, Any],
+    now: pd.Timestamp,
+    since_ts: Optional[pd.Timestamp] = None,
+) -> Tuple[Optional[Dict[str, Any]], Optional[Dict[str, pd.DataFrame]], Optional[str]]:
     try:
         bars_dict = fetch_all_bars(rec["code"], rec["market"], now)
         df = bars_dict.get("60m", pd.DataFrame())
@@ -437,31 +454,10 @@ def score_stock(rec: Dict[str, Any], now: pd.Timestamp) -> Tuple[Optional[Dict[s
         if now - df.index[-1] > pd.Timedelta(days=7):
             return None, bars_dict, "최근 7일 데이터 없음"
 
-        s = hourly_pattern(df, volume_weight=VOLUME_WEIGHT, max_extension_atr=MAX_EXTENSION_ATR).iloc[-1]
-        conf = confirmed_breakout(df).iloc[-1]
-
-        # 하위 분봉(10m, 5m, 30m) 기반 조기 돌파(Early Trigger) 감지
-        early_trigger = False
-        early_tf = ""
-        brk_lvl = float(conf.breakout_level)
-
-        if brk_lvl > 0:
-            for tf_candidate in ["10m", "5m", "30m"]:
-                df_sub = bars_dict.get(tf_candidate, pd.DataFrame())
-                if len(df_sub) >= 5:
-                    last_sub = df_sub.iloc[-1]
-                    sub_c = float(last_sub.Close)
-                    sub_v = float(last_sub.Volume)
-                    sub_amt = sub_c * sub_v
-                    sub_gap = (sub_c - brk_lvl) / brk_lvl * 100.0
-                    vol_avg = float(df_sub.Volume.tail(15).mean())
-                    # 돌파선 안착(+0.8~+4.0%) & 거래량 증가 & 거래대금 1억 이상
-                    if (0.8 <= sub_gap <= 4.0) and (vol_avg > 0 and sub_v >= vol_avg * 1.3) and sub_amt >= 1e8:
-                        early_trigger = True
-                        early_tf = tf_candidate
-                        break
-
-        matched = bool(s.eligible and (conf.hold or early_trigger))
+        s_all = hourly_pattern(df, volume_weight=VOLUME_WEIGHT, max_extension_atr=MAX_EXTENSION_ATR)
+        conf_all = confirmed_breakout(df)
+        s = s_all.iloc[-1]
+        conf = conf_all.iloc[-1]
         if not np.isfinite(s.score):
             return None, bars_dict, "지표 계산 불가"
 
@@ -469,7 +465,78 @@ def score_stock(rec: Dict[str, Any], now: pd.Timestamp) -> Tuple[Optional[Dict[s
         fast, medium = c.rolling(12).mean(), c.rolling(26).mean()
         atr_val = _atr(df).iloc[-1]
 
-        mode_badge = f"⚡ 조기({early_tf})" if early_trigger and not conf.hold else ("🟢 확정(60m)" if conf.hold else "제외")
+        # 1. 정식 60분봉 확정 돌파(Confirmed) 판정 + 당일 미관측 시간봉(스케줄 지연) 보충 스캔
+        hold_matched = bool(s.eligible and conf.hold)
+        eval_pos = len(df) - 1
+        if not hold_matched and bool(s.eligible):
+            last_day = df.index[-1].date()
+            for pos in range(len(df) - 2, max(0, len(df) - 8), -1):
+                ts_pos = df.index[pos]
+                if ts_pos.date() != last_day:
+                    break
+                if since_ts is not None and ts_pos <= since_ts:
+                    break
+                if bool(s_all.eligible.iloc[pos]) and bool(conf_all.hold.iloc[pos]):
+                    brk_pos = float(conf_all.breakout_level.iloc[pos])
+                    # 지연 실행 시점에도 돌파선 지지(종가 >= 돌파선, 이후 최저가 >= 돌파선*0.995)가 유지된 경우만 유효 복원
+                    if brk_pos > 0 and float(c.iloc[-1]) >= brk_pos and float(df.Low.iloc[pos:].min()) >= brk_pos * 0.995:
+                        hold_matched = True
+                        eval_pos = pos
+                        break
+
+        # 2. 하위 분봉(10m, 5m, 30m) 기반 조기 돌파(Early Trigger) 감지
+        # - 이전 봉이 돌파 트리거(previous_trigger)면 conf.breakout_level, 당해 봉 신규 돌파면 conf.current_level 사용
+        # - 60분봉 종가가 돌파선 이상이고 SMA60 상회(above60)일 때만 유효 처리하여 약세장 역추세·돌파선 붕괴 오탐 차단
+        early_trigger = False
+        early_tf = ""
+        use_prev_trig = bool(conf.previous_trigger)
+        early_brk_lvl = float(conf.breakout_level if use_prev_trig else conf.current_level)
+
+        if not hold_matched and bool(s.eligible) and bool(s.above60) and early_brk_lvl > 0 and float(c.iloc[-1]) >= early_brk_lvl:
+            last_day = df.index[-1].date()
+            for tf_candidate in ["10m", "5m", "30m"]:
+                df_sub = bars_dict.get(tf_candidate, pd.DataFrame())
+                if len(df_sub) >= 5:
+                    last_sub = df_sub.iloc[-1]
+                    if last_sub.name.date() != last_day:
+                        continue
+                    sub_c = float(last_sub.Close)
+                    sub_o = float(last_sub.Open)
+                    sub_v = float(last_sub.Volume)
+                    sub_amt = sub_c * sub_v
+                    sub_gap = (sub_c - early_brk_lvl) / early_brk_lvl * 100.0
+                    vol_avg = float(df_sub.Volume.tail(15).mean())
+                    # 돌파선 안착(+0.8~+4.0%) & 양봉 & 거래량 증가 & 거래대금 1억 이상
+                    if (0.8 <= sub_gap <= 4.0) and (sub_c >= sub_o) and (vol_avg > 0 and sub_v >= vol_avg * 1.3) and sub_amt >= 1e8:
+                        early_trigger = True
+                        early_tf = tf_candidate
+                        break
+
+        matched = bool(s.eligible and (hold_matched or early_trigger))
+        mode_badge = f"⚡ 조기({early_tf})" if early_trigger and not hold_matched else ("🟢 확정(60m)" if hold_matched else "제외")
+
+        if hold_matched:
+            conf_ref = conf_all.iloc[eval_pos]
+            eff_brk_level = float(conf_ref.breakout_level)
+            eff_trig_close = float(c.iloc[eval_pos - 1])
+            eff_trig_amt = float(conf_ref.trigger_amount)
+            eff_trig_ratio = float(conf_ref.trigger_ratio)
+            eff_bar_ts = df.index[eval_pos]
+            eff_trig_ts = df.index[eval_pos - 1]
+        elif early_trigger and not use_prev_trig:
+            eff_brk_level = float(conf.current_level)
+            eff_trig_close = float(c.iloc[-1])
+            eff_trig_amt = float(conf.current_amount)
+            eff_trig_ratio = float(conf.current_ratio)
+            eff_bar_ts = df.index[-1]
+            eff_trig_ts = df.index[-1]
+        else:
+            eff_brk_level = float(conf.breakout_level)
+            eff_trig_close = float(c.iloc[-2])
+            eff_trig_amt = float(conf.trigger_amount)
+            eff_trig_ratio = float(conf.trigger_ratio)
+            eff_bar_ts = df.index[-1]
+            eff_trig_ts = df.index[-2]
 
         row = {
             "종목": rec["name"],
@@ -479,13 +546,13 @@ def score_stock(rec: Dict[str, Any], now: pd.Timestamp) -> Tuple[Optional[Dict[s
             "돌파모드": mode_badge,
             "점수": float(s.score),
             "이격ATR": round(float((c.iloc[-1] - medium.iloc[-1]) / atr_val), 2) if pd.notna(atr_val) and atr_val > 0 else np.nan,
-            "돌파선": round(float(conf.breakout_level), 2),
-            "돌파봉종가": float(c.iloc[-2]),
-            "돌파봉대금_억": round(float(conf.trigger_amount), 1),
-            "돌파봉대금배수": round(float(conf.trigger_ratio), 2),
-            "기준봉(KST)": df.index[-1].strftime("%m-%d %H:%M"),
-            "돌파봉(KST)": df.index[-2].strftime("%m-%d %H:%M"),
-            "_bar_time_full": df.index[-1].strftime("%Y-%m-%d %H:%M"),
+            "돌파선": round(eff_brk_level, 2),
+            "돌파봉종가": eff_trig_close,
+            "돌파봉대금_억": round(eff_trig_amt, 1),
+            "돌파봉대금배수": round(eff_trig_ratio, 2),
+            "기준봉(KST)": eff_bar_ts.strftime("%m-%d %H:%M"),
+            "돌파봉(KST)": eff_trig_ts.strftime("%m-%d %H:%M"),
+            "_bar_time_full": eff_bar_ts.strftime("%Y-%m-%d %H:%M"),
             "_base": bool(s.eligible),
             "_match": matched,
             "_early_trigger": early_trigger,
@@ -501,7 +568,7 @@ def score_stock(rec: Dict[str, Any], now: pd.Timestamp) -> Tuple[Optional[Dict[s
         is_waiting = bool(s.eligible and conf.waiting)
         is_watch_only = bool(is_waiting and not matched)
         signal_stage = (
-            "top5_early" if (matched and early_trigger)
+            "top5_early" if (matched and early_trigger and not hold_matched)
             else ("top5_hold" if matched else ("watch" if is_waiting else "excluded"))
         )
 
@@ -512,10 +579,10 @@ def score_stock(rec: Dict[str, Any], now: pd.Timestamp) -> Tuple[Optional[Dict[s
             "volume_ratio": float(s.volume_ratio),
             "above60": bool(s.above60),
             "extension_atr": float(row["이격ATR"]),
-            "trigger_amount_e8": float(conf.current_amount if is_watch_only else conf.trigger_amount),
-            "trigger_ratio": float(conf.current_ratio if is_watch_only else conf.trigger_ratio),
-            "breakout_level": float(conf.current_level if is_watch_only else conf.breakout_level),
-            "trigger_close": float(c.iloc[-1] if is_watch_only else c.iloc[-2]),
+            "trigger_amount_e8": float(conf.current_amount if is_watch_only else eff_trig_amt),
+            "trigger_ratio": float(conf.current_ratio if is_watch_only else eff_trig_ratio),
+            "breakout_level": float(conf.current_level if is_watch_only else eff_brk_level),
+            "trigger_close": float(c.iloc[-1] if is_watch_only else eff_trig_close),
             "current_close": float(c.iloc[-1]),
             "atr_14": float(atr_val) if pd.notna(atr_val) else 0.0,
             "sma12": float(fast.iloc[-1]),
@@ -577,7 +644,8 @@ def calculate_smart_rank(
     """
     돌파 건전도, 유동성(거래대금), 진입 시간대, 패턴을 종합 평가한 스마트 랭킹 메트릭 산출
     - 돌파이격 골디락스 구간 (+1.2% ~ +4.0% 안착) 가산 (+15점)
-    - 턱걸이 돌파 (< +0.8%) 감점 (-20점, 붕괴 위험)
+    - 돌파선 하회 (< 0.0%) 대폭 감점 (-40점, 돌파 붕괴)
+    - 턱걸이 돌파 (0.0% <= gap < +0.8%) 감점 (-20점, 붕괴 위험)
     - 과열 상투 돌파 (> +5.5%) 감점 (-15점, 고점 추격매수 위험)
     - 오전 주도주 슬롯 (09:00, 10:00) 가산 (+10점)
     - 1시간 거래대금 (>= 20억: +10점, >= 50억: +15점) 및 VR (>= 2.0: +5점) 가산
@@ -599,7 +667,10 @@ def calculate_smart_rank(
         gap_pct = 0.0
 
     # 건전도 판정 및 가산/감점
-    if 1.2 <= gap_pct <= 4.0:
+    if gap_pct < 0.0:
+        health = "붕괴🔴"
+        gap_score = -40.0
+    elif 1.2 <= gap_pct <= 4.0:
         health = "안착🟢"
         gap_score = 15.0
     elif gap_pct < 0.8:
@@ -1171,6 +1242,7 @@ def run_collector():
     lrm_book = LRM60PaperBook(LRM_STATE_PATH)
     lrm_experiment = LRM60PaperBook(LRM_EXPERIMENT_STATE_PATH, experimental=True)
     index_feeds = fetch_index_feeds()
+    since_ts = pd.Timestamp(lrm_book.state["last_bar_ts"]) if lrm_book.state.get("last_bar_ts") else None
 
     # 1. 대상 유니버스 확보 (KOSPI200+KOSDAQ150 근사, 최대 350종목)
     universe_stocks = get_universe()
@@ -1202,7 +1274,7 @@ def run_collector():
     lrm_feeds = {}
 
     with ThreadPoolExecutor(max_workers=WORKERS) as pool:
-        results = pool.map(lambda s: (s, score_stock(s, now_ts)), all_scan_targets)
+        results = pool.map(lambda s: (s, score_stock(s, now_ts, since_ts=since_ts)), all_scan_targets)
         for rec, (row, bars_res, err) in results:
             if bars_res is not None:
                 if isinstance(bars_res, dict):
@@ -1257,7 +1329,7 @@ def run_collector():
     print(f"-> 채점 완료: 성공 {len(rows)} / 제외·오류 {len(errors)}")
 
     # LRM-60은 위와 동일한 완료 60분봉을 사용한다. 이전 실행의 가상 계좌만 전진시킨다.
-    lrm_advanced = lrm_book.advance(lrm_feeds, target_by_code)
+    lrm_advanced = lrm_book.advance(lrm_feeds, target_by_code, index_feeds)
     lrm_state = lrm_book.state
     lrm_experiment.advance(lrm_feeds, target_by_code, index_feeds)
     lrm_experiment_state = lrm_experiment.state
@@ -1271,8 +1343,12 @@ def run_collector():
 
     # 4. 신규 신호 등록 (Top 5 조건 충족 및 Watch 돌파 종목)
     registered_count = 0
-    # A. Top 5 등록
+    # A. Top 5 등록 (실시간 현재가가 이미 돌파선 아래로 붕괴된 경우 진입 등록 제외)
     for _, r in top_quoted.iterrows():
+        entry_ref = float(r["현재가"] if pd.notna(r.get("현재가")) else r["돌파봉종가"])
+        brk_ref = float(r.get("돌파선", 0.0))
+        if brk_ref > 0 and entry_ref < brk_ref:
+            continue
         sig_id = tracker.register_signal(
             strategy_version=STRATEGY_VERSION,
             code=r["코드"],
@@ -1280,7 +1356,7 @@ def run_collector():
             market=r["시장"],
             bar_time_kst=r.get("_bar_time_full", r["기준봉(KST)"]),
             features=r.get("_features", {}),
-            entry_reference_price=float(r["현재가"] if pd.notna(r.get("현재가")) else r["돌파봉종가"]),
+            entry_reference_price=entry_ref,
         )
         if sig_id:
             registered_count += 1

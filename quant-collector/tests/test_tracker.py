@@ -160,3 +160,38 @@ class TestUpdateWithBarsRegistrationCutoff:
         assert sig["trading_days_observed"] == 0
         assert sig["evaluations"]["h5_t535_s5"]["status"] == "PENDING"
 
+
+
+def test_day_h_midday_run_does_not_prematurely_timeout_before_market_close(tmp_path):
+    from datetime import datetime
+    from tracker import KST
+
+    tracker = make_tracker(tmp_path)
+    sig_id = tracker.register_signal(
+        strategy_version="algorithm260917_v1",
+        code="064400",
+        name="LG씨엔에스",
+        market="KOSPI",
+        bar_time_kst="2026-10-21 12:00",
+        features={"signal_stage": "top5_early"},
+        entry_reference_price=72000.0,
+        registered_at_kst="2026-10-21 13:33:01",
+    )
+    candles = [
+        {"time_kst": "2026-10-21 13:35", "open": 72100.0, "high": 72500.0, "low": 71800.0, "close": 72200.0, "volume": 1000},
+        {"time_kst": "2026-10-22 10:00", "open": 72200.0, "high": 73000.0, "low": 71900.0, "close": 72800.0, "volume": 1200},
+        {"time_kst": "2026-10-23 12:55", "open": 73000.0, "high": 73500.0, "low": 72500.0, "close": 73200.0, "volume": 1500},
+    ]
+    # 3일차(10-23) 장중 13:15 실행 시점에는 아직 오후장이 남아 있으므로 h3가 조기 TIMEOUT 처리되면 안 됨
+    midday_dt = datetime(2026, 10, 23, 13, 15, tzinfo=KST)
+    tracker.update_with_bars({"064400": candles}, midday_dt)
+    sig = tracker.pending_signals[sig_id]
+    assert sig["trading_days_observed"] == 3
+    assert sig["evaluations"]["h3_t535_s5"]["status"] == "PENDING"
+
+    # 3일차(10-23) 장 마감 이후(18:57) 실행 시점에는 h3가 정상 TIMEOUT 확정되어야 함
+    after_close_dt = datetime(2026, 10, 23, 18, 57, tzinfo=KST)
+    tracker.update_with_bars({"064400": candles}, after_close_dt)
+    sig = tracker.pending_signals[sig_id]
+    assert sig["evaluations"]["h3_t535_s5"]["status"] == "TIMEOUT"
+    assert sig["evaluations"]["h5_t535_s5"]["status"] == "PENDING"

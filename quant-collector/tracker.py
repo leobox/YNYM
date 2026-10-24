@@ -272,10 +272,24 @@ class SignalTracker:
                                 ret_pct = t_pct
                                 break
 
-                        # 5일 전체 관찰 후에도 미접촉이고 만기 도달한 경우
-                        if status == "PENDING" and len(observed_dates) >= h:
+                        # h일 전체 관찰 후에도 미접촉이고 만기(h일차 정규장 마감 이후 또는 익일 도달) 도달한 경우
+                        h_date_str = observed_dates[h - 1] if len(observed_dates) >= h else ""
+                        now_date_str = now_dt.strftime("%Y-%m-%d")
+                        now_hm_str = now_dt.strftime("%H:%M")
+                        last_bar = future_bars[-1]
+                        last_bar_hm = last_bar["time_kst"].split(" ")[-1][:5] if " " in last_bar["time_kst"] else ""
+                        session_closed = bool(
+                            h_date_str
+                            and (
+                                now_date_str > h_date_str
+                                or (now_date_str == h_date_str and now_hm_str >= "15:30")
+                                or (last_bar["time_kst"].startswith(h_date_str) and last_bar_hm >= "15:00")
+                            )
+                        )
+                        if status == "PENDING" and (
+                            len(observed_dates) > h or (len(observed_dates) == h and session_closed)
+                        ):
                             status = "TIMEOUT"
-                            last_bar = future_bars[-1]
                             exit_price = last_bar["close"]
                             exit_time = last_bar["time_kst"]
                             ret_pct = round((exit_price / entry_p - 1) * 100.0, 2)
@@ -288,8 +302,8 @@ class SignalTracker:
                         if status == "PENDING":
                             all_resolved = False
 
-            # 모든 horizon 조합이 만료되었거나 종결되었는지 확인 (최대 h=5거래일 경과 시 완전 종결)
-            if all_resolved or len(observed_dates) >= max(HORIZONS):
+            # 모든 horizon 조합이 만료되었거나 종결되었는지 확인 (최대 h=5거래일 장 마감 경과 시 완전 종결)
+            if all_resolved:
                 sig["is_fully_resolved"] = True
                 sig["resolved_at_kst"] = now_dt.strftime("%Y-%m-%d %H:%M:%S")
                 self._append_resolved(sig)

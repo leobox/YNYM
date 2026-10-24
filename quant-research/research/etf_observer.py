@@ -149,6 +149,7 @@ def rank_etfs(universe: dict[str,pd.DataFrame], as_of: str) -> dict:
         if not np.isfinite([mom,h20,l20,r20,r60,contraction,width,vr,spike,cmf]).all(): continue
         if (vr<1.2 and spike<1.35) or cmf<-.05: continue
         funnel['ignition']+=1
+        if close < h20 * 0.97: continue
         rows.append(dict(code=code,close=close,prior_high20=h20,
                          stop_price_5pct=round(close*0.95,2),sma10=sma10,
                          distance_to_high_pct=(close/h20-1)*100,contraction_ratio=contraction,
@@ -238,7 +239,7 @@ def render_panel(record: dict) -> str:
               '- **연금계좌 적격 필터:** 연금저축펀드·퇴직연금(DC/IRP)에서 매수 불가능한 **레버리지·인버스(Tab 3)**, 파생상품 위험평가액 한도(40%)로 제한되는 **선물·원자재파생·합성형 ETF(`선물`, `WTI`, `합성` 등 — 단 실물 `KRX금현물`은 허용)**, 그리고 일간 이자 누적으로 차트가 왜곡되는 **금리·머니마켓·채권 파킹형(Tab 6·7)**을 모두 제외한 실물 주식·섹터·테마·해외지수·금현물 ETF 상위 100개를 평가합니다.',
               '- **추세·대금:** 종가 ≥ SMA20, SMA20/60 정배열(또는 종가 ≥ SMA60), 20일 중앙 거래대금 ≥ 5억원.',
               '- **비과열·수축·수급:** 60일 모멘텀 ≤ 25%, SMA60 이격 ≤ 1.18배, 20일 변동폭 ≤ 25%, 수축비(20일/60일 변동폭) ≤ 0.85, 5일 거래량비 ≥ 1.20x(또는 당일 ≥ 1.35x), CMF20 ≥ −0.05.',
-              '- **돌파 확정 vs 수축 돌파임박:** 종가 ≥ 직전 20일 고점이면 **20일 돌파 확정**, 기초 수축·수급 점화를 모두 충족한 채 직전 20일 고점 아래에서 돌파를 준비 중이면 **20일 수축 돌파임박**으로 분류합니다.',
+              '- **돌파 확정 vs 수축 돌파임박:** 종가 ≥ 직전 20일 고점이면 **20일 돌파 확정**, 기초 수축·수급 점화를 모두 충족한 채 직전 20일 고점 대비 −3.0% 이내(`종가 ≥ 0.97 × 20일 고점`)에서 돌파를 준비 중이면 **20일 수축 돌파임박**으로 분류합니다.',
               '- 퇴직연금(DC/IRP)은 안전자산 30% 의무 편입 규정(주식형 ETF 최대 70% 한도)이 적용되므로 계좌별 위험자산 한도를 확인하세요. 네이버 금융 공개 일봉 기준의 관찰 참조값이며 실제 주문·체결 기능은 포함하지 않습니다.','', '</details>','']
     return '\n'.join(lines)
 

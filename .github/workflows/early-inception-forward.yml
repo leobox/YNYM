@@ -2,13 +2,14 @@ name: Early Inception daily forward observation
 
 on:
   schedule:
-    # Weekdays 20:07 / 21:07 / 22:07 / 23:07 KST. GitHub cron is frequently delayed by
-    # hours or dropped, so several attempts are queued; the first success seals the day
-    # and subsequent runs exit early without redundant commits once sealed cleanly.
-    - cron: '7 11 * * 1-5'
-    - cron: '7 12 * * 1-5'
-    - cron: '7 13 * * 1-5'
-    - cron: '7 14 * * 1-5'
+    # Weekdays 16:23 / 17:43 / 19:17 / 21:17 KST + 03:52 KST next-morning backup
+    # (avoids Yahoo Finance's 00:00~03:41 KST daily Close=NaN settlement blackout window).
+    # Once sealed cleanly, subsequent runs exit in 1s via the gate step without redundant commits.
+    - cron: '23 7 * * 1-5'
+    - cron: '43 8 * * 1-5'
+    - cron: '17 10 * * 1-5'
+    - cron: '17 12 * * 1-5'
+    - cron: '52 18 * * 1-5'
   workflow_dispatch:
 
 permissions:
@@ -33,7 +34,7 @@ jobs:
             echo "done=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          # Target session = KST date 16h ago (20:00 -> today, 01:00 after a late queue -> yesterday).
+          # Target session = KST date 16h ago (16:23 -> today, 03:52 next morning -> yesterday's KRX session).
           target=$(TZ=Asia/Seoul date -d '16 hours ago' +%F)
           echo "target=$target"
           if [ -f "quant-research/data/research/T-110/runs/$target.json" ] && ! grep -q "실행 상태: ⚠️" README.md; then
@@ -78,7 +79,7 @@ jobs:
               fi
             fi
             echo "::endgroup::"
-            if [ "$attempt" -lt 3 ]; then sleep $((attempt * 120)); fi
+            if [ "$attempt" -lt 3 ]; then sleep $((attempt * 90)); fi
           done
           echo "status=$status" >> "$GITHUB_OUTPUT"
           echo "reason=$reason" >> "$GITHUB_OUTPUT"
@@ -124,6 +125,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          cp README.md "${RUNNER_TEMP}/dual_root_readme.md"
           if [ "${{ steps.archive.outcome }}" = success ]; then
             git add quant-research/data/research/T-063/fetch_manifest_3y_*.json
             git add quant-research/data/vcp_snapshots/universe_*.csv
@@ -147,6 +149,24 @@ jobs:
                 exit 0
               fi
               git rebase --abort 2>/dev/null || true
+              git fetch origin main
+              git checkout origin/main -- README.md
+              python -c '
+          import pathlib
+          tmp_readme = pathlib.Path("'"${RUNNER_TEMP}"'/dual_root_readme.md").read_text(encoding="utf-8")
+          s, e = "<!-- DUAL_FORWARD:START -->", "<!-- DUAL_FORWARD:END -->"
+          if s in tmp_readme and e in tmp_readme:
+              block = tmp_readme[tmp_readme.index(s):tmp_readme.index(e)+len(e)]
+              cur = pathlib.Path("README.md").read_text(encoding="utf-8")
+              if s in cur and e in cur:
+                  new_cur = cur[:cur.index(s)] + block + cur[cur.index(e)+len(e):]
+                  pathlib.Path("README.md").write_text(new_cur, encoding="utf-8")
+          '
+              git add README.md
+              git commit --amend --no-edit
+              if git push origin HEAD:main; then
+                exit 0
+              fi
               if [ "$attempt" -eq 5 ]; then
                 echo "5회 재시도 후에도 관찰 기록 push 실패"
                 exit 1

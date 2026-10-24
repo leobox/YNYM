@@ -165,7 +165,10 @@ class LRM60PaperBook:
 
     def advance(self, feeds: dict[str, pd.DataFrame], metadata: dict[str, dict],
                 index_feeds: dict[str, pd.DataFrame] | None = None) -> bool:
-        times = sorted({ts for df in feeds.values() for ts in df.index})
+        times = sorted({
+            ts for df in feeds.values() for ts in df.index
+            if ts.minute == 0 and ts.second == 0 and 9 <= ts.hour <= 15
+        })
         if not times:
             return False
         last = self.state["last_bar_ts"]
@@ -231,6 +234,8 @@ class LRM60PaperBook:
                 if bar is None or bar["Volume"] <= 0:
                     continue
                 if bar["Open"] > sig["signal_close"] * 1.025:
+                    continue
+                if float(bar["Open"]) < float(sig["breakout_level"]):
                     continue
                 entry_price = float(bar["Open"]) * (1 + SLIPPAGE)
                 if entry_price <= sig["breakout_level"] * .99:
@@ -301,9 +306,10 @@ class LRM60PaperBook:
         inspected.sort(key=lambda row: (-row["r_vol"], row["code"]))
         free = MAX_SLOTS - len(positions)
         regime = {market: regime_at(index_feeds, market, ts)
-                  for market in ("KOSPI", "KOSDAQ")} if self.experimental else {}
+                  for market in ("KOSPI", "KOSDAQ")} if (self.experimental or index_feeds) else {}
         eligible = [row for row in inspected if row["code"] not in positions and
-                    (not self.experimental or regime.get(row["market"]) is True)]
+                    ((regime.get(row["market"]) is True) if self.experimental
+                     else (regime.get(row["market"]) is not False))]
         state["pending"] = eligible[:free]
         state["last_candidates"] = inspected[:10]
         state["regime"] = regime

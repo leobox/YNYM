@@ -623,3 +623,27 @@ def test_render_panel_includes_regime_and_gate_funnel_and_survives_heartbeat(pan
 
 
 
+
+
+def test_to_frame_strips_trailing_partial_nan_close_row_during_midnight_settlement():
+    from scripts.fetch_daily_history import to_frame
+    ts_prev = int(datetime(2026, 10, 22, 0, 0, tzinfo=ZoneInfo("Asia/Seoul")).timestamp())
+    ts_curr = int(datetime(2026, 10, 23, 0, 0, tzinfo=ZoneInfo("Asia/Seoul")).timestamp())
+    item = {
+        "timestamp": [ts_prev, ts_curr],
+        "indicators": {
+            "quote": [{
+                "open": [10000.0, 10100.0],
+                "high": [10200.0, 10300.0],
+                "low": [9900.0, 10000.0],
+                "close": [10050.0, None],
+                "volume": [100000, 120000],
+            }],
+            "adjclose": [{"adjclose": [10050.0, None]}],
+        },
+    }
+    fetched_night = datetime(2026, 10, 24, 1, 30, tzinfo=ZoneInfo("Asia/Seoul"))
+    df_night = to_frame(item, fetched_at=fetched_night)
+    assert len(df_night) == 1
+    assert str(df_night.index[-1].date()) == "2026-10-22"
+    assert int(df_night["Close"].isna().sum()) == 0

@@ -56,11 +56,12 @@ def to_frame(item: dict, fetched_at: datetime | None = None) -> pd.DataFrame:
         cutoff_date = (fetched_kst.date() if fetched_kst.hour >= 16
                        else (fetched_kst - timedelta(days=1)).date())
         df = df.loc[df.index.date <= cutoff_date]
-    # 자정(KST) 이후 야후는 아직 열리지 않은 새 거래일의 빈 봉(OHLC 전부 NaN)을 끝에 붙인다.
-    # 이 자리표시 봉은 체결 데이터가 아니므로 끝에서만 제거한다(중간 결측은 그대로 기록).
-    ohlc = df[["Open", "High", "Low", "Close"]]
-    while len(df) and ohlc.iloc[-1].isna().all():
-        df, ohlc = df.iloc[:-1], ohlc.iloc[:-1]
+    # 자정(KST) 이후 야후는 아직 열리지 않은 새 거래일의 빈 봉(OHLC 전부 NaN)이나
+    # 야간 정산 구간(00:00~03:41 KST) 중 Close 일부가 NaN인 미완성 봉을 끝에 붙인다.
+    # 이 자리표시/미완성 끝 봉은 체결 완료 데이터가 아니므로 끝에서만 제거한다(중간 결측은 그대로 기록).
+    req = df[["Open", "High", "Low", "Close", "Volume"]]
+    while len(df) and req.iloc[-1].isna().any():
+        df, req = df.iloc[:-1], req.iloc[:-1]
     return df
 
 
@@ -153,6 +154,8 @@ def main() -> int:
             if not payload.get("result"):
                 raise ValueError("result 없음")
             df = to_frame(payload["result"][0], fetched_at=fetched_at)
+            if df.empty:
+                raise ValueError("유효 일봉 없음")
             path = RAW_DIR / f"{code}.csv"
             df.to_csv(path)
             files.append({"code": code, "symbol": symbol, "rows": int(len(df)),
@@ -164,6 +167,12 @@ def main() -> int:
         if i % 25 == 0:
             print(f"{i}/{len(universe)} 수신 (성공 {len(files)}, 실패 {len(failed)})", flush=True)
         time.sleep(CALL_DELAY_SEC)
+
+    # 재시도 또는 유니버스 변동 시 이전 시도의 잔여 CSV가 남아 UNDECLARED_SOURCE_FILES를 유발하지 않도록 정리
+    valid_stems = {f["code"] for f in files}
+    for stale_csv in RAW_DIR.glob("*.csv"):
+        if stale_csv.stem not in valid_stems:
+            stale_csv.unlink(missing_ok=True)
 
     manifest = {
         "task": "T-063",

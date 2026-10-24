@@ -266,3 +266,70 @@ def test_build_results_watch_vs_top5_feature_alignment():
     assert w_row["돌파선"] == round(w_feat["breakout_level"], 2)
     assert w_row["돌파봉종가"] == w_feat["trigger_close"]
 
+
+
+def test_calculate_smart_rank_below_breakout_collapsed():
+    features = {
+        "score": 80.0,
+        "breakout_level": 38000.0,
+        "trigger_amount_e8": 25.0,
+        "volume_ratio": 2.1,
+        "pattern_type": "base_breakout",
+        "early_trigger": True,
+    }
+    res = calculate_smart_rank(features, signal_time_str="2026-10-20 12:00", entry_price=37750.0)
+    assert res["gap_pct"] == -0.66
+    assert res["health"] == "붕괴🔴"
+    assert res["smart_score"] < 65.0
+
+
+
+def test_score_stock_catches_up_same_day_unseen_confirmed_breakout(monkeypatch):
+    import collector as coll
+
+    times = [
+        pd.Timestamp(day, tz="Asia/Seoul") + pd.Timedelta(hours=hour)
+        for day in pd.bdate_range("2026-09-01", periods=22)
+        for hour in (9, 10, 11, 12, 13, 14)
+    ]
+    n = len(times)
+    # 완만한 조정 후 마지막 거래일 09:00 돌파(trigger), 10:00 지지 확인(hold), 11:00~12:00 돌파선 위 안착 유지
+    close = [10000.0 - (i % 15) * 10.0 for i in range(n)]
+    open_p = [c - 20.0 for c in close]
+    high = [c + 30.0 for c in close]
+    low = [c - 40.0 for c in close]
+    vol = [50000.0 for _ in range(n)]
+
+    # 직전 6봉 고점(~10030)을 마지막 날 09:00(index -4)에 거래대금 동반 돌파
+    for idx in range(n - 10, n - 4):
+        open_p[idx] = 9950.0
+        high[idx] = 10050.0
+        low[idx] = 9900.0
+        close[idx] = 10000.0
+        vol[idx] = 60000.0
+
+    # -4 (09:00): Trigger bar (close=10300 > level=10050, amount > 10억, ratio > 2x)
+    open_p[-4], high[-4], low[-4], close[-4], vol[-4] = 10020.0, 10350.0, 10010.0, 10300.0, 300000.0
+    # -3 (10:00): Hold bar (low=10250 >= 10050, close=10320 >= 10300)
+    open_p[-3], high[-3], low[-3], close[-3], vol[-3] = 10280.0, 10360.0, 10250.0, 10320.0, 180000.0
+    # -2 (11:00): Normal consolidation above breakout level (10050)
+    open_p[-2], high[-2], low[-2], close[-2], vol[-2] = 10310.0, 10340.0, 10200.0, 10290.0, 120000.0
+    # -1 (12:00): Delayed GHA execution bar still holding above 10050
+    open_p[-1], high[-1], low[-1], close[-1], vol[-1] = 10280.0, 10350.0, 10220.0, 10310.0, 150000.0
+
+    df_60m = pd.DataFrame(
+        {"Open": open_p, "High": high, "Low": low, "Close": close, "Volume": vol},
+        index=pd.DatetimeIndex(times),
+    )
+    monkeypatch.setattr(coll, "fetch_all_bars", lambda code, mkt, now: {"60m": df_60m, "30m": pd.DataFrame(), "10m": pd.DataFrame(), "5m": pd.DataFrame()})
+
+    rec = {"code": "064400", "name": "LG씨엔에스", "market": "KOSPI"}
+    now_ts = times[-1] + pd.Timedelta(minutes=90)
+    since_ts = times[-5]  # 전일 마지막 봉까지만 평가된 상태
+    row, _, err = coll.score_stock(rec, now_ts, since_ts=since_ts)
+    assert err is None and row is not None
+    assert row["_match"] is True
+    assert row["돌파모드"] == "🟢 확정(60m)"
+    assert row["기준봉(KST)"] == times[-3].strftime("%m-%d %H:%M")
+    assert row["돌파봉(KST)"] == times[-4].strftime("%m-%d %H:%M")
+    assert row["돌파선"] == 10050.0

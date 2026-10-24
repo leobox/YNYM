@@ -234,3 +234,14 @@ def test_universe_excludes_cash_bond_and_pension_ineligible_etfs_by_default():
     assert '-5% 9,880원 · SMA10' in panel
 
 
+
+
+def test_watch_requires_within_3pct_of_20d_high():
+    far_below = history('watch')
+    # prior_high20 is 10300.0; set close to 9450.0 (-8.25% below h20)
+    far_below.iloc[-1, far_below.columns.get_loc('Close')] = 9450.0
+    far_below.iloc[-1, far_below.columns.get_loc('Open')] = 9400.0
+    far_below.iloc[-1, far_below.columns.get_loc('High')] = 9500.0
+    far_below.iloc[-1, far_below.columns.get_loc('Low')] = 9350.0
+    res = rank_etfs({'475050': far_below}, '2026-10-16')
+    assert res['stages']['watch'] == []

@@ -112,3 +112,26 @@ class TestSaveBarHistory:
         # 60m: 09:00, 10:00 -> 2개
         assert len(bars["60m"]) == 2
 
+
+
+def test_parse_multiframe_bars_aligns_0905_first_trade_to_0900_hour():
+    # 09:00 무거래로 09:05에 첫 체결된 종목도 60m 봉이 09:05가 아닌 09:00 정각으로 생성되어야 함
+    times = ["2026-10-22 09:05", "2026-10-22 09:20", "2026-10-22 10:05"]
+    timestamps = [int(pd.Timestamp(t, tz="Asia/Seoul").timestamp()) for t in times]
+    item = {
+        "timestamp": timestamps,
+        "indicators": {
+            "quote": [{
+                "open": [1000.0, 1010.0, 1020.0],
+                "high": [1050.0, 1060.0, 1070.0],
+                "low": [990.0, 995.0, 1000.0],
+                "close": [1010.0, 1020.0, 1030.0],
+                "volume": [100, 200, 300],
+            }]
+        }
+    }
+    now = pd.Timestamp("2026-10-22 11:10", tz="Asia/Seoul")
+    bars = c.parse_multiframe_bars(item, now)
+    assert list(bars["60m"].index.minute) == [0, 0]
+    assert list(bars["60m"].index.hour) == [9, 10]
+    assert bars["60m"].iloc[0]["Volume"] == 300
