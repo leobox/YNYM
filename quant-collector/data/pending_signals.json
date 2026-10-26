@@ -44,7 +44,7 @@
       "2026-10-23",
       "2026-10-26"
     ],
-    "highest_seen": 74800.0,
+    "highest_seen": 75000.0,
     "lowest_seen": 71200.0,
     "evaluations": {
       "h3_t3_s3": {
@@ -209,16 +209,18 @@
       "early_tf": "10m",
       "signal_stage": "top5_early"
     },
-    "trading_days_observed": 0,
-    "observed_dates": [],
+    "trading_days_observed": 1,
+    "observed_dates": [
+      "2026-10-26"
+    ],
     "highest_seen": 22650.0,
-    "lowest_seen": 22650.0,
+    "lowest_seen": 21750.0,
     "evaluations": {
       "h3_t3_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "STOP_FIRST",
+        "exit_price": 21970.5,
+        "exit_time": "2026-10-26 14:45",
+        "return_pct": -3.0
       },
       "h3_t3_s5": {
         "status": "PENDING",
@@ -227,10 +229,10 @@
         "return_pct": null
       },
       "h3_t5_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "STOP_FIRST",
+        "exit_price": 21970.5,
+        "exit_time": "2026-10-26 14:45",
+        "return_pct": -3.0
       },
       "h3_t5_s5": {
         "status": "PENDING",
@@ -239,10 +241,10 @@
         "return_pct": null
       },
       "h3_t535_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "STOP_FIRST",
+        "exit_price": 21970.5,
+        "exit_time": "2026-10-26 14:45",
+        "return_pct": -3.0
       },
       "h3_t535_s5": {
         "status": "PENDING",
@@ -251,10 +253,10 @@
         "return_pct": null
       },
       "h3_t7_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "STOP_FIRST",
+        "exit_price": 21970.5,
+        "exit_time": "2026-10-26 14:45",
+        "return_pct": -3.0
       },
       "h3_t7_s5": {
         "status": "PENDING",
@@ -263,10 +265,10 @@
         "return_pct": null
       },
       "h3_t10_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "STOP_FIRST",
+        "exit_price": 21970.5,
+        "exit_time": "2026-10-26 14:45",
+        "return_pct": -3.0
       },
       "h3_t10_s5": {
         "status": "PENDING",
@@ -275,10 +277,10 @@
         "return_pct": null
       },
       "h5_t3_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "STOP_FIRST",
+        "exit_price": 21970.5,
+        "exit_time": "2026-10-26 14:45",
+        "return_pct": -3.0
       },
       "h5_t3_s5": {
         "status": "PENDING",
@@ -287,10 +289,10 @@
         "return_pct": null
       },
       "h5_t5_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "STOP_FIRST",
+        "exit_price": 21970.5,
+        "exit_time": "2026-10-26 14:45",
+        "return_pct": -3.0
       },
       "h5_t5_s5": {
         "status": "PENDING",
@@ -299,10 +301,10 @@
         "return_pct": null
       },
       "h5_t535_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "STOP_FIRST",
+        "exit_price": 21970.5,
+        "exit_time": "2026-10-26 14:45",
+        "return_pct": -3.0
       },
       "h5_t535_s5": {
         "status": "PENDING",
@@ -311,10 +313,10 @@
         "return_pct": null
       },
       "h5_t7_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "STOP_FIRST",
+        "exit_price": 21970.5,
+        "exit_time": "2026-10-26 14:45",
+        "return_pct": -3.0
       },
       "h5_t7_s5": {
         "status": "PENDING",
@@ -323,10 +325,10 @@
         "return_pct": null
       },
       "h5_t10_s3": {
-        "status": "PENDING",
-        "exit_price": null,
-        "exit_time": null,
-        "return_pct": null
+        "status": "STOP_FIRST",
+        "exit_price": 21970.5,
+        "exit_time": "2026-10-26 14:45",
+        "return_pct": -3.0
       },
       "h5_t10_s5": {
         "status": "PENDING",
