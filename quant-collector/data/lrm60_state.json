@@ -259,20 +259,20 @@
       "reason": "STOP_TOUCH"
     }
   ],
-  "last_bar_ts": "2026-10-23T14:00:00+09:00",
+  "last_bar_ts": "2026-10-26T12:00:00+09:00",
   "last_candidates": [],
   "gate_counts": {
-    "trend": 22,
-    "breakout": 3,
-    "liquidity": 14,
-    "candle": 9
+    "trend": 18,
+    "breakout": 2,
+    "liquidity": 15,
+    "candle": 12
   },
   "coverage": {
     "scanned": 350,
-    "evaluated": 349,
+    "evaluated": 348,
     "passed": 0,
     "missing_bar": 0,
-    "insufficient": 1
+    "insufficient": 2
   },
   "data_gaps": [
     {
@@ -313,5 +313,8 @@
       ]
     }
   ],
-  "regime": {}
+  "regime": {
+    "KOSPI": false,
+    "KOSDAQ": false
+  }
 }
