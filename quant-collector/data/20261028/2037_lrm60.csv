@@ -1,0 +1,2 @@
+﻿code,name,market,bar_ts,signal_close,breakout_level,amount_e8,r_vol,d_base_pct,cli,gates,passed
+180640,한진칼,KOSPI,2026-10-28T14:00:00+09:00,126400.0,123900.0,70.73,6.095762478441463,0.415,0.8636,"{'trend': True, 'breakout': True, 'liquidity': True, 'candle': True}",True

@@ -259,18 +259,38 @@
       "reason": "STOP_TOUCH"
     }
   ],
-  "last_bar_ts": "2026-10-28T13:00:00+09:00",
-  "last_candidates": [],
+  "last_bar_ts": "2026-10-28T14:00:00+09:00",
+  "last_candidates": [
+    {
+      "code": "180640",
+      "name": "한진칼",
+      "market": "KOSPI",
+      "bar_ts": "2026-10-28T14:00:00+09:00",
+      "signal_close": 126400.0,
+      "breakout_level": 123900.0,
+      "amount_e8": 70.73,
+      "r_vol": 6.095762478441463,
+      "d_base_pct": 0.415,
+      "cli": 0.8636,
+      "gates": {
+        "trend": true,
+        "breakout": true,
+        "liquidity": true,
+        "candle": true
+      },
+      "passed": true
+    }
+  ],
   "gate_counts": {
-    "trend": 160,
-    "breakout": 18,
-    "liquidity": 31,
-    "candle": 38
+    "trend": 174,
+    "breakout": 16,
+    "liquidity": 20,
+    "candle": 33
   },
   "coverage": {
     "scanned": 350,
     "evaluated": 349,
-    "passed": 0,
+    "passed": 1,
     "missing_bar": 0,
     "insufficient": 1
   },

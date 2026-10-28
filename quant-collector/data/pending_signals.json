@@ -207,10 +207,12 @@
       "early_tf": "",
       "signal_stage": "top5_hold"
     },
-    "trading_days_observed": 0,
-    "observed_dates": [],
-    "highest_seen": 52600.0,
-    "lowest_seen": 52600.0,
+    "trading_days_observed": 1,
+    "observed_dates": [
+      "2026-10-28"
+    ],
+    "highest_seen": 52700.0,
+    "lowest_seen": 52500.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "PENDING",
