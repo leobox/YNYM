@@ -1,19 +1,19 @@
 {
   "version": "etf_reference_v2",
-  "run_id": "20261027T223228677456",
-  "fetched_at": "2026-10-27T22:32:52+09:00",
+  "run_id": "20261028T232641569207",
+  "fetched_at": "2026-10-28T23:27:00+09:00",
   "include_leveraged": false,
   "selected_count": 100,
   "fresh_count": 100,
-  "as_of": "2026-10-27",
+  "as_of": "2026-10-28",
   "status": "OK",
   "universe_statistics": {
-    "source_count": 1183,
+    "source_count": 1186,
     "excluded_name_leverage_inverse": 109,
-    "excluded_cash_or_bond": 280,
+    "excluded_cash_or_bond": 281,
     "excluded_pension_ineligible": 68,
     "invalid_records": 0,
-    "eligible_before_limit": 726,
+    "eligible_before_limit": 728,
     "selected": 100
   },
   "universe": [
@@ -23,7 +23,7 @@
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 2063046303825.0,
+      "selection_amount_proxy": 2645998662300.0,
       "source_tab_code": 1
     },
     {
@@ -32,7 +32,7 @@
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 1356125397400.0,
+      "selection_amount_proxy": 1470864376120.0,
       "source_tab_code": 1
     },
     {
@@ -41,7 +41,7 @@
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 645174628650.0,
+      "selection_amount_proxy": 652753197740.0,
       "source_tab_code": 4
     },
     {
@@ -50,7 +50,7 @@
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 632984903125.0,
+      "selection_amount_proxy": 560462556560.0,
       "source_tab_code": 4
     },
     {
@@ -59,7 +59,7 @@
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 490413595220.0,
+      "selection_amount_proxy": 498667867880.0,
       "source_tab_code": 4
     },
     {
@@ -68,17 +68,8 @@
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 441699808485.0,
+      "selection_amount_proxy": 435835835400.0,
       "source_tab_code": 4
-    },
-    {
-      "code": "229200",
-      "name": "KODEX 코스닥150",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 416026365100.0,
-      "source_tab_code": 1
     },
     {
       "code": "396500",
@@ -86,34 +77,7 @@
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 320785066800.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "0167A0",
-      "name": "SOL AI반도체TOP2플러스",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 208832760675.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "395160",
-      "name": "KODEX AI반도체TOP2플러스",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 158042107850.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "091160",
-      "name": "KODEX 반도체",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 138993680505.0,
+      "selection_amount_proxy": 346372386920.0,
       "source_tab_code": 2
     },
     {
@@ -122,17 +86,44 @@
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 120048588980.0,
+      "selection_amount_proxy": 330015595680.0,
       "source_tab_code": 1
     },
     {
-      "code": "232080",
-      "name": "TIGER 코스닥150",
+      "code": "0167A0",
+      "name": "SOL AI반도체TOP2플러스",
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 110082513480.0,
+      "selection_amount_proxy": 306167584330.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "229200",
+      "name": "KODEX 코스닥150",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 301665386310.0,
       "source_tab_code": 1
+    },
+    {
+      "code": "395160",
+      "name": "KODEX AI반도체TOP2플러스",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 184333340800.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "091160",
+      "name": "KODEX 반도체",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 182057322895.0,
+      "source_tab_code": 2
     },
     {
       "code": "498400",
@@ -140,8 +131,17 @@
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 96900820380.0,
+      "selection_amount_proxy": 147414548960.0,
       "source_tab_code": 2
+    },
+    {
+      "code": "232080",
+      "name": "TIGER 코스닥150",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 142064717890.0,
+      "source_tab_code": 1
     },
     {
       "code": "472150",
@@ -149,124 +149,7 @@
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 87409777455.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "455850",
-      "name": "SOL AI반도체소부장",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 65274553000.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "381180",
-      "name": "TIGER 미국필라델피아반도체나스닥",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 58829638820.0,
-      "source_tab_code": 4
-    },
-    {
-      "code": "395270",
-      "name": "HANARO Fn K-반도체",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 56244554680.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "0219E0",
-      "name": "KODEX 200커버드콜액티브",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 52816823760.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "471990",
-      "name": "KODEX AI반도체핵심장비",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 46574120070.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "364980",
-      "name": "TIGER 2차전지TOP10",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 45952061940.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "139260",
-      "name": "TIGER 200 IT",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 43948226700.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "305720",
-      "name": "KODEX 2차전지산업",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 43786186400.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "0209D0",
-      "name": "KODEX 전고체배터리ESS TOP2플러스",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 42610407840.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "487240",
-      "name": "KODEX AI전력핵심설비",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 40097416300.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "152100",
-      "name": "PLUS 200",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 37820296850.0,
-      "source_tab_code": 1
-    },
-    {
-      "code": "105190",
-      "name": "ACE 200",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 37180543625.0,
-      "source_tab_code": 1
-    },
-    {
-      "code": "475300",
-      "name": "SOL 반도체전공정",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 34265125075.0,
+      "selection_amount_proxy": 119675995875.0,
       "source_tab_code": 2
     },
     {
@@ -275,79 +158,97 @@
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 31988453580.0,
+      "selection_amount_proxy": 109102886235.0,
       "source_tab_code": 1
     },
     {
-      "code": "466920",
-      "name": "SOL 조선TOP3플러스",
+      "code": "152100",
+      "name": "PLUS 200",
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 28878066360.0,
+      "selection_amount_proxy": 104511495150.0,
+      "source_tab_code": 1
+    },
+    {
+      "code": "226490",
+      "name": "KODEX 코스피",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 102651214830.0,
+      "source_tab_code": 1
+    },
+    {
+      "code": "455850",
+      "name": "SOL AI반도체소부장",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 82142242005.0,
       "source_tab_code": 2
     },
     {
-      "code": "426030",
-      "name": "TIME 미국나스닥100액티브",
+      "code": "381180",
+      "name": "TIGER 미국필라델피아반도체나스닥",
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 28434317175.0,
+      "selection_amount_proxy": 78694270680.0,
       "source_tab_code": 4
     },
     {
-      "code": "0182R0",
-      "name": "1Q K반도체TOP2+",
+      "code": "294400",
+      "name": "KIWOOM 200TR",
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 26640114170.0,
+      "selection_amount_proxy": 73303592640.0,
+      "source_tab_code": 1
+    },
+    {
+      "code": "395270",
+      "name": "HANARO Fn K-반도체",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 71037500800.0,
       "source_tab_code": 2
     },
     {
-      "code": "0080G0",
-      "name": "KODEX 방산TOP10",
+      "code": "0219E0",
+      "name": "KODEX 200커버드콜액티브",
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 24268171680.0,
+      "selection_amount_proxy": 70650147660.0,
       "source_tab_code": 2
     },
     {
-      "code": "442580",
-      "name": "PLUS 글로벌HBM반도체",
+      "code": "139260",
+      "name": "TIGER 200 IT",
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 24226687980.0,
-      "source_tab_code": 4
-    },
-    {
-      "code": "458730",
-      "name": "TIGER 미국배당다우존스",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 22013668000.0,
-      "source_tab_code": 4
-    },
-    {
-      "code": "0148J0",
-      "name": "TIGER 코리아휴머노이드로봇산업",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 19850026350.0,
+      "selection_amount_proxy": 63650305290.0,
       "source_tab_code": 2
     },
     {
-      "code": "498410",
-      "name": "KODEX 금융고배당TOP10타겟위클리커버드콜",
+      "code": "105190",
+      "name": "ACE 200",
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 19232097130.0,
+      "selection_amount_proxy": 61520793405.0,
+      "source_tab_code": 1
+    },
+    {
+      "code": "487240",
+      "name": "KODEX AI전력핵심설비",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 55938555880.0,
       "source_tab_code": 2
     },
     {
@@ -356,26 +257,143 @@
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 18723029650.0,
+      "selection_amount_proxy": 38748325840.0,
       "source_tab_code": 1
     },
     {
-      "code": "0173Y0",
-      "name": "KODEX 미국AI광통신네트워크",
+      "code": "471990",
+      "name": "KODEX AI반도체핵심장비",
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 17893762320.0,
+      "selection_amount_proxy": 38019075500.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "305720",
+      "name": "KODEX 2차전지산업",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 37971829035.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "0148J0",
+      "name": "TIGER 코리아휴머노이드로봇산업",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 37902936055.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "0182R0",
+      "name": "1Q K반도체TOP2+",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 34137961480.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "442580",
+      "name": "PLUS 글로벌HBM반도체",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 34094069720.0,
       "source_tab_code": 4
     },
     {
-      "code": "469150",
-      "name": "ACE AI반도체TOP3+",
+      "code": "277630",
+      "name": "TIGER 코스피",
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 17695004710.0,
+      "selection_amount_proxy": 33977852760.0,
+      "source_tab_code": 1
+    },
+    {
+      "code": "364980",
+      "name": "TIGER 2차전지TOP10",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 33794247850.0,
       "source_tab_code": 2
+    },
+    {
+      "code": "466920",
+      "name": "SOL 조선TOP3플러스",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 33426625340.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "475300",
+      "name": "SOL 반도체전공정",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 32946461625.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "0209D0",
+      "name": "KODEX 전고체배터리ESS TOP2플러스",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 31443314955.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "448300",
+      "name": "TIGER 미국나스닥100(H)",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 30798459760.0,
+      "source_tab_code": 4
+    },
+    {
+      "code": "302450",
+      "name": "RISE 코스피",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 28869122120.0,
+      "source_tab_code": 1
+    },
+    {
+      "code": "426030",
+      "name": "TIME 미국나스닥100액티브",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 27901384425.0,
+      "source_tab_code": 4
+    },
+    {
+      "code": "0080G0",
+      "name": "KODEX 방산TOP10",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 24761305540.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "458730",
+      "name": "TIGER 미국배당다우존스",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 24035422950.0,
+      "source_tab_code": 4
     },
     {
       "code": "0210A0",
@@ -383,268 +401,7 @@
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 17554366080.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "449450",
-      "name": "PLUS K방산",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 17371031375.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "226490",
-      "name": "KODEX 코스피",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 16778023340.0,
-      "source_tab_code": 1
-    },
-    {
-      "code": "0177R0",
-      "name": "TIGER 반도체TOP10커버드콜액티브",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 16102431810.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "0005D0",
-      "name": "SOL 전고체배터리&실리콘음극재",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 14677661280.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "294400",
-      "name": "KIWOOM 200TR",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 14538644000.0,
-      "source_tab_code": 1
-    },
-    {
-      "code": "471760",
-      "name": "TIGER AI반도체핵심공정",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 14524045965.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "475310",
-      "name": "SOL 반도체후공정",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 14429972830.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "475050",
-      "name": "ACE KPOP포커스",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 13967065140.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "0115D0",
-      "name": "KODEX 조선TOP10",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 13040247200.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "462010",
-      "name": "TIGER 2차전지소재Fn",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 12925176360.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "091230",
-      "name": "TIGER 반도체",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 12732285700.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "367380",
-      "name": "ACE 미국나스닥100",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 12662675150.0,
-      "source_tab_code": 4
-    },
-    {
-      "code": "102780",
-      "name": "KODEX 삼성그룹",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 12166263265.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "0091P0",
-      "name": "TIGER 코리아원자력",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 12005007360.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "0072R0",
-      "name": "TIGER KRX금현물",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 11889749250.0,
-      "source_tab_code": 5
-    },
-    {
-      "code": "486290",
-      "name": "TIGER 미국나스닥100타겟데일리커버드콜",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 11828172060.0,
-      "source_tab_code": 4
-    },
-    {
-      "code": "360200",
-      "name": "ACE 미국S&P500",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 11805193290.0,
-      "source_tab_code": 4
-    },
-    {
-      "code": "0117V0",
-      "name": "TIGER 코리아AI전력기기TOP3플러스",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 11691338055.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "292150",
-      "name": "TIGER 코리아TOP10",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 11456891625.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "237350",
-      "name": "KODEX 코스피100",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 10999043175.0,
-      "source_tab_code": 1
-    },
-    {
-      "code": "390390",
-      "name": "KODEX 미국반도체",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 10605104540.0,
-      "source_tab_code": 4
-    },
-    {
-      "code": "457990",
-      "name": "PLUS 태양광&ESS",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 10292726800.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "497570",
-      "name": "TIGER 미국필라델피아AI반도체나스닥",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 9759215420.0,
-      "source_tab_code": 4
-    },
-    {
-      "code": "411060",
-      "name": "ACE KRX금현물",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 9721833730.0,
-      "source_tab_code": 5
-    },
-    {
-      "code": "117700",
-      "name": "KODEX 건설",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 9649662100.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "329200",
-      "name": "TIGER 리츠부동산인프라",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 9355125490.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "0167B0",
-      "name": "SOL 200타겟위클리커버드콜",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 8959028555.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "487230",
-      "name": "KODEX 미국AI전력핵심인프라",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 8728901750.0,
-      "source_tab_code": 4
-    },
-    {
-      "code": "161510",
-      "name": "PLUS 고배당주",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 8353274360.0,
+      "selection_amount_proxy": 22427599350.0,
       "source_tab_code": 2
     },
     {
@@ -653,25 +410,187 @@
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 8184591845.0,
+      "selection_amount_proxy": 21224349860.0,
       "source_tab_code": 1
     },
     {
-      "code": "0246X0",
-      "name": "SOL 글로벌DRAM반도체플러스",
+      "code": "449450",
+      "name": "PLUS K방산",
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 8127275840.0,
+      "selection_amount_proxy": 20401200360.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "469150",
+      "name": "ACE AI반도체TOP3+",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 20259988500.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "292150",
+      "name": "TIGER 코리아TOP10",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 19649669610.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "237350",
+      "name": "KODEX 코스피100",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 19001237760.0,
+      "source_tab_code": 1
+    },
+    {
+      "code": "329200",
+      "name": "TIGER 리츠부동산인프라",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 18197643870.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "475310",
+      "name": "SOL 반도체후공정",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 18089151795.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "091230",
+      "name": "TIGER 반도체",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 17926140960.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "293180",
+      "name": "HANARO 200",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 17266906045.0,
+      "source_tab_code": 1
+    },
+    {
+      "code": "486290",
+      "name": "TIGER 미국나스닥100타겟데일리커버드콜",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 17246449255.0,
       "source_tab_code": 4
     },
     {
-      "code": "228790",
-      "name": "TIGER 화장품",
+      "code": "0177R0",
+      "name": "TIGER 반도체TOP10커버드콜액티브",
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 8081623550.0,
+      "selection_amount_proxy": 17116850970.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "0005D0",
+      "name": "SOL 전고체배터리&실리콘음극재",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 16393627340.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "0117V0",
+      "name": "TIGER 코리아AI전력기기TOP3플러스",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 16104858580.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "471760",
+      "name": "TIGER AI반도체핵심공정",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 15997805500.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "462010",
+      "name": "TIGER 2차전지소재Fn",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 15402435280.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "371160",
+      "name": "TIGER 차이나항셍테크",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 14684569860.0,
+      "source_tab_code": 4
+    },
+    {
+      "code": "381170",
+      "name": "TIGER 미국테크TOP10 INDXX",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 14431127280.0,
+      "source_tab_code": 4
+    },
+    {
+      "code": "494670",
+      "name": "TIGER 조선TOP10",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 13075162115.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "0072R0",
+      "name": "TIGER KRX금현물",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 13062590660.0,
+      "source_tab_code": 5
+    },
+    {
+      "code": "161510",
+      "name": "PLUS 고배당주",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 13013874555.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "498410",
+      "name": "KODEX 금융고배당TOP10타겟위클리커버드콜",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 12951995455.0,
       "source_tab_code": 2
     },
     {
@@ -680,79 +599,124 @@
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 7839228880.0,
+      "selection_amount_proxy": 12882009600.0,
       "source_tab_code": 2
     },
     {
-      "code": "305540",
-      "name": "TIGER 2차전지테마",
+      "code": "0167B0",
+      "name": "SOL 200타겟위클리커버드콜",
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 7629320880.0,
+      "selection_amount_proxy": 12689346250.0,
       "source_tab_code": 2
     },
     {
-      "code": "465580",
-      "name": "ACE 미국빅테크TOP7 Plus",
+      "code": "494890",
+      "name": "KODEX 200액티브",
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 7344603395.0,
+      "selection_amount_proxy": 11906006835.0,
+      "source_tab_code": 1
+    },
+    {
+      "code": "422420",
+      "name": "RISE 2차전지액티브",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 11873320800.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "0115D0",
+      "name": "KODEX 조선TOP10",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 11800355390.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "446770",
+      "name": "ACE 글로벌반도체TOP4 Plus",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 11606527800.0,
       "source_tab_code": 4
     },
     {
-      "code": "466940",
-      "name": "TIGER 은행고배당플러스TOP10",
+      "code": "0091P0",
+      "name": "TIGER 코리아원자력",
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 7169286800.0,
+      "selection_amount_proxy": 11141984775.0,
       "source_tab_code": 2
     },
     {
-      "code": "494670",
-      "name": "TIGER 조선TOP10",
+      "code": "0162L0",
+      "name": "KODEX 차이나AI반도체TOP10",
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 7158574820.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "0015B0",
-      "name": "KoAct 미국나스닥성장기업액티브",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 7076306685.0,
+      "selection_amount_proxy": 11105953660.0,
       "source_tab_code": 4
     },
     {
-      "code": "463250",
-      "name": "TIGER K방산&우주",
+      "code": "411060",
+      "name": "ACE KRX금현물",
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 7062110000.0,
-      "source_tab_code": 2
+      "selection_amount_proxy": 10851561000.0,
+      "source_tab_code": 5
     },
     {
-      "code": "456600",
-      "name": "TIME 글로벌AI인공지능액티브",
+      "code": "367380",
+      "name": "ACE 미국나스닥100",
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 7000930950.0,
+      "selection_amount_proxy": 10650018700.0,
       "source_tab_code": 4
     },
     {
-      "code": "449190",
-      "name": "KODEX 미국나스닥100(H)",
+      "code": "332500",
+      "name": "ACE 200TR",
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 6854265000.0,
+      "selection_amount_proxy": 10646366425.0,
+      "source_tab_code": 1
+    },
+    {
+      "code": "102780",
+      "name": "KODEX 삼성그룹",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 10608682680.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "483320",
+      "name": "ACE 엔비디아밸류체인액티브",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 9863647175.0,
+      "source_tab_code": 4
+    },
+    {
+      "code": "0173Y0",
+      "name": "KODEX 미국AI광통신네트워크",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 9561251180.0,
       "source_tab_code": 4
     },
     {
@@ -761,35 +725,35 @@
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 6842396625.0,
+      "selection_amount_proxy": 9314094880.0,
       "source_tab_code": 2
     },
     {
-      "code": "462900",
-      "name": "KoAct 바이오헬스케어액티브",
+      "code": "360200",
+      "name": "ACE 미국S&P500",
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 6668094100.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "381170",
-      "name": "TIGER 미국테크TOP10 INDXX",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 6596853780.0,
+      "selection_amount_proxy": 9130079595.0,
       "source_tab_code": 4
     },
     {
-      "code": "0207G0",
-      "name": "SOL 우주항공밸류체인",
+      "code": "457990",
+      "name": "PLUS 태양광&ESS",
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 6425226225.0,
+      "selection_amount_proxy": 9008415000.0,
       "source_tab_code": 2
+    },
+    {
+      "code": "295040",
+      "name": "SOL 200TR",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 8989097920.0,
+      "source_tab_code": 1
     },
     {
       "code": "091170",
@@ -797,62 +761,8 @@
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 6276675825.0,
+      "selection_amount_proxy": 8819891985.0,
       "source_tab_code": 2
-    },
-    {
-      "code": "484880",
-      "name": "SOL 금융지주플러스고배당",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 6253121700.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "418670",
-      "name": "TIGER 글로벌AI사이버보안",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 5673339300.0,
-      "source_tab_code": 4
-    },
-    {
-      "code": "483320",
-      "name": "ACE 엔비디아밸류체인액티브",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 5487275145.0,
-      "source_tab_code": 4
-    },
-    {
-      "code": "494300",
-      "name": "KODEX 미국나스닥100데일리커버드콜OTM",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 5455823175.0,
-      "source_tab_code": 4
-    },
-    {
-      "code": "0093A0",
-      "name": "RISE AI반도체TOP10",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 5406817440.0,
-      "source_tab_code": 2
-    },
-    {
-      "code": "490590",
-      "name": "RISE 미국AI밸류체인데일리고정커버드콜",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 5350917025.0,
-      "source_tab_code": 4
     },
     {
       "code": "0183J0",
@@ -860,53 +770,80 @@
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 5313851205.0,
+      "selection_amount_proxy": 8751989025.0,
       "source_tab_code": 4
     },
     {
-      "code": "0163Y0",
-      "name": "KoAct 코스닥액티브",
+      "code": "462900",
+      "name": "KoAct 바이오헬스케어액티브",
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 5299750770.0,
-      "source_tab_code": 1
+      "selection_amount_proxy": 8500685310.0,
+      "source_tab_code": 2
     },
     {
-      "code": "396520",
-      "name": "TIGER 차이나반도체FACTSET",
+      "code": "305540",
+      "name": "TIGER 2차전지테마",
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 5187228875.0,
+      "selection_amount_proxy": 8462961600.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "497570",
+      "name": "TIGER 미국필라델피아AI반도체나스닥",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 8306364875.0,
       "source_tab_code": 4
     },
     {
-      "code": "293180",
-      "name": "HANARO 200",
+      "code": "228790",
+      "name": "TIGER 화장품",
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 5108189625.0,
-      "source_tab_code": 1
-    },
-    {
-      "code": "364970",
-      "name": "TIGER 바이오TOP10",
-      "leveraged_or_inverse": false,
-      "cash_or_bond": false,
-      "pension_eligible": true,
-      "selection_amount_proxy": 5029455210.0,
+      "selection_amount_proxy": 8132620440.0,
       "source_tab_code": 2
     },
     {
-      "code": "367760",
-      "name": "RISE 네트워크인프라",
+      "code": "0198A0",
+      "name": "KIWOOM 코스닥150커버드콜액티브",
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 4985007580.0,
+      "selection_amount_proxy": 8054856720.0,
       "source_tab_code": 2
+    },
+    {
+      "code": "494300",
+      "name": "KODEX 미국나스닥100데일리커버드콜OTM",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 8037008260.0,
+      "source_tab_code": 4
+    },
+    {
+      "code": "445290",
+      "name": "KODEX 로봇액티브",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 8001763020.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "0246X0",
+      "name": "SOL 글로벌DRAM반도체플러스",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 7870841280.0,
+      "source_tab_code": 4
     },
     {
       "code": "0239Z0",
@@ -914,962 +851,1002 @@
       "leveraged_or_inverse": false,
       "cash_or_bond": false,
       "pension_eligible": true,
-      "selection_amount_proxy": 4848492785.0,
+      "selection_amount_proxy": 7846019350.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "332930",
+      "name": "HANARO 200TR",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 7728803610.0,
+      "source_tab_code": 1
+    },
+    {
+      "code": "489030",
+      "name": "PLUS 고배당주위클리커버드콜",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 7530348000.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "449180",
+      "name": "KODEX 미국S&P500(H)",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 7057371750.0,
+      "source_tab_code": 4
+    },
+    {
+      "code": "117700",
+      "name": "KODEX 건설",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 6982861445.0,
+      "source_tab_code": 2
+    },
+    {
+      "code": "456600",
+      "name": "TIME 글로벌AI인공지능액티브",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 6963844800.0,
+      "source_tab_code": 4
+    },
+    {
+      "code": "449190",
+      "name": "KODEX 미국나스닥100(H)",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 6774920440.0,
+      "source_tab_code": 4
+    },
+    {
+      "code": "367760",
+      "name": "RISE 네트워크인프라",
+      "leveraged_or_inverse": false,
+      "cash_or_bond": false,
+      "pension_eligible": true,
+      "selection_amount_proxy": 6744485100.0,
       "source_tab_code": 2
     }
   ],
   "result": {
     "stages": {
-      "breakout": [
-        {
-          "code": "418670",
-          "close": 20660.0,
-          "prior_high20": 20495.0,
-          "stop_price_5pct": 19627.0,
-          "sma10": 19040.0,
-          "distance_to_high_pct": 0.8050744083922812,
-          "contraction_ratio": 0.5862068965517241,
-          "range_width_ratio": 0.127541142303969,
-          "volume_ratio5": 0.9749306505899323,
-          "volume_spike": 2.0313274401745756,
-          "cmf20": 0.15856917411983779,
-          "median_amount": 2670060905.0,
-          "mom60_5": 0.11271056661562029,
-          "compression": 0.48983543078412395,
-          "volume_score": 3.006258090764508,
-          "range_pos": 1.0626185958254268,
-          "stage": "breakout",
-          "score": 1.0,
-          "name": "TIGER 글로벌AI사이버보안",
-          "leveraged_or_inverse": false
-        }
-      ],
+      "breakout": [],
       "watch": []
     },
     "funnel": {
       "evaluated": 94,
-      "trend_liquidity": 2,
-      "nonextended": 2,
-      "contraction": 2,
-      "ignition": 1
+      "trend_liquidity": 1,
+      "nonextended": 1,
+      "contraction": 1,
+      "ignition": 0
     },
     "qualified_before_top5": {
-      "breakout": 1,
+      "breakout": 0,
       "watch": 0
     },
-    "breadth_pct": 2.127659574468085,
+    "breadth_pct": 5.319148936170213,
     "breadth_denominator": 94
   },
-  "completion_cutoff_clock": "2026-10-27T22:32:28.677456+09:00",
+  "completion_cutoff_clock": "2026-10-28T23:26:41.569207+09:00",
   "errors": [],
   "data_quality": {
-    "102110": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
     "069500": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
+    },
+    "102110": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
     },
     "133690": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
     "360750": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
     "379800": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "379810": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "229200": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "396500": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "0167A0": {
-      "raw_rows": 151,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 151,
-      "last_date": "2026-10-27"
-    },
-    "395160": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
     "148020": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
+    },
+    "396500": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "379810": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "0167A0": {
+      "raw_rows": 152,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 152,
+      "last_date": "2026-10-28"
+    },
+    "229200": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "395160": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
     },
     "091160": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "232080": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
     "498400": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "455850": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "472150": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "381180": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "0219E0": {
-      "raw_rows": 70,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 70,
-      "last_date": "2026-10-27"
-    },
-    "395270": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "471990": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "364980": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "139260": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "305720": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "0209D0": {
-      "raw_rows": 85,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 85,
-      "last_date": "2026-10-27"
-    },
-    "487240": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "152100": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "105190": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "475300": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
     "278530": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
-    "466920": {
+    "472150": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
-    "426030": {
+    "232080": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
-    "0182R0": {
-      "raw_rows": 131,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 131,
-      "last_date": "2026-10-27"
-    },
-    "0080G0": {
+    "152100": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
-    "442580": {
+    "381180": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "0148J0": {
-      "raw_rows": 197,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 197,
-      "last_date": "2026-10-27"
-    },
-    "458730": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "498410": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "0173Y0": {
-      "raw_rows": 141,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 141,
-      "last_date": "2026-10-27"
-    },
-    "469150": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "069660": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "0210A0": {
-      "raw_rows": 85,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 85,
-      "last_date": "2026-10-27"
-    },
-    "0177R0": {
-      "raw_rows": 126,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 126,
-      "last_date": "2026-10-27"
-    },
-    "449450": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
     "226490": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
-    "0005D0": {
+    "455850": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
     "294400": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
-    "471760": {
+    "395270": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
-    "475310": {
+    "0219E0": {
+      "raw_rows": 71,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 71,
+      "last_date": "2026-10-28"
+    },
+    "105190": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
-    "475050": {
+    "139260": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
-    "0115D0": {
-      "raw_rows": 244,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 244,
-      "last_date": "2026-10-27"
-    },
-    "462010": {
+    "487240": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
-    "091230": {
+    "069660": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
-    "367380": {
+    "471990": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
-    "102780": {
+    "305720": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
-    "0091P0": {
+    "0182R0": {
+      "raw_rows": 132,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 132,
+      "last_date": "2026-10-28"
+    },
+    "0148J0": {
+      "raw_rows": 198,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 198,
+      "last_date": "2026-10-28"
+    },
+    "442580": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
-    "0072R0": {
+    "277630": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
-    "360200": {
+    "466920": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
-    "486290": {
+    "475300": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
-    "0117V0": {
-      "raw_rows": 249,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 249,
-      "last_date": "2026-10-27"
-    },
-    "292150": {
+    "364980": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
-    "237350": {
+    "0209D0": {
+      "raw_rows": 86,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 86,
+      "last_date": "2026-10-28"
+    },
+    "448300": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
-    "390390": {
+    "302450": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
-    "457990": {
+    "426030": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
-    "497570": {
+    "0080G0": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
-    "411060": {
+    "0210A0": {
+      "raw_rows": 86,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 86,
+      "last_date": "2026-10-28"
+    },
+    "458730": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "117700": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "0167B0": {
-      "raw_rows": 151,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 151,
-      "last_date": "2026-10-27"
-    },
-    "329200": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "161510": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "487230": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "0246X0": {
-      "raw_rows": 14,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 14,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
     "361580": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
-    "228790": {
+    "449450": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
-    "0094M0": {
+    "469150": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
-    "305540": {
+    "292150": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
-    "465580": {
+    "237350": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
-    "466940": {
+    "329200": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
-    "494670": {
+    "475310": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
-    "0015B0": {
+    "091230": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "463250": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "456600": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "449190": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "421320": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "462900": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "381170": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "0207G0": {
-      "raw_rows": 90,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 90,
-      "last_date": "2026-10-27"
-    },
-    "091170": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "484880": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "418670": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "483320": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "494300": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "0093A0": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "0183J0": {
-      "raw_rows": 131,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 131,
-      "last_date": "2026-10-27"
-    },
-    "0163Y0": {
-      "raw_rows": 156,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 156,
-      "last_date": "2026-10-27"
-    },
-    "490590": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "396520": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     },
     "293180": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
+    },
+    "486290": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "0177R0": {
+      "raw_rows": 127,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 127,
+      "last_date": "2026-10-28"
+    },
+    "0005D0": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "0117V0": {
+      "raw_rows": 250,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 250,
+      "last_date": "2026-10-28"
+    },
+    "462010": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "471760": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "371160": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "381170": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "494670": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "0072R0": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "161510": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "498410": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "0167B0": {
+      "raw_rows": 152,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 152,
+      "last_date": "2026-10-28"
+    },
+    "0094M0": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "494890": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "422420": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "0115D0": {
+      "raw_rows": 245,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 245,
+      "last_date": "2026-10-28"
+    },
+    "446770": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "0091P0": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "0162L0": {
+      "raw_rows": 164,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 164,
+      "last_date": "2026-10-28"
+    },
+    "411060": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "367380": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "332500": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "102780": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "483320": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "0173Y0": {
+      "raw_rows": 142,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 142,
+      "last_date": "2026-10-28"
+    },
+    "421320": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "360200": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "457990": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "295040": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "0183J0": {
+      "raw_rows": 132,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 132,
+      "last_date": "2026-10-28"
+    },
+    "091170": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "462900": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "305540": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "497570": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "228790": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "0198A0": {
+      "raw_rows": 81,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 81,
+      "last_date": "2026-10-28"
+    },
+    "494300": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "0246X0": {
+      "raw_rows": 15,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 15,
+      "last_date": "2026-10-28"
+    },
+    "445290": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "0239Z0": {
+      "raw_rows": 28,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 28,
+      "last_date": "2026-10-28"
+    },
+    "332930": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "489030": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "449180": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "117700": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "456600": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
+    },
+    "449190": {
+      "raw_rows": 260,
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "zero_volume_rows": 0,
+      "cutoff_date": "2026-10-28",
+      "completed_rows": 260,
+      "last_date": "2026-10-28"
     },
     "367760": {
       "raw_rows": 260,
       "incomplete_or_future": 0,
       "invalid_rows": 0,
       "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
+      "cutoff_date": "2026-10-28",
       "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "364970": {
-      "raw_rows": 260,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 260,
-      "last_date": "2026-10-27"
-    },
-    "0239Z0": {
-      "raw_rows": 27,
-      "incomplete_or_future": 0,
-      "invalid_rows": 0,
-      "zero_volume_rows": 0,
-      "cutoff_date": "2026-10-27",
-      "completed_rows": 27,
-      "last_date": "2026-10-27"
+      "last_date": "2026-10-28"
     }
   },
   "inputs": [
     {
-      "path": "raw/20261027T223228677456/0005D0.xml.gz",
-      "raw_bytes": 16956,
-      "sha256": "f052b283cb58c01fbb46914d93b2d9e9f9f614b0f646e9fd7e1d981dba8cb7e5",
-      "compressed_sha256": "58f828796cfdd7a67043c01712d16ce0a595095ec5a2e77131448b51738502df",
+      "path": "raw/20261028T232641569207/0005D0.xml.gz",
+      "raw_bytes": 16957,
+      "sha256": "c5ecfe8680686ed04dfecb109bf0e0c2862fa458070d9bfdd7ccae91d8e9e7ea",
+      "compressed_sha256": "bc65c7be074006c594cc516fdd515fde0b5ad1cde835991e5c725eecb77353a8",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "0005D0",
@@ -1877,27 +1854,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:41.032429+09:00"
+      "received_at": "2026-10-28T23:26:53.333127+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/0015B0.xml.gz",
-      "raw_bytes": 16873,
-      "sha256": "d607b9bbe4c6ee516dfcf7705aeed409329c71f81cbc06e764cb6ea959435507",
-      "compressed_sha256": "2083a7617a55fe9ea8e15bbea3b03dc9e301dc5a350c83afba831981d4547ea5",
-      "url": "https://fchart.stock.naver.com/sise.nhn",
-      "params": {
-        "symbol": "0015B0",
-        "timeframe": "day",
-        "count": 260,
-        "requestType": 0
-      },
-      "received_at": "2026-10-27T22:32:47.999744+09:00"
-    },
-    {
-      "path": "raw/20261027T223228677456/0072R0.xml.gz",
+      "path": "raw/20261028T232641569207/0072R0.xml.gz",
       "raw_bytes": 17023,
-      "sha256": "0741121c41fb7c15440eb87946885940903f521c6517cf47e35170a49d6328ec",
-      "compressed_sha256": "a8a0b9256852aa6cc7b5be5d9b7175fe256c9d8e56775189a6f43fc393571be6",
+      "sha256": "03f22711627e046aa0c3e29eeeb350e5f22d51e62812acd626a75832a026051d",
+      "compressed_sha256": "a81e2c3dd2e80193bab07d84974c174e6318d8b98e7a2be3ecb752b32280b81a",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "0072R0",
@@ -1905,13 +1868,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:43.274623+09:00"
+      "received_at": "2026-10-28T23:26:54.321850+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/0080G0.xml.gz",
-      "raw_bytes": 16831,
-      "sha256": "6ff36a767625ddf4e7be0fa39c8ac4b9f266a6e75b10a39d1644fd31db1106c1",
-      "compressed_sha256": "7f4609bd0956955cd7864f1a23032764f27955a045fa84f2a33943c290758b33",
+      "path": "raw/20261028T232641569207/0080G0.xml.gz",
+      "raw_bytes": 16828,
+      "sha256": "5298a88cdae1f5e6c73195e51d659788729fad1182dca19093c3d3e63902e8f1",
+      "compressed_sha256": "74481ac7e5d388fbc65505c6acb79634a33d8f800fae40efb50dfdf63c018332",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "0080G0",
@@ -1919,13 +1882,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:38.538437+09:00"
+      "received_at": "2026-10-28T23:26:51.172846+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/0091P0.xml.gz",
-      "raw_bytes": 17066,
-      "sha256": "e8167c6bb4d4287a459676da138be15fbbc6f70ab0b3ef4f525227934e2edcad",
-      "compressed_sha256": "47b0ce6d69af45c7493b9a5995cabd6d129f447e0aea933ac87258e040d8742a",
+      "path": "raw/20261028T232641569207/0091P0.xml.gz",
+      "raw_bytes": 17069,
+      "sha256": "de0240c82f79d8af54b9dc617ce232d2b007e0e373939f325f195b25b46b100c",
+      "compressed_sha256": "48849b106c26d9661ac533fc64b0a935dc8bb5f6d6f15c03c163f6c7bfc19824",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "0091P0",
@@ -1933,27 +1896,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:43.220313+09:00"
+      "received_at": "2026-10-28T23:26:55.676762+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/0093A0.xml.gz",
-      "raw_bytes": 16822,
-      "sha256": "60d7a67e9ac22a4bcec6ca04a1a1965367c49197c5b3dfcfb0b8a2a3864b5803",
-      "compressed_sha256": "1724b63505b30f06262e3db00ddbd11520c500ebe39d8931da0a1f1ad47197d4",
-      "url": "https://fchart.stock.naver.com/sise.nhn",
-      "params": {
-        "symbol": "0093A0",
-        "timeframe": "day",
-        "count": 260,
-        "requestType": 0
-      },
-      "received_at": "2026-10-27T22:32:50.637165+09:00"
-    },
-    {
-      "path": "raw/20261027T223228677456/0094M0.xml.gz",
-      "raw_bytes": 16604,
-      "sha256": "7b99c3e163c4b69f38cace5a325b6de2cf87b4c7552dea8f27fd3644edefde0a",
-      "compressed_sha256": "7fea371eafe1f66668ec4ff7daad848b79294866ee3706a12397f8a70d70f4d6",
+      "path": "raw/20261028T232641569207/0094M0.xml.gz",
+      "raw_bytes": 16608,
+      "sha256": "04fa7f51224938d7682cd78a9c955754c5d25003d9ef7b4b3aa5bb29106609ca",
+      "compressed_sha256": "d6ad70cd74857ca015cb3c4ba39255d94486daca6d8da78707016559eadd78a1",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "0094M0",
@@ -1961,13 +1910,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:47.077415+09:00"
+      "received_at": "2026-10-28T23:26:54.862512+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/0115D0.xml.gz",
-      "raw_bytes": 15333,
-      "sha256": "b9057c03316f7be8554ac73e8aa68efd84468d97dd3ec7d57fb2f050ca11243b",
-      "compressed_sha256": "9a7328faedb28097d4dbd142a17500f1b8551fa9842dc29250f571a3f826ebed",
+      "path": "raw/20261028T232641569207/0115D0.xml.gz",
+      "raw_bytes": 15394,
+      "sha256": "00ebdacfcf093b94b8335fc7ffdc6e6b940ca1c3371c249536c4b5a5dc4e4169",
+      "compressed_sha256": "01a09f3b99a2faa77e8ca4c5253464734274fa436c529c337f1acf6706fcfd5a",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "0115D0",
@@ -1975,13 +1924,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:42.307401+09:00"
+      "received_at": "2026-10-28T23:26:55.374627+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/0117V0.xml.gz",
-      "raw_bytes": 16404,
-      "sha256": "c7a51aa017a6da2f19dca14e64b2a33161dd0a3bd893ec1d418d91be144048fc",
-      "compressed_sha256": "259b680fbbd567c2f0e5e2af95f6a3e76c21495be41f9ffcc510a2984479ce82",
+      "path": "raw/20261028T232641569207/0117V0.xml.gz",
+      "raw_bytes": 16469,
+      "sha256": "2cb026250232e67c6894510493fb6025b9731258ee1895ea2a420bf38eb7d319",
+      "compressed_sha256": "6fc1d92f9a007fec8daee346d003f5ea8fa29514d16a400bc43fb593e1287f9e",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "0117V0",
@@ -1989,13 +1938,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:43.986404+09:00"
+      "received_at": "2026-10-28T23:26:53.559683+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/0148J0.xml.gz",
-      "raw_bytes": 12746,
-      "sha256": "ef010e60d329a0b8e0156781828b16c5883582d66ee082caca77d5a8515425d2",
-      "compressed_sha256": "ecf7d54600b17785becf5e75de0816f3ff621434993b7f684822e378d96ac1ac",
+      "path": "raw/20261028T232641569207/0148J0.xml.gz",
+      "raw_bytes": 12807,
+      "sha256": "b8d07224ad3d14bc79262dced5678f0001ce421809193e2ae4e5e983b6f8f9d5",
+      "compressed_sha256": "ac4c6d80eb74f2599b49ad33384ee9112767df2b1cab53baf5656e3565a33109",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "0148J0",
@@ -2003,27 +1952,27 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:38.820595+09:00"
+      "received_at": "2026-10-28T23:26:49.491131+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/0163Y0.xml.gz",
-      "raw_bytes": 10042,
-      "sha256": "6257a048d7eca6e92ffc5e8f01e13e526bd837fa275eb94979688ecfe51e72f1",
-      "compressed_sha256": "363e4c697f91c74c48586ed0426df85b6b0dae65c0d199841ccddef42e4a81e2",
+      "path": "raw/20261028T232641569207/0162L0.xml.gz",
+      "raw_bytes": 10644,
+      "sha256": "52de27a89e6890c4240e686e89fc00910717dfff93e1c00bfe477307bdc921d4",
+      "compressed_sha256": "d128964da7196b7b9a3671137b425ec71089345d8a21f36e5a54060f5bec6e68",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
-        "symbol": "0163Y0",
+        "symbol": "0162L0",
         "timeframe": "day",
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:50.933135+09:00"
+      "received_at": "2026-10-28T23:26:55.818331+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/0167A0.xml.gz",
-      "raw_bytes": 10116,
-      "sha256": "9bb65ae669304a97e353ed0c80bc5e99dcf6f57e85f25f23bbd6c6fa84e95322",
-      "compressed_sha256": "472594b613136a204a3aef13100cc2e0f3d2d795608351b9c56f9bf480c63606",
+      "path": "raw/20261028T232641569207/0167A0.xml.gz",
+      "raw_bytes": 10182,
+      "sha256": "84c361ae6dd28e704b70c9f1e1677d09ee1d997ce6154c65a71bf126b3231d33",
+      "compressed_sha256": "06501162c24f784031efcd5a1c9c05c25ae2f1b212869cdda3fe43718df541ef",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "0167A0",
@@ -2031,13 +1980,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:33.518311+09:00"
+      "received_at": "2026-10-28T23:26:45.883069+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/0167B0.xml.gz",
-      "raw_bytes": 9880,
-      "sha256": "6c7402c097520882ecd3028bdd794c00b96290f7333114bcdb1efe3d2f25036a",
-      "compressed_sha256": "9b5c24b0586847ae122a39a97dc01d4410ef036a7230658a976b026434cf0a5f",
+      "path": "raw/20261028T232641569207/0167B0.xml.gz",
+      "raw_bytes": 9943,
+      "sha256": "9b26cdfd58b32017efb242185320164f2723a3cca4e30a432299bddd470614bc",
+      "compressed_sha256": "52e33a74af8e80bb68c5cc80a28d94710ff89374aebe441a14cae55fcdf3dcb0",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "0167B0",
@@ -2045,13 +1994,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:45.669268+09:00"
+      "received_at": "2026-10-28T23:26:54.779811+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/0173Y0.xml.gz",
-      "raw_bytes": 9293,
-      "sha256": "2dbd654ffee0dd10026cbaab720d74a3cda6438564d71df857e956640dc06b8a",
-      "compressed_sha256": "ab6446766e68f42a3e7f7c63c509eb69168d9f034a08998b1bcbda337ed72968",
+      "path": "raw/20261028T232641569207/0173Y0.xml.gz",
+      "raw_bytes": 9353,
+      "sha256": "817e761f0e7de8b9140a492a5544a4380af4f04e5c34b1737c6c28ce7cc7fbe0",
+      "compressed_sha256": "25f218cffb2241c3eacfe89eddf78760e2d951ac2323626ffff1534049c53f25",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "0173Y0",
@@ -2059,13 +2008,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:39.554837+09:00"
+      "received_at": "2026-10-28T23:26:56.628254+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/0177R0.xml.gz",
-      "raw_bytes": 8329,
-      "sha256": "01bf7ae2dce45282807c06619329e03f3d80fe4d0ecc8dc8762983b4454a0a3c",
-      "compressed_sha256": "38341160f049bdb972d592d6719e3fd639647eeeea442e4f9067938813f41dfd",
+      "path": "raw/20261028T232641569207/0177R0.xml.gz",
+      "raw_bytes": 8390,
+      "sha256": "bf9b7ff531e12ec8e35e04864012ee2f98281428e84289ad43f16a8f7e6ba1a2",
+      "compressed_sha256": "6e2347528f28cff858fdfdc3a0a56be62f531c9c97ebc83e10703aeada0395aa",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "0177R0",
@@ -2073,13 +2022,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:40.457792+09:00"
+      "received_at": "2026-10-28T23:26:53.113102+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/0182R0.xml.gz",
-      "raw_bytes": 8614,
-      "sha256": "0043b59749b57050f0aeb1edca49e9e40c922b208668c0f0dc35ef0b85db9864",
-      "compressed_sha256": "b98ca6837bc45b876d3de140914d1aa368b2c02d4c2723049ee6ff116ca17344",
+      "path": "raw/20261028T232641569207/0182R0.xml.gz",
+      "raw_bytes": 8675,
+      "sha256": "01aa14ec9fc020e3e5eced646e23adccb6a5fa24adf85d42b3b4792036f73bfd",
+      "compressed_sha256": "53ebaaa9d94038712a25a014bfb81e377e8b62e24acfb1cc4b9b46be30094154",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "0182R0",
@@ -2087,13 +2036,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:38.200949+09:00"
+      "received_at": "2026-10-28T23:26:49.464325+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/0183J0.xml.gz",
-      "raw_bytes": 8417,
-      "sha256": "ed754ec26c09204defc39cde5dc37815323af6cdec7a32b5dc87714b377be91d",
-      "compressed_sha256": "f4b919beabf9be12376748e62d636718e6e659a8d67a93d12946319f2f60e23e",
+      "path": "raw/20261028T232641569207/0183J0.xml.gz",
+      "raw_bytes": 8478,
+      "sha256": "8accef13f80a0f81f6b0d7421f41ebd9e68ad51a4026af6c98aa62084a37b30c",
+      "compressed_sha256": "1e0c02907d2cd323308cd80d216e78c2346a171c65dce51587be4d556fc3948b",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "0183J0",
@@ -2101,27 +2050,27 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:50.837964+09:00"
+      "received_at": "2026-10-28T23:26:57.459685+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/0207G0.xml.gz",
-      "raw_bytes": 5624,
-      "sha256": "8c133d570eaf2b8cb1c2835af10cf5b8f3b4c36f4bc307246787a51100abe5c5",
-      "compressed_sha256": "e073eb756568335cbefe68642fd53db48c238f1c72f05370c558a7731342dc62",
+      "path": "raw/20261028T232641569207/0198A0.xml.gz",
+      "raw_bytes": 5094,
+      "sha256": "1c54d26099bf480cfc6fe791ce33af4bc1e55a685a751b3c66cd86cbcc7e1ac9",
+      "compressed_sha256": "e197ae351a1491e08826fa20df6363ab979339234eeb160a9dad07deecfbc26b",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
-        "symbol": "0207G0",
+        "symbol": "0198A0",
         "timeframe": "day",
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:49.415276+09:00"
+      "received_at": "2026-10-28T23:26:58.206259+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/0209D0.xml.gz",
-      "raw_bytes": 5377,
-      "sha256": "c49170824ca0a8039383c0dfa342fd7e016c54cef890a647d76f90c2dbcb54cd",
-      "compressed_sha256": "27062d31b4c22dd1e78d646519f743e2fc3e85008ca3e0d452d4b8e6e2e0336e",
+      "path": "raw/20261028T232641569207/0209D0.xml.gz",
+      "raw_bytes": 5438,
+      "sha256": "9239d0f68aaf88e904fe4f4ddf874da7320f8585a148823af97e8c2d37c6cfe8",
+      "compressed_sha256": "9f7b47df53c6b0abfa297b8ec297b888eebf37d0f86c8738dd5ca779d7b1ccd7",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "0209D0",
@@ -2129,13 +2078,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:36.417433+09:00"
+      "received_at": "2026-10-28T23:26:50.531621+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/0210A0.xml.gz",
-      "raw_bytes": 5434,
-      "sha256": "69435b3f99207a441e07740dc2b629be23c267d078856da0194d62cf6614bb21",
-      "compressed_sha256": "8dc16d539d43b9a32f7a6b05ad08878620c65e233a90e5e0a651c276b775ea63",
+      "path": "raw/20261028T232641569207/0210A0.xml.gz",
+      "raw_bytes": 5495,
+      "sha256": "7155ebef8e996b6816f31b98f935818e76bd785d9e421086f21a3987221d06d7",
+      "compressed_sha256": "555a5accb2855e8b9563d2415be2547cfa97217c8a5b2543207037738c1b5f32",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "0210A0",
@@ -2143,13 +2092,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:40.106404+09:00"
+      "received_at": "2026-10-28T23:26:51.464573+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/0219E0.xml.gz",
-      "raw_bytes": 4501,
-      "sha256": "85a48a493419ff78af6228e2202b4aa454cb2feca496847e3b18d7b8f76ddf4e",
-      "compressed_sha256": "a57442e24dd97b9453390f1482569b0219210dbdc0280760853e6d83009c41b4",
+      "path": "raw/20261028T232641569207/0219E0.xml.gz",
+      "raw_bytes": 4562,
+      "sha256": "f43fd54258c0082ce355d5d2c7f5bde8989aa56bf6bcf678d2a110e984dcdce8",
+      "compressed_sha256": "48cde25248a0d7b90eeaea8ba7dabc7b0a5dd9c27fe6dd420d9d9352fc93b82a",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "0219E0",
@@ -2157,13 +2106,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:35.468026+09:00"
+      "received_at": "2026-10-28T23:26:48.323401+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/0239Z0.xml.gz",
-      "raw_bytes": 1937,
-      "sha256": "61cbe39221b8054fac216d50c34db4bd2b058c5635ff355ab9b941bd47733fbb",
-      "compressed_sha256": "47ec37a2f0bc685c388bea6677f32adb0353791ceaa5973e3fda9fa4fd8a6096",
+      "path": "raw/20261028T232641569207/0239Z0.xml.gz",
+      "raw_bytes": 2001,
+      "sha256": "2147d0cb06e2ac028619cbf57221c2b9e8c05b8f35ae3dedc649b5f241c05640",
+      "compressed_sha256": "63a796c3d71f331bf1aad75e46de8a17a85afc70470bbd8d0eb118d0fcb748e1",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "0239Z0",
@@ -2171,13 +2120,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:52.028730+09:00"
+      "received_at": "2026-10-28T23:26:58.664068+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/0246X0.xml.gz",
-      "raw_bytes": 1069,
-      "sha256": "896bf14060db6ed4edbe5e74c1e0e834408fa9c76ba02a3f5a3c58ca308e76a4",
-      "compressed_sha256": "d1517c1ba406e7b69905261a4703eb2cd4df693ac203f8a0e7fd373dcad14904",
+      "path": "raw/20261028T232641569207/0246X0.xml.gz",
+      "raw_bytes": 1129,
+      "sha256": "63c756f6780aaa1509eebcc9e39e7cb4c4f8539d90007beb431f4efc710c4f9b",
+      "compressed_sha256": "25b4c6d83ce3b0968f0e6ce7334eac0e3efc06208c500e3a835ad6ec1c182e5a",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "0246X0",
@@ -2185,13 +2134,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:46.458519+09:00"
+      "received_at": "2026-10-28T23:26:58.536839+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/069500.xml.gz",
-      "raw_bytes": 17765,
-      "sha256": "e17ca7c4490d0a7dc798628ef0d8d4289ceb281658618f81ed4df33f7318ca21",
-      "compressed_sha256": "75159570f7a81d85c54210771fa486c8fefc0901f93c21e936f79079824eb3b4",
+      "path": "raw/20261028T232641569207/069500.xml.gz",
+      "raw_bytes": 17766,
+      "sha256": "9ab99612229a3cf8a3443a2b7d2ca67ca4e46770411154d569aa19e85994de8a",
+      "compressed_sha256": "3d003fcf2301c62051387f35779ab7ee6cb01e602852557cb33d8105ef6bf466",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "069500",
@@ -2199,13 +2148,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:31.695226+09:00"
+      "received_at": "2026-10-28T23:26:44.162848+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/069660.xml.gz",
+      "path": "raw/20261028T232641569207/069660.xml.gz",
       "raw_bytes": 17222,
-      "sha256": "487846a3a1f54d25c18e3242d390f80b74e5a3ac04626a34d3a67801fca346e2",
-      "compressed_sha256": "9bab61d49dcab9b9483db8f47096e8aab7ccd4610485cf188dbb5c69f3a67939",
+      "sha256": "961bc7a642f4b7f38d5ca582fe73635ea65648b1fc7509ab9f711dbd00f64176",
+      "compressed_sha256": "3a4c0ed05d527d0fe0db8cffe0318f8507be78960f536d7d1d65004ce404be04",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "069660",
@@ -2213,13 +2162,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:39.753304+09:00"
+      "received_at": "2026-10-28T23:26:48.937497+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/091160.xml.gz",
-      "raw_bytes": 17679,
-      "sha256": "1335ec1dbf2acd35c8b9694a97e00637b358d98e0d87bdeb18c6d799af40517f",
-      "compressed_sha256": "c58b5fb6a7eacb9f20e9038a060f105287761a3edb534168b72a3f61876b8995",
+      "path": "raw/20261028T232641569207/091160.xml.gz",
+      "raw_bytes": 17683,
+      "sha256": "c32b2c25c9458caeeec7dbf7d1345e681653a622e585394875f879c4041aab3f",
+      "compressed_sha256": "0bf66fc41f22158034f13e23aa7a9a25ad80a659ea8ed6416bd2075f4d3a7574",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "091160",
@@ -2227,13 +2176,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:33.739740+09:00"
+      "received_at": "2026-10-28T23:26:46.094849+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/091170.xml.gz",
+      "path": "raw/20261028T232641569207/091170.xml.gz",
       "raw_bytes": 16957,
-      "sha256": "3a60ede621e597da753357da29f585e631f4dcac8eca2c51270f713a2bf4dec5",
-      "compressed_sha256": "0866f2f9a0f6e923c5ec5672d1447bdf71db82e31aa58fdf95641f61515fd96f",
+      "sha256": "2573d77b10c5080fc4de787fa6f0be53434cb84d336424e30d14b7a039a6a74f",
+      "compressed_sha256": "3fefe6def5ff3b3287a43423c9e002c0a94733599106e1fd450b9e469da1720b",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "091170",
@@ -2241,13 +2190,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:49.561639+09:00"
+      "received_at": "2026-10-28T23:26:57.479124+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/091230.xml.gz",
-      "raw_bytes": 17497,
-      "sha256": "9047f0a5d9717f039e22287c29739020b1032494c02c6192729715d4334465c4",
-      "compressed_sha256": "9ce86506b0ab2178ed2e45bceea91be7fdf5669aa4c5f323887b422524e7d76c",
+      "path": "raw/20261028T232641569207/091230.xml.gz",
+      "raw_bytes": 17501,
+      "sha256": "4c3ed41150781e0fc2129a39e6279c6ddbc27a9e588e16545908cb4a523fb59e",
+      "compressed_sha256": "46f7c14f016557636961da132eceb3a81d16dbdc1123843bfa0fa65077a17e4e",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "091230",
@@ -2255,13 +2204,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:42.491548+09:00"
+      "received_at": "2026-10-28T23:26:52.745628+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/102110.xml.gz",
-      "raw_bytes": 17568,
-      "sha256": "5f3337229e17b3c5b59e6bf2edb493eb73fba74d443c1f461714526a03051a7d",
-      "compressed_sha256": "b595f508ed134296f8442ba5a94b6069b3996fdeb20e58db9cb06d6ef5a4f245",
+      "path": "raw/20261028T232641569207/102110.xml.gz",
+      "raw_bytes": 17569,
+      "sha256": "9e86911153c48217930d4f75ec236c9109cacb75f6d875ae4232e9dcf95ab380",
+      "compressed_sha256": "abdc3c46ff72d9d44c7ed0d4742f716d918e161dcb2e2e18ae909c0dfafcb2f1",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "102110",
@@ -2269,13 +2218,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:31.661998+09:00"
+      "received_at": "2026-10-28T23:26:44.195912+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/102780.xml.gz",
+      "path": "raw/20261028T232641569207/102780.xml.gz",
       "raw_bytes": 16946,
-      "sha256": "3a0f24c1205dcb6371809674d2a3cedcf8bda10c56b5a73a225eecd41300c7f6",
-      "compressed_sha256": "60e7f1af1da5a3e9e3c15625192c735781dcf780f6f4b7cd4f65ce861d04eacf",
+      "sha256": "d7cc6f9df278fc58b3a52a30f896ff10ac3f0d41576a031e411dd5f6c1ef9405",
+      "compressed_sha256": "44c05a7802691297249c2d7107d3fd88fcc2a76b4bf8ecab03293a5ddb399af4",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "102780",
@@ -2283,13 +2232,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:43.063740+09:00"
+      "received_at": "2026-10-28T23:26:56.408576+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/105190.xml.gz",
+      "path": "raw/20261028T232641569207/105190.xml.gz",
       "raw_bytes": 17268,
-      "sha256": "be5f72e91e1fc8fecca145caa5f29d7eb9da2cbd84ba6a82d4d44b8262e66c23",
-      "compressed_sha256": "67d9f70589853a256e4783b32a98e8eb1bc39a51c177ba038c8353e8e56d3b12",
+      "sha256": "335c0a82e3658aafaaf317ca5d3998a40d8ad8e94f993411359f269c0cab8290",
+      "compressed_sha256": "d83d5607c69e51e8ada12f009ffa6015d4f0650a542376f9ecb264916924a0e7",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "105190",
@@ -2297,13 +2246,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:37.323467+09:00"
+      "received_at": "2026-10-28T23:26:48.419765+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/117700.xml.gz",
-      "raw_bytes": 15977,
-      "sha256": "361f00c695521d9c88b1f15019d3c6397fdc0c50ccb187bb6bd85b7734837a51",
-      "compressed_sha256": "a8dc4af8bc3a944b6015fe8eabdc8b63c37048887e39ee43c90590a51599878f",
+      "path": "raw/20261028T232641569207/117700.xml.gz",
+      "raw_bytes": 15978,
+      "sha256": "aedcfbc9caf17067b1a2a7ee979eebd39c457d0f302a4400016159f7c2c0dc7b",
+      "compressed_sha256": "57c9f30474790b2285926eb673e4c9e0af4fa6453339047aa74c1c3bbf7b2246",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "117700",
@@ -2311,13 +2260,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:45.457544+09:00"
+      "received_at": "2026-10-28T23:26:59.264011+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/133690.xml.gz",
-      "raw_bytes": 18015,
-      "sha256": "18dc68e0c4d765548adae2c986ad40580d2ca56080d24ba7bf644270d0740ee2",
-      "compressed_sha256": "acb356c519b47f9bde13364571d56669aea98814a7c5577a1b902f7851510aa3",
+      "path": "raw/20261028T232641569207/133690.xml.gz",
+      "raw_bytes": 18016,
+      "sha256": "78011ce787421d704c77189a8e2d8c0f259d992016030b634a7e8bb05bf37d4f",
+      "compressed_sha256": "5c0aa96e4ce71632914ef0c13489e7b01fba63741a84d42fec7018d212f7c4ad",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "133690",
@@ -2325,13 +2274,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:31.725398+09:00"
+      "received_at": "2026-10-28T23:26:44.220566+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/139260.xml.gz",
-      "raw_bytes": 17414,
-      "sha256": "1700505e54bb901890955b49a895212da4e25ab184fd56d78b9b6f828e8e4db5",
-      "compressed_sha256": "253541831f0eb72eddcbd8ad4cae6892e9b2cb8bb55c75fc2cbe9419d922ed61",
+      "path": "raw/20261028T232641569207/139260.xml.gz",
+      "raw_bytes": 17418,
+      "sha256": "3548cf0952921eedd250ee989a4a04eda1e9c89e5483bf5fb4438c9fb46f5f80",
+      "compressed_sha256": "63391f90bd468c70c5f09883ac13fddf5cd6e2a7ed452587620778873e44796f",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "139260",
@@ -2339,13 +2288,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:36.259402+09:00"
+      "received_at": "2026-10-28T23:26:48.458321+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/148020.xml.gz",
+      "path": "raw/20261028T232641569207/148020.xml.gz",
       "raw_bytes": 17463,
-      "sha256": "6add7479fccb095fd14af7da2d9ffb6d59766dd15e096c02bfa59f90d47c42f6",
-      "compressed_sha256": "366aa210018d0bbd3fd2aad5fe940c5cc0560f5cd35c7198dd9e685ced45c2ee",
+      "sha256": "60ce7752fcb28a3fcc965078d961eee43af81948676ef2b752c39cb4b748074e",
+      "compressed_sha256": "82a0c464625d1bc24b2437eb3b4aedf77ac97d51c2d667f0d6b0b15b572577ff",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "148020",
@@ -2353,13 +2302,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:33.686092+09:00"
+      "received_at": "2026-10-28T23:26:45.086928+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/152100.xml.gz",
-      "raw_bytes": 17291,
-      "sha256": "a0fb900b9644054e85bb09466123a2bad3703785a949fe38c745edddcf6b9663",
-      "compressed_sha256": "8e8ee14e62730d995ee24572bcb57dad73c713bc7972a5da8d8000ced821a21d",
+      "path": "raw/20261028T232641569207/152100.xml.gz",
+      "raw_bytes": 17292,
+      "sha256": "e718d13efe27816d72e2bde89703eb53a06060d5b7b9cd698e53dc693d594087",
+      "compressed_sha256": "08375f0bbbc6fe29188186bc83020f6aa6dcf10b49d8d30668ade3bf73147f51",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "152100",
@@ -2367,13 +2316,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:37.013707+09:00"
+      "received_at": "2026-10-28T23:26:47.081976+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/161510.xml.gz",
+      "path": "raw/20261028T232641569207/161510.xml.gz",
       "raw_bytes": 17018,
-      "sha256": "ab86f63d17529932680291a42409eff6e00f8b48c24dc9997b95898ba0ab36d4",
-      "compressed_sha256": "ebe1098b81c79988927f54280b56ffd14e634034f6a0837d62b512104bb98652",
+      "sha256": "6515b5df0c302a5022df67fb80fe555fa1744089ee76b2e1d2554dec127fff88",
+      "compressed_sha256": "c908151005b2724706c6d593127b8a049c3ad9a4c60e1e67b71f71680a679743",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "161510",
@@ -2381,13 +2330,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:46.222637+09:00"
+      "received_at": "2026-10-28T23:26:54.511282+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/226490.xml.gz",
-      "raw_bytes": 16867,
-      "sha256": "b4ef4c37f1c9015a856dc5ee7c936cec253d975eadb95e59efb26fdd23f5bd49",
-      "compressed_sha256": "a1b003681a3d880dc98fd20f654f91e6ef4cef0241036e06b8261d5308834755",
+      "path": "raw/20261028T232641569207/226490.xml.gz",
+      "raw_bytes": 16868,
+      "sha256": "f45950636df9e4151768481531ada6f04a155ddd4b150534dfe59be7a86b811b",
+      "compressed_sha256": "a68ece843e92feb818d4da647ec2b3cbd393db6fa84c64d0047b855e56adb196",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "226490",
@@ -2395,13 +2344,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:40.783409+09:00"
+      "received_at": "2026-10-28T23:26:47.685022+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/228790.xml.gz",
+      "path": "raw/20261028T232641569207/228790.xml.gz",
       "raw_bytes": 16093,
-      "sha256": "b7593f3f46154e022c1ab6c803c9df6f6ef1024f498fbcf9940b021557f41a83",
-      "compressed_sha256": "6f65cb4a9abc3e24bd3534d8d838d87fc9645a626d4cf1bb0cf291036243f0f3",
+      "sha256": "b953a0d0c950300a06829c7ae8c3e23bac00e6f40429eb9d62e72d2bf00355f9",
+      "compressed_sha256": "23dd683480fbe27eb55d0a389eb59cd4a5ac2b485e741d88903ada4897ece155",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "228790",
@@ -2409,13 +2358,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:47.046531+09:00"
+      "received_at": "2026-10-28T23:26:58.089749+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/229200.xml.gz",
-      "raw_bytes": 17339,
-      "sha256": "fa66d52ac69bfdbbab0d21ef44d720eebe22fd3e672a891d630dc2bff9613f26",
-      "compressed_sha256": "a20547ae6740df4f24edee335210a72c7b7ec3bcc784e9d287c7de8e04b3a00d",
+      "path": "raw/20261028T232641569207/229200.xml.gz",
+      "raw_bytes": 17340,
+      "sha256": "4f2e2c2ed7dcf0984b9614e02207203b408ce93b98849e10b1fc6d35f0461946",
+      "compressed_sha256": "abc504ad6fc3bef201e1b5f77fea008b4a589fc01ad1693cdacc6bc2a6bc0318",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "229200",
@@ -2423,13 +2372,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:32.662981+09:00"
+      "received_at": "2026-10-28T23:26:46.029610+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/232080.xml.gz",
-      "raw_bytes": 17108,
-      "sha256": "17090ffe5a9891af3866f708ebbbd83ee4911b8d540d4583561e76aea8c3988b",
-      "compressed_sha256": "723d85d44664efd7a774b3a1dcb8d535fdde65c3a7a7c56c2819c9060abc7ac6",
+      "path": "raw/20261028T232641569207/232080.xml.gz",
+      "raw_bytes": 17110,
+      "sha256": "5cfaf2611d040f7d26383bcb7e208f7c6becbcd95a846fb818d315e670969341",
+      "compressed_sha256": "630c48a222b1e9c161c88411c4eb288f30dd05a1e51f2168ecfccbcf8c53d959",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "232080",
@@ -2437,13 +2386,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:34.453360+09:00"
+      "received_at": "2026-10-28T23:26:46.813396+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/237350.xml.gz",
-      "raw_bytes": 16968,
-      "sha256": "9b0efbb11b113a4d298a79bba41e76595306193f5795e0e3d77639ace4980cbd",
-      "compressed_sha256": "c0e951f206eccbb44d78b7e1dbd3234d93fbfd977be3ec48731daeefdcb6798c",
+      "path": "raw/20261028T232641569207/237350.xml.gz",
+      "raw_bytes": 16969,
+      "sha256": "cb5cb59571ee2bd6dafd891938864f37ce08a4f44fe03e57998ea89fc446b918",
+      "compressed_sha256": "7a00cd9976047c987310811d786d9986463815d47c0ba72d427f1c8f4a9f584b",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "237350",
@@ -2451,13 +2400,27 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:44.657303+09:00"
+      "received_at": "2026-10-28T23:26:52.331886+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/278530.xml.gz",
-      "raw_bytes": 17011,
-      "sha256": "f069162e9acfac1c4f351bc24e33fb26a27877972b8cdb1b03e50f632eab7c19",
-      "compressed_sha256": "8cf70bf4c7a43b757812d8faf54db8cf3035a0fe1bc6e52c9eb6067255e3f970",
+      "path": "raw/20261028T232641569207/277630.xml.gz",
+      "raw_bytes": 16706,
+      "sha256": "593388966cf9fcf3b228a4a55f3a1ef4193ccff84677f133974edda9c17b0e3c",
+      "compressed_sha256": "b652798c6fefb210e53f8c9b8a025024e895213bec9b64162bcc7af3d507f22c",
+      "url": "https://fchart.stock.naver.com/sise.nhn",
+      "params": {
+        "symbol": "277630",
+        "timeframe": "day",
+        "count": 260,
+        "requestType": 0
+      },
+      "received_at": "2026-10-28T23:26:50.059444+09:00"
+    },
+    {
+      "path": "raw/20261028T232641569207/278530.xml.gz",
+      "raw_bytes": 17012,
+      "sha256": "6ae49a1e0ee44a5811ca87af0cc73d223b27fff78615f78f331513b3cbfb352e",
+      "compressed_sha256": "8d7bc30d4038ae9a2da2e6c98f39d728718e87143666cf964489d1856dfb601c",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "278530",
@@ -2465,13 +2428,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:37.767480+09:00"
+      "received_at": "2026-10-28T23:26:46.780940+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/292150.xml.gz",
+      "path": "raw/20261028T232641569207/292150.xml.gz",
       "raw_bytes": 17027,
-      "sha256": "b4e4dcf2f53b451a04223fc525290d5870f3e2f60ba1fb60c0b23b01a8cf804a",
-      "compressed_sha256": "59c6034e1da2031ed6a151ad3e79c0c4796615e01d21a6a5e67b977bbc10b13d",
+      "sha256": "13d79a4f75e90347ca7e5de4a5b8e14a4cbac771a24d88fcd402bd30f6d77a10",
+      "compressed_sha256": "f4cc69ba540310954f8112e0b64cb8424df80f6dea708f47717b8ff1615efe85",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "292150",
@@ -2479,13 +2442,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:44.074760+09:00"
+      "received_at": "2026-10-28T23:26:52.149266+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/293180.xml.gz",
-      "raw_bytes": 17075,
-      "sha256": "c15fd1939e94de1d4ec8bc407c914441135a74d01623c4e411958b5f142821e9",
-      "compressed_sha256": "543e20effc6aff0dbac4b9387f51a201fc7c3d4263f61d3921743aa8a5c2021a",
+      "path": "raw/20261028T232641569207/293180.xml.gz",
+      "raw_bytes": 17076,
+      "sha256": "89f4cd6488a17b2d81b40145a5b07443968bbda8fffd6d01ce8eabc50d70416e",
+      "compressed_sha256": "c93b89e54ed53bc85d75bad7d11e8a5072deadc0d809c74f5dd041341271cec6",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "293180",
@@ -2493,13 +2456,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:51.620761+09:00"
+      "received_at": "2026-10-28T23:26:52.945432+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/294400.xml.gz",
-      "raw_bytes": 17470,
-      "sha256": "759ab53a6b3937ae60457e4f11617d2c7c18de6585ad8b8e6d7b50fa92237665",
-      "compressed_sha256": "a7c13f2bfe2bb34dcb71a8e22d390d12f7750fa02d69184c5f0e145845603a02",
+      "path": "raw/20261028T232641569207/294400.xml.gz",
+      "raw_bytes": 17475,
+      "sha256": "61295e7ce1d6d6b8019d00339c16c5cb78cf9a837a7950a2c28e5062da6de04f",
+      "compressed_sha256": "9c03ab39ae47c4e290e46b9c2c817f5bdcfb5eeb6ff052b07464faed64385c30",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "294400",
@@ -2507,13 +2470,41 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:41.372051+09:00"
+      "received_at": "2026-10-28T23:26:47.815272+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/305540.xml.gz",
+      "path": "raw/20261028T232641569207/295040.xml.gz",
+      "raw_bytes": 16752,
+      "sha256": "fcd7481eed7013e5a1b4271f269428e8d2094ed739f85186c46915504879df00",
+      "compressed_sha256": "3dedbdedc814465a9b38e6a6c86191a6d2f54b36cf5d78a862b03c94361c437c",
+      "url": "https://fchart.stock.naver.com/sise.nhn",
+      "params": {
+        "symbol": "295040",
+        "timeframe": "day",
+        "count": 260,
+        "requestType": 0
+      },
+      "received_at": "2026-10-28T23:26:57.203334+09:00"
+    },
+    {
+      "path": "raw/20261028T232641569207/302450.xml.gz",
+      "raw_bytes": 16530,
+      "sha256": "f8be09b6f81b2802438a15078fe1e7f9e5196e8dce9fec7b048fef7728ed035b",
+      "compressed_sha256": "ffbc041943254b79902cc70036a793e0af83e1468bbb15abf777f91bf327eb71",
+      "url": "https://fchart.stock.naver.com/sise.nhn",
+      "params": {
+        "symbol": "302450",
+        "timeframe": "day",
+        "count": 260,
+        "requestType": 0
+      },
+      "received_at": "2026-10-28T23:26:51.004686+09:00"
+    },
+    {
+      "path": "raw/20261028T232641569207/305540.xml.gz",
       "raw_bytes": 16964,
-      "sha256": "79beea24aaadb8c68f351a8d59661b74b0a6034408fea92c2253967d97abdf16",
-      "compressed_sha256": "38c4e710cfd8919aab8f3273d4247c8b6a3768712265cea598b7b5e2fe5cc73e",
+      "sha256": "117a59771cffe0f6646586032d7d0dcd4c69f180baacf488b5534d37b9c49041",
+      "compressed_sha256": "193a667400a53ac65ee35c6e3ce6ea3c35306930f731732f047359bf13b95274",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "305540",
@@ -2521,13 +2512,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:47.214744+09:00"
+      "received_at": "2026-10-28T23:26:57.787754+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/305720.xml.gz",
+      "path": "raw/20261028T232641569207/305720.xml.gz",
       "raw_bytes": 17149,
-      "sha256": "82c18998e5f60d1bb318d0e80d1310b939ef1c60143326745ea8a4b94b763978",
-      "compressed_sha256": "ecb555ad2f107ce601f24761743a6add2b59eb0f4b1d7c3fc26584de7b9646bd",
+      "sha256": "4cdfe54854bd205c4c70bf9a99ccc0a465f054ff19f8eb10086539bfeb56d1fc",
+      "compressed_sha256": "a8c34ed3a9c0338640a14c2e8b8b30cdfec1df2626c4cb5c8ad490314fa71b7f",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "305720",
@@ -2535,13 +2526,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:36.367994+09:00"
+      "received_at": "2026-10-28T23:26:49.378430+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/329200.xml.gz",
+      "path": "raw/20261028T232641569207/329200.xml.gz",
       "raw_bytes": 16095,
-      "sha256": "84182a4f207171c71ecc84d918571ce3ab44d5018c9df2b4498be652f9d8cdda",
-      "compressed_sha256": "941b907f3097df91761e1d76d210fc9374a61a388a34daac1fe4f1e8c30dfd3d",
+      "sha256": "1b5fd266470c102423264db4020813b133ba687dcadbd0962ea93e211c4aea31",
+      "compressed_sha256": "b54ee86a8a1860eb4b24312e2d98f1d27915b986bd6537e62e9264f149ae55ed",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "329200",
@@ -2549,13 +2540,41 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:45.832276+09:00"
+      "received_at": "2026-10-28T23:26:52.499296+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/360200.xml.gz",
+      "path": "raw/20261028T232641569207/332500.xml.gz",
+      "raw_bytes": 16631,
+      "sha256": "f059757e37b1bc3a963ef116756d700b7abed5c5f9a416863636867fa32f74d4",
+      "compressed_sha256": "305fbfa592d2009ef42201097b24a4b08dda1df458c3f355e432f73568b6fb3a",
+      "url": "https://fchart.stock.naver.com/sise.nhn",
+      "params": {
+        "symbol": "332500",
+        "timeframe": "day",
+        "count": 260,
+        "requestType": 0
+      },
+      "received_at": "2026-10-28T23:26:56.270067+09:00"
+    },
+    {
+      "path": "raw/20261028T232641569207/332930.xml.gz",
+      "raw_bytes": 17066,
+      "sha256": "c2e38f40136b696ef8c9e74dac3a2a1ecf001ce77f07d80b351fa59fcd90d635",
+      "compressed_sha256": "03cde0ddad82250242d77ebf30624acb2f1e4ef061c470f0f7f434544eec047b",
+      "url": "https://fchart.stock.naver.com/sise.nhn",
+      "params": {
+        "symbol": "332930",
+        "timeframe": "day",
+        "count": 260,
+        "requestType": 0
+      },
+      "received_at": "2026-10-28T23:26:58.966020+09:00"
+    },
+    {
+      "path": "raw/20261028T232641569207/360200.xml.gz",
       "raw_bytes": 16923,
-      "sha256": "3bd24f8e96a8fdcf5ee39739f3a958a0b7495e2f3e6e02cbd8b8660e40789096",
-      "compressed_sha256": "ef2523b93b971b21a963a39c0bafc76c98d81a39159a0318317d42f516679f3a",
+      "sha256": "6c9fd4f145fbeae8c58044d230a4cee131c338fd04f20afd928e99843abb15bf",
+      "compressed_sha256": "9d2c1a6226e56065151d67e83287a418be9622197c96e4e908c4df20f75a3d8d",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "360200",
@@ -2563,13 +2582,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:43.850512+09:00"
+      "received_at": "2026-10-28T23:26:56.997328+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/360750.xml.gz",
-      "raw_bytes": 17278,
-      "sha256": "24157c3c75d05317f50b38b356c05bd85fc8d6f8a145776c2ba9fd4f1487f67d",
-      "compressed_sha256": "c63b444ba6fce8e4e8f2d930f784f590d29e53e6a71322f70fd2f9778a6b9a8a",
+      "path": "raw/20261028T232641569207/360750.xml.gz",
+      "raw_bytes": 17279,
+      "sha256": "f0e5ddd1709164a3fc7d9e70e8726d3cdec937c2f64986b514e6606f8988b826",
+      "compressed_sha256": "be0dafc2a8c7419e929052d52f247564077ec647da897c676bd5731c4265984f",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "360750",
@@ -2577,13 +2596,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:31.754888+09:00"
+      "received_at": "2026-10-28T23:26:44.217064+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/361580.xml.gz",
-      "raw_bytes": 16760,
-      "sha256": "a4c9d145bf35acfb5562f240391f35100f747dbd10526a432ab8b75c4fb1ed1a",
-      "compressed_sha256": "f5f58226f8ddebc52809c90bbf72ead5451213e3660fe2fea735ebc941f1476d",
+      "path": "raw/20261028T232641569207/361580.xml.gz",
+      "raw_bytes": 16761,
+      "sha256": "770b00017ffe21e34f3f834bd0dd70bb8aada9d80dc36687d0513b8a978fa773",
+      "compressed_sha256": "c585d479cd4b8824d0d026482bcfa2775811b38ff43e624ff4dc90daba4b0858",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "361580",
@@ -2591,27 +2610,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:46.629663+09:00"
+      "received_at": "2026-10-28T23:26:51.737097+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/364970.xml.gz",
-      "raw_bytes": 16003,
-      "sha256": "fa05902e04efaeeb47060260218631be17b20b32cbdf3436a91b1debf280dccc",
-      "compressed_sha256": "6f9ee7204c6fa1eb7288dc2eda4697c46d70b9ab3434d6ecad3b0d7603e2eed6",
-      "url": "https://fchart.stock.naver.com/sise.nhn",
-      "params": {
-        "symbol": "364970",
-        "timeframe": "day",
-        "count": 260,
-        "requestType": 0
-      },
-      "received_at": "2026-10-27T22:32:51.808288+09:00"
-    },
-    {
-      "path": "raw/20261027T223228677456/364980.xml.gz",
+      "path": "raw/20261028T232641569207/364980.xml.gz",
       "raw_bytes": 16696,
-      "sha256": "3559da75589fe7f9396929184f30e8216b51289344b03d60ee0717ef9c9078bd",
-      "compressed_sha256": "0aa6d9ad8143c5bbbd0b8164fee7c06314be3835f724deb9bfc77b97a133e0e2",
+      "sha256": "f064d1275d7a3037b8a7d7fe36fed38ac24a28afd34cc96b69ef3013028583d8",
+      "compressed_sha256": "31b408e8345a2464956ed3461aed2aa372adced592147c01c874de88be5b4b2c",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "364980",
@@ -2619,13 +2624,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:36.229513+09:00"
+      "received_at": "2026-10-28T23:26:50.412692+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/367380.xml.gz",
+      "path": "raw/20261028T232641569207/367380.xml.gz",
       "raw_bytes": 16916,
-      "sha256": "663a34604564368aa3934b99550f2c9ce195e5ad1ebb508e0c06a860c99b7453",
-      "compressed_sha256": "42c723e0cc5822b7910229cb8c6edae5515e48ee7f78c877ac6da1f6c2816e40",
+      "sha256": "efb965ba4af6f5e8a241759d59e8e1f23a605788df94038e40fea79f109e70db",
+      "compressed_sha256": "791d335a3b9eb3ba548c181ffa21492f75a06baad7fb2a3284df8aeb75451492",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "367380",
@@ -2633,13 +2638,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:43.032096+09:00"
+      "received_at": "2026-10-28T23:26:56.037993+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/367760.xml.gz",
+      "path": "raw/20261028T232641569207/367760.xml.gz",
       "raw_bytes": 16904,
-      "sha256": "fdae3cef0ed8ef91e169906b2997e9a567303f1c8f680b0faf2098d4219b912f",
-      "compressed_sha256": "7697ba93d6010a1b6b039f2ea1a9ce6673a40380bb0d2d438aaaf48890712efd",
+      "sha256": "4c489c39862941d7f88725ecf402f346918314e394f18517fb24f92a76d529ea",
+      "compressed_sha256": "36bdfa70b02a054100c530fb4afd687c7f071f3d08af77f703782ebf090646dc",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "367760",
@@ -2647,13 +2652,27 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:51.724380+09:00"
+      "received_at": "2026-10-28T23:26:59.843508+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/379800.xml.gz",
-      "raw_bytes": 17296,
-      "sha256": "a70f6be909afd32ba7d5998344d7f9337ae5496cb78bbee7ddc43668a48a184a",
-      "compressed_sha256": "a4c72f73c31f81b99ac90f6a83f3602fa0e4ce54f583ef09b11120a702dd977e",
+      "path": "raw/20261028T232641569207/371160.xml.gz",
+      "raw_bytes": 15971,
+      "sha256": "117f50336d0ac6c60f48f04d25bcb8e3ab3a827d0d276b0a1314977b9be857f9",
+      "compressed_sha256": "bd4b9f480f319aeb18cd06fb36bd8fc509b99a6c59bb75209785ecd647ceafb0",
+      "url": "https://fchart.stock.naver.com/sise.nhn",
+      "params": {
+        "symbol": "371160",
+        "timeframe": "day",
+        "count": 260,
+        "requestType": 0
+      },
+      "received_at": "2026-10-28T23:26:53.921650+09:00"
+    },
+    {
+      "path": "raw/20261028T232641569207/379800.xml.gz",
+      "raw_bytes": 17297,
+      "sha256": "3f7f5308422e1bf46e6cea263c90b574d9a3f35768aa6a4162772668350f84b0",
+      "compressed_sha256": "4594568eb26b21496c0f3a600fd2b80a862a9c471a33aaeb3f76871dee696949",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "379800",
@@ -2661,13 +2680,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:32.629791+09:00"
+      "received_at": "2026-10-28T23:26:45.066342+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/379810.xml.gz",
-      "raw_bytes": 17191,
-      "sha256": "6c94e092907e51ca7c38cf61346f4f66e85007dd33c84535a5bcb82ca012d1e1",
-      "compressed_sha256": "7f09c9a9a17828530763ea12731b488a3acf49e3e580620d10f20b22fbff879f",
+      "path": "raw/20261028T232641569207/379810.xml.gz",
+      "raw_bytes": 17192,
+      "sha256": "0a4f5ba29ac9e0e760da74e458f07cbce85017d5642eeddbe9c08f96128e60fd",
+      "compressed_sha256": "2a70a3c25cd1934062878a4f3c6e2705ceb8852570b8698ea3aa6983efe19672",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "379810",
@@ -2675,13 +2694,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:32.678367+09:00"
+      "received_at": "2026-10-28T23:26:45.135306+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/381170.xml.gz",
-      "raw_bytes": 17031,
-      "sha256": "3bc908112a02a57c89d3c22d4c5147633b9bfa0b61b4d1d2c755d14eb804acf7",
-      "compressed_sha256": "0e7d66e0ffbe1fa2a7a9b13f5a37affefc3310f493f222e8ef9e889b2057f923",
+      "path": "raw/20261028T232641569207/381170.xml.gz",
+      "raw_bytes": 17030,
+      "sha256": "5a31daa047552a889974fa0732f286ed8c68e27e40d41d27758dc7556c346785",
+      "compressed_sha256": "a6806d71a35d2523b322fa98e5fb141b4e51ec3c7637dd310c02d518e711c538",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "381170",
@@ -2689,13 +2708,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:49.382419+09:00"
+      "received_at": "2026-10-28T23:26:54.150314+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/381180.xml.gz",
-      "raw_bytes": 17103,
-      "sha256": "713e97094112bad08ae3db0cc483f75cffde6c4ca6d0d2564c9f87ea057762c0",
-      "compressed_sha256": "17a7b31e014009b142ca61f076ae9d29d4a82471c7c0c121d68ea2f1cd665912",
+      "path": "raw/20261028T232641569207/381180.xml.gz",
+      "raw_bytes": 17104,
+      "sha256": "0616a8058a89b54465fc5da04b452a5cb64c623a1c4d98558b7ddfb117653e6c",
+      "compressed_sha256": "bf5720f8d94d60297791f22f9cb3f77276f6a37a68e82dab4cc098818280ef66",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "381180",
@@ -2703,27 +2722,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:35.437626+09:00"
+      "received_at": "2026-10-28T23:26:47.652404+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/390390.xml.gz",
-      "raw_bytes": 16904,
-      "sha256": "f4152f9d5f861a91aa5b15862fec6310d61e1b7ff7af8988a3335702d8892c3e",
-      "compressed_sha256": "dbb51386e90548509f8a9d173362d915f2284c2c48522c8158f68fb57c445f34",
-      "url": "https://fchart.stock.naver.com/sise.nhn",
-      "params": {
-        "symbol": "390390",
-        "timeframe": "day",
-        "count": 260,
-        "requestType": 0
-      },
-      "received_at": "2026-10-27T22:32:44.688925+09:00"
-    },
-    {
-      "path": "raw/20261027T223228677456/395160.xml.gz",
-      "raw_bytes": 17139,
-      "sha256": "cc36fc818562116863d767730e2dc3df021457f26076d5f73ef8247d26c21e55",
-      "compressed_sha256": "0d7c2c5fd55fb6a3114c41f2e4a583ea2bbb6bce77c5fd0ffbde2eb5750765fc",
+      "path": "raw/20261028T232641569207/395160.xml.gz",
+      "raw_bytes": 17140,
+      "sha256": "bff5fe4f31c3df503a0142db9e9294eddfd09908e5f1088ee676e5709aabef2d",
+      "compressed_sha256": "5e195eae9d1fb099f2f7ed2f8812f9954b7b236cae4d85f364db4f94d4ea2081",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "395160",
@@ -2731,13 +2736,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:33.680972+09:00"
+      "received_at": "2026-10-28T23:26:46.065911+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/395270.xml.gz",
+      "path": "raw/20261028T232641569207/395270.xml.gz",
       "raw_bytes": 17100,
-      "sha256": "36a1e22b0a3e33a29639a8b73715b4a1860948f9fb99175ce8893e1b2155c306",
-      "compressed_sha256": "e9b591b113be532c34eb3fec08a46c0189d1c38746a995b87617e296c28e4131",
+      "sha256": "beea0bcc4e34ff67110d3cfa3ce75bdc7abf80b0a6c6649affc6f3b614952178",
+      "compressed_sha256": "2b381c050623846a7b52d08098029b225be7870f7bfcb3eb42030f580b6e0bc8",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "395270",
@@ -2745,13 +2750,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:35.603459+09:00"
+      "received_at": "2026-10-28T23:26:48.253264+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/396500.xml.gz",
-      "raw_bytes": 17298,
-      "sha256": "2de823c5631251b29f13e508b5ada502cf53c2520353001a284a8a5118c48055",
-      "compressed_sha256": "c4679b6702f2d5017521ba66e7377d463027a21cf69bce57bd25da0732b38d22",
+      "path": "raw/20261028T232641569207/396500.xml.gz",
+      "raw_bytes": 17299,
+      "sha256": "47f89194e56b54f7856d5b9bfe475a82ee530704d2c9e7b23bb0801c09827b3f",
+      "compressed_sha256": "0ecbd6a49abb203a7835c0eef65c49a7a35ba7ff21ff93d5d0d6070daa74c66b",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "396500",
@@ -2759,27 +2764,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:32.723119+09:00"
+      "received_at": "2026-10-28T23:26:45.081798+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/396520.xml.gz",
-      "raw_bytes": 16674,
-      "sha256": "d4e38e91535dd612168b527cd17074de354aa789d7c1617047ade6f7c87d4705",
-      "compressed_sha256": "1c921656a1415caf76d2f0e92b4d96b4f726d239a83d40faa038793f38146c01",
-      "url": "https://fchart.stock.naver.com/sise.nhn",
-      "params": {
-        "symbol": "396520",
-        "timeframe": "day",
-        "count": 260,
-        "requestType": 0
-      },
-      "received_at": "2026-10-27T22:32:51.435642+09:00"
-    },
-    {
-      "path": "raw/20261027T223228677456/411060.xml.gz",
-      "raw_bytes": 17052,
-      "sha256": "32600a53393d6c628a2431093a91f4d8dd4c7510dff7a7b094edd7325c882bd8",
-      "compressed_sha256": "96b9bb16ace59b35310ae131b5617e091e11700b3cf05dc6fc80f994d73a3aa6",
+      "path": "raw/20261028T232641569207/411060.xml.gz",
+      "raw_bytes": 17051,
+      "sha256": "3297b9de417faecd0b52bfb4cefc7d4b46eba7514a7b10db50ad77be18698fac",
+      "compressed_sha256": "baa6ab919be1a091e90b5205f530636956a29e359edc488b92b551c5127ed8f0",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "411060",
@@ -2787,27 +2778,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:45.421095+09:00"
+      "received_at": "2026-10-28T23:26:55.973265+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/418670.xml.gz",
-      "raw_bytes": 16657,
-      "sha256": "36aac19d911a323c05babe6199f19dbcc8dcd17f887772cb223fca4fa2b01866",
-      "compressed_sha256": "c5d384a09f5846dda9befc080d4953bc627266d01593765f5810327618e6ef0e",
-      "url": "https://fchart.stock.naver.com/sise.nhn",
-      "params": {
-        "symbol": "418670",
-        "timeframe": "day",
-        "count": 260,
-        "requestType": 0
-      },
-      "received_at": "2026-10-27T22:32:50.201216+09:00"
-    },
-    {
-      "path": "raw/20261027T223228677456/421320.xml.gz",
-      "raw_bytes": 16770,
-      "sha256": "805c29249ef42bbaa3536abcc01fbebd9df2d55354cf892c637f336bb4976cfe",
-      "compressed_sha256": "dff146bf37e0cf2c504ecd302941c276092cf48924593e75ac58a56f79f3efce",
+      "path": "raw/20261028T232641569207/421320.xml.gz",
+      "raw_bytes": 16771,
+      "sha256": "b98e78a83c9e642d09f428db0e9080cd35bce1b7d348362f54d4fa646518f528",
+      "compressed_sha256": "92b56615e3babcab706af6c446d2266689506bfc05a295d0640e1d4589d4ba91",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "421320",
@@ -2815,13 +2792,27 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:48.809283+09:00"
+      "received_at": "2026-10-28T23:26:56.867345+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/426030.xml.gz",
+      "path": "raw/20261028T232641569207/422420.xml.gz",
+      "raw_bytes": 15933,
+      "sha256": "b101eeaff4314f9b9b8915c61f638aa82f1bdaed97502e37a61a5d190f2ac603",
+      "compressed_sha256": "4cdb379d118df8c7d1a8dd22cd09f2420599e3d22fe417604399a8ecf7f5b8d1",
+      "url": "https://fchart.stock.naver.com/sise.nhn",
+      "params": {
+        "symbol": "422420",
+        "timeframe": "day",
+        "count": 260,
+        "requestType": 0
+      },
+      "received_at": "2026-10-28T23:26:55.343711+09:00"
+    },
+    {
+      "path": "raw/20261028T232641569207/426030.xml.gz",
       "raw_bytes": 16928,
-      "sha256": "2b3c0c89a71e525301e14eeb38ddd0a30bc4aceef5d18dc6a1e02a00b9213e75",
-      "compressed_sha256": "9ebe88f0da7f31b0d2802afe74b8699858236c0d82d5d3c78d7b8809af422e92",
+      "sha256": "b65fccec281a0e6fef52cde95ba90f12f8848cad27f5c5d59523e0bba5cc3f66",
+      "compressed_sha256": "d8f60c79bf186da5e4567141bc338168808140426135c11176d913b4cec10b11",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "426030",
@@ -2829,13 +2820,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:38.111797+09:00"
+      "received_at": "2026-10-28T23:26:51.141385+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/442580.xml.gz",
-      "raw_bytes": 17142,
-      "sha256": "9e1df147de9c14f219e312a87b86e8d89e78f93408b63bbd3b73a344b4e49cf4",
-      "compressed_sha256": "99d6d0d71668328473dc75a89bf72c147003116d0543c42b6e68994acdaa0e60",
+      "path": "raw/20261028T232641569207/442580.xml.gz",
+      "raw_bytes": 17143,
+      "sha256": "9cfe5d74642766b55e4efd4bc1bb4e6797efaf5f1a7949ec8640044c39090999",
+      "compressed_sha256": "5dac3db4fd306f4c00d37b8fe1e98a351315b0e7dcd0576642b9a68e1bbb565d",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "442580",
@@ -2843,13 +2834,69 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:38.761219+09:00"
+      "received_at": "2026-10-28T23:26:49.609880+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/449190.xml.gz",
+      "path": "raw/20261028T232641569207/445290.xml.gz",
+      "raw_bytes": 16966,
+      "sha256": "c1ed53bbf0d4a67b2903c6d5347a90ac687a7f39a47c916628f4e03079f218aa",
+      "compressed_sha256": "7f1e3a0302ad9c092868a6d96949c9fd69bc0cd82d3987fa075190e04692dff4",
+      "url": "https://fchart.stock.naver.com/sise.nhn",
+      "params": {
+        "symbol": "445290",
+        "timeframe": "day",
+        "count": 260,
+        "requestType": 0
+      },
+      "received_at": "2026-10-28T23:26:58.633004+09:00"
+    },
+    {
+      "path": "raw/20261028T232641569207/446770.xml.gz",
+      "raw_bytes": 16855,
+      "sha256": "6fd41c18882cacfd0de828303ec3fc901875807c8616afac3b245d285952bdb4",
+      "compressed_sha256": "4e1a9d4c44fd8a7b4530782867de7d98f534b58d65c4a3bf38f688bedff914aa",
+      "url": "https://fchart.stock.naver.com/sise.nhn",
+      "params": {
+        "symbol": "446770",
+        "timeframe": "day",
+        "count": 260,
+        "requestType": 0
+      },
+      "received_at": "2026-10-28T23:26:55.450336+09:00"
+    },
+    {
+      "path": "raw/20261028T232641569207/448300.xml.gz",
+      "raw_bytes": 16792,
+      "sha256": "4c645b86c5fb8bf2cc86c29ca14858b18bf5848eb5da99a199202b2eb02556dc",
+      "compressed_sha256": "3d841301932d428e6be24187cabe39742fe67d457d49feb7318853ca079445c0",
+      "url": "https://fchart.stock.naver.com/sise.nhn",
+      "params": {
+        "symbol": "448300",
+        "timeframe": "day",
+        "count": 260,
+        "requestType": 0
+      },
+      "received_at": "2026-10-28T23:26:50.938751+09:00"
+    },
+    {
+      "path": "raw/20261028T232641569207/449180.xml.gz",
+      "raw_bytes": 16869,
+      "sha256": "5ae29d69c5027fcf4e852f768cc4dfefe43a385e73cba80a0255671e8347a40e",
+      "compressed_sha256": "9fcb6037867b872dd7e7377bf070f985252e940434a6b1920ebf28e3b3c9a8a6",
+      "url": "https://fchart.stock.naver.com/sise.nhn",
+      "params": {
+        "symbol": "449180",
+        "timeframe": "day",
+        "count": 260,
+        "requestType": 0
+      },
+      "received_at": "2026-10-28T23:26:59.237600+09:00"
+    },
+    {
+      "path": "raw/20261028T232641569207/449190.xml.gz",
       "raw_bytes": 16861,
-      "sha256": "e76da6a196a794294b20d2043048106a77ec98fe1c1a3b73806855e3c78da390",
-      "compressed_sha256": "883db98866232605a3eb61bf9b54e5bfdd41bce0641c9fae0de8dad49989feba",
+      "sha256": "7012129dd8805095bc161ac309981b09607d20411772a3efac9b2b50d21c19e2",
+      "compressed_sha256": "b31c4b6d865bfeb6172d7510d697b912f4ed46fcb8eb571582f515a2df95d131",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "449190",
@@ -2857,13 +2904,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:48.777822+09:00"
+      "received_at": "2026-10-28T23:26:59.708703+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/449450.xml.gz",
+      "path": "raw/20261028T232641569207/449450.xml.gz",
       "raw_bytes": 16948,
-      "sha256": "e00ce62cc3a704ebf40fcee95a366d01ca55fcabd578f49931fe53b79948fbf8",
-      "compressed_sha256": "b9aee2c97b0b90393633518e4e1010a95595aa01462fd5ea5e7df483e0315532",
+      "sha256": "2f03c2b3e0778332b927c58e8284b446cc895e60ffb58eb6ced4f48c81a900a7",
+      "compressed_sha256": "2fcb7b8150a61db085a520f3ac67075f34cc8054c64ba1bf30668ac7b5290039",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "449450",
@@ -2871,13 +2918,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:40.723681+09:00"
+      "received_at": "2026-10-28T23:26:51.767877+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/455850.xml.gz",
-      "raw_bytes": 17082,
-      "sha256": "753ab23972a17b662df0bc15c7438f524b159d5ba9109a4477294ed09b40f54d",
-      "compressed_sha256": "118be5540c100067f8d14820278d6b1563968b1226c2613d9f4667b75a8bc3a6",
+      "path": "raw/20261028T232641569207/455850.xml.gz",
+      "raw_bytes": 17083,
+      "sha256": "5a176b7c83c3caed2e138f3aea843e7d51f5bff85bbc969f0d6b642061cf34cb",
+      "compressed_sha256": "82f9d6f56c79ab7499f08bbddd29e50a4f9d7c6c11382762bc825d7d22739978",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "455850",
@@ -2885,13 +2932,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:34.673428+09:00"
+      "received_at": "2026-10-28T23:26:47.705500+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/456600.xml.gz",
+      "path": "raw/20261028T232641569207/456600.xml.gz",
       "raw_bytes": 16865,
-      "sha256": "d49bbaaf124e4839e321fd95401a26d6db8e3d531736f4cc6021413ed245b040",
-      "compressed_sha256": "0b092d39c420b359bdd2d85d81353d1beee4a8ecfe62f8b0fef0f2c2abf15d36",
+      "sha256": "ef9644627807d4ac996960c7b5acd500ee55f2a9a1a2380f2a3ea3f301e69121",
+      "compressed_sha256": "360b4e6e4100e4f1fd177917e49b7f5456034885fa3ec71916fe0fb79aba8779",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "456600",
@@ -2899,13 +2946,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:48.594163+09:00"
+      "received_at": "2026-10-28T23:26:59.566515+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/457990.xml.gz",
-      "raw_bytes": 16808,
-      "sha256": "91fcfadb9bb1ca7ee8e582d969e93a06637cec43dd26e9220cdb8e35182db1a5",
-      "compressed_sha256": "a55a4f1c81358730b33b86e16c671076cdaf4f11eab34ec79bdf3e027331987a",
+      "path": "raw/20261028T232641569207/457990.xml.gz",
+      "raw_bytes": 16809,
+      "sha256": "2da13c72720d852cd65ea6fb03d485aac6c682339c8a3a862a18f40adabdc21f",
+      "compressed_sha256": "d9db6161f0f2d4d718438e365e8ccc5b9e536ed454962f16ab563214cc031f9d",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "457990",
@@ -2913,13 +2960,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:44.754840+09:00"
+      "received_at": "2026-10-28T23:26:57.154289+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/458730.xml.gz",
+      "path": "raw/20261028T232641569207/458730.xml.gz",
       "raw_bytes": 17108,
-      "sha256": "86bc5b89df37483d338b74722c38c3118f23d7678c5f11ede17c425312e88ac5",
-      "compressed_sha256": "22c2a1f5eb77e3e6b49cfeb5be083d36fded3ed5541cb626971327db6ab23cb5",
+      "sha256": "dd1de9406278ad9340e7526b6a9c931e6b6f5c31aa63cf938df3497b215af519",
+      "compressed_sha256": "51226bb538880ddef4787b02050bbe6700dae7a7dfcc114f89e99050bc2c6b9a",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "458730",
@@ -2927,13 +2974,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:38.880036+09:00"
+      "received_at": "2026-10-28T23:26:51.547083+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/462010.xml.gz",
+      "path": "raw/20261028T232641569207/462010.xml.gz",
       "raw_bytes": 16106,
-      "sha256": "0972f759e6be81a7b55ab516cee08d906d26bc95734cfc18eb57188169a73b16",
-      "compressed_sha256": "6b7ac13756e99d5ba1214411429af4e8bec741d271b77028bcfdbc64289173c1",
+      "sha256": "6f74df91968d7a1fdaf24f5c7211b213ce2f2d92df940d42e539ce666bd693e5",
+      "compressed_sha256": "ef51422b6ece19f726bb7cbb2d2de198a9cddb51971942f074375b6a4de22ecd",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "462010",
@@ -2941,13 +2988,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:42.426164+09:00"
+      "received_at": "2026-10-28T23:26:53.682308+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/462900.xml.gz",
+      "path": "raw/20261028T232641569207/462900.xml.gz",
       "raw_bytes": 17057,
-      "sha256": "ba8556a5377b97879cd7c7112a6fcdf14019421ea9e92b82ea4d3e9be9f67e76",
-      "compressed_sha256": "3c3c133f10af8399036447974c605fda6e9349e6471a157a8df2449350130080",
+      "sha256": "c2ed0e5d416e09d69c3eac955754d33bb7c5b261b4953e26e716912a8fb6b4f8",
+      "compressed_sha256": "5549e54f838bca5205baa6f0e350ff409e43898088599de892d5ef23871c837f",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "462900",
@@ -2955,41 +3002,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:49.103403+09:00"
+      "received_at": "2026-10-28T23:26:57.751593+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/463250.xml.gz",
-      "raw_bytes": 16965,
-      "sha256": "0127be22a342d2861b364b0c209c8813ac274837986bd1db64163408b423d5bc",
-      "compressed_sha256": "0f015ecef4d5c909bfdf8e9ece0c9df2153e8bdaf6da6753b0be42ddc1169671",
-      "url": "https://fchart.stock.naver.com/sise.nhn",
-      "params": {
-        "symbol": "463250",
-        "timeframe": "day",
-        "count": 260,
-        "requestType": 0
-      },
-      "received_at": "2026-10-27T22:32:48.354374+09:00"
-    },
-    {
-      "path": "raw/20261027T223228677456/465580.xml.gz",
-      "raw_bytes": 16974,
-      "sha256": "c75d5d5e5504049baf562e616cdd3ddb4848c0e4096c0e605fa449aa914467c8",
-      "compressed_sha256": "a88731d2cf6cb380118fd2a19c6bfcd2b74c4b8436e26ed3ecae4ff5fdbf3c57",
-      "url": "https://fchart.stock.naver.com/sise.nhn",
-      "params": {
-        "symbol": "465580",
-        "timeframe": "day",
-        "count": 260,
-        "requestType": 0
-      },
-      "received_at": "2026-10-27T22:32:47.396540+09:00"
-    },
-    {
-      "path": "raw/20261027T223228677456/466920.xml.gz",
+      "path": "raw/20261028T232641569207/466920.xml.gz",
       "raw_bytes": 17085,
-      "sha256": "1b005956e51c540290595f3e6d2b6445c8d44b47b2ad4d6ea268f44802c326e7",
-      "compressed_sha256": "ea1aa98639e77705a4284c837330c8748628f02ea88a607ce931b4c1e172f470",
+      "sha256": "d4bdb3daa5758db5b8b12637cadb273ba67d2f6af40b2e2f263f1628d73a20cb",
+      "compressed_sha256": "2990869281feaa6e09cb705618fefa1f421f3c1491542ac7fb1663597c9f7071",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "466920",
@@ -2997,27 +3016,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:37.799249+09:00"
+      "received_at": "2026-10-28T23:26:50.359816+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/466940.xml.gz",
-      "raw_bytes": 16955,
-      "sha256": "e9d3f28404757ea34f9417cf04199e87ae0f33b136d2bdcd2dd9318b15609aa2",
-      "compressed_sha256": "c429a39cc800fe3c0640f50b80d816294271be6def76ce16b6ab927dc5740a04",
-      "url": "https://fchart.stock.naver.com/sise.nhn",
-      "params": {
-        "symbol": "466940",
-        "timeframe": "day",
-        "count": 260,
-        "requestType": 0
-      },
-      "received_at": "2026-10-27T22:32:47.822413+09:00"
-    },
-    {
-      "path": "raw/20261027T223228677456/469150.xml.gz",
+      "path": "raw/20261028T232641569207/469150.xml.gz",
       "raw_bytes": 16972,
-      "sha256": "eb46408c7d325e8c1779b908bde9e561bdd132c76632efd0523307e2d380ef80",
-      "compressed_sha256": "a21d1f6066ad7ce229a37ec9920f22af144495a3cc883e9293f9b84c410e736a",
+      "sha256": "4a9a615724d869cd46693dddb2656b119e9a3470ba052f71a2bf256c3ba4bc0a",
+      "compressed_sha256": "15b32c04d7ca9302afa981e9b7f85a95ffaf1b4fbcdafcebca703e81f0d5656c",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "469150",
@@ -3025,13 +3030,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:39.722379+09:00"
+      "received_at": "2026-10-28T23:26:52.063264+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/471760.xml.gz",
-      "raw_bytes": 16981,
-      "sha256": "ded3df7aa0ce2f9da4affeec628d28b4480b2a2a4633e71813e16a899f060bfb",
-      "compressed_sha256": "aea9ba55e97b585df26c9501bbdae357c7420c94d69fb23a3a60b48983427b91",
+      "path": "raw/20261028T232641569207/471760.xml.gz",
+      "raw_bytes": 16983,
+      "sha256": "9a0335b521c0089eb8eec0b2a3d2fb1cc6781d6a2e2da2cdb1fc4d71efc555ba",
+      "compressed_sha256": "30612521b104ab4386c0a656a4c8b04e0d7c8f727e9a52e234304c1b8e548459",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "471760",
@@ -3039,13 +3044,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:41.661259+09:00"
+      "received_at": "2026-10-28T23:26:53.712279+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/471990.xml.gz",
-      "raw_bytes": 17036,
-      "sha256": "863ee56c46f45cbad963893ed46b191c9f3357e8090233536af374ffb023f6d8",
-      "compressed_sha256": "a7a8bba208f604076b8454745785e8c218c1a9fee4c29ce01066b10e50a24a2e",
+      "path": "raw/20261028T232641569207/471990.xml.gz",
+      "raw_bytes": 17037,
+      "sha256": "89b42a4812fcb0e9327fd998e1521e108617e2aa7213523584a619d4ca2086b9",
+      "compressed_sha256": "f7dd3dd13f7571ebaacc4f5b4f0b02204254c2e3d7887103b23fd2c6b6ee65e7",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "471990",
@@ -3053,13 +3058,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:35.633427+09:00"
+      "received_at": "2026-10-28T23:26:48.993374+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/472150.xml.gz",
-      "raw_bytes": 17033,
-      "sha256": "e1588256c0589c7c5e56a584161707ca0e4672f778e4fc40056620588740e2c0",
-      "compressed_sha256": "4ee615d49c5e2f93095fbca831a1f3f0cd702783e5cffabc842201848b73562a",
+      "path": "raw/20261028T232641569207/472150.xml.gz",
+      "raw_bytes": 17038,
+      "sha256": "8e9827ef17b876742ca6b12fe47abca9979ddfd885a6cb0bf2f6b2f1dd7607a0",
+      "compressed_sha256": "88ed87bd5bbd11bf421508f195fa5fdfb95936df6ba83547657a35941cd8961b",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "472150",
@@ -3067,27 +3072,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:34.703660+09:00"
+      "received_at": "2026-10-28T23:26:46.823620+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/475050.xml.gz",
-      "raw_bytes": 16355,
-      "sha256": "5b0886651ceab1362e15bd930cf6132dc06303ffc734429b2cb02ba9cbd32757",
-      "compressed_sha256": "69c8f76fe96b7a44ec6800a5e5587465953bce28012b9117657a7c56a2688217",
-      "url": "https://fchart.stock.naver.com/sise.nhn",
-      "params": {
-        "symbol": "475050",
-        "timeframe": "day",
-        "count": 260,
-        "requestType": 0
-      },
-      "received_at": "2026-10-27T22:32:42.085558+09:00"
-    },
-    {
-      "path": "raw/20261027T223228677456/475300.xml.gz",
-      "raw_bytes": 16938,
-      "sha256": "79c3ee5fa56bc002432bfacffa62565b973f5d8b65b48e7a0acb84a2ad6d614c",
-      "compressed_sha256": "a72c66fe86df2fb0c184155a5b8f2acabd8ecc6c5b5d0e1fe1ab1ecf24e20903",
+      "path": "raw/20261028T232641569207/475300.xml.gz",
+      "raw_bytes": 16939,
+      "sha256": "fc180551c8b32c205c8a271f423695ba65e4eb879ba8bada712fa6263c0b0625",
+      "compressed_sha256": "d96f0f18fc7b7d2d6d18cc7dd81e3e7368c66fa39802a329d85dc83a601fabaf",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "475300",
@@ -3095,13 +3086,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:37.344406+09:00"
+      "received_at": "2026-10-28T23:26:50.391960+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/475310.xml.gz",
-      "raw_bytes": 16828,
-      "sha256": "cd5e482e31cedeab1afbc0b6e6d7775bd0f3fc78617eeea4a018d5906f79c218",
-      "compressed_sha256": "a32dfa8b9f3c11ad65a5418de24dc45e70a0910443a1508f2d37ff3972d08a3c",
+      "path": "raw/20261028T232641569207/475310.xml.gz",
+      "raw_bytes": 16829,
+      "sha256": "05fa37d73eb3458fac9aedd62133d11558fb5f058e23181256baba5ddbd1f7ed",
+      "compressed_sha256": "929c1232d85dd515ae9ea5c6b267ed76c48f781cb0186d09e72ca5169cb26931",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "475310",
@@ -3109,13 +3100,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:41.682152+09:00"
+      "received_at": "2026-10-28T23:26:52.638047+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/483320.xml.gz",
+      "path": "raw/20261028T232641569207/483320.xml.gz",
       "raw_bytes": 16904,
-      "sha256": "8809d0e5c8273e02aac9b3ae5f2fa34becb507aaadce3e7687a9744e86ef50aa",
-      "compressed_sha256": "498896ba48c4d268ff4f30cd652e103388391ad5eccd07bf0a3f1b59468a48b9",
+      "sha256": "e2bd8bfb6d784d9cc31ea63e7a9bcab049eaba6880a79fe4adf849537240f345",
+      "compressed_sha256": "87216bc0ab8dedb617d3f96e5368409785a0f19402ee05985eee2d741a258154",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "483320",
@@ -3123,27 +3114,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:50.231249+09:00"
+      "received_at": "2026-10-28T23:26:56.573822+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/484880.xml.gz",
-      "raw_bytes": 16905,
-      "sha256": "bd7437d9a1a09df44132112280b7fd7fd6a2dba1a45849797c028f3c4f699c36",
-      "compressed_sha256": "9555e2c9ea8ee0d56bec6d13ed7c3fdb43ce4c5ba9e6c92b185969ec21550677",
-      "url": "https://fchart.stock.naver.com/sise.nhn",
-      "params": {
-        "symbol": "484880",
-        "timeframe": "day",
-        "count": 260,
-        "requestType": 0
-      },
-      "received_at": "2026-10-27T22:32:49.869892+09:00"
-    },
-    {
-      "path": "raw/20261027T223228677456/486290.xml.gz",
-      "raw_bytes": 16532,
-      "sha256": "fd2a61836b0180653bc9a4bda370d9c746faadf97c6e4b89f93a3a863f1d533c",
-      "compressed_sha256": "3155ec539a5ab1b13593e209468c4f2f639eb710b25e8f29e46b043ed729ca8f",
+      "path": "raw/20261028T232641569207/486290.xml.gz",
+      "raw_bytes": 16534,
+      "sha256": "cc95af6b215465f0093b893c6c9c0edfcf100ddf8e91a0b2f4fdd2c6cd5639b6",
+      "compressed_sha256": "36c19efe5b792ca4f6f5d202825b9f91e29bb9748ccab7bc44cbb401fcf2bca7",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "486290",
@@ -3151,27 +3128,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:43.882696+09:00"
+      "received_at": "2026-10-28T23:26:53.082991+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/487230.xml.gz",
-      "raw_bytes": 17045,
-      "sha256": "dcf7950356567123ed9fbf138dface0e17c2beeacf2a39d566844b63ba5f456b",
-      "compressed_sha256": "091bdc4496f3803de673cb09ed6ea8e40d65a5199af955ec64711603f5f44a15",
-      "url": "https://fchart.stock.naver.com/sise.nhn",
-      "params": {
-        "symbol": "487230",
-        "timeframe": "day",
-        "count": 260,
-        "requestType": 0
-      },
-      "received_at": "2026-10-27T22:32:46.268854+09:00"
-    },
-    {
-      "path": "raw/20261027T223228677456/487240.xml.gz",
+      "path": "raw/20261028T232641569207/487240.xml.gz",
       "raw_bytes": 17136,
-      "sha256": "d7a96e29678fcf7cc5dedb6b3f9ecc1953141c95450338fb8d98682bc52c97f9",
-      "compressed_sha256": "a669b609615430ebfaa4024fb36b1a27c00460870b67ca55b1ffe936ed70c2dc",
+      "sha256": "7f9992fee09ef580a5961489d90b9f61aa0f7d2a426f48254c71c0cfb44f7bff",
+      "compressed_sha256": "ea4f7342fa57a1de6f79a2110b78a331c5119590357ea8a5be73dbe96e366c30",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "487240",
@@ -3179,27 +3142,27 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:36.983273+09:00"
+      "received_at": "2026-10-28T23:26:48.859026+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/490590.xml.gz",
-      "raw_bytes": 16945,
-      "sha256": "47ed19c9e0ddc3c83ea746a10ea09a7a7226b334f7d788fc2ec673a47ab48b27",
-      "compressed_sha256": "728c77caaf7af8de7fad358f2d9933641074144c6be9df867a9ee28b26c60030",
+      "path": "raw/20261028T232641569207/489030.xml.gz",
+      "raw_bytes": 15902,
+      "sha256": "cf13cbb677579c811db46489a710f9b29f300f3d2bd6d921132b1d760f189455",
+      "compressed_sha256": "5dc606e1d19489560480fae622c5646208710d4b49faa3ada0c26ff2da1b5b15",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
-        "symbol": "490590",
+        "symbol": "489030",
         "timeframe": "day",
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:50.970923+09:00"
+      "received_at": "2026-10-28T23:26:59.085533+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/494300.xml.gz",
+      "path": "raw/20261028T232641569207/494300.xml.gz",
       "raw_bytes": 16130,
-      "sha256": "a75c6657da8c2ae23401f2743107948c801e10a8df1e0c9d750a858bd4f3a955",
-      "compressed_sha256": "cb10b230578981878b9128c184df63af8d3f98036625a5032070e9499da1aa84",
+      "sha256": "000a450c2f23b6f16e9fd5e47099c0600b5afb3c17f4f6f71a0a12a3aade80c5",
+      "compressed_sha256": "2b510972d5b3277ec730a48f186e24a7e1092535dff531720e7d58e3c101237f",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "494300",
@@ -3207,13 +3170,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:50.323942+09:00"
+      "received_at": "2026-10-28T23:26:58.372514+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/494670.xml.gz",
-      "raw_bytes": 17022,
-      "sha256": "4e7e4557dbea11cb2ae98541621ec801f06ee75310a5aa9899c4fc444a028099",
-      "compressed_sha256": "7db4eba6f8b9ba886d6f1ac6eced3321a73eda9062e1486f4a2941912cf34012",
+      "path": "raw/20261028T232641569207/494670.xml.gz",
+      "raw_bytes": 17021,
+      "sha256": "0edae69ef8703993ace9145dd19d5ec01dd667ff7384e3a7b6ac94186fcb95f5",
+      "compressed_sha256": "b0ce8a3a52327e87743c07170484b05cbc38d4bc26952f4510558d126d8241e7",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "494670",
@@ -3221,13 +3184,27 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:47.851328+09:00"
+      "received_at": "2026-10-28T23:26:54.266689+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/497570.xml.gz",
+      "path": "raw/20261028T232641569207/494890.xml.gz",
+      "raw_bytes": 16887,
+      "sha256": "b526de125afec6a9a7d4ec2a45ecaeffd1c52d47dd41580ce08f29ae36efdcca",
+      "compressed_sha256": "4bb8a77d4157cabe84fa2b58ae5a302d750c9a75f941278881744601018ee1f4",
+      "url": "https://fchart.stock.naver.com/sise.nhn",
+      "params": {
+        "symbol": "494890",
+        "timeframe": "day",
+        "count": 260,
+        "requestType": 0
+      },
+      "received_at": "2026-10-28T23:26:55.100768+09:00"
+    },
+    {
+      "path": "raw/20261028T232641569207/497570.xml.gz",
       "raw_bytes": 16982,
-      "sha256": "44e6c746c8c52ec2f45f7fa41223ff360cd552e6f838a28344fa0573fa8de913",
-      "compressed_sha256": "eeb36f14ecda6c0066c764c777af72674d0b523ff48d0c41b9f654f7e8df1619",
+      "sha256": "52ded48eb65ac35adebca124a5e2d25db109b573c43fd8d22e252c867d40d7cc",
+      "compressed_sha256": "dd033c833dbcc3066e7126ef2d35c66549e8917a57a5b6de240a2d6598407757",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "497570",
@@ -3235,13 +3212,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:44.825606+09:00"
+      "received_at": "2026-10-28T23:26:58.050973+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/498400.xml.gz",
-      "raw_bytes": 17186,
-      "sha256": "00ed439c13a0750b4a529e7bc35ef149b61f054821cdcb297b20aeba9fe46953",
-      "compressed_sha256": "4cf0e9688eb897f1ddc8cbb8fdd8683b1ecea7d8a56fce4134c1342cce32a377",
+      "path": "raw/20261028T232641569207/498400.xml.gz",
+      "raw_bytes": 17190,
+      "sha256": "6e48d14f2d0d95a598315eca15b3fd59b6517a1e1ef8f22504a1ce09a351ddc1",
+      "compressed_sha256": "492fd3ba808a8469c000fef95dabaf36502d35f8ebc7cc0a413efac9ad488281",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "498400",
@@ -3249,13 +3226,13 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:34.642165+09:00"
+      "received_at": "2026-10-28T23:26:46.483649+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/498410.xml.gz",
+      "path": "raw/20261028T232641569207/498410.xml.gz",
       "raw_bytes": 17091,
-      "sha256": "944cb7012b93226604e2f53d5de3454beafd9b3906fea37a670a0a9859668151",
-      "compressed_sha256": "ad40cc4024d03333ca59b9939b1f2fba0e8cf024cb4ca88043c00b22e086e811",
+      "sha256": "30492e4901a505ee4023720f8aaaa0721961cf7f741b8fceed4447c4aee31bfe",
+      "compressed_sha256": "9e80abd18d7db3576b8c21216d6ab528fa587a20edd5743bc5fb3c070cbe6681",
       "url": "https://fchart.stock.naver.com/sise.nhn",
       "params": {
         "symbol": "498410",
@@ -3263,15 +3240,15 @@
         "count": 260,
         "requestType": 0
       },
-      "received_at": "2026-10-27T22:32:39.317181+09:00"
+      "received_at": "2026-10-28T23:26:54.748734+09:00"
     },
     {
-      "path": "raw/20261027T223228677456/etf_list.json.gz",
-      "raw_bytes": 263502,
-      "sha256": "59585245382f9696139f3de2f2cb492583fa9a863b8d23ea1f4206aff28f83ee",
-      "compressed_sha256": "796e0c49299452c6b5520203ecb27df15145c9b8754e3fbdca8efa621ac690d7",
+      "path": "raw/20261028T232641569207/etf_list.json.gz",
+      "raw_bytes": 264923,
+      "sha256": "c1199182335d75c84d388ed28c5045a44ad5382203ad302ac59d1adaa1cf0870",
+      "compressed_sha256": "15e085a2f0ecc57701834b8c62a57c0bf2c7d19cacd26fbdfa572da0efb3f5ca",
       "url": "https://finance.naver.com/api/sise/etfItemList.nhn",
-      "received_at": "2026-10-27T22:32:30.282006+09:00"
+      "received_at": "2026-10-28T23:26:43.029094+09:00"
     }
   ],
   "provenance": {
@@ -3307,18 +3284,18 @@
   },
   "code_snapshots": [
     {
-      "path": "raw/20261027T223228677456/run_etf_observation.py.gz",
+      "path": "raw/20261028T232641569207/run_etf_observation.py.gz",
       "raw_bytes": 8956,
       "sha256": "a9db7278e649ebede2401e7124c782794a811611d0345eb1310df04c470f5ced",
       "compressed_sha256": "e07b6014ded0d7a59e99ab0d0116becee955da9f8e70f5c03a8bee871405f262"
     },
     {
-      "path": "raw/20261027T223228677456/etf_observer.py.gz",
+      "path": "raw/20261028T232641569207/etf_observer.py.gz",
       "raw_bytes": 16998,
       "sha256": "901b5e13c4b279406c679c6117e7553947f61cb375e3ff3c8f5a0c27bc9bdcbf",
       "compressed_sha256": "d19b16ab6b92e4e252d58e884a51a8612b53a4607b7ada9a9acffece8f13af7b"
     }
   ],
-  "git_commit": "3de8408a59496dc9dd4ff48e0cbb6ca36559fe8b",
+  "git_commit": "8b9b4e4c00dd9052dfcc960265a719a1dc37916b",
   "git_dirty": false
 }
