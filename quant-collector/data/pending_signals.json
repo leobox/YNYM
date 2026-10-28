@@ -37,12 +37,180 @@
       "early_tf": "",
       "signal_stage": "top5_hold"
     },
-    "trading_days_observed": 1,
+    "trading_days_observed": 2,
     "observed_dates": [
-      "2026-10-27"
+      "2026-10-27",
+      "2026-10-28"
     ],
-    "highest_seen": 17580.0,
+    "highest_seen": 18960.0,
     "lowest_seen": 17070.0,
+    "evaluations": {
+      "h3_t3_s3": {
+        "status": "TARGET_FIRST",
+        "exit_price": 18035.3,
+        "exit_time": "2026-10-28 09:00",
+        "return_pct": 3.0
+      },
+      "h3_t3_s5": {
+        "status": "TARGET_FIRST",
+        "exit_price": 18035.3,
+        "exit_time": "2026-10-28 09:00",
+        "return_pct": 3.0
+      },
+      "h3_t5_s3": {
+        "status": "TARGET_FIRST",
+        "exit_price": 18385.5,
+        "exit_time": "2026-10-28 09:00",
+        "return_pct": 5.0
+      },
+      "h3_t5_s5": {
+        "status": "TARGET_FIRST",
+        "exit_price": 18385.5,
+        "exit_time": "2026-10-28 09:00",
+        "return_pct": 5.0
+      },
+      "h3_t535_s3": {
+        "status": "TARGET_FIRST",
+        "exit_price": 18446.785000000003,
+        "exit_time": "2026-10-28 09:00",
+        "return_pct": 5.35
+      },
+      "h3_t535_s5": {
+        "status": "TARGET_FIRST",
+        "exit_price": 18446.785000000003,
+        "exit_time": "2026-10-28 09:00",
+        "return_pct": 5.35
+      },
+      "h3_t7_s3": {
+        "status": "TARGET_FIRST",
+        "exit_price": 18735.7,
+        "exit_time": "2026-10-28 09:00",
+        "return_pct": 7.0
+      },
+      "h3_t7_s5": {
+        "status": "TARGET_FIRST",
+        "exit_price": 18735.7,
+        "exit_time": "2026-10-28 09:00",
+        "return_pct": 7.0
+      },
+      "h3_t10_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h3_t10_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t3_s3": {
+        "status": "TARGET_FIRST",
+        "exit_price": 18035.3,
+        "exit_time": "2026-10-28 09:00",
+        "return_pct": 3.0
+      },
+      "h5_t3_s5": {
+        "status": "TARGET_FIRST",
+        "exit_price": 18035.3,
+        "exit_time": "2026-10-28 09:00",
+        "return_pct": 3.0
+      },
+      "h5_t5_s3": {
+        "status": "TARGET_FIRST",
+        "exit_price": 18385.5,
+        "exit_time": "2026-10-28 09:00",
+        "return_pct": 5.0
+      },
+      "h5_t5_s5": {
+        "status": "TARGET_FIRST",
+        "exit_price": 18385.5,
+        "exit_time": "2026-10-28 09:00",
+        "return_pct": 5.0
+      },
+      "h5_t535_s3": {
+        "status": "TARGET_FIRST",
+        "exit_price": 18446.785000000003,
+        "exit_time": "2026-10-28 09:00",
+        "return_pct": 5.35
+      },
+      "h5_t535_s5": {
+        "status": "TARGET_FIRST",
+        "exit_price": 18446.785000000003,
+        "exit_time": "2026-10-28 09:00",
+        "return_pct": 5.35
+      },
+      "h5_t7_s3": {
+        "status": "TARGET_FIRST",
+        "exit_price": 18735.7,
+        "exit_time": "2026-10-28 09:00",
+        "return_pct": 7.0
+      },
+      "h5_t7_s5": {
+        "status": "TARGET_FIRST",
+        "exit_price": 18735.7,
+        "exit_time": "2026-10-28 09:00",
+        "return_pct": 7.0
+      },
+      "h5_t10_s3": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      },
+      "h5_t10_s5": {
+        "status": "PENDING",
+        "exit_price": null,
+        "exit_time": null,
+        "return_pct": null
+      }
+    },
+    "is_fully_resolved": false,
+    "effective_eval_start_kst": "2026-10-27 13:59"
+  },
+  "algorithm260917_v1_089860_2026-10-28_1000": {
+    "signal_id": "algorithm260917_v1_089860_2026-10-28_1000",
+    "strategy_version": "algorithm260917_v1",
+    "code": "089860",
+    "name": "롯데렌탈",
+    "market": "KOSPI",
+    "signal_time_kst": "2026-10-28 10:00",
+    "registered_at_kst": "2026-10-28 14:33:26",
+    "entry_reference_price": 52600.0,
+    "targets": {
+      "tgt_3": 54178.0,
+      "tgt_5": 55230.0,
+      "tgt_7": 56282.0,
+      "tgt_10": 57860.0,
+      "tgt_5_35": 55414.1
+    },
+    "stops": {
+      "stop_3": 51022.0,
+      "stop_5": 49970.0
+    },
+    "features": {
+      "score": 72.17507165252837,
+      "pattern_type": "rebound",
+      "volume_ratio": 3.4141115915711913,
+      "above60": true,
+      "extension_atr": 3.4,
+      "trigger_amount_e8": 15.36647,
+      "trigger_ratio": 2.283275190175174,
+      "breakout_level": 49750.0,
+      "trigger_close": 51800.0,
+      "current_close": 52400.0,
+      "atr_14": 680.9934684330059,
+      "sma12": 50500.0,
+      "sma26": 50084.61538461538,
+      "early_trigger": false,
+      "early_tf": "",
+      "signal_stage": "top5_hold"
+    },
+    "trading_days_observed": 0,
+    "observed_dates": [],
+    "highest_seen": 52600.0,
+    "lowest_seen": 52600.0,
     "evaluations": {
       "h3_t3_s3": {
         "status": "PENDING",
@@ -166,6 +334,6 @@
       }
     },
     "is_fully_resolved": false,
-    "effective_eval_start_kst": "2026-10-27 13:59"
+    "effective_eval_start_kst": "2026-10-28 14:33"
   }
 }
