@@ -1,0 +1,2 @@
+﻿code,name,market,bar_ts,signal_close,breakout_level,amount_e8,r_vol,d_base_pct,cli,gates,passed
+000270,기아,KOSPI,2026-10-29T13:00:00+09:00,109900.0,109000.0,271.63,2.957745179897164,-0.228,0.9762,"{'trend': True, 'breakout': True, 'liquidity': True, 'candle': True}",True

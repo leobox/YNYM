@@ -259,19 +259,19 @@
       "reason": "STOP_TOUCH"
     }
   ],
-  "last_bar_ts": "2026-10-28T14:00:00+09:00",
+  "last_bar_ts": "2026-10-29T13:00:00+09:00",
   "last_candidates": [
     {
-      "code": "180640",
-      "name": "한진칼",
+      "code": "000270",
+      "name": "기아",
       "market": "KOSPI",
-      "bar_ts": "2026-10-28T14:00:00+09:00",
-      "signal_close": 126400.0,
-      "breakout_level": 123900.0,
-      "amount_e8": 70.73,
-      "r_vol": 6.095762478441463,
-      "d_base_pct": 0.415,
-      "cli": 0.8636,
+      "bar_ts": "2026-10-29T13:00:00+09:00",
+      "signal_close": 109900.0,
+      "breakout_level": 109000.0,
+      "amount_e8": 271.63,
+      "r_vol": 2.957745179897164,
+      "d_base_pct": -0.228,
+      "cli": 0.9762,
       "gates": {
         "trend": true,
         "breakout": true,
@@ -282,10 +282,10 @@
     }
   ],
   "gate_counts": {
-    "trend": 174,
-    "breakout": 16,
-    "liquidity": 20,
-    "candle": 33
+    "trend": 102,
+    "breakout": 12,
+    "liquidity": 19,
+    "candle": 65
   },
   "coverage": {
     "scanned": 350,
