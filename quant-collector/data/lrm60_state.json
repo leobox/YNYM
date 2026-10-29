@@ -259,38 +259,18 @@
       "reason": "STOP_TOUCH"
     }
   ],
-  "last_bar_ts": "2026-10-29T13:00:00+09:00",
-  "last_candidates": [
-    {
-      "code": "000270",
-      "name": "기아",
-      "market": "KOSPI",
-      "bar_ts": "2026-10-29T13:00:00+09:00",
-      "signal_close": 109900.0,
-      "breakout_level": 109000.0,
-      "amount_e8": 271.63,
-      "r_vol": 2.957745179897164,
-      "d_base_pct": -0.228,
-      "cli": 0.9762,
-      "gates": {
-        "trend": true,
-        "breakout": true,
-        "liquidity": true,
-        "candle": true
-      },
-      "passed": true
-    }
-  ],
+  "last_bar_ts": "2026-10-29T14:00:00+09:00",
+  "last_candidates": [],
   "gate_counts": {
-    "trend": 102,
-    "breakout": 12,
-    "liquidity": 19,
-    "candle": 65
+    "trend": 107,
+    "breakout": 8,
+    "liquidity": 16,
+    "candle": 32
   },
   "coverage": {
     "scanned": 350,
     "evaluated": 349,
-    "passed": 1,
+    "passed": 0,
     "missing_bar": 0,
     "insufficient": 1
   },
