@@ -259,13 +259,13 @@
       "reason": "STOP_TOUCH"
     }
   ],
-  "last_bar_ts": "2026-10-30T13:00:00+09:00",
+  "last_bar_ts": "2026-10-30T14:00:00+09:00",
   "last_candidates": [],
   "gate_counts": {
-    "trend": 61,
-    "breakout": 5,
-    "liquidity": 37,
-    "candle": 38
+    "trend": 49,
+    "breakout": 1,
+    "liquidity": 20,
+    "candle": 6
   },
   "coverage": {
     "scanned": 350,
