@@ -647,3 +647,67 @@ def test_to_frame_strips_trailing_partial_nan_close_row_during_midnight_settleme
     assert len(df_night) == 1
     assert str(df_night.index[-1].date()) == "2026-10-22"
     assert int(df_night["Close"].isna().sum()) == 0
+
+
+def test_compute_action_directive_covers_all_operational_states_and_nan_safety(panel_record):
+    # 1. Invalid / NaN breadth never defaults to buy-ready
+    bad_rec = {"as_of": "2026-10-29", "market_breadth_pct": float("nan"), "strategies": panel_record["strategies"]}
+    d_nan = forward.compute_action_directive(bad_rec, {"status": "STABLE"})
+    assert d_nan["code"] == "DATA_INVALID"
+    assert "판단 보류" in d_nan["headline"]
+
+    # 2. Below 40% breadth -> HALTED_CASH even if regime_context omitted or stale
+    halted_rec = {
+        "as_of": "2026-10-26",
+        "fetched_at": "2026-10-26T18:00:00+09:00",
+        "market_breadth_pct": 39.6,
+        "strategies": {
+            "early_inception": {"score_field": "inception_score", "candidates": []},
+            "early_contraction": {"score_field": "contraction_score", "candidates": []},
+        },
+    }
+    d_halt = forward.compute_action_directive(halted_rec, {"status": "STABLE"})
+    assert d_halt["code"] == "HALTED_CASH"
+    assert "신규 매수 중단" in d_halt["headline"] and "현금화" in d_halt["headline"]
+
+    # 3. Breadth >= 40% + WEAKENING + 0 candidates (e.g. 2026-10-29 45.4%) -> WEAKENING_NO_SIGNAL_CASH
+    weak_empty = {**halted_rec, "as_of": "2026-10-29", "market_breadth_pct": 45.4}
+    d_weak0 = forward.compute_action_directive(weak_empty, {"status": "WEAKENING"})
+    assert d_weak0["code"] == "WEAKENING_NO_SIGNAL_CASH"
+    assert "관망 · 현금 유지" in d_weak0["headline"]
+
+    # 4. Breadth >= 40% + WEAKENING + candidates present -> WEAKENING_DEFENSIVE
+    d_weak_cand = forward.compute_action_directive(panel_record, {"status": "WEAKENING"})
+    assert d_weak_cand["code"] == "WEAKENING_DEFENSIVE"
+    assert "방어 우선" in d_weak_cand["headline"]
+
+    # 5. Breadth >= 40% + STABLE + 0 candidates -> STABLE_WAIT_CASH
+    d_stable0 = forward.compute_action_directive(weak_empty, {"status": "STABLE"})
+    assert d_stable0["code"] == "STABLE_WAIT_CASH"
+    assert "현금 대기" in d_stable0["headline"]
+
+    # 6. Breadth >= 40% + STABLE + only contraction watch candidates -> STABLE_WATCH_PIVOT
+    watch_only = {
+        **weak_empty,
+        "market_breadth_pct": 62.0,
+        "strategies": {
+            "early_inception": {"score_field": "inception_score", "candidates": []},
+            "early_contraction": {
+                "score_field": "contraction_score",
+                "candidates": panel_record["strategies"]["early_contraction"]["candidates"],
+            },
+        },
+    }
+    d_watch = forward.compute_action_directive(watch_only, {"status": "STABLE"})
+    assert d_watch["code"] == "STABLE_WATCH_PIVOT"
+    assert "고점 돌파 확인 후 매수" in d_watch["headline"]
+
+    # 7. Breadth >= 40% + STABLE + breakout candidates -> STABLE_BUY_READY & renders cleanly in panel
+    before = json.dumps(panel_record, ensure_ascii=False)
+    d_buy = forward.compute_action_directive(panel_record, {"status": "STABLE"})
+    assert d_buy["code"] == "STABLE_BUY_READY"
+    assert "이제 분할 매수 가능" in d_buy["headline"]
+    rendered = forward.render_panel(panel_record, {}, regime_context={"status": "STABLE"})
+    assert "### 🎯 오늘의 대응 지침 (규칙 기반 요약)" in rendered
+    assert rendered.index("### 🌐 시장 상황") < rendered.index("### 🎯 오늘의 대응 지침 (규칙 기반 요약)") < rendered.index("### 🧭 최종 상승 초입 관찰 안내")
+    assert json.dumps(panel_record, ensure_ascii=False) == before

@@ -609,6 +609,88 @@ def compute_gate_funnel(
     }
 
 
+def compute_action_directive(
+    record: dict,
+    regime_context: dict | None = None,
+) -> dict[str, str]:
+    """Translate sealed operational breadth, regime trend, and candidate counts into a deterministic manual action guide."""
+    raw_breadth = record.get("market_breadth_pct")
+    try:
+        breadth = float(raw_breadth)
+    except (TypeError, ValueError):
+        breadth = float("nan")
+
+    if not np.isfinite(breadth):
+        return {
+            "code": "DATA_INVALID",
+            "headline": "⚠️ [판단 보류 · 매수 중단] 시장 폭 수치가 유효하지 않습니다. 신규 매수를 멈추고 데이터 상태를 먼저 확인하세요.",
+            "new_buy": "전면 보류 (0원) — 정상 완료 일봉과 시장 폭이 확인될 때까지 신규 진입하지 마세요.",
+            "holding": "기존 보유분은 각 종목의 -5% 보호 손절가 및 SMA10(10일선) 이탈 기준을 수동 점검하세요.",
+            "cash_plan": "대기 자금 현금·파킹 유지.",
+        }
+
+    strategies = record.get("strategies") or {}
+    n_breakout = len((strategies.get("early_inception") or {}).get("candidates") or [])
+    n_contraction = len((strategies.get("early_contraction") or {}).get("candidates") or [])
+    regime_status = (
+        regime_context.get("status")
+        if isinstance(regime_context, dict) and regime_context.get("status")
+        else ("HALTED" if breadth < 40.0 else "STABLE")
+    )
+
+    if breadth < 40.0 or regime_status == "HALTED":
+        return {
+            "code": "HALTED_CASH",
+            "headline": "🛑 [신규 매수 중단 · 현금/파킹 대피] 지금은 사지 마세요. 보유 종목도 손절·추세선 이탈 시 즉시 현금화하세요.",
+            "new_buy": "전면 금지 (0원) — 시장 폭 40% 미만 약세 차단 구간입니다. 기준을 낮춘 억지 매수나 물타기를 금지합니다.",
+            "holding": "표의 -5% 보호 손절가 장중 도달 시 즉시 현금화, 또는 종가가 SMA10(10일선) 아래로 마감하면 다음 날 시초가에 전량 현금화하세요.",
+            "cash_plan": "대기 자금 100% 현금 또는 파킹형 ETF(CD금리·머니마켓) 유지 (시장 폭 40% 회복 전까지 관망).",
+        }
+
+    if regime_status == "WEAKENING":
+        if n_breakout == 0 and n_contraction == 0:
+            return {
+                "code": "WEAKENING_NO_SIGNAL_CASH",
+                "headline": "🛑 [관망 · 현금 유지] 레짐이 꺾이고 돌파 후보도 0건입니다. 지금은 사지 말고 현금(파킹)을 지키세요.",
+                "new_buy": "매수 금지 (0원) — 변동성 수축 베이스가 무너진 휴식기입니다. 빈칸을 채우려 임의로 종목을 고르지 마세요.",
+                "holding": "기존 보유분만 관리 — -5% 손절가 도달 시 즉시 현금화, 종가가 SMA10(10일선)을 이탈하거나 수익권(+2% 이상) 고점 대비 -6% 밀리면 다음 시초가에 현금화하세요.",
+                "cash_plan": "유휴 자금 100% 현금·파킹 유지 (레짐 둔화 진정 및 신규 돌파 확정 출현 대기).",
+            }
+        return {
+            "code": "WEAKENING_DEFENSIVE",
+            "headline": "⚠️ [신규 매수 보류 · 방어 우선] 시장 폭이 급락(둔화) 중입니다. 신규 진입은 쉬거나 평소 비중의 절반 이하로만 제한하세요.",
+            "new_buy": "원칙적 관망 권고 — 둔화 구간의 소수 돌파는 손절 빈도가 높습니다. 진입하더라도 1슬롯 비중을 절반(계좌의 1/6 이하)으로 줄이고 다음 날 시초가가 20일 기준고점 위를 지킬 때만 대응하세요.",
+            "holding": "-5% 보호 손절가 및 SMA10(10일선) 종가 이탈 시 미련 없이 즉시 현금화하세요 (추가 물타기 금지).",
+            "cash_plan": "현금·파킹 비중 70~100% 방어 유지.",
+        }
+
+    if n_breakout == 0 and n_contraction == 0:
+        return {
+            "code": "STABLE_WAIT_CASH",
+            "headline": "⏸️ [현금 대기] 시장은 안정적이나 오늘 조건을 통과한 종목이 없습니다. 현금을 쥐고 다음 신호를 기다리세요.",
+            "new_buy": "대기 (0원) — 조건 충족 후보가 나올 때까지 쉬는 것도 전략의 일부입니다.",
+            "holding": "기존 보유분은 -5% 손절가·SMA10 종가 이탈 및 수익권 고점 대비 -6% 트레일링 기준에 따라 유지·현금화하세요.",
+            "cash_plan": "현금·파킹 대기 (신규 돌파 출현 시 투입 준비).",
+        }
+
+    if n_breakout == 0 and n_contraction > 0:
+        return {
+            "code": "STABLE_WATCH_PIVOT",
+            "headline": "👀 [길목 대기 · 고점 돌파 확인 후 매수] 미리 선취매하지 말고, 아래 ‘수축 돌파임박’ 후보가 20일 기준고점을 실제로 넘을 때 진입하세요.",
+            "new_buy": f"선취매 보류 — ‘수축 돌파임박’ 후보({n_contraction}건)를 관심종목에 두고 표의 ‘20일 기준고점’ 돌파 확인 시 슬롯당 계좌 1/3 이내로 분할 진입하세요.",
+            "holding": "기존 보유분은 -5% 손절가·SMA10 이탈 전까지 추세를 유지하고, 이탈 시 즉시 현금화하세요.",
+            "cash_plan": "돌파 확인 전까지 현금·파킹 대기.",
+        }
+
+    return {
+        "code": "STABLE_BUY_READY",
+        "headline": "✅ [이제 분할 매수 가능] 레짐 안정 + ‘20일 돌파 확정’ 신호가 켜졌습니다. 아래 확정 후보를 규칙대로 분할 진입하세요.",
+        "new_buy": f"‘20일 돌파 확정’ 상위 후보({n_breakout}건) 대상 최대 3슬롯(종목당 계좌의 1/3 이내) 분할 진입 — 다음 거래일 시초가가 20일 기준고점 위를 유지할 때 진입하고, 과도한 시초가 갭상승(+5% 초과) 추격은 피하세요.",
+        "holding": "진입 즉시 -5% 보호 손절가를 걸고, 종가가 SMA10(10일선) 아래로 내려가거나 수익권(+2% 이상) 고점 대비 -6% 하락 마감하면 다음 날 시초가에 전량 현금화하세요.",
+        "cash_plan": "3슬롯 외 잔여 자금은 현금·파킹 유지 (동일 종목 중복 물타기 금지).",
+    }
+
+
 def render_panel(
     record: dict,
     observed_days: dict[tuple[str, str], int],
@@ -621,6 +703,7 @@ def render_panel(
     lamp = "🟢 관찰 가능" if breadth >= 40.0 else "🔴 후보 선별 중단"
     fetched_kst = datetime.fromisoformat(record["fetched_at"]).astimezone(KST)
     fetched_label = fetched_kst.strftime("%Y-%m-%d %H:%M KST")
+    directive = compute_action_directive(record, regime_context=regime_context)
     lines = ["### 🌐 시장 상황", "",
              f'> {lamp} · 시장 폭(SMA60) **{breadth:.1f}%** · 기준 완료 일봉 `{record["as_of"]}`']
     if regime_context and len(regime_context.get("history", [])) >= 2:
@@ -646,6 +729,14 @@ def render_panel(
             f'수축 돌파임박 `{final_contraction}`건**',
         ])
     lines.extend([
+        "",
+        "### 🎯 오늘의 대응 지침 (규칙 기반 요약)", "",
+        f'> **{directive["headline"]}**',
+        "",
+        f'- **신규 매수:** {directive["new_buy"]}',
+        f'- **보유 종목 (현금화 기준):** {directive["holding"]}',
+        f'- **대기 자금:** {directive["cash_plan"]}',
+        "- *참고: 완료 일봉 운영 규칙(`시장 폭 40%`·`5일 추이`·`후보 수`·`-5%/SMA10 청산`)을 그대로 번역한 수동 대응 기준표이며, 실제 주문·계좌 연동 기능은 없습니다.*",
         "",
         "### 🧭 최종 상승 초입 관찰 안내", "",
         "- **① 상승 초입 · 20일 돌파 확정:** 20일 변동성 수축 베이스에서 직전 20일 고점을 종가로 돌파하고 수급이 점화된 정석 후보입니다 (단기 `+5%` 도달 탄력 우위).",
