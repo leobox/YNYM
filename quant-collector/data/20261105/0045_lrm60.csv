@@ -1,0 +1,2 @@
+﻿code,name,market,bar_ts,signal_close,breakout_level,amount_e8,r_vol,d_base_pct,cli,gates,passed
+068270,셀트리온,KOSPI,2026-11-04T14:00:00+09:00,200500.0,195400.0,493.28,3.8878634153955494,1.705,0.9194,"{'trend': True, 'breakout': True, 'liquidity': True, 'candle': True}",True
