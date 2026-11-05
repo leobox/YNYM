@@ -259,38 +259,18 @@
       "reason": "STOP_TOUCH"
     }
   ],
-  "last_bar_ts": "2026-11-04T14:00:00+09:00",
-  "last_candidates": [
-    {
-      "code": "068270",
-      "name": "셀트리온",
-      "market": "KOSPI",
-      "bar_ts": "2026-11-04T14:00:00+09:00",
-      "signal_close": 200500.0,
-      "breakout_level": 195400.0,
-      "amount_e8": 493.28,
-      "r_vol": 3.8878634153955494,
-      "d_base_pct": 1.705,
-      "cli": 0.9194,
-      "gates": {
-        "trend": true,
-        "breakout": true,
-        "liquidity": true,
-        "candle": true
-      },
-      "passed": true
-    }
-  ],
+  "last_bar_ts": "2026-11-05T14:00:00+09:00",
+  "last_candidates": [],
   "gate_counts": {
-    "trend": 93,
-    "breakout": 30,
-    "liquidity": 37,
-    "candle": 100
+    "trend": 114,
+    "breakout": 2,
+    "liquidity": 40,
+    "candle": 4
   },
   "coverage": {
-    "scanned": 350,
-    "evaluated": 350,
-    "passed": 1,
+    "scanned": 349,
+    "evaluated": 349,
+    "passed": 0,
     "missing_bar": 0,
     "insufficient": 0
   },
