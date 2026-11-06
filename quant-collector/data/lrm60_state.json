@@ -259,17 +259,17 @@
       "reason": "STOP_TOUCH"
     }
   ],
-  "last_bar_ts": "2026-11-05T14:00:00+09:00",
+  "last_bar_ts": "2026-11-06T14:00:00+09:00",
   "last_candidates": [],
   "gate_counts": {
-    "trend": 114,
-    "breakout": 2,
-    "liquidity": 40,
-    "candle": 4
+    "trend": 68,
+    "breakout": 5,
+    "liquidity": 45,
+    "candle": 5
   },
   "coverage": {
-    "scanned": 349,
-    "evaluated": 349,
+    "scanned": 350,
+    "evaluated": 350,
     "passed": 0,
     "missing_bar": 0,
     "insufficient": 0
