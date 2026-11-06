@@ -1,176 +1,99 @@
-name: Early Inception daily forward observation
+name: Daily Breakout & ETF README Update
 
 on:
   schedule:
-    # Weekdays 16:23 / 17:43 / 19:17 / 21:17 KST + 03:52 KST next-morning backup
-    # (avoids Yahoo Finance's 00:00~03:41 KST daily Close=NaN settlement blackout window).
-    # Once sealed cleanly, subsequent runs exit in 1s via the gate step without redundant commits.
-    - cron: '23 7 * * 1-5'
-    - cron: '43 8 * * 1-5'
-    - cron: '17 10 * * 1-5'
-    - cron: '17 12 * * 1-5'
-    - cron: '52 18 * * 1-5'
+    # 평일 KRX 정규장 마감 이후 1차 실행 (16:35 KST) 및 2차 백업 실행 (20:00 KST)
+    - cron: '35 7 * * 1-5'
+    - cron: '0 11 * * 1-5'
   workflow_dispatch:
+
+concurrency:
+  group: daily-readme-breakout-update
+  cancel-in-progress: false
 
 permissions:
   contents: write
 
-concurrency:
-  group: dual-strategy-forward
-  cancel-in-progress: false
-
 jobs:
-  observe:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 40
+  update-readme:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
     steps:
-      - uses: actions/checkout@v5
-      - name: Skip when today's completed bar is already sealed
-        id: gate
-        shell: bash
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "Manual dispatch: running without gate check."
-            echo "done=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          # Target session = KST date 16h ago (16:23 -> today, 03:52 next morning -> yesterday's KRX session).
-          target=$(TZ=Asia/Seoul date -d '16 hours ago' +%F)
-          echo "target=$target"
-          if [ -f "quant-research/data/research/T-110/runs/$target.json" ] && ! grep -q "실행 상태: ⚠️" README.md; then
-            echo "$target already sealed and README is clean; skipping redundant run and commit."
-            echo "done=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "done=false" >> "$GITHUB_OUTPUT"
-          fi
-      - uses: actions/setup-python@v6
-        if: steps.gate.outputs.done != 'true'
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-          cache: pip
-          cache-dependency-path: quant-research/requirements.txt
-      - name: Install data and research dependencies
-        if: steps.gate.outputs.done != 'true'
-        run: python -m pip install -r quant-research/requirements.txt pytest
-      - name: Validate forward observer and panel
-        if: steps.gate.outputs.done != 'true'
-        run: python -m pytest quant-research/tests/test_early_inception_forward.py quant-research/tests/test_early_inception_engine.py quant-research/tests/test_forward_status.py -q
-      - name: Fetch and seal one completed-bar decision (with retries)
-        if: steps.gate.outputs.done != 'true'
-        id: observe
-        shell: bash
+          cache: 'pip'
+
+      - name: Install dependencies
         run: |
-          for attempt in 1 2 3; do
-            status=ERROR
-            reason=
-            echo "::group::attempt $attempt"
-            if python -B quant-research/scripts/fetch_daily_history.py --range 3y --refresh-universe --carryover-runs quant-research/data/research/T-110/runs; then
-              manifest=$(find quant-research/data/research/T-063 -name 'fetch_manifest_3y_*.json' -printf '%T@ %p\n' | sort -nr | head -1 | cut -d' ' -f2-)
-              if result=$(python -B quant-research/scripts/run_early_inception_forward.py --manifest "$manifest" --readme README.md); then
-                echo "$result"
-                status=$(printf '%s' "$result" | python -c 'import json,sys; print(json.load(sys.stdin).get("status", "ERROR"))')
-                reason=$(printf '%s' "$result" | python -c 'import json,sys; print(json.load(sys.stdin).get("reason", ""))')
-                if [[ "$status" == CAPTURED || "$status" == BACKFILLED || "$status" == REUSED ]]; then
-                  echo "status=$status" >> "$GITHUB_OUTPUT"
-                  echo "as_of=$(printf '%s' "$result" | python -c 'import json,sys; print(json.load(sys.stdin).get("as_of", ""))')" >> "$GITHUB_OUTPUT"
-                  echo "::endgroup::"
-                  exit 0
-                fi
-              fi
-            fi
-            echo "::endgroup::"
-            if [ "$attempt" -lt 3 ]; then sleep $((attempt * 90)); fi
-          done
-          echo "status=$status" >> "$GITHUB_OUTPUT"
-          echo "reason=$reason" >> "$GITHUB_OUTPUT"
-          echo "3회 시도 모두 실패"
-          exit 1
-      - name: Package exact inputs for the observation
-        id: archive
-        if: steps.observe.outputs.status == 'CAPTURED' || steps.observe.outputs.status == 'BACKFILLED'
-        shell: bash
-        run: |
-          asof="${{ steps.observe.outputs.as_of }}"
-          name="$asof"
-          if [ "${{ steps.observe.outputs.status }}" = "BACKFILLED" ]; then
-            name="backfill_from_${asof}_$(TZ=Asia/Seoul date +%Y%m%d%H%M)"
-          fi
-          echo "archive_name=$name" >> "$GITHUB_OUTPUT"
-          tar -czf "${RUNNER_TEMP}/${name}.tar.gz" -C quant-research/data daily_3y
-      - name: Upload raw daily snapshot as Actions Artifact
-        if: steps.archive.outcome == 'success'
-        uses: actions/upload-artifact@v4
-        with:
-          name: daily-3y-raw-${{ steps.archive.outputs.archive_name }}
-          path: ${{ runner.temp }}/${{ steps.archive.outputs.archive_name }}.tar.gz
-          retention-days: 30
-          if-no-files-found: error
-      - name: Refresh execution status even with no candidates or failed data
-        if: always() && !cancelled() && steps.gate.outputs.done != 'true'
-        id: heartbeat
+          python -m pip install --upgrade pip
+          pip install numpy pandas requests
+
+      - name: Update Stock 20d Breakout & Market Regime Panel
         env:
-          OBSERVATION_STATUS: ${{ steps.observe.outputs.status }}
-          OBSERVATION_REASON: ${{ steps.observe.outputs.reason }}
-          ALREADY_SEALED: ${{ steps.gate.outputs.done }}
-          JOB_STATUS: ${{ job.status }}
-        shell: bash
+          TZ: Asia/Seoul
         run: |
-          status="${OBSERVATION_STATUS:-ERROR}"
-          if [ "$ALREADY_SEALED" = true ]; then status=SEALED; fi
-          if [ "$JOB_STATUS" = failure ] && [ "$status" != SKIPPED ]; then status=ERROR; fi
-          python3 quant-research/scripts/refresh_forward_status.py --status "$status" --reason "$OBSERVATION_REASON"
-      - name: Commit research records and refreshed panel
-        if: always() && steps.heartbeat.outcome == 'success' && !cancelled() && steps.gate.outputs.done != 'true'
-        shell: bash
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          cp README.md "${RUNNER_TEMP}/dual_root_readme.md"
-          if [ "${{ steps.archive.outcome }}" = success ]; then
-            git add quant-research/data/research/T-063/fetch_manifest_3y_*.json
-            git add quant-research/data/vcp_snapshots/universe_*.csv
-            git add quant-research/data/research/T-110/runs/
-            git add quant-research/data/research/T-110/latest.md
-            git add quant-research/data/research/T-110/outcomes.json
-          else
-            # Re-render from the immutable record without replacing its source archive.
-            git add quant-research/data/research/T-110/latest.md
-          fi
-          git add README.md
-          if ! git diff --cached --quiet; then
-            git commit -m "data: seal dual-strategy forward observation [skip ci]"
-            if [ "${{ steps.archive.outcome }}" != success ]; then
-              # Fresh prices may revise old outcomes. Publish those only alongside
-              # preserved inputs on CAPTURED/BACKFILLED, never on a panel refresh.
-              git stash push --include-untracked -m unpublished-fetch-inputs -- quant-research/data/research/T-063/ quant-research/data/vcp_snapshots/ quant-research/data/research/T-110/
-            fi
-            for attempt in 1 2 3 4 5; do
-              if git pull --rebase origin main && git push origin HEAD:main; then
-                exit 0
-              fi
-              git rebase --abort 2>/dev/null || true
-              git fetch origin main
-              git checkout origin/main -- README.md
-              python -c '
-          import pathlib
-          tmp_readme = pathlib.Path("'"${RUNNER_TEMP}"'/dual_root_readme.md").read_text(encoding="utf-8")
-          s, e = "<!-- DUAL_FORWARD:START -->", "<!-- DUAL_FORWARD:END -->"
-          if s in tmp_readme and e in tmp_readme:
-              block = tmp_readme[tmp_readme.index(s):tmp_readme.index(e)+len(e)]
-              cur = pathlib.Path("README.md").read_text(encoding="utf-8")
-              if s in cur and e in cur:
-                  new_cur = cur[:cur.index(s)] + block + cur[cur.index(e)+len(e):]
-                  pathlib.Path("README.md").write_text(new_cur, encoding="utf-8")
+          set -euo pipefail
+          rm -rf quant-research/data/daily_3y
+          python quant-research/scripts/fetch_daily_history.py \
+            --range 3y \
+            --refresh-universe \
+            --carryover-runs quant-research/data/research/T-110/runs
+
+          MANIFEST=$(ls -1t quant-research/data/research/T-063/fetch_manifest_3y_*.json | head -n 1)
+          OUT=$(python quant-research/scripts/run_early_inception_forward.py \
+            --data quant-research/data/daily_3y \
+            --manifest "$MANIFEST" \
+            --runs quant-research/data/research/T-110/runs \
+            --readme README.md)
+          echo "$OUT"
+
+          STATUS=$(python -c 'import json,sys; print(json.loads(sys.argv[1])["status"])' "$OUT")
+          REASON=$(python -c 'import json,sys; print(json.loads(sys.argv[1]).get("reason",""))' "$OUT")
+          python quant-research/scripts/refresh_forward_status.py \
+            --readme README.md \
+            --latest quant-research/data/research/T-110/latest.md \
+            --status "$STATUS" \
+            --reason "$REASON"
+
+          # 최근 10거래일 초과 이력 JSON은 정리하여 불필요한 백데이터 누적을 방지
+          python -c '
+          from pathlib import Path
+          runs = sorted(Path("quant-research/data/research/T-110/runs").glob("????-??-??.json"))
+          for old in runs[:-10]:
+              old.unlink(missing_ok=True)
           '
-              git add README.md
-              git commit --amend --no-edit
-              if git push origin HEAD:main; then
-                exit 0
-              fi
-              if [ "$attempt" -eq 5 ]; then
-                echo "5회 재시도 후에도 관찰 기록 push 실패"
-                exit 1
-              fi
-              sleep $((attempt * 5))
-            done
+
+      - name: Update ETF 20d Breakout Panel
+        env:
+          TZ: Asia/Seoul
+        run: |
+          python quant-research/scripts/run_etf_observation.py \
+            --out-dir /tmp/etf_observation \
+            --readme README.md
+
+      - name: Commit and push README update
+        run: |
+          # 불필요한 백데이터(manifest, 임시 스냅샷 등)는 워킹트리에서 되돌리고 README와 최근 10일 추이만 커밋
+          git checkout -- quant-research/data/vcp_snapshots quant-research/data/research/T-063 2>/dev/null || true
+          git clean -fd quant-research/data/vcp_snapshots quant-research/data/research/T-063 quant-research/data/daily_3y 2>/dev/null || true
+
+          git add README.md quant-research/data/research/T-110/runs
+          if git diff --cached --quiet; then
+            echo "변경 사항 없음"
+            exit 0
           fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "data: update daily 20d breakout & ETF README [skip ci]"
+          for attempt in 1 2 3; do
+            git pull --rebase -X ours origin "${GITHUB_REF_NAME:-main}" && git push origin "HEAD:${GITHUB_REF_NAME:-main}" && break
+            sleep 3
+          done

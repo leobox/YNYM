@@ -2,7 +2,7 @@
   "$schema_version": "1.0",
   "meta": {
     "project": "Leobox Multi-root Workspace",
-    "updated": "2026-10-24",
+    "updated": "2026-11-06",
     "context_doc": "README.md",
     "doc_dir": "docs/tasks",
     "stack": "Multi-agent (Gemini + Claude + Codex) / Python(Quant) / GitHub Actions / Android",
@@ -5229,6 +5229,211 @@
           "at": "2026-10-24",
           "status": "done",
           "note": "7대 알고리즘·파이프라인 보완(정시 리샘플링, 미관측 시간봉 보충 스캔, early_trigger 기준선·붕괴 방어, LRM60 시초가/레짐 게이트, 트래커 장마감 타임아웃, 야간 Close=NaN 방어, ETF 수축 -3% 근접도) 및 GitHub Actions 3대 워크플로 무중단 재정비 완료 (125 passed)"
+        }
+      ]
+    },
+    {
+      "id": "T-135",
+      "title": "quant-research: 누적 상승초입 추천 성과 재검증 및 고도화 후보 비교 보고",
+      "summary": "",
+      "doc": "docs/tasks/T-135.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "누적 원본262개 해시대조·시점별 성과 재계산·3필터/5청산 비교·연구용 ret5≤15% 필터 및 보고서 완료. 21 tests·quant_guard139 통과. 사후복구 제외시 돌파5일 평균−0.92%, 필터는 소표본/날짜집중으로 운영승격하지 않음.",
+      "done_at": "2026-10-30",
+      "updated_at": "2026-10-30",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-10-30",
+      "log": [
+        {
+          "at": "2026-10-30",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-10-30",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-10-30",
+          "status": "done",
+          "note": "누적 원본262개 해시대조·시점별 성과 재계산·3필터/5청산 비교·연구용 ret5≤15% 필터 및 보고서 완료. 21 tests·quant_guard139 통과. 사후복구 제외시 돌파5일 평균−0.92%, 필터는 소표본/날짜집중으로 운영승격하지 않음."
+        }
+      ]
+    },
+    {
+      "id": "T-136",
+      "title": "quant-research: 외부 C2 약세장 보고서의 원본·시점·성과 주장 교차검토",
+      "summary": "",
+      "doc": "docs/tasks/T-136.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "제공 C2보고서 교차검토 완료: 최근5신호/양전략무후보11일, 농심 선행SMA청산 확인. C2코드·계좌원장 미확보로 성능/OOS 주장은 미검증; 운영 추가 없음. 상세 검토 문서 저장.",
+      "done_at": "2026-10-30",
+      "updated_at": "2026-10-30",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-10-30",
+      "log": [
+        {
+          "at": "2026-10-30",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-10-30",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-10-30",
+          "status": "done",
+          "note": "제공 C2보고서 교차검토 완료: 최근5신호/양전략무후보11일, 농심 선행SMA청산 확인. C2코드·계좌원장 미확보로 성능/OOS 주장은 미검증; 운영 추가 없음. 상세 검토 문서 저장."
+        }
+      ]
+    },
+    {
+      "id": "T-137",
+      "title": "quant-research: 일봉 상승초입 패널에 상황별 직관 행동 지침(현금화·관망·분할매수) 배너 추가",
+      "summary": "",
+      "doc": "docs/tasks/T-137.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "origin/main(2d2b93d6c) 푸시 완료: run_early_inception_forward.py 상황별 대응 지침 배너 및 README/latest.md 즉시 반영, 43/56 pytest·quant_guard 통과",
+      "done_at": "2026-10-30",
+      "updated_at": "2026-10-30",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": null,
+      "claimed_at": "2026-10-30",
+      "log": [
+        {
+          "at": "2026-10-30",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-10-30",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-10-30",
+          "status": "done",
+          "note": "run_early_inception_forward.py에 상황별 대응 지침(compute_action_directive 및 render_panel 배너) 추가, 56개 단위테스트·quant_guard·구문검증 통과 (원격 배포 전)"
+        },
+        {
+          "at": "2026-10-30",
+          "status": "in_progress",
+          "note": "run_early_inception_forward.py에 상황별 대응 지침(compute_action_directive 및 render_panel 배너) 추가, 56개 단위테스트·quant_guard·구문검증 통과 (원격 배포 전)"
+        },
+        {
+          "at": "2026-10-30",
+          "status": "done",
+          "note": "origin/main(2d2b93d6c) 푸시 완료: run_early_inception_forward.py 상황별 대응 지침 배너 및 README/latest.md 즉시 반영, 43/56 pytest·quant_guard 통과"
+        }
+      ]
+    },
+    {
+      "id": "T-138",
+      "title": "gym-app: 운동별 최고 기록 조회 및 1.6 업데이트 APK",
+      "summary": "",
+      "doc": "docs/tasks/T-138.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "mobile",
+      "phase": "3. 헬스 앱 (Android)",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "최고 기록 조회 구현, npm 회귀/데이터 보존 검증 통과, 기존 1.5와 동일 서명 1.6 APK 빌드 완료. 실기기 미연결로 설치 검증 미실행.",
+      "done_at": "2026-11-06",
+      "updated_at": "2026-11-06",
+      "done_when": "독립 MAX와 최근 달성일 조회, 기존 기록 및 백업 회귀 검증, 동일 서명 업데이트 APK 빌드",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-11-06",
+      "log": [
+        {
+          "at": "2026-11-06",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-11-06",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-11-06",
+          "status": "done",
+          "note": "최고 기록 조회 구현, npm 회귀/데이터 보존 검증 통과, 기존 1.5와 동일 서명 1.6 APK 빌드 완료. 실기기 미연결로 설치 검증 미실행."
+        }
+      ]
+    },
+    {
+      "id": "T-139",
+      "title": "quant-research & ops: 메인 README 4대 핵심 섹션 단일화, 익일 눌림목 매수 기준 반영, 불필요 GitHub Actions·백데이터 제거 및 일봉 누락 영구 방지",
+      "summary": "",
+      "doc": "docs/tasks/T-139.md",
+      "status": "done",
+      "priority": "P0",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "메인 README 4대 섹션 단일화, 익일 눌림목 매수가(1차/2차) 반영, 네이버 일봉 1차화로 11/5 백필·11/6 최신 일봉 무누락 반영, 불필요 GitHub Actions(lrm60_15m·etf-observation) 및 백데이터 제거 완료 (67 passed)",
+      "done_at": "2026-11-06",
+      "updated_at": "2026-11-06",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-11-06",
+      "log": [
+        {
+          "at": "2026-11-06",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-11-06",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-11-06",
+          "status": "done",
+          "note": "메인 README 4대 섹션 단일화, 익일 눌림목 매수가(1차/2차) 반영, 네이버 일봉 1차화로 11/5 백필·11/6 최신 일봉 무누락 반영, 불필요 GitHub Actions(lrm60_15m·etf-observation) 및 백데이터 제거 완료 (67 passed)"
         }
       ]
     }

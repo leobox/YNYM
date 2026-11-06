@@ -151,12 +151,16 @@ def compute_early_inception_rankings(
         compression_score = max(0.0, 1.0 - (range_width_ratio / max_range_ratio))
         breakout_ext_pct = (current_c / prior_h20 - 1.0) * 100.0 if prior_h20 > 0 else 0.0
         stop_price_5pct = round(current_c * 0.95, 2)
+        pullback_buy_1 = round(min((current_c + prior_h20) / 2.0, current_c * 0.99), 2) if prior_h20 > 0 else round(current_c * 0.99, 2)
+        pullback_buy_2 = round(min(prior_h20, current_c * 0.98), 2) if prior_h20 > 0 else round(current_c * 0.98, 2)
 
         rows.append({
             "code": code,
             "close": current_c,
             "prior_h20": prior_h20,
             "breakout_ext_pct": breakout_ext_pct,
+            "pullback_buy_1": pullback_buy_1,
+            "pullback_buy_2": pullback_buy_2,
             "stop_price_5pct": stop_price_5pct,
             "mom60_5": mom60_5,
             "ret_5": ret_5,
@@ -183,7 +187,8 @@ def compute_early_inception_rankings(
     res["rank_compression"] = res["compression_score"].rank(pct=True)
     res["rank_vol_ignition"] = (res["vol_ratio"] + res["vol_spike_1d"]).rank(pct=True)
     res["rank_cmf"] = res["cmf20"].rank(pct=True)
-    res["rank_breakout"] = res["range_pos_20"].rank(pct=True)
+    # Prefer fresh breakouts (+0~+1.5% above prior_h20) over overextended single-day spikes
+    res["rank_breakout"] = (-res["breakout_ext_pct"].sub(1.0).abs()).rank(pct=True)
 
     # Inception Score:
     # 35% Volume & Liquidity Ignition + 25% Compression & Tight Base + 20% Breakout + 20% CMF

@@ -6,11 +6,13 @@
 - 실행 manifest(수신 시각·행 수·해시·실패 종목)는 data/research/T-063/ 에 저장(추적)
 - 실패를 0이나 빈 데이터로 위장하지 않는다. 주문/매수 API 없음.
 """
+import re
 import sys
 import json
 import time
 import hashlib
 import argparse
+import urllib.request
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
 
@@ -26,9 +28,42 @@ from run_vcp_scanner import get_json, get_universe  # noqa: E402  (유한 timeou
 SNAP_DIR = ROOT / "quant-research" / "data" / "vcp_snapshots"
 DATA_DIR = ROOT / "quant-research" / "data"
 OUT_DIR = DATA_DIR / "research" / "T-063"
-CALL_DELAY_SEC = 0.4
+CALL_DELAY_SEC = 0.05
 # 기간에 못 미치는 신규 상장 종목은 제외하지 않고 행 수와 함께 기록만 한다(탐색기가 종목별 이력을 처리)
 MIN_ROWS = {"3y": 700, "10y": 2000}
+NAVER_ITEM_RE = re.compile(r'<item\s+data="(\d{8})\|([^|]+)\|([^|]+)\|([^|]+)\|([^|]+)\|([^"]+)"')
+
+
+def fetch_naver_daily(code: str, count: int = 800, fetched_at: datetime | None = None) -> pd.DataFrame:
+    url = f"https://fchart.stock.naver.com/sise.nhn?symbol={code}&timeframe=day&count={count}&requestType=0"
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+    raw = urllib.request.urlopen(req, timeout=10).read().decode("euc-kr", "ignore")
+    rows = []
+    for ds, o_s, h_s, l_s, c_s, v_s in NAVER_ITEM_RE.findall(raw):
+        dt = pd.Timestamp(datetime.strptime(ds, "%Y%m%d"))
+        c = float(c_s)
+        if c <= 0:
+            continue
+        o, h, l, v = float(o_s), float(h_s), float(l_s), float(v_s)
+        if o <= 0 or h <= 0 or l <= 0:
+            o = h = l = c
+        if h < max(o, c):
+            h = max(o, c)
+        if l > min(o, c):
+            l = min(o, c)
+        rows.append({
+            "Date": dt, "Open": o, "High": h, "Low": l,
+            "Close": c, "AdjClose": c, "Volume": max(0.0, v),
+        })
+    if not rows:
+        raise ValueError(f"Naver 일봉 없음 ({code})")
+    df = pd.DataFrame(rows).drop_duplicates("Date", keep="last").set_index("Date").sort_index()
+    if fetched_at is not None and len(df):
+        fetched_kst = fetched_at.astimezone(KST)
+        cutoff_date = (fetched_kst.date() if fetched_kst.hour >= 16
+                       else (fetched_kst - timedelta(days=1)).date())
+        df = df.loc[df.index.date <= cutoff_date]
+    return df
 
 
 def latest_universe() -> tuple[Path, pd.DataFrame]:
@@ -149,11 +184,15 @@ def main() -> int:
         code, market = row.code, row.market
         symbol = code + (".KQ" if market == "KOSDAQ" else ".KS")
         try:
-            payload = get_json(f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}",
-                               {"range": period, "interval": "1d"}, timeout=10)["chart"]
-            if not payload.get("result"):
-                raise ValueError("result 없음")
-            df = to_frame(payload["result"][0], fetched_at=fetched_at)
+            count_rows = 2500 if period == "10y" else 800
+            try:
+                df = fetch_naver_daily(code, count=count_rows, fetched_at=fetched_at)
+            except Exception:
+                payload = get_json(f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}",
+                                   {"range": period, "interval": "1d"}, timeout=10)["chart"]
+                if not payload.get("result"):
+                    raise ValueError("result 없음")
+                df = to_frame(payload["result"][0], fetched_at=fetched_at)
             if df.empty:
                 raise ValueError("유효 일봉 없음")
             path = RAW_DIR / f"{code}.csv"

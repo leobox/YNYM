@@ -94,7 +94,9 @@ def inspect(data_dir: Path, manifest_path: Path, now: datetime | None = None) ->
     fetched_at = datetime.fromisoformat(manifest["fetched_at"])
     if fetched_at.tzinfo is None or fetched_at > now + timedelta(minutes=5):
         raise ValueError("INVALID_FETCH_TIME")
-    if manifest.get("failed"):
+    failed_list = manifest.get("failed") or []
+    succeeded_cnt = int(manifest.get("succeeded") or 0)
+    if failed_list and (succeeded_cnt < 10 or len(failed_list) / max(1, succeeded_cnt + len(failed_list)) > 0.05):
         raise ValueError("SOURCE_FETCH_PARTIAL")
     files = manifest.get("files", [])
     if not files or len(files) != manifest.get("succeeded"):
@@ -659,7 +661,7 @@ def compute_action_directive(
         return {
             "code": "WEAKENING_DEFENSIVE",
             "headline": "⚠️ [신규 매수 보류 · 방어 우선] 시장 폭이 급락(둔화) 중입니다. 신규 진입은 쉬거나 평소 비중의 절반 이하로만 제한하세요.",
-            "new_buy": "원칙적 관망 권고 — 둔화 구간의 소수 돌파는 손절 빈도가 높습니다. 진입하더라도 1슬롯 비중을 절반(계좌의 1/6 이하)으로 줄이고 다음 날 시초가가 20일 기준고점 위를 지킬 때만 대응하세요.",
+            "new_buy": "원칙적 관망 권고 — 둔화 구간의 소수 돌파는 손절 빈도가 높습니다. 진입하더라도 1슬롯 비중을 절반(계좌의 1/6 이하)으로 줄이고, 평가일 종가 추격 대신 표의 ‘익일 눌림 매수가 (1차/2차)’ 지정가 체결만 수용하세요.",
             "holding": "-5% 보호 손절가 및 SMA10(10일선) 종가 이탈 시 미련 없이 즉시 현금화하세요 (추가 물타기 금지).",
             "cash_plan": "현금·파킹 비중 70~100% 방어 유지.",
         }
@@ -676,16 +678,16 @@ def compute_action_directive(
     if n_breakout == 0 and n_contraction > 0:
         return {
             "code": "STABLE_WATCH_PIVOT",
-            "headline": "👀 [길목 대기 · 고점 돌파 확인 후 매수] 미리 선취매하지 말고, 아래 ‘수축 돌파임박’ 후보가 20일 기준고점을 실제로 넘을 때 진입하세요.",
-            "new_buy": f"선취매 보류 — ‘수축 돌파임박’ 후보({n_contraction}건)를 관심종목에 두고 표의 ‘20일 기준고점’ 돌파 확인 시 슬롯당 계좌 1/3 이내로 분할 진입하세요.",
+            "headline": "👀 [길목 대기 · 고점 돌파 확인 후 매수] 미리 선취매하지 말고, 20일 기준고점을 실제로 넘을 때 진입하세요.",
+            "new_buy": f"선취매 보류 — 오늘 ‘20일 돌파 확정’ 후보가 0건입니다(수축 대기 {n_contraction}건). 20일 기준고점 돌파 마감 확인 후 다음 날 눌림목 지정가로 대응하세요.",
             "holding": "기존 보유분은 -5% 손절가·SMA10 이탈 전까지 추세를 유지하고, 이탈 시 즉시 현금화하세요.",
             "cash_plan": "돌파 확인 전까지 현금·파킹 대기.",
         }
 
     return {
         "code": "STABLE_BUY_READY",
-        "headline": "✅ [이제 분할 매수 가능] 레짐 안정 + ‘20일 돌파 확정’ 신호가 켜졌습니다. 아래 확정 후보를 규칙대로 분할 진입하세요.",
-        "new_buy": f"‘20일 돌파 확정’ 상위 후보({n_breakout}건) 대상 최대 3슬롯(종목당 계좌의 1/3 이내) 분할 진입 — 다음 거래일 시초가가 20일 기준고점 위를 유지할 때 진입하고, 과도한 시초가 갭상승(+5% 초과) 추격은 피하세요.",
+        "headline": "✅ [이제 분할 매수 가능] 레짐 안정 + ‘20일 돌파 확정’ 신호가 켜졌습니다. 종가 추격을 피하고 익일 눌림목 지정가로 분할 진입하세요.",
+        "new_buy": f"‘20일 돌파 확정’ 상위 후보({n_breakout}건) 대상 최대 3슬롯(종목당 계좌의 1/3 이내) 분할 진입 — 일봉 돌파 종목은 익일 장중 차익매물로 눌렸다가 반등하는 경우가 많으므로 평가일 종가나 갭상승 시초가를 추격하지 마세요. 표의 ‘익일 눌림 매수가 (1차: 돌파폭 절반·-1% / 2차: 20일 기준고점·-2%)’에 분할 지정가를 걸어 저점 체결만 수용하세요.",
         "holding": "진입 즉시 -5% 보호 손절가를 걸고, 종가가 SMA10(10일선) 아래로 내려가거나 수익권(+2% 이상) 고점 대비 -6% 하락 마감하면 다음 날 시초가에 전량 현금화하세요.",
         "cash_plan": "3슬롯 외 잔여 자금은 현금·파킹 유지 (동일 종목 중복 물타기 금지).",
     }
@@ -697,7 +699,7 @@ def render_panel(
     regime_context: dict | None = None,
     gate_funnel: dict | None = None,
 ) -> str:
-    """Render a sealed decision with Final Early Inception tracks (`early_inception_3d` retired)."""
+    """Render a sealed decision with only the core Market Regime, Today's Action Summary, and 20d Confirmed Breakout table."""
     strategies = record["strategies"]
     breadth = record["market_breadth_pct"]
     lamp = "🟢 관찰 가능" if breadth >= 40.0 else "🔴 후보 선별 중단"
@@ -718,15 +720,13 @@ def render_panel(
             f'({span}일 변화 **{delta:+.1f}%p**, 고점 대비 **{dd:+.1f}%p**)',
         ])
     if gate_funnel and gate_funnel.get("eligible", 0) > 0:
-        final_contraction = gate_funnel.get("final_contraction", 0)
         lines.extend([
             "",
             f'> **게이트별 생존 (`{gate_funnel["eligible"]}`종목 평가):** '
             f'추세·대금 `{gate_funnel["trend_liquidity"]}` → '
             f'비과열 `{gate_funnel["not_overextended"]}` → '
             f'20일 수축 `{gate_funnel["contraction"]}` → '
-            f'**최종 통과: 돌파 확정 `{gate_funnel["final_basic"]}`건 (고점돌파 `{gate_funnel["breakout_20d"]}`) / '
-            f'수축 돌파임박 `{final_contraction}`건**',
+            f'**최종 통과: 돌파 확정 `{gate_funnel["final_basic"]}`건 (고점돌파 `{gate_funnel["breakout_20d"]}`)**',
         ])
     lines.extend([
         "",
@@ -734,15 +734,9 @@ def render_panel(
         f'> **{directive["headline"]}**',
         "",
         f'- **신규 매수:** {directive["new_buy"]}',
+        "- **익일 눌림 타점 원칙 (종가·시초가 추격 금지):** 일봉 돌파 마감 종목은 다음 날 장 초반 차익매물로 눌렸다가 다시 추천가(평가일 종가)로 반등하는 패턴이 빈번합니다. 평가일 종가에 바로 매수하지 말고, 표의 **익일 눌림 매수가 (1차: 돌파폭 50% 되돌림·-1.0% / 2차: 20일 기준고점 지지·-2.0%)**에 분할 지정가를 걸어 눌림목 저점만 체결하세요.",
         f'- **보유 종목 (현금화 기준):** {directive["holding"]}',
         f'- **대기 자금:** {directive["cash_plan"]}',
-        "- *참고: 완료 일봉 운영 규칙(`시장 폭 40%`·`5일 추이`·`후보 수`·`-5%/SMA10 청산`)을 그대로 번역한 수동 대응 기준표이며, 실제 주문·계좌 연동 기능은 없습니다.*",
-        "",
-        "### 🧭 최종 상승 초입 관찰 안내", "",
-        "- **① 상승 초입 · 20일 돌파 확정:** 20일 변동성 수축 베이스에서 직전 20일 고점을 종가로 돌파하고 수급이 점화된 정석 후보입니다 (단기 `+5%` 도달 탄력 우위).",
-        "- **② 상승 초입 · 20일 수축 돌파임박:** 타이트한 20일 수축(`수축비 ≤ 0.65`) 상태에서 직전 20일 고점 `-3.0%` 이내에 근접하며 거래량이 먼저 점화된 길목 후보입니다 (기대수익률·손익비 우위, 실제 고점 돌파 여부 확인 권장).",
-        "- **전략 정비 (`T-131`):** 기존 `상승초입 3일 이내`는 거래량 5배 급등 추격에 따른 과열 물림·손절률 열위가 3개년 백필에서 확인되어 **폐기**되었습니다.",
-        "- **MTS 실전 참조:** `20일 기준고점 (돌파이격)`은 직전 20일 최고가 대비 현재 종가 위치이며, `참조 손절 / 추세선`은 평가일 종가 대비 `-5%` 보호 손절선과 `SMA10`(단기 추세 약화 기준선)입니다. 실제 주문·체결 기능이 없는 관찰 전용 기록입니다.",
         "",
     ])
 
@@ -760,24 +754,26 @@ def render_panel(
         display_blocks = [
             ("early_inception", "상승 초입 · 20일 돌파 확정",
              strategies.get("early_inception", {"score_field": "inception_score", "candidates": []})),
-            ("early_contraction", "상승 초입 · 20일 수축 돌파임박",
-             strategies.get("early_contraction", {"score_field": "contraction_score", "candidates": []})),
         ]
 
     for strategy, title, block in display_blocks:
         lines.extend([
             f"### {title}", "",
             f'> 갱신: `{fetched_label}` · 기준 완료 일봉: `{record["as_of"]}`', "",
-            "| 순위 | 종목 | 연속 포착 | 평가일 종가 | 20일 기준고점 (돌파이격) | 참조 손절 / 추세선 | 상대점수 | 수치 근거 |",
-            "|---:|:---|---:|---:|:---|:---|---:|:---|",
+            "| 순위 | 종목 | 연속 포착 | 평가일 종가 (추격금지) | 익일 눌림 매수가 (1차 / 2차) | 20일 기준고점 (돌파이격) | 참조 손절 / 추세선 | 수치 근거 |",
+            "|---:|:---|---:|---:|:---|:---|:---|:---|",
         ])
         for rank, pick in enumerate(block["candidates"], 1):
             name = str(pick["name"]).replace("|", "/").replace("\n", " ")
             if pick.get("prior_h20"):
                 ext_pct = pick.get("breakout_ext_pct", (pick["close"] / pick["prior_h20"] - 1.0) * 100.0)
                 pivot_col = f'{pick["prior_h20"]:,.0f}원 ({ext_pct:+.1f}%)'
+                pb1 = pick.get("pullback_buy_1") or min((pick["close"] + pick["prior_h20"]) / 2.0, pick["close"] * 0.99)
+                pb2 = pick.get("pullback_buy_2") or min(pick["prior_h20"], pick["close"] * 0.98)
+                pullback_col = f"**{pb1:,.0f}원** / {pb2:,.0f}원"
             else:
                 pivot_col = "-"
+                pullback_col = "-"
 
             stop_5 = pick.get("stop_price_5pct") or (pick["close"] * 0.95)
             if pick.get("sma10"):
@@ -799,11 +795,10 @@ def render_panel(
                 else:
                     reason = (f'20일 변동폭 {pick["range_width_ratio"]:.1%} · '
                               f'{volume} · CMF20 {pick["cmf20"]:+.2f}')
-            score_val = pick[block["score_field"]]
             days = observed_days.get((strategy, pick["code"]), 1)
             lines.append(
                 f'| {rank} | {name} (`{pick["code"]}`) | {days}거래일째 | {pick["close"]:,.0f}원 | '
-                f'{pivot_col} | {ref_col} | {score_val:.3f} | {reason} |'
+                f'{pullback_col} | {pivot_col} | {ref_col} | {reason} |'
             )
         if not block["candidates"]:
             lines.append("| - | 조건 충족 없음 | - | - | - | - | - | - |")

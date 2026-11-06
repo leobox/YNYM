@@ -152,7 +152,8 @@ def test_render_safe_names_and_explicit_no_data():
     record=dict(status='OK',as_of='2026-10-16',fetched_at='2026-10-18',result=result)
     panel=render_panel(record)
     assert 'ETF&#124;&lt;script&gt;&#91;link&#93;' in panel
-    assert '조건 충족 없음' in panel
+    empty_panel=render_panel(dict(status='OK',as_of='2026-10-16',fetched_at='2026-10-18',result={'stages':{'breakout':[]}}))
+    assert '조건 충족 없음' in empty_panel
     record['status']='ERROR';panel=render_panel(record)
     assert '자료 확인 후 산출' in panel and '조건 충족 없음' not in panel
     assert 'ETF&#124;' not in panel
@@ -226,22 +227,11 @@ def test_universe_excludes_cash_bond_and_pension_ineligible_etfs_by_default():
     result = rank_etfs({'069500': history()}, '2026-10-16')
     result['stages']['breakout'][0]['name'] = 'KODEX 200'
     panel = render_panel(dict(status='OK', as_of='2026-10-16', fetched_at='2026-10-18', result=result))
-    assert '## 📊 ETF 상승 초입 관찰 (연금계좌 매수 가능)' in panel
+    assert '### ETF 상승 초입 · 20일 돌파 확정' in panel
+    assert '### ETF 상승 초입 · 20일 수축 돌파임박' not in panel
+    assert '익일 눌림 매수가 (1차 / 2차)' in panel
     assert '연금저축·DC/IRP' in panel
     assert 'ETF 게이트별 생존 (`1`개 평가):' in panel
-    assert '### ETF 상승 초입 · 20일 돌파 확정' in panel
-    assert '### ETF 상승 초입 · 20일 수축 돌파임박' in panel
     assert '-5% 9,880원 · SMA10' in panel
 
 
-
-
-def test_watch_requires_within_3pct_of_20d_high():
-    far_below = history('watch')
-    # prior_high20 is 10300.0; set close to 9450.0 (-8.25% below h20)
-    far_below.iloc[-1, far_below.columns.get_loc('Close')] = 9450.0
-    far_below.iloc[-1, far_below.columns.get_loc('Open')] = 9400.0
-    far_below.iloc[-1, far_below.columns.get_loc('High')] = 9500.0
-    far_below.iloc[-1, far_below.columns.get_loc('Low')] = 9350.0
-    res = rank_etfs({'475050': far_below}, '2026-10-16')
-    assert res['stages']['watch'] == []

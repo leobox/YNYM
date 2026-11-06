@@ -150,7 +150,10 @@ def rank_etfs(universe: dict[str,pd.DataFrame], as_of: str) -> dict:
         if (vr<1.2 and spike<1.35) or cmf<-.05: continue
         funnel['ignition']+=1
         if close < h20 * 0.97: continue
+        pullback_buy_1 = round(min((close + h20) / 2.0, close * 0.992), 2)
+        pullback_buy_2 = round(min(h20, close * 0.985), 2)
         rows.append(dict(code=code,close=close,prior_high20=h20,
+                         pullback_buy_1=pullback_buy_1,pullback_buy_2=pullback_buy_2,
                          stop_price_5pct=round(close*0.95,2),sma10=sma10,
                          distance_to_high_pct=(close/h20-1)*100,contraction_ratio=contraction,
                          range_width_ratio=width,volume_ratio5=vr,volume_spike=spike,cmf20=cmf,
@@ -162,8 +165,9 @@ def rank_etfs(universe: dict[str,pd.DataFrame], as_of: str) -> dict:
     for stage in ('breakout','watch'):
         frame=pd.DataFrame([r for r in rows if r['stage']==stage])
         if frame.empty: stages[stage]=[]; continue
+        brk_rank = (-frame.distance_to_high_pct.sub(0.8).abs()).rank(pct=True) if stage=='breakout' else frame.range_pos.rank(pct=True)
         frame['score']=(.35*frame.volume_score.rank(pct=True)+.25*frame.compression.rank(pct=True)+
-                        .2*frame.range_pos.rank(pct=True)+.2*frame.cmf20.rank(pct=True))
+                        .2*brk_rank+.2*frame.cmf20.rank(pct=True))
         stages[stage]=frame.sort_values(['score','median_amount','code'],ascending=[False,False,True]).head(5).to_dict('records')
     return dict(stages=stages,funnel=funnel,qualified_before_top5=dict(
                     breakout=sum(r['stage']=='breakout' for r in rows),watch=sum(r['stage']=='watch' for r in rows)),
@@ -178,69 +182,58 @@ def render_panel(record: dict) -> str:
     labels={'OK':'정상 확인','PARTIAL':'일부 조회 실패 · 조회된 ETF만 비교','STALE':'자료가 오래되어 후보 산출 보류',
             'ERROR':'조회 실패 · 후보 산출 보류','INSUFFICIENT_COVERAGE':'동일 날짜 자료 부족 · 후보 산출 보류'}
     status=record['status']; result=record.get('result',{})
-    lines=['## 📊 ETF 상승 초입 관찰 (연금계좌 매수 가능)','',
-           f"> 실행 상태: {labels[status]} · 기준 완료 일봉 `{record.get('as_of') or '미확인'}`",
-           f"> 조회: `{record['fetched_at']}` · 연금저축·퇴직연금(DC/IRP) 매수 가능 ETF `{record.get('selected_count',0)}`개 중 동일 날짜 `{record.get('fresh_count',0)}`개",'']
-    scope='레버리지·인버스 포함' if record.get('include_leveraged') else '레버리지·인버스, 선물·합성 파생형, 금리·머니마켓·채권 파킹형 제외'
-    lines += [f'- **연금계좌 대상 범위:** 실제 **연금저축펀드·퇴직연금(DC/IRP)** 계좌에서 매수 가능한 국내·해외 주식·섹터·테마 및 `KRX금현물` ETF ({scope}, 거래대금 상위 100개).',
-              '- **활용 안내:** 개별주 상승 초입과 동일한 완료 일봉 수축·수급 점화 기준으로 **① 20일 돌파 확정**과 **② 20일 수축 돌파임박**을 각각 최대 5개 선별합니다.','']
+    lines=['### ETF 상승 초입 · 20일 돌파 확정','',
+           f"> 갱신: `{record['fetched_at']}` · 기준 완료 일봉: `{record.get('as_of') or '미확인'}` · 실행 상태: {labels[status]} (연금저축·DC/IRP 적격 `{record.get('selected_count',0)}`개 중 `{record.get('fresh_count',0)}`개 확인)",'']
     if result.get('breadth_pct') is not None:
         f=result.get('funnel',{})
         q=result.get('qualified_before_top5',{'breakout':0,'watch':0})
         lines += [
-            f"> 관찰군 60일선(SMA60) 상회 비율 **{result['breadth_pct']:.1f}%** (`{result['breadth_denominator']}`개 기준, 해외·금현물 포함 참고치)",
-            '',
-            f"> **ETF 게이트별 생존 (`{f.get('evaluated',0)}`개 평가):** "
+            f"> 관찰군 60일선(SMA60) 상회 비율 **{result['breadth_pct']:.1f}%** (`{result['breadth_denominator']}`개 기준) · "
+            f"**ETF 게이트별 생존 (`{f.get('evaluated',0)}`개 평가):** "
             f"추세·대금 `{f.get('trend_liquidity',0)}` → "
             f"비과열 `{f.get('nonextended',0)}` → "
             f"20일 수축 `{f.get('contraction',0)}` → "
             f"수급 점화 `{f.get('ignition',0)}` → "
-            f"**최종 통과: 돌파 확정 `{q.get('breakout',0)}`건 / 수축 돌파임박 `{q.get('watch',0)}`건**",
+            f"**최종 돌파 확정 `{q.get('breakout',0)}`건**",
             '',
         ]
-    cash_picks=sum(bool(CASH_RATE.search(p.get('name',''))) for picks in result.get('stages',{}).values() for p in picks)
+    picks=result.get('stages',{}).get('breakout',[]) if status in ('OK','PARTIAL') else []
+    cash_picks=sum(bool(CASH_RATE.search(p.get('name',''))) for p in picks)
     if cash_picks and status in ('OK','PARTIAL'):
         lines += [f'> 표시 종목 중 **금리·현금형 {cash_picks}개**가 포함되어 있습니다(상품명 기준). 이들 상품의 고점 갱신은 주식형 ETF의 상승초입과 성격이 다릅니다.','']
     if record.get('errors'):lines += [f"> 조회 실패 {len(record['errors'])}개 · 과거 값을 최신 값으로 대신하지 않았습니다.",'']
-    for stage,title in [('breakout','20일 돌파 확정'),('watch','20일 수축 돌파임박')]:
-        lines += [f'### ETF 상승 초입 · {title}','',
-                  '| 순위 | ETF (연금계좌) | 완료일 종가 | 20일 기준고점 (돌파이격) | 참조 손절 / 추세선 | 상대점수 | 수치 근거 |',
-                  '|---:|:---|---:|:---|:---|---:|:---|']
-        picks=result.get('stages',{}).get(stage,[]) if status in ('OK','PARTIAL') else []
-        for i,pick in enumerate(picks,1):
-            name=safe_text(pick.get('name',pick['code'])); code=pick['code']
-            raw_name=pick.get('name','')
-            if pick.get('leveraged_or_inverse'):
-                flag=' · 레버리지/인버스'
-            elif CASH_RATE.search(raw_name):
-                flag=' · 금리·현금형'
-            elif PENSION_INELIGIBLE.search(raw_name):
-                flag=' · 파생/합성확인'
-            else:
-                flag=' · `연금저축·DC/IRP`'
-            stop_5=pick.get('stop_price_5pct') or (pick['close']*0.95)
-            sma10=pick.get('sma10')
-            ref_col=f"-5% {stop_5:,.0f}원 · SMA10 {sma10:,.0f}원" if sma10 else f"-5% {stop_5:,.0f}원"
-            cmf_val=pick.get('cmf20',0.0)
-            width_val=pick.get('range_width_ratio',0.0)
-            score_val=pick.get('score',0.0)
-            lines.append(
-                f"| {i} | [{name}](https://finance.naver.com/item/main.naver?code={code}) (`{code}`){flag} | "
-                f"{pick['close']:,.0f}원 | 기준 {pick['prior_high20']:,.0f}원 ({pick['distance_to_high_pct']:+.2f}%) | "
-                f"{ref_col} | {score_val:.3f} | "
-                f"수축비 {pick['contraction_ratio']:.2f} (변동폭 {width_val:.1%}) · "
-                f"5일 {pick['volume_ratio5']:.2f}x (당일 {pick['volume_spike']:.2f}x) · CMF20 {cmf_val:+.2f} |"
-            )
-        if not picks:
-            message='조건 충족 없음' if status in ('OK','PARTIAL') else '자료 확인 후 산출'
-            lines.append(f'| - | {message} | - | - | - | - | - |')
-        lines.append('')
-    lines += ['<details>','<summary>ETF 상승 초입 (연금계좌) 관찰 기준 및 유의사항</summary>','',
-              '- **연금계좌 적격 필터:** 연금저축펀드·퇴직연금(DC/IRP)에서 매수 불가능한 **레버리지·인버스(Tab 3)**, 파생상품 위험평가액 한도(40%)로 제한되는 **선물·원자재파생·합성형 ETF(`선물`, `WTI`, `합성` 등 — 단 실물 `KRX금현물`은 허용)**, 그리고 일간 이자 누적으로 차트가 왜곡되는 **금리·머니마켓·채권 파킹형(Tab 6·7)**을 모두 제외한 실물 주식·섹터·테마·해외지수·금현물 ETF 상위 100개를 평가합니다.',
-              '- **추세·대금:** 종가 ≥ SMA20, SMA20/60 정배열(또는 종가 ≥ SMA60), 20일 중앙 거래대금 ≥ 5억원.',
-              '- **비과열·수축·수급:** 60일 모멘텀 ≤ 25%, SMA60 이격 ≤ 1.18배, 20일 변동폭 ≤ 25%, 수축비(20일/60일 변동폭) ≤ 0.85, 5일 거래량비 ≥ 1.20x(또는 당일 ≥ 1.35x), CMF20 ≥ −0.05.',
-              '- **돌파 확정 vs 수축 돌파임박:** 종가 ≥ 직전 20일 고점이면 **20일 돌파 확정**, 기초 수축·수급 점화를 모두 충족한 채 직전 20일 고점 대비 −3.0% 이내(`종가 ≥ 0.97 × 20일 고점`)에서 돌파를 준비 중이면 **20일 수축 돌파임박**으로 분류합니다.',
-              '- 퇴직연금(DC/IRP)은 안전자산 30% 의무 편입 규정(주식형 ETF 최대 70% 한도)이 적용되므로 계좌별 위험자산 한도를 확인하세요. 네이버 금융 공개 일봉 기준의 관찰 참조값이며 실제 주문·체결 기능은 포함하지 않습니다.','', '</details>','']
+    lines += ['| 순위 | ETF (연금계좌) | 완료일 종가 (추격금지) | 익일 눌림 매수가 (1차 / 2차) | 20일 기준고점 (돌파이격) | 참조 손절 / 추세선 | 수치 근거 |',
+              '|---:|:---|---:|:---|:---|:---|:---|']
+    for i,pick in enumerate(picks,1):
+        name=safe_text(pick.get('name',pick['code'])); code=pick['code']
+        raw_name=pick.get('name','')
+        if pick.get('leveraged_or_inverse'):
+            flag=' · 레버리지/인버스'
+        elif CASH_RATE.search(raw_name):
+            flag=' · 금리·현금형'
+        elif PENSION_INELIGIBLE.search(raw_name):
+            flag=' · 파생/합성확인'
+        else:
+            flag=' · `연금저축·DC/IRP`'
+        pb1=pick.get('pullback_buy_1') or min((pick['close']+pick['prior_high20'])/2.0, pick['close']*0.992)
+        pb2=pick.get('pullback_buy_2') or min(pick['prior_high20'], pick['close']*0.985)
+        pb_col=f"**{pb1:,.0f}원** / {pb2:,.0f}원"
+        stop_5=pick.get('stop_price_5pct') or (pick['close']*0.95)
+        sma10=pick.get('sma10')
+        ref_col=f"-5% {stop_5:,.0f}원 · SMA10 {sma10:,.0f}원" if sma10 else f"-5% {stop_5:,.0f}원"
+        cmf_val=pick.get('cmf20',0.0)
+        width_val=pick.get('range_width_ratio',0.0)
+        lines.append(
+            f"| {i} | [{name}](https://finance.naver.com/item/main.naver?code={code}) (`{code}`){flag} | "
+            f"{pick['close']:,.0f}원 | {pb_col} | 기준 {pick['prior_high20']:,.0f}원 ({pick['distance_to_high_pct']:+.2f}%) | "
+            f"{ref_col} | "
+            f"수축비 {pick['contraction_ratio']:.2f} (변동폭 {width_val:.1%}) · "
+            f"5일 {pick['volume_ratio5']:.2f}x (당일 {pick['volume_spike']:.2f}x) · CMF20 {cmf_val:+.2f} |"
+        )
+    if not picks:
+        message='조건 충족 없음' if status in ('OK','PARTIAL') else '자료 확인 후 산출'
+        lines.append(f'| - | {message} | - | - | - | - | - |')
+    lines.append('')
     return '\n'.join(lines)
 
 

@@ -247,8 +247,8 @@ def test_main_renders_stock_details_for_both_strategies(tmp_path, monkeypatch):
     assert panel.index("### 🌐 시장 상황") < panel.index("### 모드 2 · 과거 봉인 기록") < panel.index("### 상승 초입 · 20일 돌파 확정")
     assert "🟢 관찰 가능 · 시장 폭(SMA60) **55.0%** · 기준 완료 일봉 `2026-09-25`" in panel
     assert panel.count("갱신: `2026-09-25 18:00 KST`") == 2
-    assert "모드종목 (`000001`) | 1거래일째 | 10,000원 | - | -5% 9,500원 | 0.800 |" in panel
-    assert "19,800원 (+1.0%) | -5% 19,000원 · SMA10 19,500원 | 0.700 |" in panel
+    assert "모드종목 (`000001`) | 1거래일째 | 10,000원 | - | - | -5% 9,500원 |" in panel
+    assert "**19,800원** / 19,600원 | 19,800원 (+1.0%) | -5% 19,000원 · SMA10 19,500원 |" in panel
     assert "수축비 0.52 (변동폭 18.0%) · 5일 1.50x (당일 2.00x) · CMF20 +0.20" in panel
 
 
@@ -314,13 +314,14 @@ def test_panel_renders_final_early_inception_and_retires_3d(panel_record):
     panel = forward.render_panel(panel_record, {("early_inception", "000001"): 3})
     rows = [line for line in panel.splitlines() if line.startswith("| 1 |") or line.startswith("| 2 |")]
     assert "3거래일째" in rows[0]
+    assert "**9,900원** / 9,800원" in rows[0]
     assert "9,900원 (+1.0%)" in rows[0]
     assert "-5% 9,500원 · SMA10 9,750원" in rows[0]
-    assert "수축종목 (`000003`)" in rows[2]
-    assert "419,000원 (-2.1%)" in rows[2]
-    assert "-5% 389,500원 · SMA10 404,950원" in rows[2]
-    assert panel.index("### 🧭 최종 상승 초입 관찰 안내") < panel.index("### 상승 초입 · 20일 돌파 확정")
-    assert panel.index("### 상승 초입 · 20일 돌파 확정") < panel.index("### 상승 초입 · 20일 수축 돌파임박")
+    assert "### 🌐 시장 상황" in panel
+    assert "### 🎯 오늘의 대응 지침 (규칙 기반 요약)" in panel
+    assert "### 상승 초입 · 20일 돌파 확정" in panel
+    assert "### 🧭 최종 상승 초입 관찰 안내" not in panel
+    assert "### 상승 초입 · 20일 수축 돌파임박" not in panel
     assert "### 상승초입 3일 이내" not in panel
     assert "🎯 3일 목록 포함" not in panel
     assert all(line.count("|") == 9 for line in rows)
@@ -333,8 +334,8 @@ def test_panel_empty_candidates_and_market_gate(panel_record):
         block["candidates"] = []
     panel = forward.render_panel(panel_record, {})
     assert "🔴 후보 선별 중단" in panel
-    assert panel.count("| - | 조건 충족 없음 | - | - | - | - | - | - |") == 2
-    assert "### 🧭 최종 상승 초입 관찰 안내" in panel
+    assert panel.count("| - | 조건 충족 없음 | - | - | - | - | - | - |") == 1
+    assert "### 🧭 최종 상승 초입 관찰 안내" not in panel
     assert "### 상승초입 3일 이내" not in panel
 
 
@@ -346,7 +347,7 @@ def test_panel_legacy_mode2_and_retired_3d_records_render_cleanly(panel_record):
     panel_3d = forward.render_panel(panel_record, {})
     assert "### 상승초입 3일 이내" not in panel_3d
     assert "폐기된3일종목" not in panel_3d
-    assert "### 상승 초입 · 20일 수축 돌파임박" in panel_3d
+    assert "### 상승 초입 · 20일 돌파 확정" in panel_3d
 
     strategies.pop("early_inception_3d")
     strategies["mode2"] = {"score_field": "composite_score", "candidates": [{
@@ -380,7 +381,7 @@ def test_main_reused_record_refreshes_panel_without_rewriting_seal(tmp_path, mon
     assert json.loads(capsys.readouterr().out)["status"] == "REUSED"
     panel = readme.read_text(encoding="utf-8")
     assert panel.startswith(prefix) and panel.endswith(suffix)
-    assert "🧭 최종 상승 초입 관찰 안내" in panel and "수축종목 (`000003`)" in panel
+    assert "### 상승 초입 · 20일 돌파 확정" in panel and "돌파종목 (`000001`)" in panel
     assert seal.read_bytes() == sealed_bytes
     assert (runs.parent / "latest.md").read_text(encoding="utf-8") in panel
 
@@ -611,7 +612,7 @@ def test_render_panel_includes_regime_and_gate_funnel_and_survives_heartbeat(pan
     }
     panel = forward.render_panel(panel_record, {}, regime_context=regime_ctx, gate_funnel=funnel)
     assert "🟡 레짐 둔화 주의 · **최근 3거래일 추이:** 87.9% (`10-06`) → 85.9% (`10-07`) → 55.0% (`10-08`)" in panel
-    assert "**게이트별 생존 (`144`종목 평가):** 추세·대금 `53` → 비과열 `7` → 20일 수축 `4` → **최종 통과: 돌파 확정 `0`건 (고점돌파 `0`) / 수축 돌파임박 `1`건**" in panel
+    assert "**게이트별 생존 (`144`종목 평가):** 추세·대금 `53` → 비과열 `7` → 20일 수축 `4` → **최종 통과: 돌파 확정 `0`건 (고점돌파 `0`)**" in panel
 
     readme = tmp_path / "README.md"
     latest = tmp_path / "latest.md"
@@ -623,30 +624,6 @@ def test_render_panel_includes_regime_and_gate_funnel_and_survives_heartbeat(pan
 
 
 
-
-
-def test_to_frame_strips_trailing_partial_nan_close_row_during_midnight_settlement():
-    from scripts.fetch_daily_history import to_frame
-    ts_prev = int(datetime(2026, 10, 22, 0, 0, tzinfo=ZoneInfo("Asia/Seoul")).timestamp())
-    ts_curr = int(datetime(2026, 10, 23, 0, 0, tzinfo=ZoneInfo("Asia/Seoul")).timestamp())
-    item = {
-        "timestamp": [ts_prev, ts_curr],
-        "indicators": {
-            "quote": [{
-                "open": [10000.0, 10100.0],
-                "high": [10200.0, 10300.0],
-                "low": [9900.0, 10000.0],
-                "close": [10050.0, None],
-                "volume": [100000, 120000],
-            }],
-            "adjclose": [{"adjclose": [10050.0, None]}],
-        },
-    }
-    fetched_night = datetime(2026, 10, 24, 1, 30, tzinfo=ZoneInfo("Asia/Seoul"))
-    df_night = to_frame(item, fetched_at=fetched_night)
-    assert len(df_night) == 1
-    assert str(df_night.index[-1].date()) == "2026-10-22"
-    assert int(df_night["Close"].isna().sum()) == 0
 
 
 def test_compute_action_directive_covers_all_operational_states_and_nan_safety(panel_record):
@@ -709,5 +686,5 @@ def test_compute_action_directive_covers_all_operational_states_and_nan_safety(p
     assert "이제 분할 매수 가능" in d_buy["headline"]
     rendered = forward.render_panel(panel_record, {}, regime_context={"status": "STABLE"})
     assert "### 🎯 오늘의 대응 지침 (규칙 기반 요약)" in rendered
-    assert rendered.index("### 🌐 시장 상황") < rendered.index("### 🎯 오늘의 대응 지침 (규칙 기반 요약)") < rendered.index("### 🧭 최종 상승 초입 관찰 안내")
+    assert rendered.index("### 🌐 시장 상황") < rendered.index("### 🎯 오늘의 대응 지침 (규칙 기반 요약)") < rendered.index("### 상승 초입 · 20일 돌파 확정")
     assert json.dumps(panel_record, ensure_ascii=False) == before

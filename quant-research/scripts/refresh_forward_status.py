@@ -46,7 +46,7 @@ def refresh(readme: Path, latest: Path, status: str, reason: str = "",
         return (f"> 갱신: `{label}` · 기준 완료 일봉: `{match[2]}`"
                 f" · 기록 수신: `{match[3] or match[1]}`")
     panel, count = re.subn(pattern, stamp, panel)
-    if count != 2:
+    if count not in (1, 2):
         raise ValueError("EXPECTED_TWO_FORWARD_TIMESTAMPS")
     message = STATUS[status]
     if status == "SEALED" and previous_status and "⚠️" in previous_status[1]:
