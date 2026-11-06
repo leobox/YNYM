@@ -5436,6 +5436,123 @@
           "note": "메인 README 4대 섹션 단일화, 익일 눌림목 매수가(1차/2차) 반영, 네이버 일봉 1차화로 11/5 백필·11/6 최신 일봉 무누락 반영, 불필요 GitHub Actions(lrm60_15m·etf-observation) 및 백데이터 제거 완료 (67 passed)"
         }
       ]
+    },
+    {
+      "id": "T-140",
+      "title": "quant-research: 상승 초입 20일 돌파 알고리즘 5대 구조적 모순 교정 (과열·피뢰침·약세장 가짜돌파 차단, 눌림 지정가 진입 및 손절·트레일링 구조 개편)",
+      "summary": "",
+      "doc": "docs/tasks/T-140.md",
+      "status": "done",
+      "priority": "P0",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "5대 알고리즘 모순(역배열 데드캣 바운스 추천, 클라이맥스 거래량/돌파이격 상한 부재, 윗꼬리 필터 부재, 장중 -5% 노이즈 손절 및 손실 확정 트레일링 버그, 레짐 급락기 추천 강행) 전면 개편 및 3년/전진구간 백테스트·68개 테스트 검증 완료",
+      "done_at": "2026-11-06",
+      "updated_at": "2026-11-06",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-11-06",
+      "log": [
+        {
+          "at": "2026-11-06",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-11-06",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-11-06",
+          "status": "done",
+          "note": "5대 알고리즘 모순(역배열 데드캣 바운스 추천, 클라이맥스 거래량/돌파이격 상한 부재, 윗꼬리 필터 부재, 장중 -5% 노이즈 손절 및 손실 확정 트레일링 버그, 레짐 급락기 추천 강행) 전면 개편 및 3년/전진구간 백테스트·68개 테스트 검증 완료"
+        }
+      ]
+    },
+    {
+      "id": "T-141",
+      "title": "quant-collector: 개편 변경분 적대적 리뷰 및 경계조건 재현",
+      "summary": "",
+      "doc": "docs/tasks/T-141.md",
+      "status": "review",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "Codex 적대적 리뷰 완료. P1 4건 오프라인 재현: 10일 보존/20일 평가 충돌, push 실패 성공 처리, LRM 15시 결측 손절 누락, 무거래 봉 허위 라벨. 기존 115 tests pass. docs/tasks/T-141.md 및 T-141-repro.py 인계, 운영 코드 미수정.",
+      "done_at": null,
+      "updated_at": "2026-11-06",
+      "done_when": "변경분 검토, 결함 재현 및 위치가 포함된 리뷰 인수인계 기록",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-11-06",
+      "log": [
+        {
+          "at": "2026-11-06",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-11-06",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-11-06",
+          "status": "review",
+          "note": "Codex 적대적 리뷰 완료. P1 4건 오프라인 재현: 10일 보존/20일 평가 충돌, push 실패 성공 처리, LRM 15시 결측 손절 누락, 무거래 봉 허위 라벨. 기존 115 tests pass. docs/tasks/T-141.md 및 T-141-repro.py 인계, 운영 코드 미수정."
+        }
+      ]
+    },
+    {
+      "id": "T-142",
+      "title": "ops: T-141 후속 신호 기록 보존 및 Actions 게시 실패 처리",
+      "summary": "",
+      "doc": "docs/tasks/T-142.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_ops",
+      "phase": "2. 퀀트 데이터 자동 수집",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "T-141 1·2번 로컬 교정 완료. 신호 JSON 영구 보존, 평가 산출물 staging, push 3회 실패 exit 1 및 rebase abort. 알고리즘 파일 변경 없음. workflow 회귀 6 tests/YAML/정적·구문 검사 통과. 커밋·푸시 미실행, docs/tasks/T-142.md 인계.",
+      "done_at": "2026-11-06",
+      "updated_at": "2026-11-06",
+      "done_when": "알고리즘 파일 변경 없이 신호 기록 삭제 방지, push 실패 감지 및 오프라인 회귀 검증",
+      "gate": null,
+      "parent": "T-141",
+      "owner": "Codex",
+      "claimed_at": "2026-11-06",
+      "log": [
+        {
+          "at": "2026-11-06",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-11-06",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-11-06",
+          "status": "done",
+          "note": "T-141 1·2번 로컬 교정 완료. 신호 JSON 영구 보존, 평가 산출물 staging, push 3회 실패 exit 1 및 rebase abort. 알고리즘 파일 변경 없음. workflow 회귀 6 tests/YAML/정적·구문 검사 통과. 커밋·푸시 미실행, docs/tasks/T-142.md 인계."
+        }
+      ]
     }
   ]
 }

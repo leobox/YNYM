@@ -167,15 +167,21 @@ def build_record(finding: dict, manifest_path: Path) -> dict:
     breadth_count = int(eligible.loc[as_of].sum())
     if breadth_count / len(universe) < 0.90:
         raise ValueError("MARKET_BREADTH_COVERAGE_INSUFFICIENT")
-    breadth = float(calculate_market_breadth(universe).loc[as_of])
+    b_series = calculate_market_breadth(universe)
+    breadth = float(b_series.loc[as_of])
     if not np.isfinite(breadth):
         raise ValueError("MARKET_BREADTH_UNAVAILABLE")
+    b_hist = b_series.loc[:as_of].dropna().iloc[-4:]
+    regime_rollover = (
+        (len(b_hist) >= 4 and (breadth - float(b_hist.max())) <= -3.5)
+        or (len(b_hist) >= 3 and float(b_hist.iloc[-1]) < float(b_hist.iloc[-2]) < float(b_hist.iloc[-3]))
+    )
     strategies = {}
     for key, ranker, score_name in (
         ("early_inception", compute_early_inception_rankings, "inception_score"),
         ("early_contraction", compute_early_contraction_rankings, "contraction_score"),
     ):
-        ranks = ranker(universe, as_of) if breadth >= 40.0 else pd.DataFrame()
+        ranks = ranker(universe, as_of) if (breadth >= 40.0 and not regime_rollover) else pd.DataFrame()
         candidates = [] if ranks.empty else ranks.head(TOP_N).to_dict(orient="records")
         candidates = json.loads(pd.DataFrame(candidates).to_json(orient="records")) if candidates else []
         for pick in candidates:
@@ -507,9 +513,14 @@ def compute_gate_funnel(
     market_breadth_pct: float | None = None,
     min_med_amt: float = 500_000_000.0,
     max_mom60_5: float = 0.25,
-    max_range_ratio: float = 0.25,
-    max_contraction_ratio: float = 0.85,
+    max_range_ratio: float = 0.22,
+    max_contraction_ratio: float = 0.75,
     min_vol_ratio: float = 1.20,
+    max_breakout_ext_pct: float = 3.0,
+    max_ret_5: float = 0.14,
+    max_ret_1: float = 0.065,
+    max_vol_spike_1d: float = 4.5,
+    max_upper_wick_ratio: float = 0.35,
 ) -> dict | None:
     """Count stocks surviving each sequential Early Inception gate up to eval_date close."""
     if not universe:
@@ -531,17 +542,24 @@ def compute_gate_funnel(
         c = hist["Close"]
         h = hist["High"]
         l = hist["Low"]
+        o = hist["Open"] if "Open" in hist.columns else c
         v = hist["Volume"]
         amt = c * v
 
         current_c = float(c.iloc[-1])
+        current_o = float(o.iloc[-1])
+        current_h = float(h.iloc[-1])
+        current_l = float(l.iloc[-1])
         if current_c <= 0:
             continue
         eligible += 1
 
-        sma20 = float(c.rolling(20).mean().iloc[-1])
+        sma10 = float(c.rolling(10).mean().iloc[-1])
+        sma20_series = c.rolling(20).mean()
+        sma20 = float(sma20_series.iloc[-1])
+        sma20_prev5 = float(sma20_series.iloc[-6]) if len(sma20_series) >= 6 else sma20
         sma60 = float(c.rolling(60).mean().iloc[-1])
-        if current_c < sma20 or (current_c < sma60 and sma20 < sma60):
+        if not (current_c > sma10 >= sma20 and current_c > sma60 and sma20 >= sma60 * 0.99 and sma20 >= sma20_prev5):
             continue
         med_amt = float(amt.rolling(20).median().iloc[-1])
         if not np.isfinite(med_amt) or med_amt < min_med_amt:
@@ -554,7 +572,9 @@ def compute_gate_funnel(
             continue
         mom60_5 = (c_t5 - c_t60) / c_t60
         ratio_to_sma60 = current_c / sma60 if sma60 > 0 else 999.0
-        if mom60_5 > max_mom60_5 or ratio_to_sma60 > 1.18:
+        ret_5 = (current_c - float(c.iloc[-6])) / float(c.iloc[-6]) if len(c) >= 6 else 0.0
+        ret_1 = (current_c - float(c.iloc[-2])) / float(c.iloc[-2]) if len(c) >= 2 else 0.0
+        if mom60_5 < 0.0 or mom60_5 > max_mom60_5 or ratio_to_sma60 > 1.16 or ret_5 > max_ret_5 or ret_1 > max_ret_1:
             continue
         not_overextended += 1
 
@@ -568,11 +588,15 @@ def compute_gate_funnel(
         range_60 = prior_h60 - prior_l60
         range_width_ratio = range_20 / current_c
         contraction_ratio = range_20 / range_60 if range_60 > 0 else 1.0
-        if range_width_ratio > max_range_ratio or contraction_ratio > max_contraction_ratio:
+        effective_max_contraction = max(max_contraction_ratio, 0.85) if range_width_ratio <= 0.12 else max_contraction_ratio
+        if range_width_ratio > max_range_ratio or contraction_ratio > effective_max_contraction:
             continue
         contraction += 1
 
-        if current_c < prior_h20:
+        breakout_ext_pct = (current_c / prior_h20 - 1.0) * 100.0 if prior_h20 > 0 else 0.0
+        bar_range = current_h - current_l
+        upper_wick_ratio = (current_h - max(current_c, current_o)) / bar_range if bar_range > 0 else 0.0
+        if current_c < prior_h20 or breakout_ext_pct > max_breakout_ext_pct or current_c < current_o or upper_wick_ratio > max_upper_wick_ratio:
             continue
         breakout_20d += 1
 
@@ -580,7 +604,7 @@ def compute_gate_funnel(
         recent_vol = float(v.iloc[-5:].median())
         vol_ratio = recent_vol / prior_vol if prior_vol > 0 else 0.0
         vol_spike_1d = float(v.iloc[-1]) / prior_vol if prior_vol > 0 else 0.0
-        if vol_ratio < min_vol_ratio and vol_spike_1d < 1.35:
+        if (vol_ratio < min_vol_ratio and vol_spike_1d < 1.35) or vol_spike_1d > max_vol_spike_1d:
             continue
 
         hl = (h.iloc[-20:] - l.iloc[-20:]).replace(0, np.nan)
@@ -588,7 +612,7 @@ def compute_gate_funnel(
         mf_vol = mf_mult * v.iloc[-20:]
         sum_vol = float(v.iloc[-20:].sum())
         cmf20 = float(mf_vol.sum() / sum_vol) if sum_vol > 0 else -1.0
-        if cmf20 < -0.05:
+        if cmf20 < 0.02:
             continue
         final_basic += 1
 
@@ -627,7 +651,7 @@ def compute_action_directive(
             "code": "DATA_INVALID",
             "headline": "⚠️ [판단 보류 · 매수 중단] 시장 폭 수치가 유효하지 않습니다. 신규 매수를 멈추고 데이터 상태를 먼저 확인하세요.",
             "new_buy": "전면 보류 (0원) — 정상 완료 일봉과 시장 폭이 확인될 때까지 신규 진입하지 마세요.",
-            "holding": "기존 보유분은 각 종목의 -5% 보호 손절가 및 SMA10(10일선) 이탈 기준을 수동 점검하세요.",
+            "holding": "기존 보유분은 종가 기준 SMA10·SMA20 추세선 이탈 및 장중 비상 에어백(-7%) 기준을 수동 점검하세요.",
             "cash_plan": "대기 자금 현금·파킹 유지.",
         }
 
@@ -645,7 +669,7 @@ def compute_action_directive(
             "code": "HALTED_CASH",
             "headline": "🛑 [신규 매수 중단 · 현금/파킹 대피] 지금은 사지 마세요. 보유 종목도 손절·추세선 이탈 시 즉시 현금화하세요.",
             "new_buy": "전면 금지 (0원) — 시장 폭 40% 미만 약세 차단 구간입니다. 기준을 낮춘 억지 매수나 물타기를 금지합니다.",
-            "holding": "표의 -5% 보호 손절가 장중 도달 시 즉시 현금화, 또는 종가가 SMA10(10일선) 아래로 마감하면 다음 날 시초가에 전량 현금화하세요.",
+            "holding": "종가가 SMA10·SMA20 추세선 아래로 마감하면 다음 날 시초가에 전량 현금화하고, 장중 비상 에어백(-7%) 도달 시 즉시 현금화하세요.",
             "cash_plan": "대기 자금 100% 현금 또는 파킹형 ETF(CD금리·머니마켓) 유지 (시장 폭 40% 회복 전까지 관망).",
         }
 
@@ -655,14 +679,14 @@ def compute_action_directive(
                 "code": "WEAKENING_NO_SIGNAL_CASH",
                 "headline": "🛑 [관망 · 현금 유지] 레짐이 꺾이고 돌파 후보도 0건입니다. 지금은 사지 말고 현금(파킹)을 지키세요.",
                 "new_buy": "매수 금지 (0원) — 변동성 수축 베이스가 무너진 휴식기입니다. 빈칸을 채우려 임의로 종목을 고르지 마세요.",
-                "holding": "기존 보유분만 관리 — -5% 손절가 도달 시 즉시 현금화, 종가가 SMA10(10일선)을 이탈하거나 수익권(+2% 이상) 고점 대비 -6% 밀리면 다음 시초가에 현금화하세요.",
+                "holding": "기존 보유분만 관리 — 종가가 SMA10·SMA20을 이탈하거나 수익권(+6% 이상)에서 본전(+1%) 보장 고점 대비 -5% 밀리면 다음 시초가에 현금화하세요 (장중 비상 에어백 -7%).",
                 "cash_plan": "유휴 자금 100% 현금·파킹 유지 (레짐 둔화 진정 및 신규 돌파 확정 출현 대기).",
             }
         return {
             "code": "WEAKENING_DEFENSIVE",
             "headline": "⚠️ [신규 매수 보류 · 방어 우선] 시장 폭이 급락(둔화) 중입니다. 신규 진입은 쉬거나 평소 비중의 절반 이하로만 제한하세요.",
             "new_buy": "원칙적 관망 권고 — 둔화 구간의 소수 돌파는 손절 빈도가 높습니다. 진입하더라도 1슬롯 비중을 절반(계좌의 1/6 이하)으로 줄이고, 평가일 종가 추격 대신 표의 ‘익일 눌림 매수가 (1차/2차)’ 지정가 체결만 수용하세요.",
-            "holding": "-5% 보호 손절가 및 SMA10(10일선) 종가 이탈 시 미련 없이 즉시 현금화하세요 (추가 물타기 금지).",
+            "holding": "장중 단순 노이즈(-5%)에 흔들리지 말고 종가 기준 추세선(SMA10·SMA20) 이탈 시 다음 시초가 현금화, 장중 비상 에어백(-7%) 도달 시 즉시 현금화하세요 (추가 물타기 금지).",
             "cash_plan": "현금·파킹 비중 70~100% 방어 유지.",
         }
 
@@ -671,7 +695,7 @@ def compute_action_directive(
             "code": "STABLE_WAIT_CASH",
             "headline": "⏸️ [현금 대기] 시장은 안정적이나 오늘 조건을 통과한 종목이 없습니다. 현금을 쥐고 다음 신호를 기다리세요.",
             "new_buy": "대기 (0원) — 조건 충족 후보가 나올 때까지 쉬는 것도 전략의 일부입니다.",
-            "holding": "기존 보유분은 -5% 손절가·SMA10 종가 이탈 및 수익권 고점 대비 -6% 트레일링 기준에 따라 유지·현금화하세요.",
+            "holding": "기존 보유분은 종가 기준 SMA10·SMA20 이탈 시 익일 시초가 현금화, 수익권(+6% 이상) 도달 후에는 본전(+1%) 보장 고점 대비 -5% 트레일링 기준에 따라 관리하세요.",
             "cash_plan": "현금·파킹 대기 (신규 돌파 출현 시 투입 준비).",
         }
 
@@ -680,7 +704,7 @@ def compute_action_directive(
             "code": "STABLE_WATCH_PIVOT",
             "headline": "👀 [길목 대기 · 고점 돌파 확인 후 매수] 미리 선취매하지 말고, 20일 기준고점을 실제로 넘을 때 진입하세요.",
             "new_buy": f"선취매 보류 — 오늘 ‘20일 돌파 확정’ 후보가 0건입니다(수축 대기 {n_contraction}건). 20일 기준고점 돌파 마감 확인 후 다음 날 눌림목 지정가로 대응하세요.",
-            "holding": "기존 보유분은 -5% 손절가·SMA10 이탈 전까지 추세를 유지하고, 이탈 시 즉시 현금화하세요.",
+            "holding": "기존 보유분은 종가 기준 SMA10·SMA20 추세선 이탈 전까지 보유하고, 이탈 마감 시 다음 시초가에 현금화하세요.",
             "cash_plan": "돌파 확인 전까지 현금·파킹 대기.",
         }
 
@@ -688,7 +712,7 @@ def compute_action_directive(
         "code": "STABLE_BUY_READY",
         "headline": "✅ [이제 분할 매수 가능] 레짐 안정 + ‘20일 돌파 확정’ 신호가 켜졌습니다. 종가 추격을 피하고 익일 눌림목 지정가로 분할 진입하세요.",
         "new_buy": f"‘20일 돌파 확정’ 상위 후보({n_breakout}건) 대상 최대 3슬롯(종목당 계좌의 1/3 이내) 분할 진입 — 일봉 돌파 종목은 익일 장중 차익매물로 눌렸다가 반등하는 경우가 많으므로 평가일 종가나 갭상승 시초가를 추격하지 마세요. 표의 ‘익일 눌림 매수가 (1차: 돌파폭 절반·-1% / 2차: 20일 기준고점·-2%)’에 분할 지정가를 걸어 저점 체결만 수용하세요.",
-        "holding": "진입 즉시 -5% 보호 손절가를 걸고, 종가가 SMA10(10일선) 아래로 내려가거나 수익권(+2% 이상) 고점 대비 -6% 하락 마감하면 다음 날 시초가에 전량 현금화하세요.",
+        "holding": "장중 -5% 노이즈 손절 대신 ① 종가 기준 추세선(수익 +3% 이상 시 SMA10, 초기 진입 시 SMA20 및 -3%) 이탈 시 익일 시초가 청산, ② 장중 비상 에어백(-7%) 도달 시 즉시 손절, ③ 수익권(+6% 이상) 안착 후에는 본전(+1%) 보장 고점 대비 -5% 트레일링으로 수익을 확정하세요.",
         "cash_plan": "3슬롯 외 잔여 자금은 현금·파킹 유지 (동일 종목 중복 물타기 금지).",
     }
 

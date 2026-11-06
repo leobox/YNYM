@@ -130,16 +130,17 @@ def rank_etfs(universe: dict[str,pd.DataFrame], as_of: str) -> dict:
         breadth_valid+=1; breadth_above+=int(close>sma60); funnel['evaluated']+=1
         amount=float((c*v).iloc[-20:].median())
         if not np.isfinite(amount): continue
-        if v.iloc[-1]<=0 or close<sma20 or (close<sma60 and sma20<sma60) or amount<500_000_000: continue
+        if v.iloc[-1]<=0 or close<sma10 or sma10<sma20 or close<sma60 or sma20<sma60*0.99 or amount<500_000_000: continue
         funnel['trend_liquidity']+=1
         mom=float(c.iloc[-5]/c.iloc[-60]-1)
-        if mom>.25 or close/sma60>1.18: continue
+        ret1=float(c.iloc[-1]/c.iloc[-2]-1) if len(c)>=2 and c.iloc[-2]>0 else 0.
+        if mom<0.0 or mom>.25 or close/sma60>1.18 or ret1>0.06: continue
         funnel['nonextended']+=1
         h20=float(h.iloc[-21:-1].max()); l20=float(l.iloc[-21:-1].min())
         r20=h20-l20; r60=float(h.iloc[-61:-1].max()-l.iloc[-61:-1].min())
         contraction=r20/r60 if r60>0 else 1.
         width=r20/close
-        if width>.25 or contraction>.85: continue
+        if width>.22 or contraction>.75: continue
         funnel['contraction']+=1
         prior=float(v.iloc[-25:-5].median())
         vr=float(v.iloc[-5:].median()/prior) if prior>0 else 0.
@@ -147,9 +148,12 @@ def rank_etfs(universe: dict[str,pd.DataFrame], as_of: str) -> dict:
         multiplier=(2*c.iloc[-20:]-h.iloc[-20:]-l.iloc[-20:])/(h.iloc[-20:]-l.iloc[-20:]).replace(0,np.nan)
         cmf=float((multiplier*v.iloc[-20:]).sum()/v.iloc[-20:].sum()) if v.iloc[-20:].sum()>0 else -1.
         if not np.isfinite([mom,h20,l20,r20,r60,contraction,width,vr,spike,cmf]).all(): continue
-        if (vr<1.2 and spike<1.35) or cmf<-.05: continue
+        if (vr<1.2 and spike<1.35) or spike>5.0 or cmf<0.0: continue
         funnel['ignition']+=1
-        if close < h20 * 0.97: continue
+        open_p=float(df['Open'].iloc[-1])
+        bar_r=float(h.iloc[-1]-l.iloc[-1])
+        wick=(float(h.iloc[-1])-max(close,open_p))/bar_r if bar_r>0 else 0.
+        if close < h20 * 0.97 or close > h20 * 1.035 or close < open_p or wick > 0.50: continue
         pullback_buy_1 = round(min((close + h20) / 2.0, close * 0.992), 2)
         pullback_buy_2 = round(min(h20, close * 0.985), 2)
         rows.append(dict(code=code,close=close,prior_high20=h20,

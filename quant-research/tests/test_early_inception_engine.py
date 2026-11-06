@@ -48,6 +48,8 @@ def make_synthetic_stock(
         spread[-25:-5] = rng.uniform(0.002, 0.005, size=20)
     high = prices * (1.0 + spread)
     low = prices * (1.0 - spread)
+    if trend == "consolidation_breakout":
+        high[-5:] = prices[-5:] * (1.0 + spread[-5:] * 0.3)
     open_p = (prices + low) / 2.0
 
     # Volume: surge on breakout, normal otherwise
@@ -284,4 +286,48 @@ def test_early_contraction_rankings_and_reference_levels():
     assert -3.0 <= cntr_row["breakout_ext_pct"] < 0.0
     assert cntr_row["stop_price_5pct"] == pytest.approx(round(10080.0 * 0.95, 2))
     assert 0.0 < cntr_row["contraction_score"] <= 1.0
+
+
+def test_t140_blocks_downtrend_climax_shooting_star_and_protects_trailing_floor():
+    # 1. Valid Stage-2 early inception stock
+    valid = make_synthetic_stock(150, 10000.0, trend="consolidation_breakout", seed=30)
+
+    # 2. Climax blow-off spike (vol_spike > 4.5x and breakout_ext_pct > 2.5%)
+    climax = valid.copy()
+    climax.iloc[-1, climax.columns.get_loc("Close")] *= 1.08
+    climax.iloc[-1, climax.columns.get_loc("High")] *= 1.09
+    climax.iloc[-1, climax.columns.get_loc("Volume")] *= 10.0
+
+    # 3. Shooting-star candle (upper wick > 35%)
+    shooting_star = valid.copy()
+    c_last = float(shooting_star["Close"].iloc[-1])
+    l_last = float(shooting_star["Low"].iloc[-1])
+    shooting_star.iloc[-1, shooting_star.columns.get_loc("High")] = c_last + (c_last - l_last) * 2.0
+
+    eval_date = valid.index[-1]
+    ranks = compute_early_inception_rankings(
+        {"VALID": valid, "CLIMAX": climax, "SHOOTING_STAR": shooting_star},
+        eval_date,
+    )
+    assert ranks["code"].tolist() == ["VALID"]
+
+    # 4. Trailing stop must NOT lock in a loss on a tiny +2.5% peak followed by -5% dip
+    dates = pd.bdate_range("2026-01-01", periods=10)
+    closes = [10000.0, 10000.0, 10250.0, 9700.0, 10100.0, 10800.0, 10200.0, 10200.0, 10200.0, 10200.0]
+    df_trail = pd.DataFrame(
+        {
+            "Open": closes,
+            "High": [p * 1.005 for p in closes],
+            "Low": [p * 0.995 for p in closes],
+            "Close": closes,
+            "Volume": [100000.0] * 10,
+        },
+        index=dates,
+    )
+    res = simulate_trade_with_weakening_exit(df_trail, dates[0], max_horizon=8, use_sma_exit=False)
+    assert res["status"] == "COMPLETED"
+    assert res["exit_reason"] == "PEAK_TRAILING_STOP"
+    assert res["win"] is True
+    assert res["net_return_pct"] > 0.0
+
 

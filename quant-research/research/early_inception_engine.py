@@ -42,15 +42,22 @@ def compute_early_inception_rankings(
     eval_date: pd.Timestamp,
     min_med_amt: float = 500_000_000.0,
     max_mom60_5: float = 0.25,
-    max_range_ratio: float = 0.25,
-    max_contraction_ratio: float = 0.85,
+    max_range_ratio: float = 0.22,
+    max_contraction_ratio: float = 0.75,
     min_vol_ratio: float = 1.20,
+    max_breakout_ext_pct: float = 3.0,
+    max_ret_5: float = 0.14,
+    max_ret_1: float = 0.065,
+    max_vol_spike_1d: float = 4.5,
+    max_upper_wick_ratio: float = 0.35,
 ) -> pd.DataFrame:
     """
     Computes cross-sectional Early Inception rankings on eval_date strictly using
     data available up to eval_date close (zero lookahead).
 
-    Identifies stocks at the inception of an uptrend rather than chasing late-stage leaders.
+    Identifies stocks at the inception of a Stage-2 uptrend with tight volatility
+    contraction and non-climax volume ignition, blocking downtrend dead-cat bounces,
+    overextended 1-day blow-offs, and upper-wick shooting stars.
     """
     rows = []
     for code, df in universe.items():
@@ -63,21 +70,27 @@ def compute_early_inception_rankings(
         c = hist["Close"]
         h = hist["High"]
         l = hist["Low"]
+        o = hist["Open"] if "Open" in hist.columns else c
         v = hist["Volume"]
         amt = c * v
 
         current_c = float(c.iloc[-1])
+        current_o = float(o.iloc[-1])
+        current_h = float(h.iloc[-1])
+        current_l = float(l.iloc[-1])
         if current_c <= 0:
             continue
 
-        # 1. Trend & Moving Averages
+        # 1. Stage-2 Trend Alignment & Rising Moving Averages
         sma10 = float(c.rolling(10).mean().iloc[-1])
-        sma20 = float(c.rolling(20).mean().iloc[-1])
+        sma20_series = c.rolling(20).mean()
+        sma20 = float(sma20_series.iloc[-1])
+        sma20_prev5 = float(sma20_series.iloc[-6]) if len(sma20_series) >= 6 else sma20
         sma60 = float(c.rolling(60).mean().iloc[-1])
         sma120 = float(c.rolling(120).mean().iloc[-1])
 
-        # Baseline trend viability: Price above SMA20 and above SMA60 (or SMA20 >= SMA60)
-        if current_c < sma20 or (current_c < sma60 and sma20 < sma60):
+        # Require Stage-2 alignment: Close > SMA10 >= SMA20, Close > SMA60, SMA20 >= 0.99*SMA60, and rising SMA20
+        if not (current_c > sma10 >= sma20 and current_c > sma60 and sma20 >= sma60 * 0.99 and sma20 >= sma20_prev5):
             continue
 
         # 2. Liquidity Filter: 20-day median turnover >= min_med_amt
@@ -85,20 +98,21 @@ def compute_early_inception_rankings(
         if not np.isfinite(med_amt) or med_amt < min_med_amt:
             continue
 
-        # 3. Non-Overextended Filter (상승 과열 배제 - 이미 60일간 크게 오른 종목 탈락)
+        # 3. Non-Overextended & Non-Downtrend Filter
         c_t5 = float(c.iloc[-5])
         c_t60 = float(c.iloc[-60])
         if c_t60 <= 0:
             continue
         mom60_5 = (c_t5 - c_t60) / c_t60
         ratio_to_sma60 = current_c / sma60 if sma60 > 0 else 999.0
+        ret_5 = (current_c - float(c.iloc[-6])) / float(c.iloc[-6]) if len(c) >= 6 else 0.0
+        ret_1 = (current_c - float(c.iloc[-2])) / float(c.iloc[-2]) if len(c) >= 2 else 0.0
 
-        # If already up > 25% or price > 1.18x SMA60, it's late stage, NOT early inception!
-        if mom60_5 > max_mom60_5 or ratio_to_sma60 > 1.18:
+        # Block both Stage-4 downtrend dead-cat bounces (mom60_5 < 0) and overheated surges
+        if mom60_5 < 0.0 or mom60_5 > max_mom60_5 or ratio_to_sma60 > 1.16 or ret_5 > max_ret_5 or ret_1 > max_ret_1:
             continue
 
         # 4. Base Consolidation & Volatility Contraction (변동성 수축 및 박스권 형성)
-        # Prior 20-day and 60-day high/low (excluding current bar to avoid lookahead/self-reference)
         prior_h20 = float(h.iloc[-21:-1].max()) if len(h) >= 21 else float(h.iloc[:-1].max())
         prior_l20 = float(l.iloc[-21:-1].min()) if len(l) >= 21 else float(l.iloc[:-1].min())
         prior_h60 = float(h.iloc[-61:-1].max()) if len(h) >= 61 else float(h.iloc[:-1].max())
@@ -110,19 +124,23 @@ def compute_early_inception_rankings(
         range_60 = prior_h60 - prior_l60
         range_width_ratio = range_20 / current_c
 
-        # True Volatility Contraction: 20-day range is noticeably contracted compared to 60-day range
         contraction_ratio = range_20 / range_60 if range_60 > 0 else 1.0
         range_pos_20 = (current_c - prior_l20) / range_20 if range_20 > 0 else 1.0
 
-        # Absolute band <= 25% AND 20-day range is at most max_contraction_ratio of 60-day range (measurable contraction)
-        if range_width_ratio > max_range_ratio or contraction_ratio > max_contraction_ratio:
+        effective_max_contraction = max(max_contraction_ratio, 0.85) if range_width_ratio <= 0.12 else max_contraction_ratio
+        if range_width_ratio > max_range_ratio or contraction_ratio > effective_max_contraction:
             continue
 
-        # Strict Breakout: current close must meet or exceed prior 20-day high (no 98.5% discount)
-        if current_c < prior_h20:
+        # 5. Tight 20-Day Breakout + Solid Bullish Candle Quality (과열 급등 및 윗꼬리 피뢰침 차단)
+        breakout_ext_pct = (current_c / prior_h20 - 1.0) * 100.0 if prior_h20 > 0 else 0.0
+        if current_c < prior_h20 or breakout_ext_pct > max_breakout_ext_pct:
+            continue
+        bar_range = current_h - current_l
+        upper_wick_ratio = (current_h - max(current_c, current_o)) / bar_range if bar_range > 0 else 0.0
+        if current_c < current_o or upper_wick_ratio > max_upper_wick_ratio:
             continue
 
-        # 5. Volume / Liquidity Ignition (수급 점화)
+        # 6. Volume / Liquidity Ignition Without Climax Blow-Off (과열 설거지 대량거래 배제)
         prior_vol = float(v.iloc[-25:-5].median()) if len(v) >= 25 else float(v.iloc[:-5].median())
         recent_vol = float(v.iloc[-5:].median())
         vol_ratio = recent_vol / prior_vol if prior_vol > 0 else 0.0
@@ -130,26 +148,21 @@ def compute_early_inception_rankings(
         current_vol = float(v.iloc[-1])
         vol_spike_1d = current_vol / prior_vol if prior_vol > 0 else 0.0
 
-        # Recent 5-day volume or current day volume must show ignition
-        if vol_ratio < min_vol_ratio and vol_spike_1d < 1.35:
+        if (vol_ratio < min_vol_ratio and vol_spike_1d < 1.35) or vol_spike_1d > max_vol_spike_1d:
             continue
 
-        # 6. Chaikin Money Flow (CMF 20)
+        # 7. Chaikin Money Flow (CMF 20 >= +0.02, 양(+)의 자금 유입 필수)
         hl = (h.iloc[-20:] - l.iloc[-20:]).replace(0, np.nan)
         mf_mult = ((c.iloc[-20:] - l.iloc[-20:]) - (h.iloc[-20:] - c.iloc[-20:])) / hl
         mf_vol = mf_mult * v.iloc[-20:]
         sum_vol = float(v.iloc[-20:].sum())
         cmf20 = float(mf_vol.sum() / sum_vol) if sum_vol > 0 else -1.0
 
-        # CMF must not be strongly negative (money flow supporting the move)
-        if cmf20 < -0.05:
+        if cmf20 < 0.02:
             continue
 
-        # Short-term momentum: 5-day return
-        ret_5 = (current_c - float(c.iloc[-6])) / float(c.iloc[-6]) if len(c) >= 6 else 0.0
         # Compression score: lower range_width is tighter compression (better)
         compression_score = max(0.0, 1.0 - (range_width_ratio / max_range_ratio))
-        breakout_ext_pct = (current_c / prior_h20 - 1.0) * 100.0 if prior_h20 > 0 else 0.0
         stop_price_5pct = round(current_c * 0.95, 2)
         pullback_buy_1 = round(min((current_c + prior_h20) / 2.0, current_c * 0.99), 2) if prior_h20 > 0 else round(current_c * 0.99, 2)
         pullback_buy_2 = round(min(prior_h20, current_c * 0.98), 2) if prior_h20 > 0 else round(current_c * 0.98, 2)
@@ -275,7 +288,8 @@ def compute_early_contraction_rankings(
         contraction_ratio = range_20 / range_60 if range_60 > 0 else 1.0
         range_pos_20 = (current_c - prior_l20) / range_20 if range_20 > 0 else 1.0
 
-        if range_width_ratio > max_range_ratio or contraction_ratio > max_contraction_ratio:
+        effective_max_contraction = max(max_contraction_ratio, 0.85) if range_width_ratio <= 0.12 else max_contraction_ratio
+        if range_width_ratio > max_range_ratio or contraction_ratio > effective_max_contraction:
             continue
 
         # Must be tightly positioned right below prior 20-day high (within -3%, not yet broken)
@@ -349,8 +363,9 @@ def simulate_trade_with_weakening_exit(
     df: pd.DataFrame,
     entry_date: pd.Timestamp,
     max_horizon: int = 20,
-    stop_loss_pct: float = 0.05,
-    peak_trailing_pct: float = 0.06,
+    stop_loss_pct: float = 0.07,
+    peak_trailing_pct: float = 0.05,
+    trailing_activation_pct: float = 0.06,
     use_sma_exit: bool = True,
     sma_exit_window: int = 10,
     slippage: float = SLIPPAGE,
@@ -360,9 +375,9 @@ def simulate_trade_with_weakening_exit(
 ) -> Dict[str, Any]:
     """
     Simulates a trade entered at next session Open with Trend Weakening Exits:
-    1. SMA Weakening: Close < SMA10 (or SMA20) after day 1 -> exit next session Open.
-    2. Peak Trailing Stop: Pullback >= peak_trailing_pct from peak close since entry.
-    3. Protective Stop Loss: Stop loss at entry * (1 - stop_loss_pct) (e.g. -5%).
+    1. Catastrophic Protective Airbag: Intraday stop at entry * (1 - stop_loss_pct) (default -7%).
+    2. Peak Trailing Stop: Activates only after +6% peak close, with breakeven floor (+1% above entry).
+    3. Structural SMA Weakening: Close < SMA20 (below -3% from entry after day 2) or Close < SMA10.
     4. Max Horizon: Closed on day max_horizon if no prior exit.
     """
     if entry_date not in df.index:
@@ -392,6 +407,7 @@ def simulate_trade_with_weakening_exit(
     # Pre-calculate SMA for exit checks across full history up to each point
     c_series = df["Close"]
     sma_series = c_series.rolling(sma_exit_window).mean()
+    sma20_series = c_series.rolling(20).mean()
 
     highest_close = entry_open
     exit_date = None
@@ -438,19 +454,26 @@ def simulate_trade_with_weakening_exit(
         if day_close > highest_close:
             highest_close = day_close
 
-        # Check peak trailing stop (signals exit for next bar Open)
-        trailing_stop_threshold = highest_close * (1.0 - peak_trailing_pct)
-        if day_close < trailing_stop_threshold and highest_close > entry_open * 1.02:
-            pending_trailing_exit = True
-            continue
+        # Check peak trailing stop (only activates after trailing_activation_pct gain, with breakeven floor)
+        if highest_close >= entry_open * (1.0 + trailing_activation_pct):
+            trailing_stop_threshold = max(entry_open * 1.01, highest_close * (1.0 - peak_trailing_pct))
+            if day_close < trailing_stop_threshold:
+                pending_trailing_exit = True
+                continue
 
         # Check SMA weakening on close (signals exit for next bar Open)
-        if use_sma_exit and i >= 1:
+        # - Once trade has gained >= +3%, protect profit on close < SMA10
+        # - Before +3% gain, allow normal pullback to SMA20 base support (exit only if both SMA10 and SMA20 break and loss > -3%)
+        if use_sma_exit and i >= 2:
             current_sma = float(sma_series.loc[bar_date])
+            current_sma20 = float(sma20_series.loc[bar_date])
             if np.isfinite(current_sma) and day_close < current_sma:
-                # Trigger exit for next bar Open
-                pending_sma_exit = True
-                continue
+                if highest_close >= entry_open * 1.03 or (
+                    (not np.isfinite(current_sma20) or day_close < current_sma20)
+                    and day_close < entry_open * 0.97
+                ):
+                    pending_sma_exit = True
+                    continue
 
     # If completed all bars without exit
     if exit_date is None:
