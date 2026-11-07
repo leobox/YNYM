@@ -208,3 +208,157 @@ def test_etf_observation_cli_accepts_out_dir_alias(tmp_path: Path) -> None:
         _sys.argv = old_argv
 
     assert "<!-- ETF_OBSERVATION:START -->" in readme_path.read_text(encoding="utf-8")
+
+
+# ---------------------------------------------------------------------------
+# T-151: KR sector leading stocks (`C`) shown under the section-2 sector table
+# ---------------------------------------------------------------------------
+
+_SEMI_ETF = "396500"
+# (code, name, daily mult, volume): F has the strongest RS but the lowest turnover (rank 6)
+_SEMI_STOCKS = (
+    ("100010", "가종목", 1.0014, 900_000.0),
+    ("100020", "나종목", 1.0018, 800_000.0),
+    ("100030", "다종목", 1.0013, 700_000.0),
+    ("100040", "라종목", 1.0010, 600_000.0),
+    ("100050", "마종목", 1.0011, 500_000.0),
+    ("100060", "바종목", 1.0030, 100_000.0),
+)
+
+
+def _boosted(dates: pd.DatetimeIndex, mult: float, base: float, volume: float | None = None) -> pd.DataFrame:
+    df = _synthetic_ohlcv(dates, mult=mult, base=base)
+    boost = np.ones(len(dates))
+    boost[-10:] = np.linspace(1.001, 1.015, 10)
+    for col in ("Open", "High", "Low", "Close"):
+        df[col] = df[col] * boost
+    if volume is not None:
+        df["Volume"] = volume
+    return df
+
+
+def _leader_fixture(kr_bull: bool) -> tuple[dict, dict, pd.DatetimeIndex]:
+    mapping = build_frozen_public_sector_mapping()
+    dates = pd.bdate_range("2025-11-03", "2026-11-06", freq="B")
+    frames: dict[str, pd.DataFrame] = {
+        "069500": _synthetic_ohlcv(dates, mult=1.0005 if kr_bull else 0.9985, base=35_000.0),
+        "360750": _synthetic_ohlcv(dates, mult=0.9990, base=18_000.0),
+    }
+    for idx, ((region, _sector), spec) in enumerate(sorted(mapping.representatives.items())):
+        if spec.code == _SEMI_ETF:
+            frames[spec.code] = _boosted(dates, mult=1.0012, base=15_000.0)
+        else:
+            frames[spec.code] = _synthetic_ohlcv(dates, mult=0.9980, base=15_000.0 + idx * 100.0)
+    for code, _name, mult, vol in _SEMI_STOCKS:
+        df = _boosted(dates, mult=mult, base=10_000.0, volume=vol)
+        df["Halted"] = False
+        frames[code] = df
+    constituents = {
+        ("KR", "반도체"): [{"code": c, "name": n} for c, n, _, _ in _SEMI_STOCKS]
+        + [{"code": "005935", "name": "삼성전자우"}, {"code": _SEMI_ETF, "name": "ETF 자기참조"}]
+    }
+    return frames, constituents, dates
+
+
+def _render_ok(res: dict) -> str:
+    return render_sector_v1_panel(
+        {"status": "OK", "as_of": "2026-11-06", "fetched_at": "2026-11-06T17:00:00+09:00", "result": res}
+    )
+
+
+def test_kr_leader_respects_top5_turnover_and_bull_regime_c_candidate() -> None:
+    frames, constituents, _ = _leader_fixture(kr_bull=True)
+    res = evaluate_public_sector_snapshot(
+        raw_frames=frames,
+        as_of="2026-11-06",
+        fetched_at=datetime(2026, 11, 6, 17, 0, tzinfo=KST),
+        sector_constituents=constituents,
+    )
+    assert res["region_status"]["KR"] == "ACTIVE"
+    semi = next(r for r in res["observations"] if r["code"] == _SEMI_ETF)
+    assert semi["is_entry_qualified"] is True, semi["gate_failure_reasons"]
+
+    leader_obs = semi["leader_observation"]
+    # Preferred share (005935) and ETF self-reference are excluded; rank-6 turnover stock (100060)
+    # with the highest RS never enters the top-5 pool (§4).
+    assert leader_obs["evaluated_constituent_count"] == 6
+    assert leader_obs["top5_liquid_count"] == 5
+    assert leader_obs["leader"]["code"] == "100020"
+    assert leader_obs["leader"]["rs20_vs_sector"] > 0
+
+    c_codes = [c["code"] for c in res["weekly_candidates_c"]]
+    assert c_codes == ["100020"]
+    c0 = res["weekly_candidates_c"][0]
+    assert c0["e1_check_upper_inclusive"] > c0["e1_check_lower_exclusive_sma20"]
+    assert c0["reference_qty_30m_krw"] >= 0
+
+    panel = _render_ok(res)
+    assert "#### 2) 대표 섹터 ETF 주간 후보" in panel
+    assert "#### 2-1) 위 섹터의 대장주" in panel
+    assert "나종목" in panel and "✅ 대장주 후보" in panel
+    assert "바종목" not in panel
+    assert "#### 3)" not in panel
+
+
+def test_kr_bear_regime_blocks_c_but_previews_leader_of_observed_sector() -> None:
+    frames, constituents, _ = _leader_fixture(kr_bull=False)
+    res = evaluate_public_sector_snapshot(
+        raw_frames=frames,
+        as_of="2026-11-06",
+        fetched_at=datetime(2026, 11, 6, 17, 0, tzinfo=KST),
+        sector_constituents=constituents,
+    )
+    assert res["region_status"]["KR"] == "HALTED_BEAR_REGIME"
+    assert res["weekly_candidates_b"] == []
+    assert res["weekly_candidates_c"] == []
+    semi = next(r for r in res["observations"] if r["code"] == _SEMI_ETF)
+    assert semi["is_observed"] is True
+    assert semi["leader_observation"]["leader"]["code"] == "100020"
+
+    panel = _render_ok(res)
+    assert "강세 관찰 상위 국내 섹터의 대장주 (미리보기 · 신규 매수 대상 아님)" in panel
+    assert "나종목" in panel
+    assert "✅ 대장주 후보" not in panel
+    assert "#### 3)" not in panel
+    # Preview rows never expose an E1 band or reference share count
+    leader_line = next(line for line in panel.splitlines() if "나종목" in line)
+    assert leader_line.rstrip().endswith("| - | - |")
+
+
+def test_us_sector_leader_is_marked_etf_only() -> None:
+    frames, constituents, _ = _leader_fixture(kr_bull=True)
+    res = evaluate_public_sector_snapshot(
+        raw_frames=frames,
+        as_of="2026-11-06",
+        fetched_at=datetime(2026, 11, 6, 17, 0, tzinfo=KST),
+        sector_constituents=constituents,
+    )
+    us_rows = [r for r in res["observations"] if r["region"] == "US"]
+    assert us_rows
+    assert all(r["leader_observation"]["status"] == "NOT_APPLICABLE_OVERSEAS_ETF_ONLY" for r in us_rows)
+    assert res["c_region_notes"]["US"] == "NOT_IMPLEMENTED_OVERSEAS_CONSTITUENTS"
+
+
+def test_constituent_payload_parser_keeps_common_stocks_only() -> None:
+    from research.sector_v1.public_observer import is_eligible_kr_common_constituent
+    from scripts.run_sector_v1_observation import parse_constituent_payload
+
+    payload = json.dumps(
+        {
+            "etfTop10MajorConstituentAssets": [
+                {"itemCode": "005930", "itemName": "삼성전자"},
+                {"itemCode": "005935", "itemName": "삼성전자우"},
+                {"itemCode": "0126Z0", "itemName": "삼성에피스홀딩스"},
+                {"itemCode": "069500", "itemName": "KODEX 200"},
+                {"itemCode": "", "itemName": "원화예금"},
+                {"itemCode": "KRD010010001", "itemName": "현금"},
+                {"itemCode": "005930", "itemName": "삼성전자"},
+            ]
+        },
+        ensure_ascii=False,
+    ).encode("utf-8")
+    rows = parse_constituent_payload(payload, {"069500"})
+    assert [r["code"] for r in rows] == ["005930", "0126Z0"]
+    assert not is_eligible_kr_common_constituent("123450", "OO스팩1호")
+    with pytest.raises(ValueError):
+        parse_constituent_payload(b"{}", set())

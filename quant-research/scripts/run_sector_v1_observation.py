@@ -33,15 +33,38 @@ from research.etf_observer import parse_daily  # noqa: E402
 from research.sector_v1 import SPEC_TASK_ID, SPEC_VERSION  # noqa: E402
 from research.sector_v1.public_observer import (  # noqa: E402
     KST,
+    OBSERVATION_SCHEMA_VERSION,
     PUBLIC_MAPPING_VERSION,
     build_frozen_public_sector_mapping,
     evaluate_public_sector_snapshot,
+    is_eligible_kr_common_constituent,
     render_sector_v1_panel,
     update_sector_v1_readme,
 )
 
 LIST_URL = "https://finance.naver.com/api/sise/etfItemList.nhn"
 CHART_URL = "https://fchart.stock.naver.com/sise.nhn"
+CONSTITUENT_URL_TMPL = "https://m.stock.naver.com/api/stock/{code}/etfAnalysis"
+
+
+def parse_constituent_payload(payload: bytes, excluded_etf_codes: set[str]) -> list[dict[str, str]]:
+    """Parse public ETF top constituent JSON into eligible KRX common-stock `{code, name}` rows."""
+    doc = json.loads(payload.decode("utf-8"))
+    items = doc.get("etfTop10MajorConstituentAssets") if isinstance(doc, dict) else None
+    if not isinstance(items, list):
+        raise ValueError("CONSTITUENT_SCHEMA_MISSING")
+    out: list[dict[str, str]] = []
+    seen: set[str] = set()
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        code = str(item.get("itemCode") or "").strip()
+        name = str(item.get("itemName") or "").strip()
+        if code in seen or not is_eligible_kr_common_constituent(code, name, excluded_etf_codes):
+            continue
+        seen.add(code)
+        out.append({"code": code, "name": name})
+    return out
 
 
 def fetch_public_bytes(url: str, params: dict | None = None) -> bytes:
@@ -129,6 +152,7 @@ def collect_sector_v1_observation(
     errors: list[dict] = []
     frames: dict[str, pd.DataFrame] = {}
     quality: dict[str, dict] = {}
+    constituent_quality: dict[str, dict] = {}
 
     def record_payload_digest(name: str, payload: bytes, extra: dict) -> dict:
         digest = {
@@ -148,6 +172,7 @@ def collect_sector_v1_observation(
         "spec_task_id": SPEC_TASK_ID,
         "spec_version": SPEC_VERSION,
         "mapping_version": PUBLIC_MAPPING_VERSION,
+        "observation_schema_version": OBSERVATION_SCHEMA_VERSION,
         "run_id": run_id,
         "fetched_at": started.isoformat(timespec="seconds"),
         "requested_symbol_count": len(symbols),
@@ -216,12 +241,80 @@ def collect_sector_v1_observation(
             unlisted_frozen_codes=unlisted_frozen,
         )
         if status in ("OK", "PARTIAL") and as_of is not None:
+            # KR sector constituents (`C`): contemporaneous public ETF top holdings snapshot.
+            # Failures degrade per sector (never fabricated) and never block the ETF panel.
+            excluded_etf_codes = set(listed_codes) | {s["code"] for s in symbols}
+            sector_constituents: dict[tuple[str, str], list[dict[str, str]]] = {}
+            for (region, sector), spec in sorted(mapping.representatives.items()):
+                if region != "KR":
+                    continue
+                try:
+                    c_payload = fetch_public_bytes(CONSTITUENT_URL_TMPL.format(code=spec.code))
+                    inputs_meta.append(
+                        record_payload_digest(
+                            f"constituents_{spec.code}.json",
+                            c_payload,
+                            {
+                                "url": CONSTITUENT_URL_TMPL.format(code=spec.code),
+                                "sector": sector,
+                                "received_at": datetime.now(KST).isoformat(timespec="seconds"),
+                            },
+                        )
+                    )
+                    sector_constituents[(region, sector)] = parse_constituent_payload(
+                        c_payload, excluded_etf_codes
+                    )
+                except Exception as exc:
+                    errors.append(
+                        {
+                            "code": f"constituents:{spec.code}",
+                            "error": f"{type(exc).__name__}:{str(exc)[:120]}",
+                        }
+                    )
+
+            stock_codes = sorted(
+                {m["code"] for members in sector_constituents.values() for m in members}
+            )
+            stock_frames: dict[str, pd.DataFrame] = {}
+            with ThreadPoolExecutor(max_workers=4) as pool:
+                futures = {
+                    pool.submit(fetch_one, {"code": c, "name": c, "role": "KR_CONSTITUENT"}): c
+                    for c in stock_codes
+                }
+                for fut in as_completed(futures):
+                    code = futures[fut]
+                    try:
+                        c_out, frame, q, meta, err = fut.result()
+                        inputs_meta.append(meta)
+                        if err:
+                            errors.append({"code": c_out, "error": err})
+                        elif frame is not None and q is not None and len(frame) > 0:
+                            # Zero-volume flat bars are non-traded sessions, not completed trades.
+                            frame = frame.copy()
+                            frame["Halted"] = frame["Volume"].astype(float) <= 0.0
+                            stock_frames[c_out] = frame
+                            constituent_quality[c_out] = q
+                    except Exception as exc:
+                        errors.append({"code": code, "error": f"{type(exc).__name__}:{str(exc)[:120]}"})
+
+            record.update(
+                requested_constituent_stock_count=len(stock_codes),
+                fetched_constituent_stock_count=len(stock_frames),
+                constituent_snapshot={
+                    f"{reg}:{sec}": members for (reg, sec), members in sorted(sector_constituents.items())
+                },
+            )
             fresh_frames = {code: frames[code] for code in fresh}
+            fresh_frames.update(
+                {c: f for c, f in stock_frames.items() if c not in fresh_frames}
+            )
             record["result"] = evaluate_public_sector_snapshot(
                 raw_frames=fresh_frames,
                 as_of=as_of,
                 fetched_at=started,
                 mapping=mapping,
+                sector_constituents=sector_constituents,
+                extra_excluded_etf_codes=excluded_etf_codes,
             )
     except Exception as exc:
         errors.append({"code": None, "error": f"{type(exc).__name__}:{str(exc)[:120]}"})
@@ -240,15 +333,19 @@ def collect_sector_v1_observation(
         completion_cutoff_clock=started.isoformat(timespec="seconds"),
         errors=sorted(errors, key=lambda e: e.get("code") or ""),
         data_quality=quality,
+        constituent_data_quality=constituent_quality,
         inputs=sorted(inputs_meta, key=lambda i: i["name"]),
         provenance={
             "list_source": LIST_URL,
             "daily_source": CHART_URL,
+            "constituent_source": CONSTITUENT_URL_TMPL,
             "price_unit": "KRW",
             "volume_unit": "shares",
             "total_return_verified": False,
             "corporate_actions_verified": False,
             "mapping_pit_verified": False,
+            "constituents_pit_verified": False,
+            "constituents_scope": "KR only; contemporaneous public ETF top-10 holdings snapshot on fetch date (not historical survivorship-free PIT). US individual stocks not implemented (§4).",
             "note": "Public KRX daily raw price bars for forward observation & E1 check band only; not total-return backtest proof.",
         },
         environment={
@@ -280,7 +377,10 @@ def collect_sector_v1_observation(
         daily_seal_path = runs_dir / f"{as_of_val}.json"
         if daily_seal_path.is_file():
             existing = json.loads(daily_seal_path.read_text(encoding="utf-8"))
-            if existing.get("status") == "OK":
+            # Reuse only an identical-schema `OK` seal; an older schema `OK` seal is upgraded only by
+            # a fully `OK` new run so a degraded `PARTIAL` run never replaces a complete seal.
+            schema_match = existing.get("observation_schema_version") == OBSERVATION_SCHEMA_VERSION
+            if existing.get("status") == "OK" and (schema_match or record["status"] != "OK"):
                 existing["idempotent_reused"] = True
                 (output_dir / "latest.md").write_text(
                     render_sector_v1_panel(existing), encoding="utf-8"

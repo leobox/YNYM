@@ -5948,6 +5948,50 @@
           "note": "섹터 상대강도(RS20) 일일 관찰·주간 후보 패널 README 및 GitHub Actions 등록·검증 완료"
         }
       ]
+    },
+    {
+      "id": "T-151",
+      "title": "quant-research & ops: T-145 v1.0 국내 섹터별 대장주(C) 일일 관찰·주간 후보 표 연결 및 README/Actions 반영",
+      "summary": "국내 13개 섹터 ETF 공개 구성종목 스냅샷 기반 거래대금 상위 5개 내 섹터 대비 RS20 1위 대장주(C) 일일 관찰·주간 후보·E1 확인 가격대 패널 확장",
+      "doc": "docs/tasks/T-151.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [
+        "T-150"
+      ],
+      "where": "quant-research/research/sector_v1/public_observer.py, quant-research/scripts/run_sector_v1_observation.py, quant-research/tests/test_sector_v1_observation.py, README.md",
+      "refs": [
+        "docs/tasks/T-145-spec-v1.md",
+        "docs/tasks/T-150.md"
+      ],
+      "note": "국내 13개 섹터 대장주(C) 일일 관찰 및 2-1 패널 연동, 테스트 통과, 문서화 완료",
+      "done_at": "2026-11-07",
+      "updated_at": "2026-11-07",
+      "done_when": "국내 13개 섹터 ETF 공개 구성종목 조회 및 거래대금 중앙값 상위 5개 내 섹터 대비 RS20 1위 대장주(C) 일일 관찰·주간 후보·E1 확인 허용가 패널 반영, 테스트/가드 통과, origin/main 게시 완료",
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-11-07",
+      "log": [
+        {
+          "at": "2026-11-07",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-11-07",
+          "status": "in_progress",
+          "note": "국내 13개 섹터 대장주(C) 일일 관찰 및 주간 후보 표 구현 착수"
+        },
+        {
+          "at": "2026-11-07",
+          "status": "done",
+          "note": "국내 13개 섹터 대장주(C) 일일 관찰 및 2-1 패널 연동, 테스트 통과, 문서화 완료"
+        }
+      ]
     }
   ]
 }

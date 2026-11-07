@@ -58,7 +58,7 @@ python -B quant-research/scripts/pure_quant_portfolio_manager.py explore --md-ou
 - 동결 수치 사양: [`../docs/tasks/T-145-spec-v1.md`](../docs/tasks/T-145-spec-v1.md) (`../docs/tasks/T-145-freeze.json` 해시 봉인)
 - 오프라인 연구·원장·검증 패키지: [`research/sector_v1/`](research/sector_v1/) (`models.py`, `signals.py`, `execution_e0.py`, `journal_e1.py`, `evaluator.py`, `public_observer.py`)
 - 오프라인 번들 평가·재현 CLI: `python quant-research/scripts/run_t145_sector_research.py --verify-freeze`
-- 공개 KRX ETF 일일 관찰·주간 후보(`B`) 패널 갱신기: `python quant-research/scripts/run_sector_v1_observation.py --output quant-research/data/research/T-150 --readme README.md`
+- 공개 KRX ETF 일일 관찰·주간 후보(`B`) 및 국내 섹터 대장주(`C`, T-151) 패널 갱신기: `python quant-research/scripts/run_sector_v1_observation.py --output quant-research/data/research/T-150 --readme README.md`
 - GitHub Actions 연동: [`.github/workflows/early-inception-forward.yml`](../.github/workflows/early-inception-forward.yml) (`<!-- SECTOR_V1:START --> ... <!-- SECTOR_V1:END -->`)
 - 한계: 공개 원가격 일봉 기반 전진 관찰은 분배금 재투자 총수익·과거 상폐 PIT 검증본을 대체하지 않으며, 전략의 실제 수익성을 주장하거나 자동 주문을 실행하지 않습니다.
 
