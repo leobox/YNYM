@@ -1,4 +1,4 @@
-name: Daily Breakout & ETF README Update
+name: Daily Breakout, ETF & Sector RS README Update
 
 on:
   schedule:
@@ -63,13 +63,8 @@ jobs:
             --status "$STATUS" \
             --reason "$REASON"
 
-          # 최근 10거래일 초과 이력 JSON은 정리하여 불필요한 백데이터 누적을 방지
-          python -c '
-          from pathlib import Path
-          runs = sorted(Path("quant-research/data/research/T-110/runs").glob("????-??-??.json"))
-          for old in runs[:-10]:
-              old.unlink(missing_ok=True)
-          '
+          # 봉인된 신호 JSON은 계속 보존한다. 20거래일 후 성과 확정 및
+          # 이후 성과 재계산의 입력이므로 화면의 최근 추이와 별개로 유지한다.
 
       - name: Update ETF 20d Breakout Panel
         env:
@@ -79,21 +74,46 @@ jobs:
             --out-dir /tmp/etf_observation \
             --readme README.md
 
+      - name: Update Sector RS v1.0 Observation Panel
+        env:
+          TZ: Asia/Seoul
+        run: |
+          python quant-research/scripts/run_sector_v1_observation.py \
+            --output quant-research/data/research/T-150 \
+            --raw-dir /tmp/sector_v1_raw \
+            --readme README.md
+
       - name: Commit and push README update
         run: |
-          # 불필요한 백데이터(manifest, 임시 스냅샷 등)는 워킹트리에서 되돌리고 README와 최근 10일 추이만 커밋
+          set -euo pipefail
+          # 임시 수집 자료를 정리하고 README와 누적 신호·평가 기록을 커밋한다.
           git checkout -- quant-research/data/vcp_snapshots quant-research/data/research/T-063 2>/dev/null || true
           git clean -fd quant-research/data/vcp_snapshots quant-research/data/research/T-063 quant-research/data/daily_3y 2>/dev/null || true
 
-          git add README.md quant-research/data/research/T-110/runs
+          git add README.md quant-research/data/research/T-110/runs quant-research/data/research/T-150/runs
+          # 데이터 검증 보류 시에는 outcomes.json 등이 아직 없을 수 있다.
+          for output in quant-research/data/research/T-110/outcomes.json quant-research/data/research/T-110/latest.md quant-research/data/research/T-150/latest.md; do
+            if [ -f "$output" ]; then
+              git add "$output"
+            fi
+          done
           if git diff --cached --quiet; then
             echo "변경 사항 없음"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "data: update daily 20d breakout & ETF README [skip ci]"
+          git commit -m "data: update daily breakout, ETF & Sector RS README [skip ci]"
           for attempt in 1 2 3; do
-            git pull --rebase -X ours origin "${GITHUB_REF_NAME:-main}" && git push origin "HEAD:${GITHUB_REF_NAME:-main}" && break
-            sleep 3
+            if git pull --rebase origin "${GITHUB_REF_NAME:-main}" && git push origin "HEAD:${GITHUB_REF_NAME:-main}"; then
+              echo "README 및 전진 기록 게시 완료"
+              exit 0
+            fi
+            # 충돌한 rebase를 원복하여 다음 시도가 같은 로컬 커밋에서 시작하게 한다.
+            git rebase --abort 2>/dev/null || true
+            if [ "$attempt" -eq 3 ]; then
+              echo "::error::3회 재시도 후에도 README 및 전진 기록 게시 실패"
+              exit 1
+            fi
+            sleep $((3 * attempt))
           done

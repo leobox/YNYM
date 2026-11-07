@@ -147,7 +147,7 @@ def collect(output: Path, limit: int = 100, include_leveraged: bool = False) -> 
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--output',type=Path,default=ROOT/'quant-research/data/etf_observation')
+    parser.add_argument('--output','--out-dir',dest='output',type=Path,default=ROOT/'quant-research/data/etf_observation')
     parser.add_argument('--readme',type=Path)
     parser.add_argument('--limit',type=int,default=100)
     parser.add_argument('--include-leveraged',action='store_true')

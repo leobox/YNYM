@@ -1,1 +1,4 @@
 .githooks/* text eol=lf
+docs/tasks/T-145-* -text
+docs/tasks/T-148-* -text
+docs/tasks/T-149-* -text

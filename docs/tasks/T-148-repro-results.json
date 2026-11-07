@@ -1,0 +1,108 @@
+{
+  "R1_a_matched_changes_more_than_sector_gate": {
+    "C": [
+      "STOCK"
+    ],
+    "A": []
+  },
+  "R2_bad_total_return_and_conflicting_pit_flags_accepted": {
+    "reconciliation": false,
+    "declared_verified": true,
+    "missing_prerequisites": [
+      "WINDOW_SHORTER_THAN_24_MONTHS",
+      "CLOSED_EPISODES_BELOW_60"
+    ]
+  },
+  "R3_run_drops_replay_artifacts": {
+    "saved_files": [
+      "evaluation_report.json"
+    ],
+    "closed_count": 5,
+    "missing": [
+      "raw bundle/bars",
+      "daily_ledger",
+      "closed_episodes",
+      "order_events",
+      "daily signals"
+    ]
+  },
+  "R4_short_calendar_marked_24_months": {
+    "eval_start": "2024-07-02",
+    "eval_end": "2026-07-02",
+    "scheduled_sessions": 50,
+    "months_approx": 24.016,
+    "meets_24_months": 1,
+    "is_uninspected_oos": 1
+  },
+  "R5_nonfrozen_statistics_not_withheld": {
+    "n_random": 1,
+    "bootstrap_reps": 1,
+    "missing_prerequisites": [
+      "WINDOW_SHORTER_THAN_24_MONTHS",
+      "CLOSED_EPISODES_BELOW_60"
+    ],
+    "classifier_with_one_bootstrap": "ELIGIBLE_FOR_REVIEW_E0_ONLY"
+  },
+  "R6_e1_pre_signal_fill_and_duplicate_accepted": {
+    "signal_date": "2026-03-06",
+    "filled_at": "2026-03-01T10:01:01+09:00",
+    "same_date_entry_records": 2
+  },
+  "R7_e1_orphan_exits_allow_profitability_claim": {
+    "record_count": 60,
+    "span_weeks": 118.0,
+    "span_months_approx": 27.138,
+    "disposition_counts": {
+      "EXIT_FILLED": 60
+    },
+    "real_entry_fills": 0,
+    "real_exit_fills": 60,
+    "virtual_observations": 0,
+    "evaluation_stage": "SUFFICIENT_SPAN_FOR_E1_EVALUATION",
+    "profitability_claim_allowed": true
+  },
+  "R8_missing_held_marks_silently_carried": {
+    "missing_dates": [
+      "2024-07-09",
+      "2024-07-10"
+    ],
+    "end_mark": 10000.0,
+    "mark_timestamp_or_stale_flag": "absent",
+    "order_events_on_missing_dates": [],
+    "coverage_halt_recorded": {
+      "KR:HALTED_INSUFFICIENT_COVERAGE": 2
+    }
+  },
+  "R9_c_domestic_compared_to_multiregion_b": {
+    "entry_regions": {
+      "B_sector_etf_30m": [
+        "KR",
+        "US"
+      ],
+      "C_sector_stock_30m": [
+        "KR"
+      ]
+    },
+    "comparison": {
+      "status": "C_HOLD_NO_SUPERIORITY_OVER_B",
+      "pit_verified_regions": [
+        "KR"
+      ],
+      "unimplemented_regions_no_pit": [
+        "US"
+      ],
+      "c_minus_b_mbb_ci95": {
+        "valid": 1,
+        "reason": "OK",
+        "n_obs": 50,
+        "block_len": 20,
+        "n_boot": 1,
+        "seed": 20261107,
+        "mean_daily_diff": -0.0008512828735972389,
+        "ci_lower": -0.0009958108788735065,
+        "ci_upper": -0.0009958108788735065
+      },
+      "sector_gate_ablation_c_minus_a_matched_ann_return": 0.0012778900400232107
+    }
+  }
+}

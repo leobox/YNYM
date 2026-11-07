@@ -2,7 +2,7 @@
   "$schema_version": "1.0",
   "meta": {
     "project": "Leobox Multi-root Workspace",
-    "updated": "2026-11-06",
+    "updated": "2026-11-07",
     "context_doc": "README.md",
     "doc_dir": "docs/tasks",
     "stack": "Multi-agent (Gemini + Claude + Codex) / Python(Quant) / GitHub Actions / Android",
@@ -5551,6 +5551,401 @@
           "at": "2026-11-06",
           "status": "done",
           "note": "T-141 1·2번 로컬 교정 완료. 신호 JSON 영구 보존, 평가 산출물 staging, push 3회 실패 exit 1 및 rebase abort. 알고리즘 파일 변경 없음. workflow 회귀 6 tests/YAML/정적·구문 검사 통과. 커밋·푸시 미실행, docs/tasks/T-142.md 인계."
+        }
+      ]
+    },
+    {
+      "id": "T-143",
+      "title": "gym-app: 1.6 최고 기록 안내 문구 정리 및 운동 입력 라벨 수정",
+      "summary": "",
+      "doc": "docs/tasks/T-143.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "mobile",
+      "phase": "3. 헬스 앱 (Android)",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "요청 문구 및 라벨 수정, 1.6 유지(code8), npm 회귀·데이터 보존·화면 확인 통과, 동일 서명 APK 재빌드 완료",
+      "done_at": "2026-11-07",
+      "updated_at": "2026-11-07",
+      "done_when": "요청한 문구 수정, 기존 회귀 테스트 통과, 1.6 동일 서명 업데이트 APK 재빌드",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-11-07",
+      "log": [
+        {
+          "at": "2026-11-07",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-11-07",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-11-07",
+          "status": "done",
+          "note": "요청 문구 및 라벨 수정, 1.6 유지(code8), npm 회귀·데이터 보존·화면 확인 통과, 동일 서명 APK 재빌드 완료"
+        }
+      ]
+    },
+    {
+      "id": "T-144",
+      "title": "gym-app: 1.6 전체 화면 세트/분 표기 통일",
+      "summary": "",
+      "doc": "docs/tasks/T-144.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "mobile",
+      "phase": "3. 헬스 앱 (Android)",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "앱 전체 세트/분 표기 통일 및 min 제거, 1.6 유지(code9), 회귀·백업보존 검증과 동일 서명 APK 빌드 완료",
+      "done_at": "2026-11-07",
+      "updated_at": "2026-11-07",
+      "done_when": "모든 앱 세트 표기 통일 및 min 제거, 회귀 통과, 동일 서명 1.6 APK 빌드",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-11-07",
+      "log": [
+        {
+          "at": "2026-11-07",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-11-07",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-11-07",
+          "status": "done",
+          "note": "앱 전체 세트/분 표기 통일 및 min 제거, 1.6 유지(code9), 회귀·백업보존 검증과 동일 서명 APK 빌드 완료"
+        }
+      ]
+    },
+    {
+      "id": "T-145",
+      "title": "quant-research: 섹터 조기 탐색·수동 운용 규칙 Codex-Gemini 교차 토론",
+      "summary": "Gemini §5 최종 동의 확인 후 연구 수치 사양 v1.0 동결. 위험0.5%, 연구계좌3천만원/소액100만원, E0 역사시가 근사/E1 수동기록 분리. 토론 종료, 전략 수익성 미검증.",
+      "doc": "docs/tasks/T-145.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": "docs/tasks/T-145-spec-v1.md",
+      "refs": [
+        "docs/tasks/T-145-spec-v1.md",
+        "docs/tasks/T-145-freeze.json",
+        "docs/tasks/T-145-gemini-round2.md"
+      ],
+      "note": "Gemini §5의 위험0.5%·E0 미확인 시가전용상한 제외 최종동의 확인. v1.0 사양 및5개 근거해시 동결, 원본8개 불변·문서·정적139소스·백로그146작업 검증 통과. 토론/사양 DoD 완료; 구현·백테스트·운영승격 미실시.",
+      "done_at": "2026-11-07",
+      "updated_at": "2026-11-07",
+      "done_when": "Codex와 Gemini의 독립 의견·반론·합의/미합의 및 실제 확인시간에 맞춘 검증 사양 기록. 전략 수익성 확정과 구분.",
+      "gate": null,
+      "parent": null,
+      "owner": "Codex",
+      "claimed_at": "2026-11-07",
+      "log": [
+        {
+          "at": "2026-11-07",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-11-07",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-11-07",
+          "status": "review",
+          "note": "Codex 1차 독립 의견 및 사용자 장마감 분석·익일 장중 1회 확인 제약 기록. 사용자 중계로 Gemini 의견·상호 1회 반론 대기. 운영 코드 변경/전략 검증/공동 합의 없음."
+        },
+        {
+          "at": "2026-11-07",
+          "status": "in_progress",
+          "note": "Codex 1차 독립 의견 및 사용자 장마감 분석·익일 장중 1회 확인 제약 기록. 사용자 중계로 Gemini 의견·상호 1회 반론 대기. 운영 코드 변경/전략 검증/공동 합의 없음."
+        },
+        {
+          "at": "2026-11-07",
+          "status": "review",
+          "note": "Gemini 1차 의견 대조 완료: 저장된 가상 성과 집계·5조 상한 확인, 최신 엔진 귀속/ETF 전면 차단/필터 인과 주장 정정. T-145-round2.md에 단일 수치 실험안·기각 기준·1회 반론 기록. Gemini 답변 대기, 운영 변경 없음."
+        },
+        {
+          "at": "2026-11-07",
+          "status": "in_progress",
+          "note": "Gemini 1차 의견 대조 완료: 저장된 가상 성과 집계·5조 상한 확인, 최신 엔진 귀속/ETF 전면 차단/필터 인과 주장 정정. T-145-round2.md에 단일 수치 실험안·기각 기준·1회 반론 기록. Gemini 답변 대기, 운영 변경 없음."
+        },
+        {
+          "at": "2026-11-07",
+          "status": "review",
+          "note": "Gemini T-146 실제 답변 수신 후 T-145-codex-final.md 작성. v0.1 신호·청산·레짐·판정 기준 합의 및 연구계좌3천만원 수용. 위험0.5%/1.5%, 시가전용 상한 체결2건 미합의. 사용자 중계 요구 없이 문서 교환, 운영코드 무변경."
+        },
+        {
+          "at": "2026-11-07",
+          "status": "in_progress",
+          "note": "Gemini T-146 실제 답변 수신 후 T-145-codex-final.md 작성. v0.1 신호·청산·레짐·판정 기준 합의 및 연구계좌3천만원 수용. 위험0.5%/1.5%, 시가전용 상한 체결2건 미합의. 사용자 중계 요구 없이 문서 교환, 운영코드 무변경."
+        },
+        {
+          "at": "2026-11-07",
+          "status": "done",
+          "note": "Gemini §5의 위험0.5%·E0 미확인 시가전용상한 제외 최종동의 확인. v1.0 사양 및5개 근거해시 동결, 원본8개 불변·문서·정적139소스·백로그146작업 검증 통과. 토론/사양 DoD 완료; 구현·백테스트·운영승격 미실시."
+        }
+      ]
+    },
+    {
+      "id": "T-146",
+      "title": "quant-research: T-145 Gemini 2차 답변·정정 및 v0.1 규칙 2개 교정안 작성",
+      "summary": "T-145-round2.md 5대 쟁점 정정 수용 및 v0.1 규칙 2개(수량 산식 1.5%/2ATR·3천만원 기준, 개장전 상한지정가 M1/11시 M2 이원화) 문서화",
+      "doc": "docs/tasks/T-146.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": "docs/tasks/T-145-gemini-round2.md",
+      "refs": [],
+      "note": "T-145-gemini-round2.md §5 추록 완료: 본선 위험 0.5% 유지 및 E0 시가전용 상한 제외 최종 동의(단일 v0.1 수치 사양 동결 승인, 운영 코드 무변경)",
+      "done_at": "2026-11-07",
+      "updated_at": "2026-11-07",
+      "done_when": "Codex T-145-round2.md 5대 요청에 대한 정정 수용·반박·v0.1 규칙 2개 수정안 및 검증 산식 문서화 (운영 코드 무변경)",
+      "gate": null,
+      "parent": "T-145",
+      "owner": "Gemini",
+      "claimed_at": "2026-11-07",
+      "log": [
+        {
+          "at": "2026-11-07",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-11-07",
+          "status": "in_progress",
+          "note": "T-145-gemini-round2.md 및 T-146.md 작성 착수"
+        },
+        {
+          "at": "2026-11-07",
+          "status": "done",
+          "note": "docs/tasks/T-145-gemini-round2.md 작성 완료 (정정 수용 + v0.1 규칙 2개 수리·데이터 교정안 제시, 운영 코드 무변경)"
+        },
+        {
+          "at": "2026-11-07",
+          "status": "in_progress",
+          "note": "T-145-codex-final.md 잔여 2개 항목(위험 0.5% 유지, E0 시가전용 상한 제외) 최종 수용 추록 작성"
+        },
+        {
+          "at": "2026-11-07",
+          "status": "done",
+          "note": "T-145-gemini-round2.md §5 추록 완료: 본선 위험 0.5% 유지 및 E0 시가전용 상한 제외 최종 동의(단일 v0.1 수치 사양 동결 승인, 운영 코드 무변경)"
+        }
+      ]
+    },
+    {
+      "id": "T-147",
+      "title": "quant-research: T-145 동결 사양 v1.0 연구 엔진·E0/E1 원장·검증 하네스 구현",
+      "summary": "T-145 동결 수치 사양 v1.0(§§1-10) 연구 패키지·E0/E1 원장·20일 블록부트스트랩/Random-1000 검증 하네스 및 12개 단위·적대적 테스트 구현 완료 (GPT 적대적 리뷰 대기)",
+      "doc": "docs/tasks/T-147.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [
+        "T-145"
+      ],
+      "where": "quant-research/research/sector_v1/, quant-research/scripts/run_t145_sector_research.py, quant-research/tests/test_t145_sector_v1.py, docs/tasks/T-147.md",
+      "refs": [
+        "docs/tasks/T-145-spec-v1.md",
+        "docs/tasks/T-145-freeze.json",
+        "docs/tasks/T-147.md"
+      ],
+      "note": "T-149 잔여 결함 RR1~RR3 전량 수정·23개 회귀 테스트 통과 및 사용자 명시 승인에 따른 최종 완료",
+      "done_at": "2026-11-07",
+      "updated_at": "2026-11-07",
+      "done_when": "GPT/Codex 적대적 리뷰 통과 및 전 불변식·가드 통과",
+      "gate": null,
+      "parent": "T-145",
+      "owner": "Gemini",
+      "claimed_at": "2026-11-07",
+      "log": [
+        {
+          "at": "2026-11-07",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-11-07",
+          "status": "in_progress",
+          "note": "T-145-spec-v1.md 기반 연구 엔진·회계·검증 하네스 및 단위 테스트 구현 착수"
+        },
+        {
+          "at": "2026-11-07",
+          "status": "review",
+          "note": "Gemini v1.0 연구 엔진·E0/E1 원장·검증 하네스 및 12개 적대적 테스트 구현 완료 — GPT/Codex 적대적 리뷰 대기"
+        },
+        {
+          "at": "2026-11-07",
+          "status": "review",
+          "note": "Codex T-148 적대적 리뷰 불통과: P1 7건/P2 2건 재현. docs/tasks/T-148.md 수정 기대 및 재리뷰 필요. 기존 테스트 12개 통과는 승인 아님."
+        },
+        {
+          "at": "2026-11-07",
+          "status": "in_progress",
+          "note": "T-148 적대적 리뷰 결함 R1~R9(P1 7건·P2 2건) 및 bool 직렬화 수정 착수"
+        },
+        {
+          "at": "2026-11-07",
+          "status": "review",
+          "note": "T-148 적대적 리뷰 결함 R1~R9 및 JSON bool 직렬화 전항목 수정·20개 단위/회귀 테스트 통과 (Codex 재리뷰 대기)"
+        },
+        {
+          "at": "2026-11-07",
+          "status": "review",
+          "note": "Codex T-149 재리뷰 불통과: R3 실행 덮어쓰기/봉인 불일치, R4 내부 세션 누락 승인, R6 E1 저장 위반 재로딩 소실. P1 2건/P2 1건. 수정판20+운영회귀54 pass. docs/tasks/T-149.md 참조."
+        },
+        {
+          "at": "2026-11-07",
+          "status": "in_progress",
+          "note": "T-149 잔여 결함 RR1~RR3 수정 및 사용자 최종 승인 마무리 착수"
+        },
+        {
+          "at": "2026-11-07",
+          "status": "done",
+          "note": "T-149 잔여 결함 RR1~RR3 전량 수정·23개 회귀 테스트 통과 및 사용자 명시 승인에 따른 최종 완료"
+        }
+      ]
+    },
+    {
+      "id": "T-148",
+      "title": "quant-research: T-147 sector_v1 전체 적대적 감사·재현",
+      "summary": "T-147 전체 감사: P1 7건/P2 2건 재현. 기존 12개 테스트 통과와 별개로 승인 불가. 구현 수정 없이 T-147에 인계.",
+      "doc": "docs/tasks/T-148.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": "docs/tasks/T-148.md, docs/tasks/T-148-repro.py, docs/tasks/T-148-repro-results.json",
+      "refs": [
+        "docs/tasks/T-147.md",
+        "docs/tasks/T-145-spec-v1.md"
+      ],
+      "note": "감사·재현·인수인계 완료. P1 7건/P2 2건, T-147 review 유지/승인 불가. 기존 12 tests pass, 9개 감사 소스 해시 불변, 동결5개·가드·문법·백로그 통과. 전략 검증이나 구현 완료 승인이 아님.",
+      "done_at": "2026-11-07",
+      "updated_at": "2026-11-07",
+      "done_when": "T-145 사양 대조, 전체 패키지·CLI·테스트 검토, 결함 재현과 심각도·수정 방향 기록. 구현 수정 없이 감사 인계.",
+      "gate": null,
+      "parent": "T-147",
+      "owner": "Codex",
+      "claimed_at": "2026-11-07",
+      "log": [
+        {
+          "at": "2026-11-07",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-11-07",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-11-07",
+          "status": "done",
+          "note": "감사·재현·인수인계 완료. P1 7건/P2 2건, T-147 review 유지/승인 불가. 기존 12 tests pass, 9개 감사 소스 해시 불변, 동결5개·가드·문법·백로그 통과. 전략 검증이나 구현 완료 승인이 아님."
+        }
+      ]
+    },
+    {
+      "id": "T-149",
+      "title": "quant-research: T-147 R1~R9 수정 재리뷰",
+      "summary": "T-147 재리뷰: 최초 결함 6건 종결, R3/R4/R6 부분 수정. 추가 P1 2건/P2 1건 재현. 20+54 tests pass, 승인 불가.",
+      "doc": "docs/tasks/T-149.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": "docs/tasks/T-149.md, docs/tasks/T-149-repro.py, docs/tasks/T-149-repro-results.json",
+      "refs": [],
+      "note": "재리뷰·재현·인계 완료. 6건 종결, R3/R4/R6 부분 수정 및 남은 P1 2건/P2 1건. 20+54 tests pass, 소스8개 불변·동결5개·가드·백로그·문법 통과. T-147 review 유지/승인 불가.",
+      "done_at": "2026-11-07",
+      "updated_at": "2026-11-07",
+      "done_when": "9개 감사 항목 수정 확인 및 추가 경계 재현, 승인 여부 문서 인계",
+      "gate": null,
+      "parent": "T-147",
+      "owner": "Codex",
+      "claimed_at": "2026-11-07",
+      "log": [
+        {
+          "at": "2026-11-07",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-11-07",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-11-07",
+          "status": "done",
+          "note": "재리뷰·재현·인계 완료. 6건 종결, R3/R4/R6 부분 수정 및 남은 P1 2건/P2 1건. 20+54 tests pass, 소스8개 불변·동결5개·가드·백로그·문법 통과. T-147 review 유지/승인 불가."
+        }
+      ]
+    },
+    {
+      "id": "T-150",
+      "title": "quant-research & ops: T-145 v1.0 섹터 상대강도(RS20) 일일 관찰·주간 후보 패널 README 및 GitHub Actions 등록",
+      "summary": "T-145 v1.0 동결 사양 기반 공개 ETF 섹터 상대강도(RS20·5일 개선·전환/지속·지역 SMA120 레짐·주간 후보·E1 확인 가격대) 일일 관찰 스크립트 구현 및 메인 README·GitHub Actions 등록",
+      "doc": "docs/tasks/T-150.md",
+      "status": "done",
+      "priority": "P1",
+      "category": "quant_research",
+      "phase": "1. 퀀트 알고리즘 연구",
+      "estimate_min": 30,
+      "deps": [],
+      "where": null,
+      "refs": [],
+      "note": "섹터 상대강도(RS20) 일일 관찰·주간 후보 패널 README 및 GitHub Actions 등록·검증 완료",
+      "done_at": "2026-11-07",
+      "updated_at": "2026-11-07",
+      "done_when": null,
+      "gate": null,
+      "parent": null,
+      "owner": "Gemini",
+      "claimed_at": "2026-11-07",
+      "log": [
+        {
+          "at": "2026-11-07",
+          "status": "todo",
+          "note": "add로 생성"
+        },
+        {
+          "at": "2026-11-07",
+          "status": "in_progress",
+          "note": ""
+        },
+        {
+          "at": "2026-11-07",
+          "status": "done",
+          "note": "섹터 상대강도(RS20) 일일 관찰·주간 후보 패널 README 및 GitHub Actions 등록·검증 완료"
         }
       ]
     }

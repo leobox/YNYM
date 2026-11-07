@@ -1,0 +1,979 @@
+{
+  "as_of": "2026-11-06",
+  "code_sha256": {
+    "quant-research/research/sector_v1/execution_e0.py": "65a799a71c8d84d8d309d0aca2433b8c0788737c530944501e5d994488e0414a",
+    "quant-research/research/sector_v1/journal_e1.py": "f8b0c8c3ec788e0b6d0c854bed5c5adf7763a9c513f2fe87142159dc35ea7464",
+    "quant-research/research/sector_v1/models.py": "e23abbb3408b1781a907548720df627a022dc1faa5415868f4d0dcf39c32fdca",
+    "quant-research/research/sector_v1/public_observer.py": "0e40033a890ed925318b9c543ebbbd60619a434d3597766477e112868d9fb26a",
+    "quant-research/research/sector_v1/signals.py": "e435af2e2aa20ec1e84d97c837ec05112709ad2ee406158ad6a695ada9e77323",
+    "quant-research/scripts/run_sector_v1_observation.py": "d7a6700722c87b3b9ac5b478c523ba2b4602fa86dc864590e3ba17637d330ce5"
+  },
+  "completion_cutoff_clock": "2026-11-07T20:26:00+09:00",
+  "data_quality": {
+    "0041D0": {
+      "completed_rows": 260,
+      "cutoff_date": "2026-11-07",
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "last_date": "2026-11-06",
+      "raw_rows": 260,
+      "zero_volume_rows": 0
+    },
+    "0080G0": {
+      "completed_rows": 260,
+      "cutoff_date": "2026-11-07",
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "last_date": "2026-11-06",
+      "raw_rows": 260,
+      "zero_volume_rows": 0
+    },
+    "0173Y0": {
+      "completed_rows": 149,
+      "cutoff_date": "2026-11-07",
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "last_date": "2026-11-06",
+      "raw_rows": 149,
+      "zero_volume_rows": 0
+    },
+    "0183J0": {
+      "completed_rows": 139,
+      "cutoff_date": "2026-11-07",
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "last_date": "2026-11-06",
+      "raw_rows": 139,
+      "zero_volume_rows": 0
+    },
+    "069500": {
+      "completed_rows": 260,
+      "cutoff_date": "2026-11-07",
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "last_date": "2026-11-06",
+      "raw_rows": 260,
+      "zero_volume_rows": 0
+    },
+    "091180": {
+      "completed_rows": 260,
+      "cutoff_date": "2026-11-07",
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "last_date": "2026-11-06",
+      "raw_rows": 260,
+      "zero_volume_rows": 0
+    },
+    "102970": {
+      "completed_rows": 260,
+      "cutoff_date": "2026-11-07",
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "last_date": "2026-11-06",
+      "raw_rows": 260,
+      "zero_volume_rows": 0
+    },
+    "117700": {
+      "completed_rows": 260,
+      "cutoff_date": "2026-11-07",
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "last_date": "2026-11-06",
+      "raw_rows": 260,
+      "zero_volume_rows": 0
+    },
+    "228790": {
+      "completed_rows": 260,
+      "cutoff_date": "2026-11-07",
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "last_date": "2026-11-06",
+      "raw_rows": 260,
+      "zero_volume_rows": 0
+    },
+    "305720": {
+      "completed_rows": 260,
+      "cutoff_date": "2026-11-07",
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "last_date": "2026-11-06",
+      "raw_rows": 260,
+      "zero_volume_rows": 0
+    },
+    "360750": {
+      "completed_rows": 260,
+      "cutoff_date": "2026-11-07",
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "last_date": "2026-11-06",
+      "raw_rows": 260,
+      "zero_volume_rows": 0
+    },
+    "364970": {
+      "completed_rows": 260,
+      "cutoff_date": "2026-11-07",
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "last_date": "2026-11-06",
+      "raw_rows": 260,
+      "zero_volume_rows": 0
+    },
+    "381170": {
+      "completed_rows": 260,
+      "cutoff_date": "2026-11-07",
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "last_date": "2026-11-06",
+      "raw_rows": 260,
+      "zero_volume_rows": 0
+    },
+    "381180": {
+      "completed_rows": 260,
+      "cutoff_date": "2026-11-07",
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "last_date": "2026-11-06",
+      "raw_rows": 260,
+      "zero_volume_rows": 0
+    },
+    "396500": {
+      "completed_rows": 260,
+      "cutoff_date": "2026-11-07",
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "last_date": "2026-11-06",
+      "raw_rows": 260,
+      "zero_volume_rows": 0
+    },
+    "434730": {
+      "completed_rows": 260,
+      "cutoff_date": "2026-11-07",
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "last_date": "2026-11-06",
+      "raw_rows": 260,
+      "zero_volume_rows": 0
+    },
+    "445290": {
+      "completed_rows": 260,
+      "cutoff_date": "2026-11-07",
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "last_date": "2026-11-06",
+      "raw_rows": 260,
+      "zero_volume_rows": 0
+    },
+    "458730": {
+      "completed_rows": 260,
+      "cutoff_date": "2026-11-07",
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "last_date": "2026-11-06",
+      "raw_rows": 260,
+      "zero_volume_rows": 0
+    },
+    "466920": {
+      "completed_rows": 260,
+      "cutoff_date": "2026-11-07",
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "last_date": "2026-11-06",
+      "raw_rows": 260,
+      "zero_volume_rows": 0
+    },
+    "466940": {
+      "completed_rows": 260,
+      "cutoff_date": "2026-11-07",
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "last_date": "2026-11-06",
+      "raw_rows": 260,
+      "zero_volume_rows": 0
+    },
+    "487230": {
+      "completed_rows": 260,
+      "cutoff_date": "2026-11-07",
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "last_date": "2026-11-06",
+      "raw_rows": 260,
+      "zero_volume_rows": 0
+    },
+    "487240": {
+      "completed_rows": 260,
+      "cutoff_date": "2026-11-07",
+      "incomplete_or_future": 0,
+      "invalid_rows": 0,
+      "last_date": "2026-11-06",
+      "raw_rows": 260,
+      "zero_volume_rows": 0
+    }
+  },
+  "environment": {
+    "numpy": "2.4.6",
+    "pandas": "2.3.3",
+    "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "requests": "2.34.2"
+  },
+  "errors": [],
+  "fetched_at": "2026-11-07T20:26:03+09:00",
+  "fresh_symbol_count": 22,
+  "git_commit": "2af0038b2290095b574dce92e610373862cff3d8",
+  "inputs": [
+    {
+      "count": 260,
+      "name": "0041D0.xml",
+      "raw_bytes": 16717,
+      "received_at": "2026-11-07T20:26:02+09:00",
+      "sha256": "303b6f9a87bcc0a54f2b332edfae1f4d424d02336b4ed9b055d0268760086c07",
+      "symbol": "0041D0",
+      "url": "https://fchart.stock.naver.com/sise.nhn"
+    },
+    {
+      "count": 260,
+      "name": "0080G0.xml",
+      "raw_bytes": 16803,
+      "received_at": "2026-11-07T20:26:01+09:00",
+      "sha256": "e5b508e6d5148a9e2ff9862a8d5c947b5a7d2cebed5c4232bee1005e8b1ba727",
+      "symbol": "0080G0",
+      "url": "https://fchart.stock.naver.com/sise.nhn"
+    },
+    {
+      "count": 260,
+      "name": "0173Y0.xml",
+      "raw_bytes": 9781,
+      "received_at": "2026-11-07T20:26:02+09:00",
+      "sha256": "0e40092b1c016f1a22b9389c8372bb2cc483cbc98624b5bccd229431653309bf",
+      "symbol": "0173Y0",
+      "url": "https://fchart.stock.naver.com/sise.nhn"
+    },
+    {
+      "count": 260,
+      "name": "0183J0.xml",
+      "raw_bytes": 8905,
+      "received_at": "2026-11-07T20:26:02+09:00",
+      "sha256": "ec67479b9f0dcac4bcf4d0664f20f7b07267df33c32fc93cfd4b57a2d8b8ff6c",
+      "symbol": "0183J0",
+      "url": "https://fchart.stock.naver.com/sise.nhn"
+    },
+    {
+      "count": 260,
+      "name": "069500.xml",
+      "raw_bytes": 17766,
+      "received_at": "2026-11-07T20:26:01+09:00",
+      "sha256": "e150ff5ebd555f71757bf928c8cbcbc1237fbb3ebc50eac189607ef85f0add46",
+      "symbol": "069500",
+      "url": "https://fchart.stock.naver.com/sise.nhn"
+    },
+    {
+      "count": 260,
+      "name": "091180.xml",
+      "raw_bytes": 16944,
+      "received_at": "2026-11-07T20:26:02+09:00",
+      "sha256": "029eb8c93fbcabc2cab080f3bbe54ea0821d89dcd7107438af5fe4ca0d4c904a",
+      "symbol": "091180",
+      "url": "https://fchart.stock.naver.com/sise.nhn"
+    },
+    {
+      "count": 260,
+      "name": "102970.xml",
+      "raw_bytes": 17046,
+      "received_at": "2026-11-07T20:26:02+09:00",
+      "sha256": "b84634162fb838475f5bd798cd086f98ebd314413e7c340bb7293b0b53cdbf3e",
+      "symbol": "102970",
+      "url": "https://fchart.stock.naver.com/sise.nhn"
+    },
+    {
+      "count": 260,
+      "name": "117700.xml",
+      "raw_bytes": 15984,
+      "received_at": "2026-11-07T20:26:01+09:00",
+      "sha256": "0c7ea05c0f0d8121da37a1df9046ed1bf4832f5ec2542e81bbaa94e6843f77a5",
+      "symbol": "117700",
+      "url": "https://fchart.stock.naver.com/sise.nhn"
+    },
+    {
+      "count": 260,
+      "name": "228790.xml",
+      "raw_bytes": 16093,
+      "received_at": "2026-11-07T20:26:02+09:00",
+      "sha256": "16ba9bfc296a12162d5e721f708ebaf9836f0813de123a0dd0beeb6d352859a4",
+      "symbol": "228790",
+      "url": "https://fchart.stock.naver.com/sise.nhn"
+    },
+    {
+      "count": 260,
+      "name": "305720.xml",
+      "raw_bytes": 17149,
+      "received_at": "2026-11-07T20:26:01+09:00",
+      "sha256": "b68f6b0697020a63710ee5b355baa807e6c14339447a39c20c4835c406c536ed",
+      "symbol": "305720",
+      "url": "https://fchart.stock.naver.com/sise.nhn"
+    },
+    {
+      "count": 260,
+      "name": "360750.xml",
+      "raw_bytes": 17286,
+      "received_at": "2026-11-07T20:26:01+09:00",
+      "sha256": "7abdbf507b74a881827f7cd7e0a8aebe118ba7e0d45f97ee3806d8717bc2c1eb",
+      "symbol": "360750",
+      "url": "https://fchart.stock.naver.com/sise.nhn"
+    },
+    {
+      "count": 260,
+      "name": "364970.xml",
+      "raw_bytes": 16002,
+      "received_at": "2026-11-07T20:26:01+09:00",
+      "sha256": "e15efb79f2439e94f0d4e9ebaf4c27a487e8f403e1da3c8254ccf5fe1af735ea",
+      "symbol": "364970",
+      "url": "https://fchart.stock.naver.com/sise.nhn"
+    },
+    {
+      "count": 260,
+      "name": "381170.xml",
+      "raw_bytes": 17024,
+      "received_at": "2026-11-07T20:26:02+09:00",
+      "sha256": "b33e18ce051d72e613c259b60fef45eeeede9c9ffba3ab98fe8f147b63807bd1",
+      "symbol": "381170",
+      "url": "https://fchart.stock.naver.com/sise.nhn"
+    },
+    {
+      "count": 260,
+      "name": "381180.xml",
+      "raw_bytes": 17106,
+      "received_at": "2026-11-07T20:26:02+09:00",
+      "sha256": "dfb71e21b1b7d717010f2bfcb2dcc67cc326c589ab0499c89bf098cfd34dc879",
+      "symbol": "381180",
+      "url": "https://fchart.stock.naver.com/sise.nhn"
+    },
+    {
+      "count": 260,
+      "name": "396500.xml",
+      "raw_bytes": 17305,
+      "received_at": "2026-11-07T20:26:01+09:00",
+      "sha256": "0721aa0f315c8c81935f7b726ac630f9ade16f73b3e45b78710537bedfd6b08c",
+      "symbol": "396500",
+      "url": "https://fchart.stock.naver.com/sise.nhn"
+    },
+    {
+      "count": 260,
+      "name": "434730.xml",
+      "raw_bytes": 16882,
+      "received_at": "2026-11-07T20:26:02+09:00",
+      "sha256": "6494e4e00b5359d42e129a1be4dd43cee5f15452cba518c3d2d97446cf022c77",
+      "symbol": "434730",
+      "url": "https://fchart.stock.naver.com/sise.nhn"
+    },
+    {
+      "count": 260,
+      "name": "445290.xml",
+      "raw_bytes": 16963,
+      "received_at": "2026-11-07T20:26:01+09:00",
+      "sha256": "c0eea7d7dccbf9f6a25da021f00c3b2d99dd6de2b6184f21e534b77caf2c4712",
+      "symbol": "445290",
+      "url": "https://fchart.stock.naver.com/sise.nhn"
+    },
+    {
+      "count": 260,
+      "name": "458730.xml",
+      "raw_bytes": 17108,
+      "received_at": "2026-11-07T20:26:02+09:00",
+      "sha256": "c9b396f6285f977c17268f12a853ece9a077370c9c3c23aeb9171e28e838554e",
+      "symbol": "458730",
+      "url": "https://fchart.stock.naver.com/sise.nhn"
+    },
+    {
+      "count": 260,
+      "name": "466920.xml",
+      "raw_bytes": 17085,
+      "received_at": "2026-11-07T20:26:02+09:00",
+      "sha256": "05e77637f9fe9ad2a1c978f0b1005ec7a9b24f973951223558c146af33cd7f15",
+      "symbol": "466920",
+      "url": "https://fchart.stock.naver.com/sise.nhn"
+    },
+    {
+      "count": 260,
+      "name": "466940.xml",
+      "raw_bytes": 16954,
+      "received_at": "2026-11-07T20:26:01+09:00",
+      "sha256": "a87bacd4c94454746457b992a1bd05038004190eb53736040a851a56544e2543",
+      "symbol": "466940",
+      "url": "https://fchart.stock.naver.com/sise.nhn"
+    },
+    {
+      "count": 260,
+      "name": "487230.xml",
+      "raw_bytes": 17041,
+      "received_at": "2026-11-07T20:26:02+09:00",
+      "sha256": "95424418b972c2a30d2f7783e78e25eb226220e6d7081f0533e39798816764e3",
+      "symbol": "487230",
+      "url": "https://fchart.stock.naver.com/sise.nhn"
+    },
+    {
+      "count": 260,
+      "name": "487240.xml",
+      "raw_bytes": 17136,
+      "received_at": "2026-11-07T20:26:02+09:00",
+      "sha256": "11614833ae733bf4781484f0f98f28d5ba82116f7d98322d5448edef2943908b",
+      "symbol": "487240",
+      "url": "https://fchart.stock.naver.com/sise.nhn"
+    },
+    {
+      "name": "etf_list.json",
+      "raw_bytes": 266766,
+      "received_at": "2026-11-07T20:26:00+09:00",
+      "sha256": "490f511f8da08653ed4af8753b1e364a5ed55d7819d7b75db42559dd59e9bcd1",
+      "url": "https://finance.naver.com/api/sise/etfItemList.nhn"
+    }
+  ],
+  "mapping_version": "v1.0-public-obs-2026H2",
+  "provenance": {
+    "corporate_actions_verified": false,
+    "daily_source": "https://fchart.stock.naver.com/sise.nhn",
+    "list_source": "https://finance.naver.com/api/sise/etfItemList.nhn",
+    "mapping_pit_verified": false,
+    "note": "Public KRX daily raw price bars for forward observation & E1 check band only; not total-return backtest proof.",
+    "price_unit": "KRW",
+    "total_return_verified": false,
+    "volume_unit": "shares"
+  },
+  "requested_symbol_count": 22,
+  "result": {
+    "benchmarks": {
+      "KR": {
+        "benchmark_code": "069500",
+        "benchmark_name": "KODEX 200",
+        "close": 79005.0,
+        "coverage_ok": true,
+        "coverage_ratio": 1.0,
+        "regime_bullish": false,
+        "region_status": "HALTED_BEAR_REGIME",
+        "scheduled_representatives": 13,
+        "sma120": 111664.26666666666,
+        "valid_representatives": 13
+      },
+      "US": {
+        "benchmark_code": "360750",
+        "benchmark_name": "TIGER 미국S&P500",
+        "close": 24755.0,
+        "coverage_ok": true,
+        "coverage_ratio": 1.0,
+        "regime_bullish": false,
+        "region_status": "HALTED_BEAR_REGIME",
+        "scheduled_representatives": 7,
+        "sma120": 26812.583333333332,
+        "valid_representatives": 7
+      }
+    },
+    "blocked_representatives": [],
+    "counts": {
+      "entry_qualified_before_regime": 0,
+      "evaluated_sectors": 20,
+      "observed_improving_sectors": 8,
+      "scheduled_sectors": 20,
+      "weekly_actionable_candidates": 0,
+      "weekly_preview_candidates": 0
+    },
+    "eval_date": "2026-11-06",
+    "mapping_valid_from": "2026-11-06",
+    "mapping_valid_until": "2027-05-07",
+    "mapping_version": "v1.0-public-obs-2026H2",
+    "observations": [
+      {
+        "atr20": 249.56,
+        "close": 6775.0,
+        "code": "364970",
+        "eval_date": "2026-11-06",
+        "gate_failure_reasons": [
+          "지역 레짐 차단(<SMA120)",
+          "SMA60 하회"
+        ],
+        "is_entry_qualified": false,
+        "is_observed": true,
+        "name": "TIGER 바이오TOP10",
+        "regime_bullish": false,
+        "region": "KR",
+        "region_coverage_ok": true,
+        "ret60_total": -0.121271,
+        "rs20": 0.374919,
+        "rs20_improvement_5d": 0.193431,
+        "rs_transition_label": "강세 지속",
+        "sector": "바이오/헬스케어",
+        "sma20": 6622.5,
+        "sma60": 7018.08
+      },
+      {
+        "atr20": 746.76,
+        "close": 23250.0,
+        "code": "466940",
+        "eval_date": "2026-11-06",
+        "gate_failure_reasons": [
+          "지역 레짐 차단(<SMA120)",
+          "SMA60 하회"
+        ],
+        "is_entry_qualified": false,
+        "is_observed": true,
+        "name": "TIGER 은행고배당플러스TOP10",
+        "regime_bullish": false,
+        "region": "KR",
+        "region_coverage_ok": true,
+        "ret60_total": -0.125216,
+        "rs20": 0.245359,
+        "rs20_improvement_5d": 0.160334,
+        "rs_transition_label": "최근 상대강도 전환",
+        "sector": "은행",
+        "sma20": 23577.45,
+        "sma60": 25404.75
+      },
+      {
+        "atr20": 925.36,
+        "close": 22365.0,
+        "code": "091180",
+        "eval_date": "2026-11-06",
+        "gate_failure_reasons": [
+          "지역 레짐 차단(<SMA120)",
+          "SMA60 하회"
+        ],
+        "is_entry_qualified": false,
+        "is_observed": true,
+        "name": "KODEX 자동차",
+        "regime_bullish": false,
+        "region": "KR",
+        "region_coverage_ok": true,
+        "ret60_total": -0.230782,
+        "rs20": 0.206765,
+        "rs20_improvement_5d": 0.137975,
+        "rs_transition_label": "강세 지속",
+        "sector": "자동차",
+        "sma20": 23251.05,
+        "sma60": 25907.25
+      },
+      {
+        "atr20": 324.68,
+        "close": 5545.0,
+        "code": "117700",
+        "eval_date": "2026-11-06",
+        "gate_failure_reasons": [
+          "지역 레짐 차단(<SMA120)",
+          "SMA60 하회"
+        ],
+        "is_entry_qualified": false,
+        "is_observed": true,
+        "name": "KODEX 건설",
+        "regime_bullish": false,
+        "region": "KR",
+        "region_coverage_ok": true,
+        "ret60_total": -0.146923,
+        "rs20": 0.154247,
+        "rs20_improvement_5d": 0.136707,
+        "rs_transition_label": "강세 지속",
+        "sector": "건설",
+        "sma20": 5932.25,
+        "sma60": 6561.92
+      },
+      {
+        "atr20": 170.81,
+        "close": 15250.0,
+        "code": "458730",
+        "eval_date": "2026-11-06",
+        "gate_failure_reasons": [
+          "지역 레짐 차단(<SMA120)",
+          "2ATR 이격 초과"
+        ],
+        "is_entry_qualified": false,
+        "is_observed": true,
+        "name": "TIGER 미국배당다우존스",
+        "regime_bullish": false,
+        "region": "US",
+        "region_coverage_ok": true,
+        "ret60_total": 0.013491,
+        "rs20": 0.151316,
+        "rs20_improvement_5d": 0.057364,
+        "rs_transition_label": "강세 지속",
+        "sector": "배당/가치주",
+        "sma20": 14724.45,
+        "sma60": 14740.17
+      },
+      {
+        "atr20": 171.8,
+        "close": 3460.0,
+        "code": "228790",
+        "eval_date": "2026-11-06",
+        "gate_failure_reasons": [
+          "지역 레짐 차단(<SMA120)",
+          "SMA60 하회"
+        ],
+        "is_entry_qualified": false,
+        "is_observed": true,
+        "name": "TIGER 화장품",
+        "regime_bullish": false,
+        "region": "KR",
+        "region_coverage_ok": true,
+        "ret60_total": -0.169268,
+        "rs20": 0.110648,
+        "rs20_improvement_5d": 0.114877,
+        "rs_transition_label": "최근 상대강도 전환",
+        "sector": "화장품/소비재",
+        "sma20": 3697.25,
+        "sma60": 4187.5
+      },
+      {
+        "atr20": 702.44,
+        "close": 13405.0,
+        "code": "102970",
+        "eval_date": "2026-11-06",
+        "gate_failure_reasons": [
+          "지역 레짐 차단(<SMA120)",
+          "SMA60 하회"
+        ],
+        "is_entry_qualified": false,
+        "is_observed": true,
+        "name": "KODEX 증권",
+        "regime_bullish": false,
+        "region": "KR",
+        "region_coverage_ok": true,
+        "ret60_total": -0.267486,
+        "rs20": 0.074126,
+        "rs20_improvement_5d": 0.019643,
+        "rs_transition_label": "강세 지속",
+        "sector": "증권",
+        "sma20": 14971.0,
+        "sma60": 17051.42
+      },
+      {
+        "atr20": 1354.01,
+        "close": 23805.0,
+        "code": "445290",
+        "eval_date": "2026-11-06",
+        "gate_failure_reasons": [
+          "지역 레짐 차단(<SMA120)",
+          "SMA60 하회"
+        ],
+        "is_entry_qualified": false,
+        "is_observed": true,
+        "name": "KODEX 로봇액티브",
+        "regime_bullish": false,
+        "region": "KR",
+        "region_coverage_ok": true,
+        "ret60_total": -0.210029,
+        "rs20": 0.052789,
+        "rs20_improvement_5d": 0.038363,
+        "rs_transition_label": "최근 상대강도 전환",
+        "sector": "로봇/자동화",
+        "sma20": 25930.25,
+        "sma60": 29313.43
+      },
+      {
+        "atr20": 789.12,
+        "close": 12375.0,
+        "code": "305720",
+        "eval_date": "2026-11-06",
+        "gate_failure_reasons": [
+          "지역 레짐 차단(<SMA120)",
+          "5일 개선≤0",
+          "SMA60 하회"
+        ],
+        "is_entry_qualified": false,
+        "is_observed": false,
+        "name": "KODEX 2차전지산업",
+        "regime_bullish": false,
+        "region": "KR",
+        "region_coverage_ok": true,
+        "ret60_total": -0.116071,
+        "rs20": 0.038975,
+        "rs20_improvement_5d": -0.086943,
+        "rs_transition_label": "강세 지속",
+        "sector": "2차전지",
+        "sma20": 14170.5,
+        "sma60": 14548.92
+      },
+      {
+        "atr20": 1079.48,
+        "close": 17960.0,
+        "code": "466920",
+        "eval_date": "2026-11-06",
+        "gate_failure_reasons": [
+          "지역 레짐 차단(<SMA120)",
+          "RS20≤0",
+          "SMA60 하회"
+        ],
+        "is_entry_qualified": false,
+        "is_observed": false,
+        "name": "SOL 조선TOP3플러스",
+        "regime_bullish": false,
+        "region": "KR",
+        "region_coverage_ok": true,
+        "ret60_total": -0.391186,
+        "rs20": -0.000716,
+        "rs20_improvement_5d": 0.158362,
+        "rs_transition_label": "RS_NON_POSITIVE",
+        "sector": "조선",
+        "sma20": 20362.0,
+        "sma60": 25189.58
+      },
+      {
+        "atr20": 488.35,
+        "close": 6405.0,
+        "code": "0080G0",
+        "eval_date": "2026-11-06",
+        "gate_failure_reasons": [
+          "지역 레짐 차단(<SMA120)",
+          "RS20≤0",
+          "SMA60 하회"
+        ],
+        "is_entry_qualified": false,
+        "is_observed": false,
+        "name": "KODEX 방산TOP10",
+        "regime_bullish": false,
+        "region": "KR",
+        "region_coverage_ok": true,
+        "ret60_total": -0.421931,
+        "rs20": -0.069326,
+        "rs20_improvement_5d": 0.075251,
+        "rs_transition_label": "RS_NON_POSITIVE",
+        "sector": "방산",
+        "sma20": 7765.0,
+        "sma60": 9473.67
+      },
+      {
+        "atr20": 580.2,
+        "close": 28290.0,
+        "code": "381170",
+        "eval_date": "2026-11-06",
+        "gate_failure_reasons": [
+          "지역 레짐 차단(<SMA120)",
+          "RS20≤0",
+          "5일 개선≤0",
+          "SMA60 하회"
+        ],
+        "is_entry_qualified": false,
+        "is_observed": false,
+        "name": "TIGER 미국테크TOP10 INDXX",
+        "regime_bullish": false,
+        "region": "US",
+        "region_coverage_ok": true,
+        "ret60_total": -0.115108,
+        "rs20": -0.073117,
+        "rs20_improvement_5d": -0.019646,
+        "rs_transition_label": "RS_NON_POSITIVE",
+        "sector": "빅테크/플랫폼",
+        "sma20": 30018.25,
+        "sma60": 30673.92
+      },
+      {
+        "atr20": 2728.83,
+        "close": 35015.0,
+        "code": "434730",
+        "eval_date": "2026-11-06",
+        "gate_failure_reasons": [
+          "지역 레짐 차단(<SMA120)",
+          "RS20≤0",
+          "SMA60 하회"
+        ],
+        "is_entry_qualified": false,
+        "is_observed": false,
+        "name": "HANARO 원자력iSelect",
+        "regime_bullish": false,
+        "region": "KR",
+        "region_coverage_ok": true,
+        "ret60_total": -0.384189,
+        "rs20": -0.121106,
+        "rs20_improvement_5d": 0.034331,
+        "rs_transition_label": "RS_NON_POSITIVE",
+        "sector": "원자력",
+        "sma20": 43511.75,
+        "sma60": 53513.08
+      },
+      {
+        "atr20": 2151.45,
+        "close": 24775.0,
+        "code": "396500",
+        "eval_date": "2026-11-06",
+        "gate_failure_reasons": [
+          "지역 레짐 차단(<SMA120)",
+          "RS20≤0",
+          "5일 개선≤0",
+          "SMA60 하회"
+        ],
+        "is_entry_qualified": false,
+        "is_observed": false,
+        "name": "TIGER 반도체TOP10",
+        "regime_bullish": false,
+        "region": "KR",
+        "region_coverage_ok": true,
+        "ret60_total": -0.178766,
+        "rs20": -0.131013,
+        "rs20_improvement_5d": -0.082564,
+        "rs_transition_label": "RS_NON_POSITIVE",
+        "sector": "반도체",
+        "sma20": 30049.8,
+        "sma60": 34107.62
+      },
+      {
+        "atr20": 437.71,
+        "close": 11610.0,
+        "code": "0041D0",
+        "eval_date": "2026-11-06",
+        "gate_failure_reasons": [
+          "지역 레짐 차단(<SMA120)",
+          "RS20≤0",
+          "5일 개선≤0",
+          "SMA60 하회"
+        ],
+        "is_entry_qualified": false,
+        "is_observed": false,
+        "name": "KODEX 미국AI소프트웨어TOP10",
+        "regime_bullish": false,
+        "region": "US",
+        "region_coverage_ok": true,
+        "ret60_total": -0.098952,
+        "rs20": -0.138956,
+        "rs20_improvement_5d": -0.113174,
+        "rs_transition_label": "RS_NON_POSITIVE",
+        "sector": "AI소프트웨어",
+        "sma20": 13502.95,
+        "sma60": 13498.53
+      },
+      {
+        "atr20": 2002.87,
+        "close": 20490.0,
+        "code": "487240",
+        "eval_date": "2026-11-06",
+        "gate_failure_reasons": [
+          "지역 레짐 차단(<SMA120)",
+          "RS20≤0",
+          "5일 개선≤0",
+          "SMA60 하회"
+        ],
+        "is_entry_qualified": false,
+        "is_observed": false,
+        "name": "KODEX AI전력핵심설비",
+        "regime_bullish": false,
+        "region": "KR",
+        "region_coverage_ok": true,
+        "ret60_total": -0.411798,
+        "rs20": -0.195849,
+        "rs20_improvement_5d": -0.012307,
+        "rs_transition_label": "RS_NON_POSITIVE",
+        "sector": "전력설비",
+        "sma20": 26739.0,
+        "sma60": 32913.92
+      },
+      {
+        "atr20": 1506.31,
+        "close": 32610.0,
+        "code": "381180",
+        "eval_date": "2026-11-06",
+        "gate_failure_reasons": [
+          "지역 레짐 차단(<SMA120)",
+          "RS20≤0",
+          "5일 개선≤0",
+          "SMA60 하회"
+        ],
+        "is_entry_qualified": false,
+        "is_observed": false,
+        "name": "TIGER 미국필라델피아반도체나스닥",
+        "regime_bullish": false,
+        "region": "US",
+        "region_coverage_ok": true,
+        "ret60_total": -0.270617,
+        "rs20": -0.2462,
+        "rs20_improvement_5d": -0.126704,
+        "rs_transition_label": "RS_NON_POSITIVE",
+        "sector": "반도체",
+        "sma20": 38656.05,
+        "sma60": 41454.08
+      },
+      {
+        "atr20": 294.38,
+        "close": 5285.0,
+        "code": "0183J0",
+        "eval_date": "2026-11-06",
+        "gate_failure_reasons": [
+          "지역 레짐 차단(<SMA120)",
+          "RS20≤0",
+          "5일 개선≤0",
+          "SMA60 하회"
+        ],
+        "is_entry_qualified": false,
+        "is_observed": false,
+        "name": "TIGER 미국우주테크",
+        "regime_bullish": false,
+        "region": "US",
+        "region_coverage_ok": true,
+        "ret60_total": -0.329315,
+        "rs20": -0.268399,
+        "rs20_improvement_5d": -0.120402,
+        "rs_transition_label": "RS_NON_POSITIVE",
+        "sector": "우주항공/방산",
+        "sma20": 6223.75,
+        "sma60": 7275.92
+      },
+      {
+        "atr20": 788.98,
+        "close": 13535.0,
+        "code": "487230",
+        "eval_date": "2026-11-06",
+        "gate_failure_reasons": [
+          "지역 레짐 차단(<SMA120)",
+          "RS20≤0",
+          "5일 개선≤0",
+          "SMA60 하회"
+        ],
+        "is_entry_qualified": false,
+        "is_observed": false,
+        "name": "KODEX 미국AI전력핵심인프라",
+        "regime_bullish": false,
+        "region": "US",
+        "region_coverage_ok": true,
+        "ret60_total": -0.352299,
+        "rs20": -0.292698,
+        "rs20_improvement_5d": -0.132127,
+        "rs_transition_label": "RS_NON_POSITIVE",
+        "sector": "전력/인프라",
+        "sma20": 16577.8,
+        "sma60": 18643.13
+      },
+      {
+        "atr20": 625.49,
+        "close": 6650.0,
+        "code": "0173Y0",
+        "eval_date": "2026-11-06",
+        "gate_failure_reasons": [
+          "지역 레짐 차단(<SMA120)",
+          "RS20≤0",
+          "5일 개선≤0",
+          "SMA60 하회"
+        ],
+        "is_entry_qualified": false,
+        "is_observed": false,
+        "name": "KODEX 미국AI광통신네트워크",
+        "regime_bullish": false,
+        "region": "US",
+        "region_coverage_ok": true,
+        "ret60_total": -0.450413,
+        "rs20": -0.438948,
+        "rs20_improvement_5d": -0.288587,
+        "rs_transition_label": "RS_NON_POSITIVE",
+        "sector": "광통신/네트워크",
+        "sma20": 9288.0,
+        "sma60": 10552.42
+      }
+    ],
+    "reference_capital_krw": 30000000.0,
+    "region_status": {
+      "KR": "HALTED_BEAR_REGIME",
+      "US": "HALTED_BEAR_REGIME"
+    },
+    "spec_task_id": "T-145",
+    "spec_version": "1.0",
+    "weekly_candidates_b": [],
+    "weekly_rebalance_confirmed": true,
+    "weekly_selection_mode": "WEEKEND_REBALANCE_CONFIRMED"
+  },
+  "run_id": "20261107T202600554864",
+  "spec_task_id": "T-145",
+  "spec_version": "1.0",
+  "status": "OK",
+  "unlisted_frozen_codes": []
+}

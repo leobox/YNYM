@@ -1,0 +1,10 @@
+{
+  "quant-research/research/sector_v1/__init__.py": "5333c21ae0c124fe6f794bbb9f9937665525f65525c3946037bfdfb3268ea8f9",
+  "quant-research/research/sector_v1/evaluator.py": "2041003e510fa6f89e4ac860395813e3af49c4b517e674b335e75d0f13c23abb",
+  "quant-research/research/sector_v1/execution_e0.py": "65a799a71c8d84d8d309d0aca2433b8c0788737c530944501e5d994488e0414a",
+  "quant-research/research/sector_v1/journal_e1.py": "ba48fba9c9311fdb43ded5ad433d5852e4202fda49307f1bf6029786675ca79f",
+  "quant-research/research/sector_v1/models.py": "a113c4afdedad93ec3ec573225df837224da850dbd1ca1a058d10718f95c92da",
+  "quant-research/research/sector_v1/signals.py": "e435af2e2aa20ec1e84d97c837ec05112709ad2ee406158ad6a695ada9e77323",
+  "quant-research/scripts/run_t145_sector_research.py": "4acce9f2e9b28647e64421aa1f4763e68147df425422ec835ec611e85edc1ace",
+  "quant-research/tests/test_t145_sector_v1.py": "e4438fd894f845cf222664fd795c94e883083f73dc6480e4fcb066b0102a88b0"
+}

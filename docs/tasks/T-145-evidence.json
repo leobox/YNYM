@@ -1,0 +1,193 @@
+{
+  "audit_date": "2026-11-07",
+  "scope": "Local working tree only; aggregation of saved hypothetical outcomes, not a price-path replay or current-engine backtest",
+  "outcomes_as_of": "2026-11-06",
+  "pending_count": 10,
+  "strategies": {
+    "early_inception": {
+      "count": 27,
+      "wins": 8,
+      "win_pct": 29.62962962962963,
+      "mean_net_return_pct": -2.212113821036938,
+      "median_net_return_pct": -5.294223232831907,
+      "unique_symbols": 22,
+      "signal_dates": {
+        "2026-09-28": 2,
+        "2026-09-29": 5,
+        "2026-09-30": 5,
+        "2026-10-01": 5,
+        "2026-10-02": 3,
+        "2026-10-06": 3,
+        "2026-10-07": 4
+      },
+      "exit_reasons": {
+        "PEAK_TRAILING_STOP": 13,
+        "STOP_LOSS": 14
+      }
+    },
+    "early_inception_3d": {
+      "count": 6,
+      "wins": 0,
+      "win_pct": 0.0,
+      "mean_net_return_pct": -5.29422323283192,
+      "median_net_return_pct": -5.294223232831918,
+      "unique_symbols": 6,
+      "signal_dates": {
+        "2026-10-06": 2,
+        "2026-10-07": 4
+      },
+      "exit_reasons": {
+        "STOP_LOSS": 6
+      }
+    },
+    "mode2": {
+      "count": 25,
+      "wins": 0,
+      "win_pct": 0.0,
+      "mean_net_return_pct": -14.093736107391935,
+      "median_net_return_pct": -15.364910298420265,
+      "unique_symbols": 9,
+      "signal_dates": {
+        "2026-09-28": 5,
+        "2026-09-29": 5,
+        "2026-09-30": 5,
+        "2026-10-01": 5,
+        "2026-10-02": 5
+      },
+      "exit_reasons": {
+        "MAX_HORIZON": 5,
+        "AIRBAG_STOP_LOSS": 20
+      }
+    }
+  },
+  "files": {
+    "quant-research/data/research/T-110/outcomes.json": {
+      "bytes": 25837,
+      "sha256": "f677c66bc5d0787207fd707dea3a6935b6b0ee0123b5f8b3c2f1f1b5726adbdc"
+    },
+    "quant-research/research/early_inception_engine.py": {
+      "bytes": 27119,
+      "sha256": "0ce3afeeaa4d89bbcb3f7bb9ee0ef8a2a9e4c50576a03a164149681be307e62c"
+    },
+    "quant-research/research/etf_observer.py": {
+      "bytes": 15075,
+      "sha256": "e678b8505b47ee9fd29ef7d3ca19c52a6e7713f48a3cb453c1d93ba14b5eddae"
+    },
+    "quant-research/scripts/run_early_inception_forward.py": {
+      "bytes": 46043,
+      "sha256": "f8fbc1b9ab70af0a80c5cad049b785e382209766e54c2a0e9afb6c36d9b7d264"
+    },
+    "quant-research/scripts/fetch_daily_history.py": {
+      "bytes": 12382,
+      "sha256": "d8430fb44840d45ffb73dffb68c03b2afcc5c247f7ef78072da38366a2fb2857"
+    },
+    "quant-research/scripts/run_vcp_scanner.py": {
+      "bytes": 13212,
+      "sha256": "314b86a07f9c34d23bbbe01960f5e124811cfd45c35ce124eb68faa15c0da34c"
+    },
+    ".github/workflows/early-inception-forward.yml": {
+      "bytes": 4269,
+      "sha256": "f5d639a849b3824f011576c987928f0d5383147ced7bd9c1c56865660feef1b0"
+    },
+    "quant-research/data/vcp_snapshots/universe_20261106_233153.csv": {
+      "bytes": 8783,
+      "sha256": "5204c8c8e8828e6e8c1c2a78eb4f60dcf026237f24ee5227141a8a4893a7b504"
+    }
+  },
+  "runs": [
+    {
+      "file": "2026-10-26.json",
+      "engine_sha256": "83a80f91b14bf95272666fe6c92d2863534190044683f59a4115c31a795dbb89",
+      "candidate_counts": {
+        "early_inception": 0,
+        "early_contraction": 0
+      }
+    },
+    {
+      "file": "2026-10-27.json",
+      "engine_sha256": "83a80f91b14bf95272666fe6c92d2863534190044683f59a4115c31a795dbb89",
+      "candidate_counts": {
+        "early_inception": 1,
+        "early_contraction": 0
+      }
+    },
+    {
+      "file": "2026-10-28.json",
+      "engine_sha256": "83a80f91b14bf95272666fe6c92d2863534190044683f59a4115c31a795dbb89",
+      "candidate_counts": {
+        "early_inception": 0,
+        "early_contraction": 1
+      }
+    },
+    {
+      "file": "2026-10-29.json",
+      "engine_sha256": "83a80f91b14bf95272666fe6c92d2863534190044683f59a4115c31a795dbb89",
+      "candidate_counts": {
+        "early_inception": 0,
+        "early_contraction": 0
+      }
+    },
+    {
+      "file": "2026-10-30.json",
+      "engine_sha256": "83a80f91b14bf95272666fe6c92d2863534190044683f59a4115c31a795dbb89",
+      "candidate_counts": {
+        "early_inception": 0,
+        "early_contraction": 1
+      }
+    },
+    {
+      "file": "2026-11-02.json",
+      "engine_sha256": "83a80f91b14bf95272666fe6c92d2863534190044683f59a4115c31a795dbb89",
+      "candidate_counts": {
+        "early_inception": 1,
+        "early_contraction": 1
+      }
+    },
+    {
+      "file": "2026-11-03.json",
+      "engine_sha256": "83a80f91b14bf95272666fe6c92d2863534190044683f59a4115c31a795dbb89",
+      "candidate_counts": {
+        "early_inception": 0,
+        "early_contraction": 0
+      }
+    },
+    {
+      "file": "2026-11-04.json",
+      "engine_sha256": "83a80f91b14bf95272666fe6c92d2863534190044683f59a4115c31a795dbb89",
+      "candidate_counts": {
+        "early_inception": 0,
+        "early_contraction": 0
+      }
+    },
+    {
+      "file": "2026-11-05.json",
+      "engine_sha256": "8fd8d0cfc54ba33f558c38918dc01571fce624b91efbb4d688d40ac25ecab495",
+      "candidate_counts": {
+        "early_inception": 0,
+        "early_contraction": 0
+      }
+    },
+    {
+      "file": "2026-11-06.json",
+      "engine_sha256": "8fd8d0cfc54ba33f558c38918dc01571fce624b91efbb4d688d40ac25ecab495",
+      "candidate_counts": {
+        "early_inception": 0,
+        "early_contraction": 0
+      }
+    }
+  ],
+  "missing_resolved_signal_files_in_current_runs": [
+    "2026-09-28",
+    "2026-09-29",
+    "2026-09-30",
+    "2026-10-01",
+    "2026-10-02",
+    "2026-10-06",
+    "2026-10-07"
+  ],
+  "latest_stock_universe": {
+    "n": 150,
+    "min_market_cap": 100500000000.0,
+    "max_market_cap": 4949300000000.0
+  }
+}

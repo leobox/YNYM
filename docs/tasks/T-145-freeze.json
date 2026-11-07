@@ -1,0 +1,30 @@
+{
+  "task_id": "T-145",
+  "spec_version": "1.0",
+  "status": "frozen_research_spec_not_validated_strategy",
+  "frozen_at": "2026-11-07T17:21:10.864295+09:00",
+  "authoritative_spec": "docs/tasks/T-145-spec-v1.md",
+  "consensus_evidence": "docs/tasks/T-145-gemini-round2.md section 5",
+  "files": {
+    "docs/tasks/T-145-spec-v1.md": {
+      "sha256": "4502dd3f0a83315f301fb2efd9810b1de320087d3ced4d878038e61cb2cda6c7",
+      "bytes": 16486
+    },
+    "docs/tasks/T-145-gemini-round2.md": {
+      "sha256": "1afc902b76e7a6c117e8afa8c0cb90a986468a63361d665dede7497f292ffeb2",
+      "bytes": 18176
+    },
+    "docs/tasks/T-145-codex-final.md": {
+      "sha256": "76267e1624004981192e9a8c7eff858e23e43ff973102f62f71f6430a939219b",
+      "bytes": 9980
+    },
+    "docs/tasks/T-145-round2.md": {
+      "sha256": "041b699dae827578b751a6f10fd6feab152197c15f47cf286720e6e69d2238cc",
+      "bytes": 19301
+    },
+    "docs/tasks/T-145-evidence.json": {
+      "sha256": "519257676ae8dcab923f2d799ab95e13044743ca19dd5525e52aa7b157550130",
+      "bytes": 5814
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "RR1_sparse_calendar_accepted": {
+    "source_benchmark_sessions": 526,
+    "scheduled_sessions": 316,
+    "omitted_benchmark_sessions": 210,
+    "calendar_complete": true,
+    "meets_24_months": true,
+    "benchmark_missing_ratio": 0.0
+  },
+  "RR2_e1_saved_violation_lost": {
+    "saved_status": "PROTOCOL_VIOLATION_PRESERVED",
+    "saved_reasons": [
+      "ENTRY_CHECK_SESSION_LATER_THAN_NEXT_TRADING_SESSION"
+    ],
+    "compliant_with_calendar": 0,
+    "compliant_default_reload": 1,
+    "violation_count_default_reload": 0
+  },
+  "RR3_registered_run_overwritten": {
+    "same_run_dir": true,
+    "first_report_overwritten": true,
+    "attempt_numbers": [
+      1,
+      1
+    ],
+    "disk_pre_seal_seed": 20261107,
+    "saved_report_seed": 7,
+    "registry_report_hashes": [
+      "c41f120c4363b9914e73c7177d18ae50adec7392312afdfba58a3adaaf5cc7ec",
+      "335e0215582ae79d8ec6af11eb1a23388738cf02a6e02721ec0a5f13b0a964ab"
+    ]
+  }
+}
