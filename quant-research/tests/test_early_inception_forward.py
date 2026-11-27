@@ -645,7 +645,8 @@ def test_compute_action_directive_covers_all_operational_states_and_nan_safety(p
     }
     d_halt = forward.compute_action_directive(halted_rec, {"status": "STABLE"})
     assert d_halt["code"] == "HALTED_CASH"
-    assert "신규 매수 중단" in d_halt["headline"] and "현금화" in d_halt["headline"]
+    assert "신규 매수 중단" in d_halt["headline"] and "기존 보유는 최초 신호의 청산 기준 적용" in d_halt["headline"]
+    assert "현금화" in d_halt["headline"]
 
     # 3. Breadth >= 40% + WEAKENING + 0 candidates (e.g. 2026-10-29 45.4%) -> WEAKENING_NO_SIGNAL_CASH
     weak_empty = {**halted_rec, "as_of": "2026-10-29", "market_breadth_pct": 45.4}
@@ -688,3 +689,158 @@ def test_compute_action_directive_covers_all_operational_states_and_nan_safety(p
     assert "### 🎯 오늘의 대응 지침 (규칙 기반 요약)" in rendered
     assert rendered.index("### 🌐 시장 상황") < rendered.index("### 🎯 오늘의 대응 지침 (규칙 기반 요약)") < rendered.index("### 상승 초입 · 20일 돌파 확정")
     assert json.dumps(panel_record, ensure_ascii=False) == before
+
+
+def test_blocked_observations_never_pollute_outcomes_or_buy_fields(source, monkeypatch):
+    data, manifest_path, now, runs = source
+    finding = inspect(data, manifest_path, now=now)
+    finding["name_by_code"] = {"000001": "차단통과종목"}
+    day = pd.Timestamp(finding["as_of"])
+
+    monkeypatch.setattr(forward, "calculate_market_breadth", lambda universe: pd.Series({day: 25.0}))
+    monkeypatch.setattr(
+        forward,
+        "compute_early_inception_rankings",
+        lambda universe, as_of: pd.DataFrame([{
+            "code": "000001", "close": 10000.0, "prior_h20": 9900.0,
+            "pullback_buy_1": 9950.0, "pullback_buy_2": 9800.0, "stop_price_5pct": 9500.0,
+            "contraction_ratio": 0.55, "inception_score": 0.85, "cmf20": 0.15,
+        }]),
+    )
+    monkeypatch.setattr(forward, "compute_early_contraction_rankings", lambda universe, as_of: pd.DataFrame())
+
+    record = build_record(finding, manifest_path)
+    # Official strategy candidates MUST stay empty so outcomes.json never counts blocked days
+    assert record["strategies"]["early_inception"]["candidates"] == []
+    assert record["strategies"]["early_contraction"]["candidates"] == []
+
+    blocked = record["blocked_observations"]
+    assert blocked["reason"] == "BREADTH_BELOW_40"
+    assert len(blocked["early_inception"]) == 1
+    item = blocked["early_inception"][0]
+    assert item["code"] == "000001" and item["name"] == "차단통과종목"
+    assert "pullback_buy_1" not in item
+    assert "pullback_buy_2" not in item
+    assert "stop_price_5pct" not in item
+
+    # Even with 25 future sessions appended, resolve() produces 0 trades from blocked_observations
+    runs.mkdir()
+    (runs / f'{record["as_of"]}.json').write_text(json.dumps(record, ensure_ascii=False), encoding="utf-8")
+    ext_days = pd.bdate_range(day + pd.Timedelta(days=1), periods=25)
+    ext_df = pd.DataFrame(
+        {"Open": 11000.0, "High": 11500.0, "Low": 10800.0, "Close": 11200.0, "Volume": 150000.0},
+        index=ext_days,
+    )
+    full_univ = {"000001": pd.concat([finding["universe"]["000001"], ext_df])}
+    out = resolve(runs, full_univ, str(ext_days[-1].date()))
+    assert out["pending_count"] == 0
+    assert out["resolved"] == []
+
+
+def test_regime_observations_distinguish_pre_halt_tracking_blocked_first_and_falling_rs(tmp_path):
+    from scripts.refresh_forward_status import refresh
+
+    runs = tmp_path / "runs"
+    runs.mkdir()
+    days = pd.bdate_range("2026-04-01", periods=140)
+    as_of_idx = -4
+    as_of_ts = days[as_of_idx]
+    as_of_str = str(as_of_ts.date())
+    pre_halt_ts = days[as_of_idx - 5]
+    pre_halt_str = str(pre_halt_ts.date())
+
+    # 1. Pre-halt captured stock (035900 JYP-like): captured before halt at 40,050, now +15.1% (46,100)
+    c_jyp = np.full(len(days), 40050.0)
+    c_jyp[as_of_idx - 4 : as_of_idx + 1] = [40500.0, 42000.0, 43500.0, 45000.0, 46100.0]
+    # Inject extreme future crash after as_of_ts to verify strict prefix invariance
+    c_jyp[as_of_idx + 1 :] = 10000.0
+
+    # 2. Blocked-regime stock with positive relative strength ONLY because market dropped -12% while stock dropped -4%
+    c_rel = np.full(len(days), 20000.0)
+    c_rel[as_of_idx] = 19200.0  # -4.0% over 20d (falling in absolute terms!)
+    c_rel[as_of_idx + 1 :] = 99999.0
+
+    # 3-5. Market median stocks dropping -12.0% over 20d
+    c_mkt = np.full(len(days), 10000.0)
+    c_mkt[as_of_idx] = 8800.0  # -12.0% over 20d
+
+    def make_frame(c_arr):
+        return pd.DataFrame(
+            {"Open": c_arr, "High": c_arr * 1.02, "Low": c_arr * 0.98, "Close": c_arr, "Volume": 200000.0},
+            index=days,
+        )
+
+    full_univ = {
+        "035900": make_frame(c_jyp),
+        "000002": make_frame(c_rel),
+        "000003": make_frame(c_mkt),
+        "000004": make_frame(c_mkt),
+        "000005": make_frame(c_mkt),
+    }
+    prefix_univ = {k: df.loc[:as_of_ts].copy() for k, df in full_univ.items()}
+
+    # Seal pre-halt record on pre_halt_str
+    (runs / f"{pre_halt_str}.json").write_text(
+        json.dumps({
+            "as_of": pre_halt_str,
+            "market_breadth_pct": 50.7,
+            "strategies": {
+                "early_inception": {"score_field": "inception_score", "candidates": []},
+                "early_contraction": {
+                    "score_field": "contraction_score",
+                    "candidates": [{"code": "035900", "name": "JYP Ent.", "close": 40050.0}],
+                },
+            },
+        }, ensure_ascii=False),
+        encoding="utf-8",
+    )
+
+    cur_record = {
+        "as_of": as_of_str,
+        "fetched_at": f"{as_of_str}T18:00:00+09:00",
+        "market_breadth_pct": 20.3,
+        "strategies": {
+            "early_inception": {"score_field": "inception_score", "candidates": []},
+            "early_contraction": {"score_field": "contraction_score", "candidates": []},
+        },
+        "blocked_observations": {
+            "reason": "BREADTH_BELOW_40",
+            "early_inception": [],
+            "early_contraction": [{"code": "000002", "name": "상대방어종목", "close": 19200.0, "contraction_ratio": 0.58}],
+        },
+    }
+
+    obs_full = forward.compute_regime_observations(cur_record, run_dir=runs, full_universe=full_univ, eval_universe=full_univ)
+    obs_prefix = forward.compute_regime_observations(cur_record, run_dir=runs, full_universe=prefix_univ, eval_universe=prefix_univ)
+    assert obs_full == obs_prefix
+    assert obs_full["is_blocked"] is True
+    assert len(obs_full["pre_halt_rows"]) == 1
+    assert len(obs_full["blocked_rows"]) == 1
+
+    r_track = obs_full["pre_halt_rows"][0]
+    assert "차단 전 포착 추적" in r_track["category"]
+    assert r_track["code"] == "035900"
+    assert "+15.1%" in r_track["current_path_str"]
+    assert "상대강도 우위(" in r_track["status_str"]
+
+    r_blocked = obs_full["blocked_rows"][0]
+    assert r_blocked["category"] == "차단 중 첫 포착"
+    assert r_blocked["code"] == "000002"
+    # Market dropped -12%, stock dropped -4% -> MUST say 상대강도 우위·절대하락, NEVER 독자 상승
+    assert "상대강도 우위·절대하락" in r_blocked["status_str"]
+    assert "레짐 때문에 제외" in r_blocked["status_str"]
+
+    panel = forward.render_panel(cur_record, {}, regime_observations=obs_full)
+    obs_section = panel.split("#### 🔍 약세장 관찰 기록", 1)[1]
+    assert "JYP Ent." in obs_section and "상대방어종목" in obs_section
+    assert "소액" not in obs_section
+    assert "익일 눌림 매수가" not in obs_section
+    assert "수량" not in obs_section or "매수가·수량·손절선을 제시하지 않는" in obs_section
+
+    # Ensure refresh_forward_status heartbeat works without EXPECTED_TWO_FORWARD_TIMESTAMPS error
+    readme = tmp_path / "README.md"
+    latest = tmp_path / "latest.md"
+    readme.write_text(f"<!-- DUAL_FORWARD:START -->\n{panel}\n<!-- DUAL_FORWARD:END -->\n", encoding="utf-8")
+    refresh(readme, latest, "CAPTURED", now=datetime(2026, 11, 6, 20, 0, tzinfo=ZoneInfo("Asia/Seoul")))
+    assert "#### 🔍 약세장 관찰 기록" in readme.read_text(encoding="utf-8")
+

@@ -176,12 +176,15 @@ def build_record(finding: dict, manifest_path: Path) -> dict:
         (len(b_hist) >= 4 and (breadth - float(b_hist.max())) <= -3.5)
         or (len(b_hist) >= 3 and float(b_hist.iloc[-1]) < float(b_hist.iloc[-2]) < float(b_hist.iloc[-3]))
     )
+    regime_blocked = bool(breadth < 40.0 or regime_rollover)
     strategies = {}
+    blocked_lists: dict[str, list[dict]] = {}
     for key, ranker, score_name in (
         ("early_inception", compute_early_inception_rankings, "inception_score"),
         ("early_contraction", compute_early_contraction_rankings, "contraction_score"),
     ):
-        ranks = ranker(universe, as_of) if (breadth >= 40.0 and not regime_rollover) else pd.DataFrame()
+        raw_ranks = ranker(universe, as_of)
+        ranks = raw_ranks if not regime_blocked else pd.DataFrame()
         candidates = [] if ranks.empty else ranks.head(TOP_N).to_dict(orient="records")
         candidates = json.loads(pd.DataFrame(candidates).to_json(orient="records")) if candidates else []
         for pick in candidates:
@@ -189,6 +192,21 @@ def build_record(finding: dict, manifest_path: Path) -> dict:
             pick["market"] = "KOSDAQ" if symbol.endswith(".KQ") else "KOSPI"
             pick["name"] = finding["name_by_code"].get(pick["code"], pick["code"])
         strategies[key] = {"score_field": score_name, "candidates": candidates}
+
+        if regime_blocked:
+            obs_items = [] if raw_ranks.empty else raw_ranks.head(TOP_N).to_dict(orient="records")
+            obs_items = json.loads(pd.DataFrame(obs_items).to_json(orient="records")) if obs_items else []
+            cleaned_obs = []
+            for item in obs_items:
+                clean_item = {
+                    k: v for k, v in item.items()
+                    if k not in {"pullback_buy_1", "pullback_buy_2", "stop_price_5pct"}
+                }
+                symbol = finding["symbol_by_code"].get(clean_item["code"], "")
+                clean_item["market"] = "KOSDAQ" if symbol.endswith(".KQ") else "KOSPI"
+                clean_item["name"] = finding["name_by_code"].get(clean_item["code"], clean_item["code"])
+                cleaned_obs.append(clean_item)
+            blocked_lists[key] = cleaned_obs
     source = {
         "manifest_sha256": _sha(manifest_path),
         "price_sha256": finding["hashes"],
@@ -202,6 +220,12 @@ def build_record(finding: dict, manifest_path: Path) -> dict:
               "fresh_count": len(universe), "rejected_rows": finding["rejected"],
               "market_breadth_pct": breadth,
               "note": "완료 일봉 관찰. 다음 봉 시가 가상 진입만 후속 평가하며 실제 주문·매수 추천이 아님."}
+    if regime_blocked:
+        record["blocked_observations"] = {
+            "reason": "BREADTH_BELOW_40" if breadth < 40.0 else "REGIME_ROLLOVER",
+            "early_inception": blocked_lists.get("early_inception", []),
+            "early_contraction": blocked_lists.get("early_contraction", []),
+        }
     record["run_id"] = hashlib.sha256(_canonical(record)).hexdigest()[:20]
     return record
 
@@ -219,7 +243,8 @@ def capture(data_dir: Path, manifest_path: Path, run_dir: Path,
                 and prior.get("source", {}).get("engine_sha256") == record["source"]["engine_sha256"]
                 and prior.get("source", {}).get("runner_sha256") == record["source"]["runner_sha256"]
                 and prior.get("source", {}).get("mode2_sha256") == record["source"]["mode2_sha256"]
-                and prior.get("strategies") == record["strategies"])
+                and prior.get("strategies") == record["strategies"]
+                and prior.get("blocked_observations") == record.get("blocked_observations"))
     if target.exists():
         prior = json.loads(target.read_text(encoding="utf-8"))
         if not same_decision(prior):
@@ -667,9 +692,9 @@ def compute_action_directive(
     if breadth < 40.0 or regime_status == "HALTED":
         return {
             "code": "HALTED_CASH",
-            "headline": "🛑 [신규 매수 중단 · 현금/파킹 대피] 지금은 사지 마세요. 보유 종목도 손절·추세선 이탈 시 즉시 현금화하세요.",
-            "new_buy": "전면 금지 (0원) — 시장 폭 40% 미만 약세 차단 구간입니다. 기준을 낮춘 억지 매수나 물타기를 금지합니다.",
-            "holding": "종가가 SMA10·SMA20 추세선 아래로 마감하면 다음 날 시초가에 전량 현금화하고, 장중 비상 에어백(-7%) 도달 시 즉시 현금화하세요.",
+            "headline": "🛑 [신규 매수 중단 · 기존 보유는 최초 신호의 청산 기준 적용] 신규 진입은 멈추고, 기존 보유분만 최초 청산 기준 이탈 시 현금화하세요.",
+            "new_buy": "신규 진입 차단 (0원) — 시장 폭 40% 미만 약세 차단 구간입니다. 기준을 낮춘 억지 매수나 물타기를 금지합니다.",
+            "holding": "기존 보유는 최초 신호의 청산 기준 적용 — 레짐 차단만으로 추세 유지 보유분을 임의 매도하지 말고, 종가가 SMA10·SMA20 추세선 아래로 마감하면 다음 날 시초가 현금화, 장중 비상 에어백(-7%) 도달 시 즉시 현금화하세요.",
             "cash_plan": "대기 자금 100% 현금 또는 파킹형 ETF(CD금리·머니마켓) 유지 (시장 폭 40% 회복 전까지 관망).",
         }
 
@@ -717,11 +742,335 @@ def compute_action_directive(
     }
 
 
+def _describe_bar_state_up_to(
+    frame: pd.DataFrame | None,
+    as_of_ts: pd.Timestamp,
+    universe_median_ret20: float | None,
+) -> dict | None:
+    """Summarize strictly completed daily bar metrics up to as_of_ts (zero lookahead)."""
+    if frame is None or frame.empty or as_of_ts not in frame.index:
+        return None
+    hist = frame.loc[:as_of_ts]
+    if hist.empty:
+        return None
+    c = hist["Close"].astype(float)
+    h = hist["High"].astype(float)
+    l = hist["Low"].astype(float)
+    close_now = float(c.iloc[-1])
+    if not np.isfinite(close_now) or close_now <= 0.0:
+        return None
+
+    ret20: float | None = None
+    if len(c) >= 21 and float(c.iloc[-21]) > 0.0:
+        val = float(c.iloc[-1] / c.iloc[-21] - 1.0)
+        if np.isfinite(val):
+            ret20 = val
+
+    rel20: float | None = None
+    if ret20 is not None and universe_median_ret20 is not None and np.isfinite(universe_median_ret20):
+        rel20 = float(ret20 - universe_median_ret20)
+
+    if rel20 is None or ret20 is None:
+        rs_label = "상대강도 미산출"
+    elif rel20 > 0.0 and ret20 >= 0.0:
+        rs_label = f"상대강도 우위(20일 {ret20:+.1%} · 중앙대비 {rel20 * 100.0:+.1f}%p)"
+    elif rel20 > 0.0 and ret20 < 0.0:
+        rs_label = f"상대강도 우위·절대하락(20일 {ret20:+.1%} · 중앙대비 {rel20 * 100.0:+.1f}%p)"
+    else:
+        rs_label = f"상대강도 열위(20일 {ret20:+.1%} · 중앙대비 {rel20 * 100.0:+.1f}%p)"
+
+    contraction_label = "수축 미산출"
+    if len(hist) >= 61:
+        prior_h20 = float(h.iloc[-21:-1].max())
+        prior_l20 = float(l.iloc[-21:-1].min())
+        prior_h60 = float(h.iloc[-61:-1].max())
+        prior_l60 = float(l.iloc[-61:-1].min())
+        r20 = prior_h20 - prior_l20
+        r60 = prior_h60 - prior_l60
+        if prior_h20 > 0.0 and r60 > 0.0 and r20 >= 0.0:
+            width = r20 / close_now
+            c_ratio = r20 / r60
+            eff_max = 0.85 if width <= 0.12 else 0.75
+            if width <= 0.25 and c_ratio <= eff_max:
+                contraction_label = f"수축 충족(수축비 {c_ratio:.2f})"
+            else:
+                contraction_label = f"수축 미충족(수축비 {c_ratio:.2f})"
+
+    sma10 = float(c.rolling(10).mean().iloc[-1]) if len(c) >= 10 else float("nan")
+    sma20 = float(c.rolling(20).mean().iloc[-1]) if len(c) >= 20 else float("nan")
+    return {
+        "close": close_now,
+        "ret20": ret20,
+        "rel20": rel20,
+        "rs_label": rs_label,
+        "contraction_label": contraction_label,
+        "sma10": sma10,
+        "sma20": sma20,
+        "hist": hist,
+    }
+
+
+def compute_regime_observations(
+    record: dict,
+    run_dir: Path | None = None,
+    full_universe: dict[str, pd.DataFrame] | None = None,
+    eval_universe: dict[str, pd.DataFrame] | None = None,
+    regime_context: dict | None = None,
+    max_horizon: int = 20,
+) -> dict | None:
+    """Build read-only bear-regime observation rows strictly up to record['as_of'].
+
+    Separates:
+      1) `차단 전 포착 추적`: Stocks captured before the halt within `max_horizon` sessions,
+         showing initial capture date/close, path to `as_of` close, relative strength,
+         contraction state, and original exit-rule status (no buy/stop/qty recommendations).
+      2) `차단 중 첫 포착`: Stocks passing all technical gates on `as_of` except the market
+         regime gate, explicitly labeled `레짐 때문에 제외` (never enters `outcomes.json`).
+    """
+    if "as_of" not in record or "market_breadth_pct" not in record:
+        return None
+    try:
+        breadth = float(record["market_breadth_pct"])
+    except (TypeError, ValueError):
+        return None
+    if not np.isfinite(breadth):
+        return None
+
+    regime_status = (
+        regime_context.get("status")
+        if isinstance(regime_context, dict) and regime_context.get("status")
+        else ("HALTED" if breadth < 40.0 else "STABLE")
+    )
+    has_sealed_blocked = isinstance(record.get("blocked_observations"), dict)
+    is_blocked = bool(breadth < 40.0 or regime_status == "HALTED" or has_sealed_blocked)
+    strats_now = record.get("strategies") or {}
+    today_breakouts = (strats_now.get("early_inception") or {}).get("candidates") or []
+    today_contractions = (strats_now.get("early_contraction") or {}).get("candidates") or []
+    today_breakout_codes = {str(p.get("code", "")).strip() for p in today_breakouts if p.get("code")}
+    if not is_blocked and run_dir is None and (today_breakouts or not today_contractions):
+        return None
+
+    as_of_str = str(record["as_of"])
+    as_of_ts = pd.Timestamp(as_of_str)
+    price_book = full_universe or eval_universe or {}
+    primary_book = eval_universe or full_universe or {}
+
+    ret20_vals: list[float] = []
+    for df in primary_book.values():
+        if df is None or df.empty or as_of_ts not in df.index:
+            continue
+        sliced = df.loc[:as_of_ts]
+        if len(sliced) >= 21 and float(sliced["Close"].iloc[-21]) > 0.0:
+            r20 = float(sliced["Close"].iloc[-1] / sliced["Close"].iloc[-21] - 1.0)
+            if np.isfinite(r20):
+                ret20_vals.append(r20)
+    med_ret20 = float(np.median(ret20_vals)) if ret20_vals else None
+
+    # Session calendar <= as_of for 20-session window filtering
+    calendar_days: set[str] = {as_of_str}
+    for df in price_book.values():
+        if df is not None and not df.empty:
+            for ts in df.loc[:as_of_ts].index[-35:]:
+                calendar_days.add(pd.Timestamp(ts).date().isoformat())
+
+    prior_records: list[tuple[str, dict]] = []
+    if run_dir is not None and run_dir.is_dir():
+        for path in sorted(run_dir.glob("????-??-??.json")):
+            day = path.stem
+            if day < as_of_str:
+                eff = load_effective_record(run_dir, day)
+                if eff is not None:
+                    prior_records.append((day, eff))
+                    calendar_days.add(day)
+
+    ordered_sessions = sorted(d for d in calendar_days if d <= as_of_str)
+    session_pos = {d: i for i, d in enumerate(ordered_sessions)}
+    as_of_pos = session_pos[as_of_str]
+
+    # 1. Pre-halt captured stocks within max_horizon sessions
+    tracked_by_code: dict[str, dict] = {}
+    for day, eff in prior_records:
+        if day in session_pos and (as_of_pos - session_pos[day]) > max_horizon:
+            continue
+        strats = eff.get("strategies") or {}
+        for strat_key, strat_label in (
+            ("early_inception", "돌파확정"),
+            ("early_contraction", "수축임박"),
+        ):
+            cands = (strats.get(strat_key) or {}).get("candidates") or []
+            for pick in cands:
+                code = str(pick.get("code", "")).strip()
+                if not code or code in today_breakout_codes:
+                    continue
+                if code not in tracked_by_code:
+                    tracked_by_code[code] = {
+                        "code": code,
+                        "name": str(pick.get("name", code)),
+                        "first_date": day,
+                        "first_close": float(pick.get("close", 0.0) or 0.0),
+                        "origin_label": strat_label,
+                    }
+
+    exit_reason_labels = {
+        "STOP_LOSS": "비상손절(-7%)",
+        "SMA10_WEAKENING": "추세선이탈",
+        "PEAK_TRAILING_STOP": "고점트레일링",
+    }
+    pre_halt_rows: list[dict] = []
+    for code, info in tracked_by_code.items():
+        first_date = info["first_date"]
+        first_close = info["first_close"]
+        frame = price_book.get(code)
+        bar_state = _describe_bar_state_up_to(frame, as_of_ts, med_ret20)
+        if bar_state is not None:
+            hist = bar_state["hist"]
+            elapsed = int((hist.index > pd.Timestamp(first_date)).sum())
+            if elapsed > max_horizon:
+                continue
+            cur_close = bar_state["close"]
+            chg_pct = (cur_close / first_close - 1.0) * 100.0 if first_close > 0 else 0.0
+            path_str = f"{cur_close:,.0f}원 ({chg_pct:+.1f}% · {elapsed}거래일 경과)"
+
+            sim = simulate_trade_with_weakening_exit(hist, pd.Timestamp(first_date), max_horizon=max_horizon)
+            if sim.get("status") == "COMPLETED" and sim.get("exit_reason") != "MAX_HORIZON":
+                r_lbl = exit_reason_labels.get(str(sim["exit_reason"]), str(sim["exit_reason"]))
+                exit_note = f"청산기준 도달({str(sim['exit_date'])[5:]} {r_lbl})"
+            elif sim.get("status") == "COMPLETED" and elapsed >= max_horizon:
+                exit_note = f"20일 관찰만료({str(sim['exit_date'])[5:]})"
+            elif sim.get("status") == "INSUFFICIENT_FUTURE_BARS" and elapsed == 1:
+                f_bars = hist.loc[hist.index > pd.Timestamp(first_date)]
+                d1_open = float(f_bars.iloc[0]["Open"])
+                d1_low = float(f_bars.iloc[0]["Low"])
+                if d1_open > 0.0 and d1_low <= d1_open * 0.93:
+                    exit_note = f"청산기준 도달({str(f_bars.index[0].date())[5:]} 비상손절(-7%))"
+                else:
+                    exit_note = "최초신호 추세 관찰(1일차)"
+            else:
+                s20 = bar_state["sma20"]
+                if np.isfinite(s20) and cur_close < s20:
+                    exit_note = "SMA20 하회(청산전 점검)"
+                else:
+                    exit_note = "최초신호 추세 유지"
+            status_str = f"{bar_state['rs_label']} · {bar_state['contraction_label']} · `{exit_note}`"
+        else:
+            path_str = "시세 미수신 (일봉 조회 시 갱신)"
+            status_str = f"원 신호: `{info['origin_label']}` · 시세 확인 대기"
+
+        track_prefix = "차단 전 포착 추적" if is_blocked else "이전 포착 추적"
+        pre_halt_rows.append(
+            {
+                "category": f"{track_prefix} (`{info['origin_label']}`)",
+                "code": code,
+                "name": info["name"],
+                "first_capture_str": (
+                    f"`{first_date}` ({first_close:,.0f}원)" if first_close > 0 else f"`{first_date}`"
+                ),
+                "current_path_str": path_str,
+                "status_str": status_str,
+            }
+        )
+
+    # 2. Newly qualified during regime block (or pre-breakout contraction watch when confirmed breakouts == 0)
+    blocked_src: list[tuple[str, dict, str, str]] = []
+    if is_blocked:
+        sealed_obs = record.get("blocked_observations")
+        if isinstance(sealed_obs, dict):
+            for item in sealed_obs.get("early_inception") or []:
+                blocked_src.append(("차단 중 첫 포착", item, "20일돌파 충족", "**`레짐 때문에 제외`**"))
+            for item in sealed_obs.get("early_contraction") or []:
+                blocked_src.append(("차단 중 첫 포착", item, "20일수축 충족", "**`레짐 때문에 제외`**"))
+        elif primary_book:
+            inc_df = compute_early_inception_rankings(primary_book, as_of_ts)
+            if not inc_df.empty:
+                for item in inc_df.head(TOP_N).to_dict(orient="records"):
+                    blocked_src.append(("차단 중 첫 포착", item, "20일돌파 충족", "**`레짐 때문에 제외`**"))
+            con_df = compute_early_contraction_rankings(primary_book, as_of_ts)
+            if not con_df.empty:
+                for item in con_df.head(TOP_N).to_dict(orient="records"):
+                    blocked_src.append(("차단 중 첫 포착", item, "20일수축 충족", "**`레짐 때문에 제외`**"))
+    elif not today_breakouts and today_contractions:
+        for item in today_contractions:
+            blocked_src.append(("수축 관찰 (미돌파)", item, "20일수축 충족", "**`20일 고점 미돌파로 제외`**"))
+
+    # Find earliest blocked capture within current contiguous blocked streak
+    current_streak_first: dict[str, tuple[str, float, str]] = {}
+    if is_blocked:
+        for day, eff in reversed(prior_records):
+            eff_strats = eff.get("strategies") or {}
+            had_active = any((eff_strats.get(k) or {}).get("candidates") for k in ("early_inception", "early_contraction"))
+            eff_b = eff.get("market_breadth_pct")
+            eff_blocked_obs = eff.get("blocked_observations")
+            if had_active or (isinstance(eff_b, (int, float)) and float(eff_b) >= 40.0 and not isinstance(eff_blocked_obs, dict)):
+                break
+            if isinstance(eff_blocked_obs, dict):
+                for k_name in ("early_inception", "early_contraction"):
+                    for b_item in eff_blocked_obs.get(k_name) or []:
+                        b_code = str(b_item.get("code", "")).strip()
+                        if b_code:
+                            current_streak_first[b_code] = (
+                                day,
+                                float(b_item.get("close", 0.0) or 0.0),
+                                str(b_item.get("name", b_code)),
+                            )
+
+    seen_blocked: set[str] = set(tracked_by_code.keys()) | set(today_breakout_codes)
+    blocked_rows: list[dict] = []
+    for row_cat, item, cond_label, excl_label in blocked_src:
+        code = str(item.get("code", "")).strip()
+        if not code or code in seen_blocked:
+            continue
+        seen_blocked.add(code)
+        cur_close = float(item.get("close", 0.0) or 0.0)
+        name = str(item.get("name", code))
+        if code in current_streak_first:
+            f_day, f_close, f_name = current_streak_first[code]
+            if name == code and f_name:
+                name = f_name
+            chg = (cur_close / f_close - 1.0) * 100.0 if f_close > 0 else 0.0
+            first_str = f"`{f_day}` ({f_close:,.0f}원)" if f_close > 0 else f"`{f_day}`"
+            path_str = f"{cur_close:,.0f}원 ({chg:+.1f}%)"
+        else:
+            first_str = f"`{as_of_str}` ({cur_close:,.0f}원)" if cur_close > 0 else f"`{as_of_str}`"
+            path_str = f"{cur_close:,.0f}원 (당일 첫 포착)"
+
+        b_frame = primary_book[code] if code in primary_book else price_book.get(code)
+        bar_state = _describe_bar_state_up_to(b_frame, as_of_ts, med_ret20)
+        if bar_state is not None:
+            rs_part = bar_state["rs_label"]
+            con_part = bar_state["contraction_label"]
+        else:
+            c_ratio = item.get("contraction_ratio")
+            rs_part = "상대강도 미산출"
+            con_part = f"수축 충족(수축비 {float(c_ratio):.2f})" if isinstance(c_ratio, (int, float)) else cond_label
+
+        blocked_rows.append(
+            {
+                "category": row_cat,
+                "code": code,
+                "name": name,
+                "first_capture_str": first_str,
+                "current_path_str": path_str,
+                "status_str": f"{rs_part} · {con_part} · {cond_label} · {excl_label}",
+            }
+        )
+
+    if not is_blocked and not pre_halt_rows and not blocked_rows:
+        return None
+
+    return {
+        "is_blocked": is_blocked,
+        "should_render": True,
+        "pre_halt_rows": pre_halt_rows,
+        "blocked_rows": blocked_rows,
+    }
+
+
 def render_panel(
     record: dict,
     observed_days: dict[tuple[str, str], int],
     regime_context: dict | None = None,
     gate_funnel: dict | None = None,
+    regime_observations: dict | None = None,
 ) -> str:
     """Render a sealed decision with only the core Market Regime, Today's Action Summary, and 20d Confirmed Breakout table."""
     strategies = record["strategies"]
@@ -827,6 +1176,37 @@ def render_panel(
         if not block["candidates"]:
             lines.append("| - | 조건 충족 없음 | - | - | - | - | - | - |")
         lines.append("")
+
+    eff_obs = (
+        regime_observations
+        if regime_observations is not None
+        else compute_regime_observations(record, regime_context=regime_context)
+    )
+    if eff_obs and (eff_obs.get("is_blocked") or eff_obs.get("should_render")):
+        obs_rows = list(eff_obs.get("pre_halt_rows") or []) + list(eff_obs.get("blocked_rows") or [])
+        obs_heading = (
+            "#### 🔍 약세장 관찰 기록 (매수 추천 아님 · 경로 확인 전용)"
+            if eff_obs.get("is_blocked")
+            else "#### 🔍 포착 추적 및 수축 관찰 기록 (매수 추천 아님 · 경로 확인 전용)"
+        )
+        lines.extend([
+            obs_heading,
+            "",
+            "> 매수가·수량·손절선을 제시하지 않는 순수 관찰 기록입니다. **차단 전/이전 포착 추적**은 최근 20거래일 내 정상 신호의 이후 경로이며, **차단 중 첫 포착 / 수축 관찰**은 기술적 조건을 통과했으나 **레짐 또는 고점 미돌파로 제외**된 종목입니다.",
+            "",
+            "| 구분 | 종목 | 최초 포착일 (당시 종가) | 기준일 종가 (포착 대비 경로) | 상대강도 · 수축 · 상태 |",
+            "|:---|:---|:---|:---|:---|",
+        ])
+        for row in obs_rows:
+            r_name = str(row.get("name", row.get("code", ""))).replace("|", "/").replace("\n", " ")
+            r_code = str(row.get("code", ""))
+            lines.append(
+                f"| {row['category']} | {r_name} (`{r_code}`) | "
+                f"{row['first_capture_str']} | {row['current_path_str']} | {row['status_str']} |"
+            )
+        if not obs_rows:
+            lines.append("| - | 관찰 대상 없음 | - | - | - |")
+        lines.append("")
     return "\n".join(lines)
 
 
@@ -865,7 +1245,20 @@ def main() -> int:
     gate_funnel = compute_gate_funnel(
         eval_universe, record["as_of"], market_breadth_pct=record.get("market_breadth_pct")
     )
-    panel = render_panel(record, observed_days, regime_context=regime_context, gate_funnel=gate_funnel)
+    regime_observations = compute_regime_observations(
+        record,
+        run_dir=args.runs,
+        full_universe=finding["universe"],
+        eval_universe=eval_universe,
+        regime_context=regime_context,
+    )
+    panel = render_panel(
+        record,
+        observed_days,
+        regime_context=regime_context,
+        gate_funnel=gate_funnel,
+        regime_observations=regime_observations,
+    )
     (args.runs.parent / "latest.md").write_text(panel, encoding="utf-8")
     if args.readme:
         update_readme_panel(args.readme, panel)

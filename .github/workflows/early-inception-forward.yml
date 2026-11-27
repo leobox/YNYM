@@ -72,6 +72,7 @@ jobs:
         run: |
           python quant-research/scripts/run_etf_observation.py \
             --out-dir /tmp/etf_observation \
+            --history-dir quant-research/data/etf_observation/history \
             --readme README.md
 
       - name: Update Sector RS v1.0 Observation Panel
@@ -91,6 +92,9 @@ jobs:
           git clean -fd quant-research/data/vcp_snapshots quant-research/data/research/T-063 quant-research/data/daily_3y 2>/dev/null || true
 
           git add README.md quant-research/data/research/T-110/runs quant-research/data/research/T-150/runs
+          if [ -d quant-research/data/etf_observation/history ]; then
+            git add quant-research/data/etf_observation/history
+          fi
           # 데이터 검증 보류 시에는 outcomes.json 등이 아직 없을 수 있다.
           for output in quant-research/data/research/T-110/outcomes.json quant-research/data/research/T-110/latest.md quant-research/data/research/T-150/latest.md; do
             if [ -f "$output" ]; then

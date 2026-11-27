@@ -75,6 +75,9 @@ python() {
         for name in ('outcomes.json', 'latest.md'):
             (self.runs.parent / name).write_text('fixture', encoding='utf-8')
         (self.sector_runs.parent / 'latest.md').write_text('sector-fixture', encoding='utf-8')
+        etf_hist = self.root / 'quant-research/data/etf_observation/history'
+        etf_hist.mkdir(parents=True, exist_ok=True)
+        (etf_hist / '2026-11-06.json').write_text('{}', encoding='utf-8')
         prelude = r'''
 pulls=0
 pushes=0
@@ -106,6 +109,7 @@ sleep() { printf 'sleep %s\n' "$*" >> git-calls.txt; }
         self.assertEqual(1, sum(c.startswith('push ') for c in calls))
         self.assertIn('push origin HEAD:test-branch', calls)
         self.assertIn('add README.md quant-research/data/research/T-110/runs quant-research/data/research/T-150/runs', calls)
+        self.assertIn('add quant-research/data/etf_observation/history', calls)
         self.assertIn('add quant-research/data/research/T-110/outcomes.json', calls)
         self.assertIn('add quant-research/data/research/T-110/latest.md', calls)
         self.assertIn('add quant-research/data/research/T-150/latest.md', calls)
@@ -123,7 +127,10 @@ python() {
         self.assertEqual(0, res_sec.returncode, res_sec.stderr)
         py_calls = (self.root / 'py-calls.txt').read_text(encoding='utf-8').splitlines()
         self.assertEqual(2, len(py_calls))
-        self.assertIn('quant-research/scripts/run_etf_observation.py --out-dir /tmp/etf_observation --readme README.md', py_calls[0])
+        self.assertIn(
+            'quant-research/scripts/run_etf_observation.py --out-dir /tmp/etf_observation --history-dir quant-research/data/etf_observation/history --readme README.md',
+            py_calls[0],
+        )
         self.assertIn('quant-research/scripts/run_sector_v1_observation.py --output quant-research/data/research/T-150 --raw-dir /tmp/sector_v1_raw --readme README.md', py_calls[1])
 
     def test_exhausted_push_failure_is_nonzero(self):

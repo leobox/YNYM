@@ -18,7 +18,16 @@ import requests
 
 ROOT=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(ROOT/'quant-research'))
-from research.etf_observer import KST, VERSION, parse_daily, rank_etfs, render_panel, select_universe, update_readme
+from research.etf_observer import (
+    KST,
+    VERSION,
+    build_etf_observation_rows,
+    parse_daily,
+    rank_etfs,
+    render_panel,
+    select_universe,
+    update_readme,
+)
 
 LIST_URL='https://finance.naver.com/api/sise/etfItemList.nhn'
 CHART_URL='https://fchart.stock.naver.com/sise.nhn'
@@ -58,7 +67,53 @@ def classify_coverage(frames: dict[str,pd.DataFrame], selected_count: int, now: 
     return ('OK' if len(fresh)==selected_count else 'PARTIAL'),as_of,fresh
 
 
-def collect(output: Path, limit: int = 100, include_leveraged: bool = False) -> dict:
+def _load_etf_history(history_dir: Path | None, as_of: str | None) -> list[dict]:
+    if history_dir is None or not as_of or not history_dir.is_dir():
+        return []
+    out = []
+    for p in sorted(history_dir.glob('????-??-??.json')):
+        if p.stem < str(as_of):
+            try:
+                out.append(json.loads(p.read_text(encoding='utf-8')))
+            except (OSError, ValueError):
+                continue
+    return out
+
+
+def _seal_etf_history(history_dir: Path | None, record: dict) -> None:
+    as_of = record.get('as_of')
+    status = record.get('status')
+    if history_dir is None or status not in ('OK', 'PARTIAL') or not as_of:
+        return
+    history_dir.mkdir(parents=True, exist_ok=True)
+    target = history_dir / f'{as_of}.json'
+    if target.is_file():
+        try:
+            existing = json.loads(target.read_text(encoding='utf-8'))
+            if existing.get('status') == 'OK' or status != 'OK':
+                return
+        except (OSError, ValueError):
+            pass
+    stages = (record.get('result') or {}).get('stages') or {}
+    compact_stages = {
+        'breakout': [
+            {k: p.get(k) for k in ('code', 'name', 'close') if k in p}
+            for p in (stages.get('breakout') or [])
+        ],
+        'watch': [
+            {k: p.get(k) for k in ('code', 'name', 'close', 'distance_to_high_pct', 'contraction_ratio') if k in p}
+            for p in (stages.get('watch') or [])
+        ],
+    }
+    dump(target, dict(version=VERSION, as_of=as_of, status=status, stages=compact_stages))
+
+
+def collect(
+    output: Path,
+    limit: int = 100,
+    include_leveraged: bool = False,
+    history_dir: Path | None = None,
+) -> dict:
     started=datetime.now(KST)
     run_id=started.strftime('%Y%m%dT%H%M%S%f')
     raw_dir=output/'raw'/run_id
@@ -117,6 +172,9 @@ def collect(output: Path, limit: int = 100, include_leveraged: bool = False) -> 
                 for pick in group:
                     pick.update(name=names[pick['code']]['name'],leveraged_or_inverse=names[pick['code']]['leveraged_or_inverse'])
             record['result']=result
+            prior_hist = _load_etf_history(history_dir, as_of)
+            record['observation_rows'] = build_etf_observation_rows(record, prior_hist, evaluated)
+            _seal_etf_history(history_dir, record)
     except Exception as exc:
         errors.append(dict(code=None,error=type(exc).__name__+':'+str(exc)[:120]))
         record['status']='ERROR'
@@ -148,6 +206,7 @@ def collect(output: Path, limit: int = 100, include_leveraged: bool = False) -> 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output','--out-dir',dest='output',type=Path,default=ROOT/'quant-research/data/etf_observation')
+    parser.add_argument('--history-dir',type=Path,help='Optional directory for compact per-session ETF capture summaries')
     parser.add_argument('--readme',type=Path)
     parser.add_argument('--limit',type=int,default=100)
     parser.add_argument('--include-leveraged',action='store_true')
@@ -156,7 +215,7 @@ def main():
     if not 1<=args.limit<=200:parser.error('limit must be 1..200')
     if args.render_only:
         record=json.loads(args.render_only.read_text(encoding='utf-8'))
-    else:record=collect(args.output,args.limit,args.include_leveraged)
+    else:record=collect(args.output,args.limit,args.include_leveraged,history_dir=args.history_dir)
     if args.readme:update_readme(args.readme,render_panel(record))
     print(json.dumps({k:record.get(k) for k in ('run_id','status','as_of','selected_count','fresh_count')},ensure_ascii=True))
     if record['status'] not in ('OK','PARTIAL'):raise SystemExit(1)

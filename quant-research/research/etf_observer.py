@@ -182,6 +182,156 @@ def safe_text(value: str) -> str:
     return escape(str(value)).replace('|','&#124;').replace('\n',' ').replace('[','&#91;').replace(']','&#93;')
 
 
+def _etf_bar_state_up_to(
+    frame: pd.DataFrame | None,
+    as_of_ts: pd.Timestamp,
+    med_ret20: float | None,
+) -> dict | None:
+    if frame is None or frame.empty or as_of_ts not in frame.index:
+        return None
+    hist = frame.loc[:as_of_ts].dropna(subset=['Open', 'High', 'Low', 'Close', 'Volume'])
+    if hist.empty or hist.index[-1] != as_of_ts:
+        return None
+    c = hist['Close'].astype(float)
+    h = hist['High'].astype(float)
+    l = hist['Low'].astype(float)
+    close_now = float(c.iloc[-1])
+    if not np.isfinite(close_now) or close_now <= 0:
+        return None
+    ret20 = float(c.iloc[-1] / c.iloc[-21] - 1.0) if len(c) >= 21 and float(c.iloc[-21]) > 0 else None
+    if ret20 is not None and not np.isfinite(ret20):
+        ret20 = None
+    rel20 = (ret20 - med_ret20) if (ret20 is not None and med_ret20 is not None and np.isfinite(med_ret20)) else None
+    if rel20 is None or ret20 is None:
+        rs_label = '상대강도 미산출'
+    elif rel20 > 0 and ret20 >= 0:
+        rs_label = f'상대강도 우위(20일 {ret20:+.1%} · 중앙대비 {rel20*100:+.1f}%p)'
+    elif rel20 > 0 and ret20 < 0:
+        rs_label = f'상대강도 우위·절대하락(20일 {ret20:+.1%} · 중앙대비 {rel20*100:+.1f}%p)'
+    else:
+        rs_label = f'상대강도 열위(20일 {ret20:+.1%} · 중앙대비 {rel20*100:+.1f}%p)'
+
+    con_label = '수축 미산출'
+    if len(hist) >= 61:
+        r20 = float(h.iloc[-21:-1].max() - l.iloc[-21:-1].min())
+        r60 = float(h.iloc[-61:-1].max() - l.iloc[-61:-1].min())
+        if r60 > 0 and r20 >= 0:
+            cr = r20 / r60
+            con_label = f'수축 충족(수축비 {cr:.2f})' if (r20 / close_now <= 0.22 and cr <= 0.75) else f'수축 미충족(수축비 {cr:.2f})'
+    sma20 = float(c.iloc[-20:].mean()) if len(c) >= 20 else float('nan')
+    return dict(close=close_now, rs_label=rs_label, con_label=con_label, sma20=sma20, hist=hist)
+
+
+def build_etf_observation_rows(
+    record: dict,
+    history_records: list[dict] | None = None,
+    evaluated_frames: dict[str, pd.DataFrame] | None = None,
+    max_horizon: int = 20,
+) -> list[dict]:
+    """Build read-only ETF tracking & pre-breakout watch rows up to record['as_of'] (no buy/stop fields)."""
+    status = record.get('status')
+    as_of = record.get('as_of')
+    if status not in ('OK', 'PARTIAL') or not as_of:
+        return []
+    as_of_str = str(as_of)
+    as_of_ts = pd.Timestamp(as_of_str)
+    frames = evaluated_frames or {}
+    result = record.get('result') or {}
+    stages = result.get('stages') or {}
+    today_breakout_codes = {str(p.get('code', '')) for p in (stages.get('breakout') or [])}
+
+    ret20_vals = []
+    for df in frames.values():
+        if df is None or df.empty or as_of_ts not in df.index:
+            continue
+        s = df.loc[:as_of_ts].dropna(subset=['Close'])
+        if len(s) >= 21 and s.index[-1] == as_of_ts and float(s['Close'].iloc[-21]) > 0:
+            v = float(s['Close'].iloc[-1] / s['Close'].iloc[-21] - 1.0)
+            if np.isfinite(v):
+                ret20_vals.append(v)
+    med_ret20 = float(np.median(ret20_vals)) if ret20_vals else None
+
+    prior_list = sorted(
+        [h for h in (history_records or []) if isinstance(h, dict) and str(h.get('as_of') or '') < as_of_str],
+        key=lambda x: str(x['as_of']),
+    )
+    cal_days = {as_of_str} | {str(h['as_of']) for h in prior_list}
+    for df in frames.values():
+        if df is not None and not df.empty:
+            for ts in df.loc[:as_of_ts].dropna(subset=['Close']).index[-35:]:
+                cal_days.add(pd.Timestamp(ts).date().isoformat())
+    ordered = sorted(d for d in cal_days if d <= as_of_str)
+    pos = {d: i for i, d in enumerate(ordered)}
+    as_pos = pos[as_of_str]
+
+    tracked: dict[str, dict] = {}
+    for h_rec in prior_list:
+        h_day = str(h_rec['as_of'])
+        if h_day in pos and (as_pos - pos[h_day]) > max_horizon:
+            continue
+        h_stages = h_rec.get('stages') or (h_rec.get('result') or {}).get('stages') or {}
+        for st_key, st_lbl in (('breakout', '돌파확정'), ('watch', '수축관찰')):
+            for p in h_stages.get(st_key) or []:
+                c_code = str(p.get('code', '')).strip()
+                if not c_code or c_code in today_breakout_codes:
+                    continue
+                if c_code not in tracked:
+                    tracked[c_code] = dict(
+                        code=c_code,
+                        name=str(p.get('name', c_code)),
+                        first_date=h_day,
+                        first_close=float(p.get('close', 0.0) or 0.0),
+                        origin_label=st_lbl,
+                    )
+
+    out_rows: list[dict] = []
+    for c_code, info in tracked.items():
+        st = _etf_bar_state_up_to(frames.get(c_code), as_of_ts, med_ret20)
+        f_date, f_close = info['first_date'], info['first_close']
+        if st is not None:
+            elapsed = int((st['hist'].index > pd.Timestamp(f_date)).sum())
+            if elapsed > max_horizon:
+                continue
+            cur_c = st['close']
+            chg = (cur_c / f_close - 1.0) * 100.0 if f_close > 0 else 0.0
+            path_str = f"{cur_c:,.0f}원 ({chg:+.1f}% · {elapsed}거래일 경과)"
+            trend_note = 'SMA20 상회 유지' if (np.isfinite(st['sma20']) and cur_c >= st['sma20']) else 'SMA20 하회'
+            status_str = f"{st['rs_label']} · {st['con_label']} · `{trend_note}`"
+        else:
+            path_str = '시세 미수신 (일봉 조회 시 갱신)'
+            status_str = f"원 기록: `{info['origin_label']}` · 시세 확인 대기"
+        out_rows.append(dict(
+            category=f"이전 포착 추적 (`{info['origin_label']}`)",
+            code=c_code,
+            name=info['name'],
+            first_capture_str=f"`{f_date}` ({f_close:,.0f}원)" if f_close > 0 else f"`{f_date}`",
+            current_path_str=path_str,
+            status_str=status_str,
+        ))
+
+    seen = set(today_breakout_codes) | set(tracked.keys())
+    for w_pick in stages.get('watch') or []:
+        w_code = str(w_pick.get('code', '')).strip()
+        if not w_code or w_code in seen:
+            continue
+        seen.add(w_code)
+        w_close = float(w_pick.get('close', 0.0) or 0.0)
+        w_name = str(w_pick.get('name', w_code))
+        dist = float(w_pick.get('distance_to_high_pct', 0.0) or 0.0)
+        c_rat = float(w_pick.get('contraction_ratio', 0.0) or 0.0)
+        st = _etf_bar_state_up_to(frames.get(w_code), as_of_ts, med_ret20)
+        rs_lbl = st['rs_label'] if st is not None else '상대강도 미산출'
+        out_rows.append(dict(
+            category='수축 관찰 (미돌파)',
+            code=w_code,
+            name=w_name,
+            first_capture_str=f"`{as_of_str}` ({w_close:,.0f}원)" if w_close > 0 else f"`{as_of_str}`",
+            current_path_str=f"{w_close:,.0f}원 (20일 고점대비 {dist:+.2f}%)",
+            status_str=f"{rs_lbl} · 수축 충족(수축비 {c_rat:.2f}) · **`20일 고점 미돌파로 제외`**",
+        ))
+    return out_rows
+
+
 def render_panel(record: dict) -> str:
     labels={'OK':'정상 확인','PARTIAL':'일부 조회 실패 · 조회된 ETF만 비교','STALE':'자료가 오래되어 후보 산출 보류',
             'ERROR':'조회 실패 · 후보 산출 보류','INSUFFICIENT_COVERAGE':'동일 날짜 자료 부족 · 후보 산출 보류'}
@@ -238,6 +388,28 @@ def render_panel(record: dict) -> str:
         message='조건 충족 없음' if status in ('OK','PARTIAL') else '자료 확인 후 산출'
         lines.append(f'| - | {message} | - | - | - | - | - |')
     lines.append('')
+    if status in ('OK','PARTIAL'):
+        obs_rows = record.get('observation_rows')
+        if not isinstance(obs_rows, list):
+            obs_rows = build_etf_observation_rows(record)
+        lines += [
+            '#### 🔍 ETF 수축 관찰 및 포착 추적 (매수 추천 아님 · 경로 확인 전용)',
+            '',
+            '> 매수가·수량·손절선을 제시하지 않는 관찰 전용 기록입니다. **이전 포착 추적**은 최근 20거래일 내 포착 ETF의 이후 경로이며, **수축 관찰 (미돌파)**은 수축·수급 조건을 통과했으나 **20일 고점 미돌파로 제외**된 ETF입니다.',
+            '',
+            '| 구분 | ETF (연금계좌) | 최초 포착일 (당시 종가) | 완료일 종가 (포착 대비 경로) | 상대강도 · 수축 · 상태 |',
+            '|:---|:---|:---|:---|:---|',
+        ]
+        for row in obs_rows:
+            r_name = safe_text(row.get('name', row.get('code', '')))
+            r_code = safe_text(row.get('code', ''))
+            lines.append(
+                f"| {row['category']} | [{r_name}](https://finance.naver.com/item/main.naver?code={r_code}) (`{r_code}`) | "
+                f"{row['first_capture_str']} | {row['current_path_str']} | {row['status_str']} |"
+            )
+        if not obs_rows:
+            lines.append('| - | 관찰 대상 없음 | - | - | - |')
+        lines.append('')
     return '\n'.join(lines)
 
 

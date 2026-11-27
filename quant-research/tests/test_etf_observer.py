@@ -235,3 +235,75 @@ def test_universe_excludes_cash_bond_and_pension_ineligible_etfs_by_default():
     assert '-5% 9,880원 · SMA10' in panel
 
 
+def test_etf_observation_rows_and_compact_history_seal_without_buy_inducement(tmp_path):
+    from research.etf_observer import build_etf_observation_rows
+
+    # Session 1 (2026-10-15): 475050 captured as pre-breakout watch at 7,110 KRW
+    hist_dir = tmp_path / 'history'
+    hist_dir.mkdir()
+    prior_summary = {
+        'version': 'etf_reference_v2',
+        'as_of': '2026-10-15',
+        'status': 'OK',
+        'stages': {
+            'breakout': [],
+            'watch': [{'code': '475050', 'name': 'ACE KPOP포커스', 'close': 7110.0}],
+        },
+    }
+    (hist_dir / '2026-10-15.json').write_text(json.dumps(prior_summary, ensure_ascii=False), encoding='utf-8')
+
+    # Session 2 (2026-10-16): 475050 rises to 8,180 (+15.0%), while 360750 is today's new watch (-1.9% below h20)
+    f_kpop = history('watch', end='2026-10-16')
+    f_kpop['Close'] = 7110.0
+    f_kpop['Open'] = 7110.0
+    f_kpop['High'] = 7362.0
+    f_kpop['Low'] = 6950.0
+    f_kpop.iloc[-1, f_kpop.columns.get_loc('Close')] = 8180.0
+    f_kpop.iloc[-1, f_kpop.columns.get_loc('High')] = 8200.0
+    f_kpop.iloc[-1, f_kpop.columns.get_loc('Low')] = 8000.0
+
+    f_watch = history('watch', end='2026-10-16')
+    f_bench = history('watch', end='2026-10-16')
+    f_bench['Close'] = np.linspace(11000.0, 9600.0, len(f_bench))
+    f_bench['Open'] = f_bench['Close']
+    f_bench['High'] = f_bench['Close'] * 1.01
+    f_bench['Low'] = f_bench['Close'] * 0.99
+
+    frames_prefix = {'475050': f_kpop, '360750': f_watch, '069500': f_bench}
+    res = rank_etfs({'360750': f_watch}, '2026-10-16')
+    res['stages']['watch'][0]['name'] = 'TIGER 테스트수축'
+    record = {'status': 'OK', 'as_of': '2026-10-16', 'fetched_at': '2026-10-16T18:00:00+09:00', 'result': res}
+
+    prior_loaded = runner._load_etf_history(hist_dir, '2026-10-16')
+    rows_prefix = build_etf_observation_rows(record, prior_loaded, frames_prefix)
+
+    # Prefix invariance check with extreme future bars after 2026-10-16
+    future = pd.DataFrame(500000.0, index=pd.bdate_range('2026-10-19', periods=3), columns=f_kpop.columns)
+    frames_with_future = {k: pd.concat([df, future]) for k, df in frames_prefix.items()}
+    assert rows_prefix == build_etf_observation_rows(record, prior_loaded, frames_with_future)
+
+    assert len(rows_prefix) == 2
+    assert rows_prefix[0]['code'] == '475050'
+    assert '이전 포착 추적' in rows_prefix[0]['category']
+    assert '+15.0%' in rows_prefix[0]['current_path_str']
+    assert rows_prefix[1]['code'] == '360750'
+    assert rows_prefix[1]['category'] == '수축 관찰 (미돌파)'
+    assert '20일 고점 미돌파로 제외' in rows_prefix[1]['status_str']
+
+    record['observation_rows'] = rows_prefix
+    panel = render_panel(record)
+    obs_section = panel.split('#### 🔍 ETF 수축 관찰 및 포착 추적', 1)[1]
+    assert 'ACE KPOP포커스' in obs_section
+    assert 'TIGER 테스트수축' in obs_section
+    assert '소액' not in obs_section
+    assert '익일 눌림 매수가' not in obs_section
+    assert '-5%' not in obs_section
+
+    # Verify compact history seal never lets PARTIAL overwrite an existing OK summary
+    runner._seal_etf_history(hist_dir, record)
+    sealed_ok = (hist_dir / '2026-10-16.json').read_bytes()
+    runner._seal_etf_history(hist_dir, {**record, 'status': 'PARTIAL'})
+    assert (hist_dir / '2026-10-16.json').read_bytes() == sealed_ok
+
+
+

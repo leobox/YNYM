@@ -362,3 +362,177 @@ def test_constituent_payload_parser_keeps_common_stocks_only() -> None:
     assert not is_eligible_kr_common_constituent("123450", "OO스팩1호")
     with pytest.raises(ValueError):
         parse_constituent_payload(b"{}", set())
+
+
+def test_high_winrate_hybrid_routing_and_action_summary_table() -> None:
+    from research.sector_v1.public_observer import _derive_high_winrate_recommendations
+
+    benchmarks = {
+        "KR": {"regime_bullish": True, "sub_regime": "UP", "sma20_slope_5d_pct": 1.25},
+        "US": {"regime_bullish": True, "sub_regime": "UP", "sma20_slope_5d_pct": 0.80},
+    }
+    candidates_b = [
+        {
+            "rank": 1,
+            "region": "KR",
+            "sector": "방산",
+            "code": "0080G0",
+            "name": "KODEX 방산TOP10",
+            "signal_close": 15_000.0,
+            "signal_sma20": 14_500.0,
+            "signal_atr20": 400.0,
+            "rs20": 0.12,
+            "rs20_improvement_5d": 0.03,
+            "rs_transition_label": "강세 지속",
+            "e1_check_lower_exclusive_sma20": 14_500.0,
+            "e1_check_upper_inclusive": 15_200.0,
+            "reference_stop_close_minus_2atr": 14_200.0,
+            "reference_qty_30m_krw": 180,
+        },
+        {
+            "rank": 2,
+            "region": "KR",
+            "sector": "반도체",
+            "code": "396500",
+            "name": "TIGER 반도체TOP10",
+            "signal_close": 16_000.0,
+            "signal_sma20": 15_200.0,
+            "signal_atr20": 500.0,
+            "rs20": 0.10,
+            "rs20_improvement_5d": 0.02,
+            "rs_transition_label": "강세 지속",
+            "e1_check_lower_exclusive_sma20": 15_200.0,
+            "e1_check_upper_inclusive": 16_250.0,
+            "reference_stop_close_minus_2atr": 15_000.0,
+            "reference_qty_30m_krw": 150,
+        },
+        {
+            "rank": 3,
+            "region": "KR",
+            "sector": "자동차",
+            "code": "091180",
+            "name": "KODEX 자동차",
+            "signal_close": 20_000.0,
+            "signal_sma20": 19_500.0,
+            "signal_atr20": 400.0,
+            "rs20": 0.05,
+            "rs20_improvement_5d": 0.04,
+            "rs_transition_label": "최근 상대강도 전환",
+            "e1_check_lower_exclusive_sma20": 19_500.0,
+            "e1_check_upper_inclusive": 20_200.0,
+            "reference_stop_close_minus_2atr": 19_200.0,
+            "reference_qty_30m_krw": 180,
+        },
+    ]
+    observations = [
+        {
+            "region": "KR",
+            "sector": "방산",
+            "code": "0080G0",
+            "name": "KODEX 방산TOP10",
+            "rs20": 0.12,
+            "leader_observation": {
+                "status": "QUALIFIED_STOCK_GATE",
+                "leader": {
+                    "code": "272210",
+                    "name": "한화시스템",
+                    "close": 100_000.0,
+                    "sma20": 98_000.0,
+                    "sma60": 90_000.0,
+                    "atr20": 4_000.0,  # ext_atr = +0.50 <= 0.8
+                    "rs20_vs_sector": 0.08,
+                    "rs20_vs_sector_improvement_5d": -0.02,  # 5d pullback <= 0
+                    "is_stock_qualified": True,
+                    "e1_check_lower_exclusive_sma20": 98_000.0,
+                    "e1_check_upper_inclusive": 102_000.0,
+                    "reference_stop_close_minus_2atr": 92_000.0,
+                    "reference_qty_30m_krw": 18,
+                    "stock_gate_failures": [],
+                },
+            },
+        },
+        {
+            "region": "KR",
+            "sector": "반도체",
+            "code": "396500",
+            "name": "TIGER 반도체TOP10",
+            "rs20": 0.10,
+            "leader_observation": {
+                "status": "QUALIFIED_STOCK_GATE",
+                "leader": {
+                    "code": "042700",
+                    "name": "한미반도체",
+                    "close": 300_000.0,
+                    "sma20": 270_000.0,
+                    "sma60": 240_000.0,
+                    "atr20": 20_000.0,  # ext_atr = +1.50 > 0.8 (overheated!)
+                    "rs20_vs_sector": 0.15,
+                    "rs20_vs_sector_improvement_5d": 0.06,
+                    "is_stock_qualified": True,
+                    "e1_check_lower_exclusive_sma20": 270_000.0,
+                    "e1_check_upper_inclusive": 310_000.0,
+                    "reference_stop_close_minus_2atr": 260_000.0,
+                    "reference_qty_30m_krw": 3,
+                    "stock_gate_failures": [],
+                },
+            },
+        },
+        {
+            "region": "KR",
+            "sector": "자동차",
+            "code": "091180",
+            "name": "KODEX 자동차",
+            "rs20": 0.05,
+            "leader_observation": {"status": "NO_OUTPERFORMING_TOP5_STOCK", "leader": None},
+        },
+    ]
+
+    recs = _derive_high_winrate_recommendations(
+        candidates_b=candidates_b,
+        observations=observations,
+        benchmarks=benchmarks,
+        weekly_confirmed=True,
+    )
+    # Slot 1 (방산): 강세 지속 + non-overheated pullback leader -> BUY_PULLBACK_LEADER_C (272210)
+    # Slot 2 (반도체): 강세 지속 + overheated leader (+1.50 ATR) -> BUY_SECTOR_ETF_B (396500)
+    # Slot 3 (자동차): 최근 상대강도 전환 -> excluded from high-winrate recommendations!
+    assert len(recs) == 2
+    assert recs[0]["action_type"] == "BUY_PULLBACK_LEADER_C"
+    assert recs[0]["code"] == "272210"
+    assert recs[0]["target_price_plus_10pct"] == 110_000.0
+    assert recs[0]["stop_price_minus_5pct"] == 95_000.0
+
+    assert recs[1]["action_type"] == "BUY_SECTOR_ETF_B"
+    assert recs[1]["code"] == "396500"
+    assert "대표 ETF(B) 대체" in recs[1]["selection_reason"]
+
+    # In SIDE regime (KODEX 200 SMA20 falling), even Slot 1 routes to ETF(B) for defense
+    recs_side = _derive_high_winrate_recommendations(
+        candidates_b=candidates_b,
+        observations=observations,
+        benchmarks={**benchmarks, "KR": {"regime_bullish": True, "sub_regime": "SIDE"}},
+        weekly_confirmed=True,
+    )
+    assert len(recs_side) == 2
+    assert recs_side[0]["action_type"] == "BUY_SECTOR_ETF_B"
+    assert recs_side[0]["code"] == "0080G0"
+
+    panel = _render_ok(
+        {
+            "weekly_rebalance_confirmed": True,
+            "benchmarks": benchmarks,
+            "weekly_candidates_b": candidates_b,
+            "weekly_candidates_c": [],
+            "observations": observations,
+            "counts": {
+                "evaluated_sectors": 20,
+                "observed_improving_sectors": 3,
+                "entry_qualified_before_regime": 3,
+            },
+        }
+    )
+    assert "#### 🎯 한눈에 보는 주간 매수·매도 실행표" in panel
+    assert "🎯 눌림대장주(C)" in panel
+    assert "🛡️ 대표ETF(B)" in panel
+    assert "전환 관찰(추격주의)" in panel
+

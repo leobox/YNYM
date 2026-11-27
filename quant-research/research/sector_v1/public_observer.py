@@ -54,7 +54,8 @@ PUBLIC_MAPPING_VERSION = "v1.0-public-obs-2026H2"
 PUBLIC_MAPPING_FREEZE_DATE = "2026-11-06"
 PUBLIC_MAPPING_VALID_FROM = "2026-11-06"
 PUBLIC_MAPPING_VALID_UNTIL = "2027-05-07"
-OBSERVATION_SCHEMA_VERSION = "1.1"
+OBSERVATION_SCHEMA_VERSION = "1.2"
+HIGH_WINRATE_MAX_STOCK_EXT_ATR = 0.8
 
 SECTOR_V1_START = "<!-- SECTOR_V1:START -->"
 SECTOR_V1_END = "<!-- SECTOR_V1:END -->"
@@ -262,6 +263,16 @@ def _evaluate_kr_constituent_on_date(
     if (close_now - sma20_now) > (2.0 * atr20_now):
         failures.append("2ATR 이격 초과")
 
+    ext_atr20 = (close_now - sma20_now) / atr20_now
+    is_non_overheated_08atr = bool(0.0 <= ext_atr20 <= HIGH_WINRATE_MAX_STOCK_EXT_ATR)
+    is_pullback_5d = bool(rs20_imp_5d is not None and rs20_imp_5d <= 0.0)
+    is_high_winrate_leader = bool(
+        rs20_now > 0.0
+        and close_now > sma60_now
+        and is_non_overheated_08atr
+        and is_pullback_5d
+    )
+
     return {
         "code": code,
         "name": name,
@@ -272,12 +283,72 @@ def _evaluate_kr_constituent_on_date(
         "sma20": sma20_now,
         "sma60": sma60_now,
         "atr20": atr20_now,
+        "ext_atr20": ext_atr20,
+        "is_above_sma20": bool(close_now >= sma20_now),
+        "is_non_overheated_08atr": is_non_overheated_08atr,
+        "is_pullback_5d": is_pullback_5d,
+        "is_high_winrate_leader": is_high_winrate_leader,
         "is_stock_qualified": bool(
             rs20_now > 0.0
             and close_now > sma60_now
             and (close_now - sma20_now) <= (2.0 * atr20_now)
         ),
         "stock_gate_failures": failures,
+    }
+
+
+def _serialize_stock_candidate(
+    member: Mapping[str, object],
+    reference_capital: float = DEFAULT_REFERENCE_CAPITAL_KRW,
+) -> dict:
+    close_val = float(member["close"])
+    sma20_val = float(member["sma20"])
+    sma60_val = float(member["sma60"])
+    atr20_val = float(member["atr20"])
+    band = compute_e1_entry_check_band(
+        signal_sma20=sma20_val,
+        signal_close=close_val,
+        signal_atr20=atr20_val,
+    )
+    ext_atr = (close_val - sma20_val) / atr20_val if atr20_val > 0 else 0.0
+    imp_5d = member.get("rs20_vs_sector_imp_5d")
+    is_pb_5d = bool(imp_5d is not None and float(imp_5d) <= 0.0)
+    is_non_overheated = bool(0.0 <= ext_atr <= HIGH_WINRATE_MAX_STOCK_EXT_ATR)
+    non_rs_failures = [
+        f for f in list(member.get("stock_gate_failures") or []) if f != "섹터대비 RS20≤0"
+    ]
+    return {
+        "code": str(member["code"]),
+        "name": str(member["name"]),
+        "close": round(close_val, 2),
+        "sma20": round(sma20_val, 2),
+        "sma60": round(sma60_val, 2),
+        "atr20": round(atr20_val, 2),
+        "ext_atr20": round(ext_atr, 4),
+        "rs20_vs_sector": round(float(member["rs20_vs_sector"]), 6),
+        "rs20_vs_sector_improvement_5d": (
+            round(float(imp_5d), 6) if imp_5d is not None else None
+        ),
+        "turnover20_median_krw": round(float(member["turnover20"]), 2),
+        "is_stock_qualified": bool(member["is_stock_qualified"]),
+        "is_non_overheated_08atr": is_non_overheated,
+        "is_pullback_5d": is_pb_5d,
+        "is_high_winrate_leader": bool(
+            bool(member["is_stock_qualified"]) and is_non_overheated and is_pb_5d
+        ),
+        "stock_gate_failures": non_rs_failures,
+        "e1_check_lower_exclusive_sma20": band["lower_exclusive_sma20"],
+        "e1_check_upper_inclusive": band["upper_inclusive_close_plus_half_atr"],
+        "target_price_plus_10pct": round(close_val * 1.10, 2),
+        "stop_price_minus_5pct": round(close_val * 0.95, 2),
+        "reference_stop_close_minus_2atr": round(close_val - 2.0 * atr20_val, 2),
+        "reference_qty_30m_krw": int(
+            compute_target_qty(
+                nav_t=reference_capital,
+                signal_close=close_val,
+                signal_atr20=atr20_val,
+            )
+        ),
     }
 
 
@@ -300,6 +371,7 @@ def _evaluate_sector_leader_pool(
                 "top5_liquid_count": 0,
                 "outperforming_top5_count": 0,
                 "leader": None,
+                "pullback_leader": None,
             },
             [],
         )
@@ -313,6 +385,7 @@ def _evaluate_sector_leader_pool(
                 "top5_liquid_count": 0,
                 "outperforming_top5_count": 0,
                 "leader": None,
+                "pullback_leader": None,
             },
             [],
         )
@@ -328,6 +401,7 @@ def _evaluate_sector_leader_pool(
                 "top5_liquid_count": 0,
                 "outperforming_top5_count": 0,
                 "leader": None,
+                "pullback_leader": None,
             },
             [],
         )
@@ -348,6 +422,7 @@ def _evaluate_sector_leader_pool(
                 "top5_liquid_count": 0,
                 "outperforming_top5_count": 0,
                 "leader": None,
+                "pullback_leader": None,
             },
             [],
         )
@@ -388,6 +463,7 @@ def _evaluate_sector_leader_pool(
                 "top5_liquid_count": 0,
                 "outperforming_top5_count": 0,
                 "leader": None,
+                "pullback_leader": None,
             },
             [],
         )
@@ -400,6 +476,7 @@ def _evaluate_sector_leader_pool(
     outperforming.sort(key=lambda m: (-m["rs20_vs_sector"], -m["turnover20"], m["code"]))
 
     qualifying = [m for m in outperforming if m["is_stock_qualified"]]
+    pullback_pool = [m for m in qualifying if m["is_high_winrate_leader"]]
 
     if not outperforming:
         return (
@@ -410,16 +487,12 @@ def _evaluate_sector_leader_pool(
                 "top5_liquid_count": len(top5_liquid),
                 "outperforming_top5_count": 0,
                 "leader": None,
+                "pullback_leader": None,
             },
             [],
         )
 
     top1 = outperforming[0]
-    band = compute_e1_entry_check_band(
-        signal_sma20=float(top1["sma20"]),
-        signal_close=float(top1["close"]),
-        signal_atr20=float(top1["atr20"]),
-    )
     non_rs_failures = [f for f in top1["stock_gate_failures"] if f != "섹터대비 RS20≤0"]
     leader_summary = {
         "status": "QUALIFIED_STOCK_GATE" if not non_rs_failures else "OUTPERFORMING_SECTOR_WATCH",
@@ -427,37 +500,164 @@ def _evaluate_sector_leader_pool(
         "evaluated_constituent_count": len(evaluated_members),
         "top5_liquid_count": len(top5_liquid),
         "outperforming_top5_count": len(outperforming),
-        "leader": {
-            "code": top1["code"],
-            "name": top1["name"],
-            "close": round(float(top1["close"]), 2),
-            "sma20": round(float(top1["sma20"]), 2),
-            "sma60": round(float(top1["sma60"]), 2),
-            "atr20": round(float(top1["atr20"]), 2),
-            "rs20_vs_sector": round(float(top1["rs20_vs_sector"]), 6),
-            "rs20_vs_sector_improvement_5d": (
-                round(float(top1["rs20_vs_sector_imp_5d"]), 6)
-                if top1["rs20_vs_sector_imp_5d"] is not None
-                else None
-            ),
-            "turnover20_median_krw": round(float(top1["turnover20"]), 2),
-            "is_stock_qualified": bool(top1["is_stock_qualified"]),
-            "stock_gate_failures": non_rs_failures,
-            "e1_check_lower_exclusive_sma20": band["lower_exclusive_sma20"],
-            "e1_check_upper_inclusive": band["upper_inclusive_close_plus_half_atr"],
-            "reference_stop_close_minus_2atr": round(
-                float(top1["close"]) - 2.0 * float(top1["atr20"]), 2
-            ),
-            "reference_qty_30m_krw": int(
-                compute_target_qty(
-                    nav_t=reference_capital,
-                    signal_close=float(top1["close"]),
-                    signal_atr20=float(top1["atr20"]),
-                )
-            ),
-        },
+        "leader": _serialize_stock_candidate(top1, reference_capital=reference_capital),
+        "pullback_leader": (
+            _serialize_stock_candidate(pullback_pool[0], reference_capital=reference_capital)
+            if pullback_pool
+            else None
+        ),
     }
     return leader_summary, qualifying
+
+
+def _derive_high_winrate_recommendations(
+    *,
+    candidates_b: Sequence[Mapping[str, object]],
+    observations: Sequence[Mapping[str, object]],
+    benchmarks: Mapping[str, Mapping[str, object]],
+    weekly_confirmed: bool,
+) -> list[dict]:
+    """Build the high-win-rate B+C hybrid recommendation list (max 3 slots).
+
+    Rules verified in T-155/T-156:
+    1) Sector must be in `weekly_candidates_b`, have `rs_transition_label == "강세 지속"` (10d continuous RS20>0),
+       and hold `signal_close >= signal_sma20` (20-day line support).
+    2) If `region == "KR"` and `KR` sub-regime is `"UP"` (`Close >= SMA120` & `SMA20` 5d rising) and the sector
+       has a non-overheated 5-day pullback leader (`0 <= ext_atr20 <= 0.8` & `5d RS imp <= 0`), select `STOCK_C`.
+    3) Otherwise (leader overheated `>0.8 ATR`, 5d spike, `SIDE` transition market, or `US` sector), route to
+       the Representative Sector ETF (`ETF_B`) to avoid single-stock mean reversion and gap risk.
+    """
+    obs_by_key = {
+        (str(r.get("region")), str(r.get("sector"))): r
+        for r in observations
+        if isinstance(r, Mapping)
+    }
+    used_codes: set[str] = set()
+    recommendations: list[dict] = []
+
+    for cand in candidates_b:
+        if len(recommendations) >= 3:
+            break
+        reg = str(cand.get("region", ""))
+        sec = str(cand.get("sector", ""))
+        label = str(cand.get("rs_transition_label", ""))
+        c_px = float(cand.get("signal_close", 0.0) or 0.0)
+        sma20_px = float(cand.get("signal_sma20", 0.0) or 0.0)
+        atr20_px = float(cand.get("signal_atr20", 0.0) or 0.0)
+        if label != "강세 지속" or c_px < sma20_px or c_px <= 0.0:
+            continue
+
+        bm = benchmarks.get(reg, {}) if isinstance(benchmarks, Mapping) else {}
+        sub_regime = str(bm.get("sub_regime") or ("UP" if bm.get("regime_bullish") else "DOWN"))
+        obs_row = obs_by_key.get((reg, sec), {})
+        l_obs = (
+            obs_row.get("leader_observation")
+            if isinstance(obs_row, Mapping) and isinstance(obs_row.get("leader_observation"), Mapping)
+            else {}
+        )
+
+        # Check pullback_leader first, or fallback to leader if it satisfies high-winrate criteria
+        pb_leader = l_obs.get("pullback_leader") if isinstance(l_obs, Mapping) else None
+        raw_leader = l_obs.get("leader") if isinstance(l_obs, Mapping) else None
+        chosen_stock: Mapping[str, object] | None = None
+        if isinstance(pb_leader, Mapping) and pb_leader.get("code"):
+            chosen_stock = pb_leader
+        elif isinstance(raw_leader, Mapping) and raw_leader.get("code"):
+            l_close = float(raw_leader.get("close", 0.0) or 0.0)
+            l_sma20 = float(raw_leader.get("sma20", 0.0) or 0.0)
+            l_atr20 = float(raw_leader.get("atr20", 0.0) or 0.0)
+            l_ext = (l_close - l_sma20) / l_atr20 if l_atr20 > 0 else 999.0
+            l_imp = raw_leader.get("rs20_vs_sector_improvement_5d")
+            if (
+                bool(raw_leader.get("is_stock_qualified"))
+                and 0.0 <= l_ext <= HIGH_WINRATE_MAX_STOCK_EXT_ATR
+                and l_imp is not None
+                and float(l_imp) <= 0.0
+            ):
+                chosen_stock = raw_leader
+
+        if (
+            reg == "KR"
+            and sub_regime == "UP"
+            and chosen_stock is not None
+            and str(chosen_stock.get("code")) not in used_codes
+        ):
+            s_code = str(chosen_stock["code"])
+            used_codes.add(s_code)
+            s_close = float(chosen_stock["close"])
+            s_sma20 = float(chosen_stock["sma20"])
+            s_atr20 = float(chosen_stock["atr20"])
+            s_ext = (s_close - s_sma20) / s_atr20 if s_atr20 > 0 else 0.0
+            recommendations.append(
+                {
+                    "slot": len(recommendations) + 1,
+                    "action_type": "BUY_PULLBACK_LEADER_C",
+                    "action_badge": "🎯 눌림대장주(C)",
+                    "region": reg,
+                    "sector": sec,
+                    "code": s_code,
+                    "name": str(chosen_stock["name"]),
+                    "close": round(s_close, 2),
+                    "sma20": round(s_sma20, 2),
+                    "atr20": round(s_atr20, 2),
+                    "ext_atr20": round(s_ext, 2),
+                    "selection_reason": f"강세지속 섹터 · 대장주 눌림(이격 {s_ext:+.2f}ATR · 5일 숨고르기)",
+                    "buy_band_lower_exclusive": float(chosen_stock["e1_check_lower_exclusive_sma20"]),
+                    "buy_band_upper_inclusive": float(chosen_stock["e1_check_upper_inclusive"]),
+                    "target_price_plus_10pct": round(s_close * 1.10, 2),
+                    "stop_price_minus_5pct": round(s_close * 0.95, 2),
+                    "stop_price_minus_2atr": float(chosen_stock["reference_stop_close_minus_2atr"]),
+                    "reference_qty_30m_krw": int(chosen_stock["reference_qty_30m_krw"]),
+                    "weekly_confirmed": bool(weekly_confirmed),
+                }
+            )
+            continue
+
+        etf_code = str(cand["code"])
+        if etf_code in used_codes:
+            continue
+        used_codes.add(etf_code)
+        etf_ext = (c_px - sma20_px) / atr20_px if atr20_px > 0 else 0.0
+        if reg != "KR":
+            route_reason = "강세지속 해외 섹터 · 대표 ETF(B) 전용"
+        elif sub_regime != "UP":
+            route_reason = "강세지속 섹터 · 혼조장(20일선 둔화)으로 대표 ETF(B) 방어 진입"
+        elif isinstance(raw_leader, Mapping) and raw_leader.get("code"):
+            r_close = float(raw_leader.get("close", 0.0) or 0.0)
+            r_sma20 = float(raw_leader.get("sma20", 0.0) or 0.0)
+            r_atr20 = float(raw_leader.get("atr20", 0.0) or 0.0)
+            r_ext = (r_close - r_sma20) / r_atr20 if r_atr20 > 0 else 0.0
+            route_reason = (
+                f"강세지속 섹터 · 대장주({raw_leader.get('name')}) 단기과열/급등({r_ext:+.2f}ATR) → 대표 ETF(B) 대체"
+            )
+        else:
+            route_reason = "강세지속 섹터 · 대표 섹터 ETF(B) 진입"
+
+        recommendations.append(
+            {
+                "slot": len(recommendations) + 1,
+                "action_type": "BUY_SECTOR_ETF_B",
+                "action_badge": "🛡️ 대표ETF(B)",
+                "region": reg,
+                "sector": sec,
+                "code": etf_code,
+                "name": str(cand["name"]),
+                "close": round(c_px, 2),
+                "sma20": round(sma20_px, 2),
+                "atr20": round(atr20_px, 2),
+                "ext_atr20": round(etf_ext, 2),
+                "selection_reason": route_reason,
+                "buy_band_lower_exclusive": float(cand["e1_check_lower_exclusive_sma20"]),
+                "buy_band_upper_inclusive": float(cand["e1_check_upper_inclusive"]),
+                "target_price_plus_10pct": round(c_px * 1.10, 2),
+                "stop_price_minus_5pct": round(c_px * 0.95, 2),
+                "stop_price_minus_2atr": float(cand["reference_stop_close_minus_2atr"]),
+                "reference_qty_30m_krw": int(cand["reference_qty_30m_krw"]),
+                "weekly_confirmed": bool(weekly_confirmed),
+            }
+        )
+
+    return recommendations
 
 
 def evaluate_public_sector_snapshot(
@@ -508,23 +708,35 @@ def evaluate_public_sector_snapshot(
 
     enriched_candidates_b: list[dict] = []
     for rank, cand in enumerate(raw_candidates_b, start=1):
+        c_val = float(cand["signal_close"])
+        s20_val = float(cand["signal_sma20"])
+        a20_val = float(cand["signal_atr20"])
         band = compute_e1_entry_check_band(
-            signal_sma20=float(cand["signal_sma20"]),
-            signal_close=float(cand["signal_close"]),
-            signal_atr20=float(cand["signal_atr20"]),
+            signal_sma20=s20_val,
+            signal_close=c_val,
+            signal_atr20=a20_val,
         )
         ref_qty = compute_target_qty(
             nav_t=reference_capital,
-            signal_close=float(cand["signal_close"]),
-            signal_atr20=float(cand["signal_atr20"]),
+            signal_close=c_val,
+            signal_atr20=a20_val,
         )
-        stop_ref = float(cand["signal_close"]) - 2.0 * float(cand["signal_atr20"])
+        stop_ref = c_val - 2.0 * a20_val
+        ext_atr = (c_val - s20_val) / a20_val if a20_val > 0 else 0.0
+        is_hw_sector = bool(
+            str(cand["rs_transition_label"]) == "강세 지속" and c_val >= s20_val
+        )
         enriched_candidates_b.append(
             {
                 "rank": rank,
                 **cand,
+                "ext_atr20": round(ext_atr, 4),
+                "is_above_sma20": bool(c_val >= s20_val),
+                "is_high_winrate_sector": is_hw_sector,
                 "e1_check_lower_exclusive_sma20": band["lower_exclusive_sma20"],
                 "e1_check_upper_inclusive": band["upper_inclusive_close_plus_half_atr"],
+                "target_price_plus_10pct": round(c_val * 1.10, 2),
+                "stop_price_minus_5pct": round(c_val * 0.95, 2),
                 "reference_stop_close_minus_2atr": round(stop_ref, 2),
                 "reference_qty_30m_krw": int(ref_qty),
                 "weekly_action_status": (
@@ -551,12 +763,6 @@ def evaluate_public_sector_snapshot(
         qualifying_c_by_sector_key[(obs.region, obs.sector)] = qual_list
 
     # Weekly `C` candidates (Domestic Leading Stocks in Selected Qualified `KR` Sectors, max 3 slots, §4)
-    # Matches `signals.select_weekly_stock_candidates_c` 100%:
-    # 1) Filter `KR` observations with `region_coverage_ok`, `regime_bullish`, constituent snapshot present,
-    #    and `is_entry_qualified`.
-    # 2) Sort by `(-obs.rs20, obs.code)` and slice `[:3]`.
-    # 3) Pick #1 qualifying top-5 turnover constituent (`rs20_vs_sector > 0`, `>SMA60`, `<=SMA20+2ATR20`),
-    #    excluding duplicate stock codes across slots.
     c_region_notes: dict[str, str] = {"US": "NOT_IMPLEMENTED_OVERSEAS_CONSTITUENTS"}
     if sector_constituents is None:
         c_region_notes["KR"] = "NOT_PROVIDED_CONSTITUENT_SNAPSHOT"
@@ -586,17 +792,21 @@ def evaluate_public_sector_snapshot(
         if winner is None:
             continue
         used_stock_codes.add(winner["code"])
+        w_close = float(winner["close"])
+        w_sma20 = float(winner["sma20"])
+        w_atr20 = float(winner["atr20"])
         band = compute_e1_entry_check_band(
-            signal_sma20=float(winner["sma20"]),
-            signal_close=float(winner["close"]),
-            signal_atr20=float(winner["atr20"]),
+            signal_sma20=w_sma20,
+            signal_close=w_close,
+            signal_atr20=w_atr20,
         )
         ref_qty = compute_target_qty(
             nav_t=reference_capital,
-            signal_close=float(winner["close"]),
-            signal_atr20=float(winner["atr20"]),
+            signal_close=w_close,
+            signal_atr20=w_atr20,
         )
-        stop_ref = float(winner["close"]) - 2.0 * float(winner["atr20"])
+        stop_ref = w_close - 2.0 * w_atr20
+        w_ext = (w_close - w_sma20) / w_atr20 if w_atr20 > 0 else 0.0
         enriched_candidates_c.append(
             {
                 "rank": len(enriched_candidates_c) + 1,
@@ -608,10 +818,14 @@ def evaluate_public_sector_snapshot(
                 "sector_etf_name": obs.name,
                 "sector_rs20": round(float(obs.rs20), 6),
                 "sector_rs_transition_label": obs.rs_transition_label,
-                "signal_close": round(float(winner["close"]), 2),
-                "signal_sma20": round(float(winner["sma20"]), 2),
+                "signal_close": round(w_close, 2),
+                "signal_sma20": round(w_sma20, 2),
                 "signal_sma60": round(float(winner["sma60"]), 2),
-                "signal_atr20": round(float(winner["atr20"]), 2),
+                "signal_atr20": round(w_atr20, 2),
+                "ext_atr20": round(w_ext, 4),
+                "is_non_overheated_08atr": bool(winner.get("is_non_overheated_08atr", False)),
+                "is_pullback_5d": bool(winner.get("is_pullback_5d", False)),
+                "is_high_winrate_leader": bool(winner.get("is_high_winrate_leader", False)),
                 "score": round(float(winner["rs20_vs_sector"]), 6),
                 "rs20_vs_sector": round(float(winner["rs20_vs_sector"]), 6),
                 "rs20_vs_sector_improvement_5d": (
@@ -622,6 +836,8 @@ def evaluate_public_sector_snapshot(
                 "turnover20": round(float(winner["turnover20"]), 2),
                 "e1_check_lower_exclusive_sma20": band["lower_exclusive_sma20"],
                 "e1_check_upper_inclusive": band["upper_inclusive_close_plus_half_atr"],
+                "target_price_plus_10pct": round(w_close * 1.10, 2),
+                "stop_price_minus_5pct": round(w_close * 0.95, 2),
                 "reference_stop_close_minus_2atr": round(stop_ref, 2),
                 "reference_qty_30m_krw": int(ref_qty),
                 "weekly_action_status": (
@@ -652,11 +868,15 @@ def evaluate_public_sector_snapshot(
             "sma20": round(r.sma20, 2),
             "sma60": round(r.sma60, 2),
             "atr20": round(r.atr20, 2),
+            "ext_atr20": round((r.close - r.sma20) / r.atr20, 4) if r.atr20 > 0 else 0.0,
             "rs20": round(r.rs20, 6),
             "rs20_improvement_5d": round(r.rs20_improvement_5d, 6),
             "ret60_total": round(r.ret60_total, 6),
             "is_observed": bool(r.is_observed),
             "is_entry_qualified": bool(r.is_entry_qualified),
+            "is_high_winrate_sector": bool(
+                r.is_entry_qualified and r.rs_transition_label == "강세 지속" and r.close >= r.sma20
+            ),
             "rs_transition_label": r.rs_transition_label,
             "regime_bullish": bool(r.regime_bullish),
             "region_coverage_ok": bool(r.region_coverage_ok),
@@ -672,7 +892,34 @@ def evaluate_public_sector_snapshot(
         bmeta["benchmark_code"] = bspec.code
         bmeta["benchmark_name"] = bspec.name
         bmeta["region_status"] = snapshot.region_status.get(region, "UNKNOWN")
+        b_df = cleaned_bars.get(bspec.code)
+        if b_df is not None:
+            b_comp = _completed_traded_bars_up_to(b_df, eval_ts)
+            if len(b_comp) >= 25:
+                b_adj = pit_split_adjusted_ohlc(b_comp)
+                b_c = b_adj["Close"]
+                sma20_now = float(b_c.iloc[-20:].mean())
+                sma20_prev5 = float(b_c.iloc[-25:-5].mean())
+                slope_pct = (sma20_now / sma20_prev5 - 1.0) * 100.0 if sma20_prev5 > 0 else 0.0
+                b_bull = bool(bmeta.get("regime_bullish", False))
+                if b_bull and sma20_now > sma20_prev5:
+                    sub_reg = "UP"
+                elif (not b_bull) and sma20_now < sma20_prev5:
+                    sub_reg = "DOWN"
+                else:
+                    sub_reg = "SIDE"
+                bmeta["sma20"] = round(sma20_now, 2)
+                bmeta["sma20_prev5"] = round(sma20_prev5, 2)
+                bmeta["sma20_slope_5d_pct"] = round(slope_pct, 4)
+                bmeta["sub_regime"] = sub_reg
         benchmarks_out[region] = bmeta
+
+    high_winrate_recommendations = _derive_high_winrate_recommendations(
+        candidates_b=enriched_candidates_b,
+        observations=observations_serialized,
+        benchmarks=benchmarks_out,
+        weekly_confirmed=weekly_confirmed,
+    )
 
     kr_obs = [r for r in observations_serialized if r["region"] == "KR"]
     kr_with_leader = sum(
@@ -701,6 +948,7 @@ def evaluate_public_sector_snapshot(
         "benchmarks": benchmarks_out,
         "weekly_candidates_b": enriched_candidates_b,
         "weekly_candidates_c": enriched_candidates_c,
+        "high_winrate_recommendations": high_winrate_recommendations,
         "c_region_notes": c_region_notes,
         "observations": observations_serialized,
         "blocked_representatives": list(snapshot.blocked_representatives),
@@ -718,6 +966,10 @@ def evaluate_public_sector_snapshot(
             "kr_sectors_with_stock_gate_leader": kr_with_stock_qualified_leader,
             "weekly_actionable_candidates_c": len(enriched_candidates_c) if weekly_confirmed else 0,
             "weekly_preview_candidates_c": len(enriched_candidates_c),
+            "high_winrate_actionable_candidates": (
+                len(high_winrate_recommendations) if weekly_confirmed else 0
+            ),
+            "high_winrate_preview_candidates": len(high_winrate_recommendations),
         },
     }
 
@@ -786,8 +1038,77 @@ def render_sector_v1_panel(record: Mapping[str, object]) -> str:
         ]
         return "\n".join(lines)
 
-    # 1. Regional Regime Table (SMA120)
-    benchmarks = result.get("benchmarks", {})
+    benchmarks = result.get("benchmarks", {}) if isinstance(result.get("benchmarks"), Mapping) else {}
+    candidates_b = list(result.get("weekly_candidates_b", []))
+    candidates_c = list(result.get("weekly_candidates_c", []))
+    observations = list(result.get("observations", []))
+    hw_recs = result.get("high_winrate_recommendations")
+    if not isinstance(hw_recs, list):
+        hw_recs = _derive_high_winrate_recommendations(
+            candidates_b=candidates_b,
+            observations=observations,
+            benchmarks=benchmarks,
+            weekly_confirmed=weekly_confirmed,
+        )
+
+    # 0. At-a-glance Buy/Sell Execution Summary (고승률 B+C 하이브리드 실전 요약)
+    lines += [
+        "#### 🎯 한눈에 보는 주간 매수·매도 실행표 (고승률 `B+C` 하이브리드)",
+        "",
+    ]
+    if hw_recs and weekly_confirmed:
+        lines.append(
+            f"> **🟢 [이번 주 신규 매수: `{len(hw_recs)}`종목 확정]** `10일 강세 지속` & `20일선 지지(종가≥SMA20)` 검증 섹터만 선별합니다. **상승장(`UP`)에서 대장주가 비과열 눌림(`0~0.8 ATR` · `5일 숨고르기`)이면 `🎯 눌림대장주(C)`를, 대장주가 단기 과열되었거나 혼조장이면 `🛡️ 대표ETF(B)`를 매수합니다.**"
+        )
+    elif hw_recs and not weekly_confirmed:
+        lines.append(
+            f"> **🕒 [주중 예비 관찰: `{len(hw_recs)}`종목 — 신규 매수 대기]** 현재 고승률 조건을 충족 중이나 주중 관찰일입니다. **금요일(주간 마지막 거래일) 종가 확정 후 다음 거래일 오전 1회만 매수하세요.**"
+        )
+    else:
+        lines.append(
+            "> **🛑 [이번 주 신규 매수: 없음 (0종목 · 신규 진입 차단 / 기존 보유는 최초 신호의 청산 기준 적용)]** 지역 레짐 차단(`종가 < SMA120`) 또는 `10일 강세 지속(≥SMA20)` 충족 섹터가 없습니다. **억지 매수를 금하고 현금/파킹형 ETF를 유지하세요.**"
+        )
+    lines += [
+        "",
+        "| 슬롯 | 매수 구분 | 종목 (`코드`) | 왜 이 종목인가? (고승률 라우팅 근거) | 얼마에 살까? (`매수 허용가` · 추격금지) | 3,000만원 수량 | 언제 팔까? (`익절 +10%` / `손절·이탈 기준`) |",
+        "|---:|:---|:---|:---|:---|---:|:---|",
+    ]
+    if hw_recs:
+        for rec in hw_recs:
+            slot = int(rec["slot"])
+            badge = _safe_md(rec["action_badge"]) + ("" if weekly_confirmed else " *(주중예비)*")
+            r_reg = _safe_md(rec["region"])
+            r_sec = _safe_md(rec["sector"])
+            r_code = _safe_md(rec["code"])
+            r_name = _safe_md(rec["name"])
+            r_reason = _safe_md(rec["selection_reason"])
+            low_b = float(rec["buy_band_lower_exclusive"])
+            high_b = float(rec["buy_band_upper_inclusive"])
+            tgt_10 = float(rec["target_price_plus_10pct"])
+            stp_5 = float(rec["stop_price_minus_5pct"])
+            stp_2a = float(rec["stop_price_minus_2atr"])
+            s20 = float(rec["sma20"])
+            qty = int(rec["reference_qty_30m_krw"])
+            qty_cell = f"**`{qty:,}주`**" if qty > 0 else "`0주`"
+            lines.append(
+                f"| {slot} | {badge}<br>(`{r_reg}`·{r_sec}) | "
+                f"[{r_name}](https://finance.naver.com/item/main.naver?code={r_code}) (`{r_code}`) | "
+                f"{r_reason} | "
+                f"**`{low_b:,.0f}원 초과 ~ {high_b:,.0f}원 이하`** | "
+                f"{qty_cell} | "
+                f"🟢 **익절**: 종가 `≥{tgt_10:,.0f}원`(+10%)<br>🔴 **손절**: 종가 `≤{stp_5:,.0f}원`(-5%) · 2일`<SMA20({s20:,.0f}원)` · `-2ATR({stp_2a:,.0f}원)` → **익일 시초가 매도** |"
+            )
+    else:
+        lines.append(
+            "| - | 🛑 **신규 매수 금지** | **현금 / 파킹형 ETF (CD금리·KOFR) 유지** | 지역 120일선 하회 차단 또는 `강세 지속` 섹터 부재 | **매수 금지 (0원)** | `0주` | **기존 보유 (최초 신호의 청산 기준 적용)**: 종가 `2일 연속 < SMA20` 또는 `매수가 -5%` 이하 마감 시 **익일 시초가 전량 매도** |"
+        )
+    lines += [
+        "",
+        "- **📌 매수·매도 3초 원칙:** ① **매수**: 월요일(주간 첫 거래일) 오전 1회 확인 시 현재가가 **`매수 허용가(SMA20 초과 ~ 종가+0.5ATR 이하)`** 안일 때만 매수 (범위 밖 갭상승·20일선 이탈 시 패스) · ② **익절**: 보유 중 일봉 종가가 **`+10%` 이상** 마감하면 다음 날 시초가 매도 · ③ **손절/청산**: 일봉 종가가 **`-5%` 이하** 또는 **`20일선(SMA20)` 2일 연속 하회** 마감하면 다음 날 시초가 전량 매도.",
+        "",
+    ]
+
+    # 1. Regional Regime Table (SMA120 + SMA20 5d slope UP/SIDE/DOWN)
     lines += [
         "#### 1) 지역별 시장 레짐 (`종가 ≥ SMA120` 신규 진입 허용 · 약세장에도 관찰 지속)",
         "",
@@ -801,6 +1122,8 @@ def render_sector_v1_panel(record: Mapping[str, object]) -> str:
         r_status = str(bm.get("region_status", "UNKNOWN"))
         b_close = bm.get("close")
         b_sma120 = bm.get("sma120")
+        sub_reg = str(bm.get("sub_regime", ""))
+        slope_5d = bm.get("sma20_slope_5d_pct")
         sched_n = int(bm.get("scheduled_representatives", 0) or 0)
         valid_n = int(bm.get("valid_representatives", 0) or 0)
         if isinstance(b_close, (int, float)) and isinstance(b_sma120, (int, float)) and b_sma120 > 0:
@@ -811,10 +1134,22 @@ def render_sector_v1_panel(record: Mapping[str, object]) -> str:
             close_str = "-"
             sma_str = "-"
 
+        slope_note = (
+            f" · 20일선 5일 `{float(slope_5d):+.2f}%`"
+            if isinstance(slope_5d, (int, float))
+            else ""
+        )
         if r_status == "ACTIVE":
-            verdict_str = "🟢 신규 편입 허용 (`종가 ≥ SMA120`)"
+            if sub_reg == "SIDE":
+                verdict_str = (
+                    f"🟢 신규 편입 허용 (`종가 ≥ SMA120` · 🟡 `혼조·전환(SIDE)`{slope_note} → 대표ETF(B) 방어 권장)"
+                )
+            else:
+                verdict_str = (
+                    f"🟢 신규 편입 허용 (`종가 ≥ SMA120` · `상승(UP)`{slope_note} → 눌림대장주(C)/ETF(B))"
+                )
         elif r_status == "HALTED_BEAR_REGIME":
-            verdict_str = "🔴 현금 유지 · 신규 차단 (`종가 < SMA120`, 관찰 지속)"
+            verdict_str = f"🔴 현금 유지 · 신규 차단 (`종가 < SMA120`{slope_note}, 관찰 지속)"
         else:
             verdict_str = f"⚪ 신규 선발 보류 (`{r_status}`)"
 
@@ -825,8 +1160,6 @@ def render_sector_v1_panel(record: Mapping[str, object]) -> str:
     lines.append("")
 
     # 2. Weekly Sector ETF Candidates (`B`) & E1 Manual Check Price Band
-    candidates_b = list(result.get("weekly_candidates_b", []))
-    candidates_c = list(result.get("weekly_candidates_c", []))
     counts = result.get("counts", {}) if isinstance(result.get("counts"), Mapping) else {}
     obs_cnt = int(counts.get("observed_improving_sectors", 0) or 0)
     qual_cnt = int(counts.get("entry_qualified_before_regime", 0) or 0)
@@ -838,7 +1171,7 @@ def render_sector_v1_panel(record: Mapping[str, object]) -> str:
     lines += [
         f"#### 2) 대표 섹터 ETF 주간 후보 (`B`, 최대 3슬롯) — {cand_title_suffix}",
         "",
-        f"> **섹터 게이트 요약 (`{eval_cnt}`개 섹터 평가):** 관찰 강세(`RS20>0` & `5일 개선>0`) `{obs_cnt}`개 → 추세·비과열 자격(`>SMA60` & `≤SMA20+2ATR20`) `{qual_cnt}`개 → 지역 레짐(`≥SMA120`) 통과 상위 최대 3개 **`{len(candidates_b)}`건**",
+        f"> **섹터 게이트 요약 (`{eval_cnt}`개 섹터 평가):** 관찰 강세(`RS20>0` & `5일 개선>0`) `{obs_cnt}`개 → 추세·비과열 자격(`>SMA60` & `≤SMA20+2ATR20`) `{qual_cnt}`개 → 지역 레짐(`≥SMA120`) 통과 상위 최대 3개 **`{len(candidates_b)}`건** (고승률 `강세 지속·≥SMA20` 적격 **`{len(hw_recs)}`건**)",
         "",
         "| 순위 | 지역·섹터 | 대표 ETF | 완료일 종가 | RS20 (5일 변화 · 상태) | E1 다음 거래일 1회 확인 허용가 | 이탈 기준선 / 3,000만원 참고수량 |",
         "|---:|:---|:---|---:|:---|:---|:---|",
@@ -854,27 +1187,34 @@ def render_sector_v1_panel(record: Mapping[str, object]) -> str:
             c_px = float(cand["signal_close"])
             rs20_pct = float(cand["rs20"]) * 100.0
             imp_pct = float(cand["rs20_improvement_5d"]) * 100.0
-            label = _safe_md(cand["rs_transition_label"])
+            raw_label = str(cand["rs_transition_label"])
+            label = _safe_md(raw_label)
             low_ex = float(cand["e1_check_lower_exclusive_sma20"])
             high_in = float(cand["e1_check_upper_inclusive"])
             stop_px = float(cand["reference_stop_close_minus_2atr"])
             sma20_px = float(cand["signal_sma20"])
+            tgt_px = round(c_px * 1.10, 0)
             ref_qty = int(cand["reference_qty_30m_krw"])
             mode_tag = "" if weekly_confirmed else " *(주중 예비)*"
+            if raw_label == "강세 지속" and c_px >= sma20_px:
+                hw_badge = "🟢 `고승률 적격`"
+            elif c_px < sma20_px:
+                hw_badge = "⚠️ `SMA20 하회(보류)`"
+            else:
+                hw_badge = "🟡 `전환 관찰(추격주의)`"
             qty_str = f"`{ref_qty:,}주` (0.5% 위험예산)" if ref_qty > 0 else "`0주 (미진입)`"
             lines.append(
                 f"| {rk} | `{reg}` · **{sec}**{mode_tag} | "
                 f"[{name}](https://finance.naver.com/item/main.naver?code={code}) (`{code}`) | "
-                f"{c_px:,.0f}원 | **{rs20_pct:+.2f}%** ({imp_pct:+.2f}%p · `{label}`) | "
+                f"{c_px:,.0f}원 | **{rs20_pct:+.2f}%** ({imp_pct:+.2f}%p · `{label}` · {hw_badge}) | "
                 f"`{low_ex:,.0f}원 초과 ~ {high_in:,.0f}원 이하` | "
-                f"2일<SMA20(`{sma20_px:,.0f}원`) · 진입가−2ATR(`{stop_px:,.0f}원` 참고) · {qty_str} |"
+                f"익절+10%(`{tgt_px:,.0f}원`) · 2일<SMA20(`{sma20_px:,.0f}원`) · 진입가−2ATR(`{stop_px:,.0f}원` 참고) · {qty_str} |"
             )
     else:
         lines.append("| - | 조건 충족 섹터 없음 (억지 대체 편입 금지 · 현금 유지) | - | - | - | - | - |")
     lines.append("")
 
     # 2-1. Leading stocks of the sectors in section 2 (`C`: top-5 turnover, highest RS20 vs sector ETF)
-    observations = list(result.get("observations", []))
     obs_by_key = {
         (str(r.get("region")), str(r.get("sector"))): r for r in observations if isinstance(r, Mapping)
     }
@@ -944,6 +1284,11 @@ def render_sector_v1_panel(record: Mapping[str, object]) -> str:
         l_code = _safe_md(leader["code"])
         l_name = _safe_md(leader["name"])
         l_close = float(leader["close"])
+        l_sma20 = float(leader.get("sma20", 0.0) or 0.0)
+        l_atr20 = float(leader.get("atr20", 0.0) or 0.0)
+        l_ext = (l_close - l_sma20) / l_atr20 if l_atr20 > 0 else 0.0
+        l_imp = leader.get("rs20_vs_sector_improvement_5d")
+        l_imp_str = f" · 5일 {float(l_imp)*100.0:+.1f}%p" if l_imp is not None else ""
         l_rs_pct = float(leader["rs20_vs_sector"]) * 100.0
         stock_cell = f"[{l_name}](https://finance.naver.com/item/main.naver?code={l_code}) (`{l_code}`)"
         c_pick = c_by_key.get((reg, str(row.get("sector", ""))))
@@ -954,33 +1299,50 @@ def render_sector_v1_panel(record: Mapping[str, object]) -> str:
                 f"[{_safe_md(c_pick['name'])}](https://finance.naver.com/item/main.naver?code={_safe_md(c_pick['code'])}) "
                 f"(`{_safe_md(c_pick['code'])}`)"
             )
+            c_close = float(c_pick["signal_close"])
+            c_sma20 = float(c_pick["signal_sma20"])
+            c_atr20 = float(c_pick["signal_atr20"])
+            c_ext = (c_close - c_sma20) / c_atr20 if c_atr20 > 0 else 0.0
+            c_imp = c_pick.get("rs20_vs_sector_improvement_5d")
+            is_hw_c = bool(
+                0.0 <= c_ext <= HIGH_WINRATE_MAX_STOCK_EXT_ATR
+                and c_imp is not None
+                and float(c_imp) <= 0.0
+            )
             low_ex = float(c_pick["e1_check_lower_exclusive_sma20"])
             high_in = float(c_pick["e1_check_upper_inclusive"])
             stop_px = float(c_pick["reference_stop_close_minus_2atr"])
             sma20_px = float(c_pick["signal_sma20"])
+            tgt_px = round(c_close * 1.10, 0)
             ref_qty = int(c_pick["reference_qty_30m_krw"])
             qty_str = f"`{ref_qty:,}주` (0.5% 위험예산)" if ref_qty > 0 else "`0주 (미진입)`"
-            verdict = "✅ 대장주 후보" + ("" if weekly_confirmed else " *(주중 예비)*")
+            hw_tag = (
+                f" · 🎯 `눌림매수 적격(이격 {c_ext:+.2f}ATR)`"
+                if is_hw_c
+                else f" · ⚠️ `단기과열(이격 {c_ext:+.2f}ATR→섹터ETF B 권장)`"
+            )
+            verdict = "✅ 대장주 후보" + ("" if weekly_confirmed else " *(주중 예비)*") + hw_tag
             lines.append(
-                f"| {sec_cell} | {stock_cell} | {float(c_pick['signal_close']):,.0f}원 | "
+                f"| {sec_cell} | {stock_cell} | {c_close:,.0f}원 | "
                 f"**{float(c_pick['rs20_vs_sector']) * 100.0:+.2f}%** | {verdict} | "
                 f"`{low_ex:,.0f}원 초과 ~ {high_in:,.0f}원 이하` | "
-                f"2일<SMA20(`{sma20_px:,.0f}원`) · 진입가−2ATR(`{stop_px:,.0f}원` 참고) · {qty_str} |"
+                f"익절+10%(`{tgt_px:,.0f}원`) · 2일<SMA20(`{sma20_px:,.0f}원`) · 진입가−2ATR(`{stop_px:,.0f}원` 참고) · {qty_str} |"
             )
             continue
 
         fails = [_safe_md(x) for x in (leader.get("stock_gate_failures") or [])]
+        ext_tag = f"이격 `{l_ext:+.2f}ATR`{l_imp_str}"
         if is_preview:
             region_blocked = "지역 레짐 차단(<SMA120)" in list(row.get("gate_failure_reasons") or [])
             block_note = "레짐 차단" if region_blocked else "섹터 자격 미달"
             if bool(leader.get("is_stock_qualified", False)):
-                verdict = f"👀 개별 추세 통과 · `{block_note}`"
+                verdict = f"👀 개별 추세 통과 ({ext_tag}) · `{block_note}`"
             else:
-                verdict = f"👀 관찰 · `{', '.join(fails) or block_note}`"
+                verdict = f"👀 관찰 ({ext_tag}) · `{', '.join(fails) or block_note}`"
         elif bool(leader.get("is_stock_qualified", False)):
-            verdict = "👀 관찰 (`중복 종목 제외`)"
+            verdict = f"👀 관찰 (`중복 종목 제외` · {ext_tag})"
         else:
-            verdict = f"👀 관찰 · `{', '.join(fails) or '개별주 자격 미달'}`"
+            verdict = f"👀 관찰 ({ext_tag}) · `{', '.join(fails) or '개별주 자격 미달'}`"
         lines.append(
             f"| {sec_cell} | {stock_cell} | {l_close:,.0f}원 | **{l_rs_pct:+.2f}%** | {verdict} | - | - |"
         )
